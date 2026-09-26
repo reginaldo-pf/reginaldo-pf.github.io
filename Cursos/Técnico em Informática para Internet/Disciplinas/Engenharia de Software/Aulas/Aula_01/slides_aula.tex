@@ -1,0 +1,215 @@
+\documentclass[10pt]{beamer}
+
+% Tema Limpo e Profissional
+\usetheme{Madrid}
+\usecolortheme{whale}
+
+% Pacotes Essenciais
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Configuracoes de Codigo (Python)
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\tiny,
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    commentstyle=\color{green!60!black},
+    breaklines=true,
+    showstringspaces=false
+}
+
+% Metadados
+\title[IFCE Tauá - Planejamento Ágil]{Simulação de Reunião de Backlog e Estimativas}
+\subtitle{Projeto FamilyFinance.AI: Finanças Familiares com Inteligência Artificial}
+\author[Prof. Reginaldo Fernandes]{Prof. Reginaldo Fernandes\texorpdfstring{\\ \small{Engenharia de Software}}{}}
+\institute[IFCE]{Instituto Federal do Ceará -- Campus Tauá}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}{Sumário da Aula}
+    \tableofcontents
+\end{frame}
+
+\section{Introdução e Problema}
+\begin{frame}{O Problema de Negócio: Projeto FamilyFinance.AI}
+    \begin{columns}
+        \begin{column}{0.55\textwidth}
+            \textbf{Contexto e Requisitos:}
+            \begin{itemize}
+                \item Registro diário de gastos do usuário.
+                \item Geração de relatórios mensais de consumo por categorias.
+                \item Vínculo de membros familiares (dados isolados por grupo).
+                \item Inteligência Artificial para apoiar no planejamento orçamentário mensal.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.45\textwidth}
+            \textbf{Desafio Metodológico:}
+            Como uma equipe de 5 alunos pode estimar com precisão o esforço inicial, definir a Sprint 1 e planejar prazos de forma robusta e baseada em dados estatísticos?
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\section{Método Teórico Clássico}
+\begin{frame}{Método Teórico: Estimativa Relativa e Fibonacci}
+    \begin{itemize}
+        \item \textbf{Story Points (Pontos de História):} Medida abstrata que quantifica esforço, complexidade e incerteza técnica de tarefas.
+        \item \textbf{Sequência de Fibonacci ($1, 2, 3, 5, 8, 13$):} Reduz a falsa precisão de estimativas lineares. Quanto maior a tarefa, maior a incerteza.
+        \item \textbf{Planning Poker:} Reunião de consenso onde cada desenvolvedor apresenta seu palpite sem sofrer influência inicial do grupo.
+    \end{itemize}
+    \begin{block}{Parâmetros Estatísticos de Incerteza}
+        Calculamos a Média Amostral ($\bar{X}$), o Desvio Padrão Amostral ($s$) e o Erro Padrão ($SE$) dos palpites para medir a dispersão e incerteza da equipe.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Exemplo Teórico Analítico (Passo a Passo)}
+    \textbf{Tarefa:} "Integrar API do Gemini para gerar relatórios preditivos"
+    \begin{itemize}
+        \item Estimativas fornecidas por 5 desenvolvedores: $5, 8, 5, 8, 8$ Story Points.
+    \end{itemize}
+    
+    \textbf{Passo 1: Média Amostral ($\bar{X}$):}
+    $$\bar{X} = \frac{5 + 8 + 5 + 8 + 8}{5} = \frac{34}{5} = 6.8 \text{ SP}$$
+    
+    \textbf{Passo 2: Desvio Padrão Amostral ($s$):}
+    $$s = \sqrt{\frac{(5-6.8)^2 + (8-6.8)^2 + (5-6.8)^2 + (8-6.8)^2 + (8-6.8)^2}{5 - 1}}$$
+    $$s = \sqrt{\frac{3.24 + 1.44 + 3.24 + 1.44 + 1.44}{4}} = \sqrt{2.7} \approx 1.64 \text{ SP}$$
+    
+    \textbf{Passo 3: Erro Padrão ($SE$):}
+    $$SE = \frac{s}{\sqrt{N}} = \frac{1.64}{\sqrt{5}} \approx 0.73 \text{ SP}$$
+\end{frame}
+
+\section{Abordagem Computacional}
+\begin{frame}[fragile]{Demonstração Computacional Equivalente}
+    O código Python a seguir realiza o mesmo cálculo de incerteza feito analiticamente:
+\begin{lstlisting}
+import numpy as np
+
+# Estimativas dos 5 alunos
+estimativas = np.array([5, 8, 5, 8, 8])
+n = len(estimativas)
+
+# Calculos Estatisticos
+media = np.mean(estimativas)
+desvio_padrao = np.std(estimativas, ddof=1) # ddof=1 garante desvio padrao amostral (N-1)
+erro_padrao = desvio_padrao / np.sqrt(n)
+
+print(f"Media Amostral: {media:.2f} SP")
+print(f"Desvio Padrao Amostral: {desvio_padrao:.2f} SP")
+print(f"Erro Padrao: {erro_padrao:.2f} SP")
+\end{lstlisting}
+    \begin{block}{Conexão Computacional}
+        A saída do código valida as equações de Média Amostral ($6.80$ SP), Desvio Padrão ($1.64$ SP) e Erro Padrão ($0.73$ SP).
+    \end{block}
+\end{frame}
+
+\begin{frame}{Simulação Monte Carlo para Prazos}
+    \begin{itemize}
+        \item O backlog total do MVP foi fechado em \textbf{80 Story Points (SP)}.
+        \item A velocidade da equipe por sprint segue uma distribuição normal com média de \textbf{15 SP} e desvio padrão de \textbf{3.5 SP}.
+        \item Realizamos $10.000$ simulações em Python para prever o prazo de entrega.
+    \end{itemize}
+    \begin{block}{Resultados obtidos via simulação}
+        \begin{itemize}
+            \item \textbf{50\% de Confiança (Mais Provável):} Conclusão em até 5.3 Sprints.
+            \item \textbf{80\% de Confiança (Recomendado):} Conclusão em até 5.8 Sprints.
+            \item \textbf{90\% de Confiança (Pessimista):} Conclusão em até 6.1 Sprints.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\section{Planejamento e Execução}
+\begin{frame}{Trilha ADS: Divisão das Tarefas da Sprint 1}
+    Para a primeira sprint (2 semanas), a equipe de ADS planejou \textbf{16 SP} de capacidade:
+    \begin{table}[]
+        \tiny
+        \centering
+        \begin{tabular}{lllc}
+            \toprule
+            \textbf{Responsável} & \textbf{Papel Principal} & \textbf{Atividades da Sprint 1} & \textbf{Esforço (SP)} \\
+            \midrule
+            Aluno A & Infra & Setup Next.js 16 + Docker + Prisma PostgreSQL & 3 SP \\
+            Aluno B & Segurança & Autenticação Next-Auth + Lógica de Vínculo Familiar & 5 SP \\
+            Aluno C & UI/UX & Tela móvel de cadastro e Histórico de Gastos & 3 SP \\
+            Aluno D & Backend & API CRUD de Categorias de gastos e deleção lógica & 2 SP \\
+            Aluno E & IA Integrador & Conexão SDK Gemini + Loader Assíncrono (Skeleton) & 3 SP \\
+            \bottomrule
+        \end{tabular}
+        \caption{Divisão equilibrada da carga de trabalho para 5 alunos de ADS}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Trilha Técnica: Divisão Alternativa de Tarefas}
+    Para o curso Técnico em Informática para Internet, o foco é frontend e consumo de APIs (13 SP):
+    \begin{table}[]
+        \tiny
+        \centering
+        \begin{tabular}{lllc}
+            \toprule
+            \textbf{Responsável} & \textbf{Papel Principal} & \textbf{Atividades da Sprint 1} & \textbf{Esforço (SP)} \\
+            \midrule
+            Aluno 1 & Web Design & Prototipagem e estilização responsiva do painel (Tailwind) & 3 SP \\
+            Aluno 2 & Integrator & Roteamento dinâmico (App Router) e proteção simples de rotas & 3 SP \\
+            Aluno 3 & JavaScript & Formulário de gastos, validações client-side e lista local & 2 SP \\
+            Aluno 4 & Visualização & Gráfico de pizza de gastos mensais por categorias (Recharts) & 2 SP \\
+            Aluno 5 & APIs / IA & Envio de requisições HTTP e exibição das dicas de IA na tela & 3 SP \\
+            \bottomrule
+        \end{tabular}
+        \caption{Divisão de tarefas de nível técnico ajustada para 5 alunos}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Arquitetura do FamilyFinance.AI}
+    Desenvolvimento baseado em \textbf{Next.js 16} (React 19) e banco de dados isolado por família:
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \textbf{Camada Web (Next.js 16):}
+            \begin{itemize}
+                \item App Router para organização.
+                \item Server Components (RSC) para leitura.
+                \item Server Actions para mutações.
+                \item Vercel AI SDK para integração.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \textbf{Isolamento Multi-tenant:}
+            \begin{itemize}
+                \item Toda transação e categoria possui o vínculo obrigatório a um \texttt{familyId}.
+                \item Consultas do Prisma são filtradas pela sessão do usuário logado no servidor.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\section{Metas e Exercícios}
+\begin{frame}{Guia de OKR Individual e Gestão de Metas}
+    Cada aluno utilizará o modelo de OKR e fará o auto-monitoramento diário:
+    \begin{itemize}
+        \item \textbf{Daily Check-in:} O que fiz ontem? O que farei hoje? Algum impedimento no meu progresso?
+        \item \textbf{Foco na Meta da Sprint:} Garantir que as entregas de infra e fluxo básico de autenticação/CRUD funcionem sem atritos.
+    \end{itemize}
+    \begin{alertblock}{Impedimentos Coletivos}
+        Qualquer gargalo técnico (ex: conflitos de tipagem ou portas do Docker) deve ser resolvido imediatamente em reuniões rápidas e cooperativas.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Exercícios Propostos para os Alunos}
+    \begin{enumerate}
+        \item \textbf{Exercício Analítico:} Uma tarefa recebeu as estimativas $3, 5, 3, 5, 8$ SP de 5 alunos. Calcule a Média Amostral ($\bar{X}$), o Desvio Padrão Amostral ($s$) e o Erro Padrão ($SE$).
+        \item \textbf{Exercício de Decisão:} Com base no gráfico ECDF, se a diretoria exigir 80\% de confiança na data de entrega do MVP, qual deve ser o prazo acordado (em número de sprints)?
+        \item \textbf{Desafio de Código:} Altere as propriedades do script Python para uma velocidade média pessimista de 12 SP e desvio padrão de 4.5 SP. Plote a nova ECDF e aponte o novo prazo para 80\% de confiança.
+    \end{enumerate}
+\end{frame}
+
+\end{document}
