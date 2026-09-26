@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 01: Introdução ao NoSQL | BDNR ADS16 | Prof. Reginaldo Fernandes</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            ifce: {
+              green: '#2F855A',
+              red: '#C53030',
+              dark: '#1C4532',
+              emerald: '#059669'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Prism.js para Realce de Sintaxe (Tema Okaidia / Dark compatível) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    code, pre { font-family: 'JetBrains Mono', monospace !important; }
+    .tab-active {
+      border-color: #059669;
+      color: #059669;
+      background-color: rgba(5, 150, 105, 0.08);
+    }
+    .dark .tab-active {
+      border-color: #34d399;
+      color: #34d399;
+      background-color: rgba(52, 211, 153, 0.12);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- Navbar -->
+  <header class="border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="../../index.html" class="flex items-center space-x-2 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium text-sm transition-colors">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Voltar para Disciplina</span>
+        </a>
+      </div>
+      <div class="flex items-center space-x-4">
+        <a href="https://github.com/reginaldo-pf" target="_blank" rel="noopener noreferrer" class="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white text-lg" title="GitHub @reginaldo-pf">
+          <i class="fa-brands fa-github"></i>
+        </a>
+        <button id="themeToggle" class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Alternar tema">
+          <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 py-8 w-full">
+
+    <!-- Breadcrumb -->
+    <nav class="text-xs text-slate-500 dark:text-slate-400 mb-4 flex items-center space-x-2 flex-wrap">
+      <a href="../../../../../index.html" class="hover:underline">Início</a>
+      <span>/</span>
+      <span>Tecnologia em ADS</span>
+      <span>/</span>
+      <a href="../../index.html" class="hover:underline">Bancos de Dados Não-Relacionais</a>
+      <span>/</span>
+      <span class="text-emerald-600 dark:text-emerald-400 font-medium">Aula 01</span>
+    </nav>
+
+    <!-- Header do Bloco da Aula -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/60 shadow-sm mb-8">
+      <div class="flex flex-wrap items-center gap-2 mb-3">
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">Aula 01</span>
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200">ADS16 • 2h (120 min)</span>
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300">Semestre 2026.2</span>
+      </div>
+
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+        Introdução aos Bancos Não-Relacionais & O Paradigma Pós-Relacional
+      </h1>
+      <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+        <strong>Disciplina:</strong> Bancos de Dados Não-Relacionais | <strong>Docente:</strong> Prof. Reginaldo Pereira Fernandes (IFCE Campus Tauá)
+      </p>
+
+      <!-- Botões de Ação Rápida no Topo -->
+      <div class="flex flex-wrap items-center gap-3 mt-6 pt-5 border-t border-slate-100 dark:border-slate-700/60">
+        <!-- Botão Google Colab -->
+        <a href="https://colab.research.google.com/github/reginaldo-pf/reginaldo-pf.github.io/blob/main/Cursos/Tecnologia%20em%20An%C3%A1lise%20e%20Desenvolvimento%20de%20Sistemas/Disciplinas/Banco%20de%20Dados%20N%C3%A3o-Relacionais/Aulas/Aula_01/codigo/demonstracao_aula01.ipynb" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-sm transition-all transform hover:-translate-y-0.5">
+          <i class="fa-solid fa-bolt"></i>
+          <span>Abrir no Google Colab</span>
+        </a>
+
+        <!-- Botão Ver Slides -->
+        <button onclick="switchTab('tab-slides')" class="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all">
+          <i class="fa-solid fa-file-pdf"></i>
+          <span>Visualizar Slides (PDF)</span>
+        </button>
+
+        <!-- Botão Baixar Script Python -->
+        <a href="codigo/demonstracao_aula01.py" download class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors">
+          <i class="fa-brands fa-python text-emerald-500"></i>
+          <span>Baixar Script (.py)</span>
+        </a>
+
+        <!-- Botão Baixar Notebook -->
+        <a href="codigo/demonstracao_aula01.ipynb" download class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors">
+          <i class="fa-solid fa-book-open text-amber-500"></i>
+          <span>Baixar Notebook (.ipynb)</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Navegação por Abas -->
+    <div class="flex items-center space-x-2 border-b border-slate-200 dark:border-slate-700 mb-8 overflow-x-auto pb-1">
+      <button onclick="switchTab('tab-notebook')" id="btn-tab-notebook" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent transition-all flex items-center space-x-2 tab-active">
+        <i class="fa-solid fa-code"></i>
+        <span>Caderno Didático (Notebook)</span>
+      </button>
+
+      <button onclick="switchTab('tab-slides')" id="btn-tab-slides" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all flex items-center space-x-2">
+        <i class="fa-solid fa-file-pdf"></i>
+        <span>Slides da Apresentação</span>
+      </button>
+
+      <button onclick="switchTab('tab-plano')" id="btn-tab-plano" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all flex items-center space-x-2">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Plano Pedagógico & Atividades</span>
+      </button>
+
+      <button onclick="switchTab('tab-recursos')" id="btn-tab-recursos" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all flex items-center space-x-2">
+        <i class="fa-solid fa-download"></i>
+        <span>Central de Arquivos</span>
+      </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 1: CADERNO DIDÁTICO (NOTEBOOK PYTHON) -->
+    <!-- ========================================== -->
+    <div id="tab-notebook" class="tab-content space-y-6">
+
+      <!-- Célula Markdown 1: Introdução Teórica -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-lightbulb text-amber-500"></i>
+          <span>1. O Desafio dos Dados e as Limitações do Modelo Relacional</span>
+        </h2>
+        <p class="text-slate-700 dark:text-slate-300 mb-3">
+          Por mais de três décadas (desde Edgar F. Codd em 1970), o modelo relacional e a linguagem SQL reinaram absolutos no desenvolvimento de software corporativo. No entanto, o advento da <strong>Web 2.0</strong> e do <strong>Big Data</strong> impôs novas demandas aos sistemas de armazenamento:
+        </p>
+        <ul class="list-disc list-inside space-y-1 text-slate-600 dark:text-slate-400 text-xs sm:text-sm">
+          <li><strong>Volume Massivo & Concorrência:</strong> Milhões de acessos simultâneos ao redor do planeta.</li>
+          <li><strong>Escalabilidade Horizontal (Scale-Out):</strong> Em vez de adquirir servidores cada vez maiores e mais caros (Scale-Up), a computação moderna distribui os dados por dezenas ou centenas de nós em cluster.</li>
+          <li><strong>Custo Computacional dos JOINs:</strong> Executar junções complexas entre tabelas gigantescas distribuídas em rede é uma operação de altíssimo custo e latência.</li>
+          <li><strong>Descasamento de Impedância Objeto-Relacional:</strong> O atrito permanente entre o paradigma de objetos na aplicação e as tabelas rígidas do banco.</li>
+        </ul>
+      </div>
+
+      <!-- Célula de Código 1: Domínio de Negócio -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-sm overflow-hidden">
+        <div class="bg-slate-100 dark:bg-slate-850 px-4 py-2 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center space-x-2">
+            <span class="font-mono font-bold text-emerald-600 dark:text-emerald-400">In [1]:</span>
+            <span>Definição do Domínio em Python (Dataclasses)</span>
+          </div>
+          <button onclick="copiarCodigo('code-cell-1')" class="hover:text-emerald-600 transition-colors flex items-center space-x-1">
+            <i class="fa-regular fa-copy"></i>
+            <span>Copiar</span>
+          </button>
+        </div>
+        <pre class="p-4 text-xs sm:text-sm overflow-x-auto"><code id="code-cell-1" class="language-python">from dataclasses import dataclass, field
+from typing import List
+
+@dataclass
+class ItemPedido:
+    produto: str
+    quantidade: int
+    preco_unitario: float
+
+@dataclass
+class Pedido:
+    id_pedido: str
+    data_emissao: str
+    itens: List[ItemPedido] = field(default_factory=list)
+
+    @property
+    def total(self) -> float:
+        return sum(item.quantidade * item.preco_unitario for item in self.itens)
+
+@dataclass
+class Cliente:
+    id_cliente: int
+    nome: str
+    email: str
+    cidade: str
+    uf: str
+    pedidos: List[Pedido] = field(default_factory=list)
+
+print("✅ Modelo de domínio carregado com sucesso!")</code></pre>
+        <div class="bg-slate-50 dark:bg-slate-900/60 px-4 py-3 border-t border-slate-200 dark:border-slate-700 font-mono text-xs text-slate-600 dark:text-slate-400">
+          <span class="font-bold text-slate-400">Out [1]:</span>
+          <p class="text-emerald-600 dark:text-emerald-400 mt-1">✅ Modelo de domínio carregado com sucesso!</p>
+        </div>
+      </div>
+
+      <!-- Célula Markdown 2: O Descasamento Objeto-Relacional -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center space-x-2">
+          <i class="fa-solid fa-code-compare text-blue-500"></i>
+          <span>2. Comparativo: Fragmentação Normalizada vs Agregação JSON</span>
+        </h2>
+        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
+          Observe a diferença entre a abordagem normalizada do SQL (que espalha uma única entidade em múltiplas linhas e tabelas) e a abordagem agregada do NoSQL orientado a documentos (que guarda a entidade completa como um agregado de acesso instantâneo):
+        </p>
+      </div>
+
+      <!-- Célula de Código 2: Consulta Relacional com JOINs -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-sm overflow-hidden">
+        <div class="bg-slate-100 dark:bg-slate-850 px-4 py-2 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center space-x-2">
+            <span class="font-mono font-bold text-blue-600 dark:text-blue-400">In [2]:</span>
+            <span>Abordagem SQL Relacional (Necessidade de Múltiplos JOINs)</span>
+          </div>
+          <button onclick="copiarCodigo('code-cell-2')" class="hover:text-blue-600 transition-colors flex items-center space-x-1">
+            <i class="fa-regular fa-copy"></i>
+            <span>Copiar</span>
+          </button>
+        </div>
+        <pre class="p-4 text-xs sm:text-sm overflow-x-auto"><code id="code-cell-2" class="language-sql">-- Para remontar o cliente com seus pedidos e itens no modelo relacional:
+SELECT 
+    c.id, c.nome, c.email, 
+    p.id AS pedido_id, p.data_emissao, 
+    i.produto, i.quantidade, i.preco_unitario
+FROM clientes c
+JOIN pedidos p ON p.cliente_id = c.id
+JOIN itens_pedido i ON i.pedido_id = p.id
+WHERE c.id = 1;</code></pre>
+        <div class="bg-slate-50 dark:bg-slate-900/60 px-4 py-3 border-t border-slate-200 dark:border-slate-700 font-mono text-xs text-slate-600 dark:text-slate-400">
+          <span class="font-bold text-slate-400">Out [2]:</span>
+          <div class="mt-1 text-slate-600 dark:text-slate-300">
+            Linha 1: (1, 'Maria Silva', 'maria@ifce.edu.br', 'PED-001', '2026-09-29', 'Notebook Dell', 1, 4500.0)<br>
+            Linha 2: (1, 'Maria Silva', 'maria@ifce.edu.br', 'PED-001', '2026-09-29', 'Mouse Sem Fio', 2, 85.5)<br>
+            <span class="text-amber-600 dark:text-amber-400">⚠️ Note a redundância dos dados do cliente repetidos a cada item retornado.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Célula de Código 3: Representação NoSQL de Documentos -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-sm overflow-hidden">
+        <div class="bg-slate-100 dark:bg-slate-850 px-4 py-2 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center space-x-2">
+            <span class="font-mono font-bold text-purple-600 dark:text-purple-400">In [3]:</span>
+            <span>Abordagem NoSQL Documentos (Estrutura Agregada JSON/BSON)</span>
+          </div>
+          <button onclick="copiarCodigo('code-cell-3')" class="hover:text-purple-600 transition-colors flex items-center space-x-1">
+            <i class="fa-regular fa-copy"></i>
+            <span>Copiar</span>
+          </button>
+        </div>
+        <pre class="p-4 text-xs sm:text-sm overflow-x-auto"><code id="code-cell-3" class="language-json">{
+  "_id": 1,
+  "nome": "Maria Silva",
+  "email": "maria@ifce.edu.br",
+  "cidade": "Tauá",
+  "uf": "CE",
+  "pedidos": [
+    {
+      "id_pedido": "PED-001",
+      "data_emissao": "2026-09-29",
+      "itens": [
+        {"produto": "Notebook Dell", "quantidade": 1, "preco_unitario": 4500.00},
+        {"produto": "Mouse Sem Fio", "quantidade": 2, "preco_unitario": 85.50}
+      ],
+      "total": 4671.00
+    }
+  ]
+}</code></pre>
+        <div class="bg-slate-50 dark:bg-slate-900/60 px-4 py-3 border-t border-slate-200 dark:border-slate-700 font-mono text-xs text-slate-600 dark:text-slate-400">
+          <span class="font-bold text-slate-400">Out [3]:</span>
+          <p class="text-emerald-600 dark:text-emerald-400 mt-1">
+            ⚡ Consulta atômica por chave primária (_id: 1) retornando a entidade completa em uma única operação de I/O em milissegundos, sem nenhum JOIN!
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 2: SLIDES DA APRESENTAÇÃO (PDF)       -->
+    <!-- ========================================== -->
+    <div id="tab-slides" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h3 class="font-bold text-base flex items-center space-x-2">
+            <i class="fa-solid fa-file-pdf text-red-500 text-lg"></i>
+            <span>Apresentação Beamer: Aula 01 -- Introdução ao NoSQL</span>
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Documento oficial gerado em LaTeX Beamer (Template 16:9 - IFCE Tauá).</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <a href="materiais/main.pdf" target="_blank" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors inline-flex items-center space-x-1.5">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            <span>Abrir em Nova Aba</span>
+          </a>
+          <a href="materiais/main.pdf" download class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors inline-flex items-center space-x-1.5">
+            <i class="fa-solid fa-download"></i>
+            <span>Baixar PDF</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Iframe Incorporador de PDF -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700/60 overflow-hidden shadow-sm">
+        <iframe src="materiais/main.pdf" class="w-full h-[650px] border-0" title="Slides da Aula 01"></iframe>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 3: PLANO PEDAGÓGICO & ATIVIDADES      -->
+    <!-- ========================================== -->
+    <div id="tab-plano" class="tab-content hidden space-y-6">
+      
+      <!-- Cronograma da Aula -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <h3 class="font-bold text-base mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-clock text-emerald-600 dark:text-emerald-400"></i>
+          <span>Cronograma dos 120 Minutos do Encontro</span>
+        </h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs sm:text-sm">
+            <thead>
+              <tr class="bg-slate-50 dark:bg-slate-900/50 text-slate-500 border-b border-slate-200 dark:border-slate-700">
+                <th class="py-2.5 px-3">Bloco</th>
+                <th class="py-2.5 px-3">Duração</th>
+                <th class="py-2.5 px-4">Descrição das Atividades</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50">
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-emerald-600">Bloco 1</td>
+                <td class="py-2.5 px-3 text-xs">00 - 25 min</td>
+                <td class="py-2.5 px-4"><strong>Acolhimento & Apresentação:</strong> Apresentação docente, objetivos, sistema de avaliação (AVT 40%, AVP 40%, Listas 20%).</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-emerald-600">Bloco 2</td>
+                <td class="py-2.5 px-3 text-xs">25 - 50 min</td>
+                <td class="py-2.5 px-4"><strong>Contexto Histórico:</strong> Hegemonia relacional (Codd, 1970; SQL) e a explosão dos 3 Vs da Web 2.0.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-emerald-600">Bloco 3</td>
+                <td class="py-2.5 px-3 text-xs">50 - 75 min</td>
+                <td class="py-2.5 px-4"><strong>Limitações do Modelo Relacional:</strong> Scale-Up vs Scale-Out, gargalos de JOINs e Impedance Mismatch.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-emerald-600">Bloco 4</td>
+                <td class="py-2.5 px-3 text-xs">75 - 100 min</td>
+                <td class="py-2.5 px-4"><strong>Movimento NoSQL & Taxonomia:</strong> Chave-Valor (Redis), Documentos (MongoDB), Família de Colunas e Grafos.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-emerald-600">Bloco 5</td>
+                <td class="py-2.5 px-3 text-xs">100 - 120 min</td>
+                <td class="py-2.5 px-4"><strong>Demonstração Prática & Conclusão:</strong> Execução do script Python comparativo e orientações para a Lista 1.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Exercícios de Fixação -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <h3 class="font-bold text-base mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-pencil text-blue-500"></i>
+          <span>Exercícios de Fixação (Lista 1 -- Bloco 1)</span>
+        </h3>
+        <ol class="list-decimal list-inside space-y-2 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+          <li>Explique por que os bancos relacionais tradicionais enfrentam dificuldades para escalar horizontalmente mantendo propriedades ACID estritas.</li>
+          <li>Defina com suas palavras o que é o <em>Descasamento de Impedância Objeto-Relacional</em> e como o modelo de documentos busca mitigar esse problema.</li>
+          <li>Diferencie escala vertical (<em>Scale-Up</em>) de escala horizontal (<em>Scale-Out</em>), citando vantagens e desvantagens de cada uma.</li>
+          <li>Cite os quatro modelos canônicos de bancos NoSQL, indicando uma ferramenta representativa e um caso de uso para cada um.</li>
+        </ol>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 4: CENTRAL DE RECURSOS & ARQUIVOS     -->
+    <!-- ========================================== -->
+    <div id="tab-recursos" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <h3 class="font-bold text-base mb-4 flex items-center space-x-2">
+          <i class="fa-solid fa-folder-open text-amber-500"></i>
+          <span>Arquivos e Recursos Disponíveis para Esta Aula</span>
+        </h3>
+        <div class="divide-y divide-slate-100 dark:divide-slate-700">
+          
+          <div class="py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <i class="fa-brands fa-python text-emerald-500 text-xl"></i>
+              <div>
+                <p class="font-semibold text-sm">demonstracao_aula01.py</p>
+                <p class="text-xs text-slate-500">Código Python completo com benchmarks e classes</p>
+              </div>
+            </div>
+            <a href="codigo/demonstracao_aula01.py" download class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200">
+              Download
+            </a>
+          </div>
+
+          <div class="py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <i class="fa-solid fa-book-open text-amber-500 text-xl"></i>
+              <div>
+                <p class="font-semibold text-sm">demonstracao_aula01.ipynb</p>
+                <p class="text-xs text-slate-500">Jupyter Notebook interativo para execução local ou nuvem</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <a href="https://colab.research.google.com/github/reginaldo-pf/reginaldo-pf.github.io/blob/main/Cursos/Tecnologia%20em%20An%C3%A1lise%20e%20Desenvolvimento%20de%20Sistemas/Disciplinas/Banco%20de%20Dados%20N%C3%A3o-Relacionais/Aulas/Aula_01/codigo/demonstracao_aula01.ipynb" target="_blank" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-amber-500 text-slate-900">
+                Colab
+              </a>
+              <a href="codigo/demonstracao_aula01.ipynb" download class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200">
+                Download
+              </a>
+            </div>
+          </div>
+
+          <div class="py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <i class="fa-solid fa-file-pdf text-red-500 text-xl"></i>
+              <div>
+                <p class="font-semibold text-sm">main.pdf</p>
+                <p class="text-xs text-slate-500">Apresentação de slides oficial compilada (250 KB)</p>
+              </div>
+            </div>
+            <a href="materiais/main.pdf" download class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200">
+              Download
+            </a>
+          </div>
+
+          <div class="py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <i class="fa-solid fa-file-lines text-slate-500 text-xl"></i>
+              <div>
+                <p class="font-semibold text-sm">README.md / plano_de_aula.md</p>
+                <p class="text-xs text-slate-500">Documento pedagógico com contrato da disciplina</p>
+              </div>
+            </div>
+            <a href="README.md" target="_blank" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200">
+              Visualizar
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-6xl mx-auto px-4">
+      <p>© 2026 Instituto Federal do Ceará -- Campus Tauá. Todos os direitos reservados.</p>
+      <p class="mt-1">Prof. Reginaldo Pereira Fernandes | Tecnologia em Análise e Desenvolvimento de Sistemas (ADS)</p>
+    </div>
+  </footer>
+
+  <!-- Scripts: Alternância de Abas e Modo Escuro -->
+  <script>
+    // Gerenciamento de Abas
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
+      
+      const activeContent = document.getElementById(tabId);
+      const activeBtn = document.getElementById('btn-' + tabId);
+      
+      if (activeContent) activeContent.classList.remove('hidden');
+      if (activeBtn) activeBtn.classList.add('tab-active');
+    }
+
+    // Copiar Código para Área de Transferência
+    function copiarCodigo(elementId) {
+      const code = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        alert('Código copiado para a área de transferência!');
+      });
+    }
+
+    // Modo Escuro / Claro
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const html = document.documentElement;
+
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      html.classList.add('dark');
+      themeIcon.className = 'fa-solid fa-sun text-lg text-amber-400';
+    } else {
+      html.classList.remove('dark');
+      themeIcon.className = 'fa-solid fa-moon text-lg';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        localStorage.theme = 'light';
+        themeIcon.className = 'fa-solid fa-moon text-lg';
+      } else {
+        html.classList.add('dark');
+        localStorage.theme = 'dark';
+        themeIcon.className = 'fa-solid fa-sun text-lg text-amber-400';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -273,12 +273,149 @@ def resolver_problema():
     with open(os.path.join(materiais_path, "main.tex"), "w", encoding="utf-8") as f:
         f.write(tex_content)
 
+    # 5. notebook_aula.ipynb (Jupyter Notebook)
+    import json
+    notebook_dict = {
+        "cells": [
+            {
+                "cell_type": "markdown",
+                "metadata": {},
+                "source": [
+                    f"# Aula {aula_numero:02d}: {titulo}\n",
+                    f"**Disciplina:** {disciplina}  \n",
+                    f"**Curso:** {curso} -- IFCE Campus Tauá  \n",
+                    f"**Professor:** Reginaldo Pereira Fernandes\n",
+                    "\n",
+                    "---\n",
+                    "## 🎯 Objetivos de Aprendizagem:\n",
+                    "1. Fundamentos teóricos e analíticos do tópico.\n",
+                    "2. Implementação computacional e simulação prática em Python.\n",
+                    "3. Análise visual de dados e tomada de decisão fundamentada."
+                ]
+            },
+            {
+                "cell_type": "markdown",
+                "metadata": {},
+                "source": [
+                    "### 1. Preparação do Ambiente e Bibliotecas\n",
+                    "Importação dos módulos padrão para manipulação de dados e visualização gráfica:"
+                ]
+            },
+            {
+                "cell_type": "code",
+                "execution_count": 1,
+                "metadata": {},
+                "outputs": [],
+                "source": [
+                    "import numpy as np\n",
+                    "import matplotlib.pyplot as plt\n",
+                    "\n",
+                    "plt.style.use('seaborn-v0_8-colorblind')\n",
+                    "plt.rcParams.update({\n",
+                    "    'figure.figsize': (10, 6),\n",
+                    "    'axes.labelsize': 13,\n",
+                    "    'axes.titlesize': 15,\n",
+                    "    'lines.linewidth': 2.2\n",
+                    "})\n",
+                    "\n",
+                    "print('✅ Ambiente configurado com sucesso!')"
+                ]
+            }
+        ],
+        "metadata": {
+            "language_info": {"name": "python", "version": "3"},
+            "kernelspec": {"name": "python3", "display_name": "Python 3"}
+        },
+        "nbformat": 4,
+        "nbformat_minor": 5
+    }
+    with open(os.path.join(codigo_path, "notebook_aula.ipynb"), "w", encoding="utf-8") as f:
+        json.dump(notebook_dict, f, indent=2, ensure_ascii=False)
+
+    # 6. index.html (Página Web Interativa da Aula)
+    aula_html = f"""<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula {aula_numero:02d}: {titulo} | {disciplina}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    body {{ font-family: 'Inter', sans-serif; }}
+    code, pre {{ font-family: 'JetBrains Mono', monospace !important; }}
+    .tab-active {{
+      border-color: #059669;
+      color: #059669;
+      background-color: rgba(5, 150, 105, 0.08);
+    }}
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col">
+  <header class="border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+      <a href="../../index.html" class="flex items-center space-x-2 text-slate-700 dark:text-slate-300 hover:text-emerald-600 font-medium text-sm">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Voltar para Disciplina</span>
+      </a>
+      <div class="flex items-center space-x-3">
+        <a href="https://github.com/reginaldo-pf" target="_blank" class="text-slate-500 hover:text-slate-800 text-lg"><i class="fa-brands fa-github"></i></a>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow max-w-6xl mx-auto px-4 py-8 w-full">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm mb-8">
+      <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800">Aula {aula_numero:02d}</span>
+      <h1 class="text-2xl sm:text-3xl font-extrabold mt-2">{titulo}</h1>
+      <p class="text-xs sm:text-sm text-slate-500 mt-1">{disciplina} • {curso} • Prof. Reginaldo Pereira Fernandes</p>
+
+      <div class="flex flex-wrap items-center gap-3 mt-6 pt-5 border-t border-slate-100 dark:border-slate-700">
+        <a href="codigo/notebook_aula.ipynb" download class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-amber-500 text-slate-900">
+          <i class="fa-solid fa-book-open"></i><span>Baixar Notebook (.ipynb)</span>
+        </a>
+        <a href="codigo/script_apoio.py" download class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200">
+          <i class="fa-brands fa-python text-emerald-500"></i><span>Baixar Script (.py)</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+      <h2 class="text-lg font-bold mb-4 flex items-center space-x-2">
+        <i class="fa-solid fa-code text-emerald-500"></i>
+        <span>Prática e Código da Aula</span>
+      </h2>
+      <div class="bg-slate-100 dark:bg-slate-850 px-4 py-2 border-b border-slate-200 flex items-center justify-between text-xs text-slate-500">
+        <span class="font-mono font-bold text-emerald-600">In [1]:</span>
+      </div>
+      <pre class="p-4 text-xs overflow-x-auto"><code class="language-python"># Execução do script de apoio da Aula {aula_numero:02d}
+import numpy as np
+
+print("Ambiente configurado para: {titulo}")</code></pre>
+    </div>
+  </main>
+
+  <footer class="border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+    <p>© 2026 IFCE Campus Tauá • Prof. Reginaldo Pereira Fernandes</p>
+  </footer>
+</body>
+</html>
+"""
+    with open(os.path.join(base_path, "index.html"), "w", encoding="utf-8") as f:
+        f.write(aula_html)
+
     print(f"✅ Aula {aula_numero:02d} ('{titulo}') criada com sucesso!")
     print(f"   Local: {base_path}")
     print(f"   Arquivos gerados:")
+    print(f"   - index.html (Página Web Interativa)")
     print(f"   - README.md")
     print(f"   - plano_de_aula.md")
     print(f"   - codigo/script_apoio.py")
+    print(f"   - codigo/notebook_aula.ipynb")
     print(f"   - materiais/main.tex")
 
 def modo_interativo():
