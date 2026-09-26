@@ -1,0 +1,204 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[portuguese]{babel}
+\usepackage{geometry}
+\geometry{a4paper, margin=2.5cm}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Configuração de Listings para Python
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    commentstyle=\color{green!60!black},
+    breaklines=true,
+    showstringspaces=false
+}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+}
+
+\begin{document}
+
+\begin{center}
+    \vspace{0.5cm}
+    \textbf{INSTITUTO FEDERAL DO CEARÁ -- CAMPUS TAUÁ} \\
+    \textbf{Tecnologia em Análise e Desenvolvimento de Sistemas} \\
+    \textbf{Disciplina: Ciência de Dados / Análise de Dados} \\
+    \textbf{Professor: Reginaldo Fernandes} \\
+    \vspace{0.5cm}
+    \large{\textbf{Exercício Prático de Fixação: Causalidade e Método Científico (N2)}}
+    \vspace{0.3cm}
+\end{center}
+
+\hrule
+\vspace{0.4cm}
+
+\section*{Contexto: Xarope Fitoterápico e a Asma Infantil no Ceará}
+Uma equipe de pesquisadores da área de saúde pública conduziu um Experimento Controlado Aleatório (RCT) no Maciço de Baturité, Ceará, para avaliar a eficácia de um xarope fitoterápico feito à base de \textbf{hortelã-chinesa (malvarisco)} no alívio de sintomas de asma infantil.
+
+Foram recrutadas $30$ crianças com diagnóstico de asma persistente leve. As crianças foram distribuídas aleatoriamente por sorteio duplo-cego em dois grupos:
+\begin{itemize}
+    \item \textbf{Grupo de Tratamento ($N_{\text{tr}} = 15$):} Recebeu o xarope fitoterápico de malvarisco por 4 semanas.
+    \item \textbf{Grupo de Controle ($N_{\text{co}} = 15$):} Recebeu um xarope placebo com aroma e aparência idênticos.
+\end{itemize}
+
+Ao final das 4 semanas, os médicos avaliaram a melhoria significativa na capacidade respiratória ($1$ para melhora substancial, $0$ para sem melhora):
+\begin{itemize}
+    \item \textbf{Resultados no Tratamento:} $11$ crianças melhoraram ($73.3\%$) e $4$ não apresentaram melhoras.
+    \item \textbf{Resultados no Controle:} $4$ crianças melhoraram ($26.7\%$) e $11$ não apresentaram melhoras.
+\end{itemize}
+
+Os vetores de dados originais são:
+\begin{itemize}
+    \item \lstinline|resultados_tratamento = [1]*11 + [0]*4|
+    \item \lstinline|resultados_controle = [1]*4 + [0]*11|
+\end{itemize}
+
+\vspace{0.3cm}
+\hrule
+\vspace{0.5cm}
+
+\section*{Atividades Práticas}
+
+Escreva um script Python modularizado (no arquivo \texttt{pratica\_causalidade.py}) que realize as seguintes etapas e responda às questões no relatório LaTeX correspondente:
+
+\begin{enumerate}[label=\textbf{Tarefa \arabic*}]
+    \item \textbf{Estatística Observada:}
+    Determine a proporção de melhoria em cada grupo ($p_{\text{tratamento}}$ e $p_{\text{controle}}$) e calcule a estatística de teste observada, definida pela diferença absoluta entre as proporções dos grupos:
+    $$\text{Observed\_Diff} = |p_{\text{tratamento}} - p_{\text{controle}}|$$
+
+    \item \textbf{O Modelo de Resultados Potenciais:}
+    Utilizando a metáfora do ``bilhete de dois lados'' explicada na Aula 12, descreva o que representa cada lado do bilhete para uma criança que participou do estudo. Explique o conceito de contrafactual.
+
+    \item \textbf{Formulação de Hipóteses:}
+    Formule a Hipótese Nula ($H_0$) e a Hipótese Alternativa ($H_1$) para o experimento com o xarope de malvarisco.
+    
+    \item \textbf{Simulação do Teste de Permutação:}
+    Implemente uma simulação com $10.000$ permutações em Python para construir a distribuição nula da estatística de teste (diferença absoluta). Colete as diferenças absolutas geradas por puro acaso.
+    
+    \item \textbf{Cálculo do $P$-valor e Visualização:}
+    \begin{enumerate}[label=\alph*)]
+        \item Calcule o $p$-valor empírico bilateral.
+        \item Gere um histograma da distribuição nula. Destaque em dourado (\texttt{\#ff9900}) a barra que contém a diferença observada e todas as barras à sua direita. Insira a linha tracejada vermelha no valor observado.
+        \item Salve o gráfico como \texttt{histograma\_causalidade.png}.
+    \end{enumerate}
+
+    \item \textbf{Inferência de Causalidade:}
+    Considerando o nível de significância de $\alpha = 5\%$, qual a decisão estatística? Podemos afirmar que o xarope de malvarisco \textbf{causou} a melhoria na respiração das crianças? Justifique detalhadamente por que a randomização (RCT) nos permite fazer essa afirmação de causalidade, ao contrário de um estudo observacional.
+\end{enumerate}
+
+\pagebreak
+
+\section*{Gabarito Comentado e Código de Referência}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=yellow!50!black,title=\textbf{Gabarito das Tarefas Teóricas}]
+\textbf{Resultados Potenciais (Tarefa 2):}
+Cada bilhete de dois lados representa as duas respostas possíveis de uma criança:
+\begin{itemize}
+    \item \textbf{Lado Esquerdo:} Melhora respiratória caso a criança tome o xarope fitoterápico.
+    \item \textbf{Lado Direito:} Melhora respiratória caso a criança tome o placebo.
+    \item \textbf{Contrafactual:} É o resultado não observado. Para uma criança sorteada no tratamento, o lado esquerdo é o resultado observado e a resposta sob controle (lado direito) é o contrafactual (desconhecido).
+\end{itemize}
+
+\textbf{Decisão e Causalidade (Tarefa 6):}
+\begin{itemize}
+    \item Diferença Observada: $|0.7333 - 0.2667| = 0.4667$.
+    \item P-valor Empírico: $0.0247$ ($2.47\%$).
+    \item \textbf{Decisão:} Rejeitamos $H_0$ pois $2.47\% < 5\%$.
+    \item \textbf{Causalidade:} Sim, podemos inferir causalidade. Como os pacientes foram alocados aleatoriamente nos dois grupos, a presença de variáveis de confundimento (como severidade inicial da asma, alimentação ou hábitos familiares) foi balanceada igualmente entre os dois grupos. Logo, a única diferença sistemática entre os grupos foi a administração do xarope de malvarisco, provando causa e efeito.
+\end{itemize}
+\end{tcolorbox}
+
+\subsection*{Script Python de Referência}
+\begin{lstlisting}[language=Python]
+import numpy as np
+import matplotlib.pyplot as plots
+
+# Estilo visual
+plots.style.use('seaborn-v0_8-colorblind')
+plots.rcParams.update({
+    'figure.figsize': (10, 6),
+    'axes.labelsize': 12,
+    'axes.titlesize': 14,
+    'lines.linewidth': 2.5
+})
+
+def despine(ax):
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
+# Dados (1 = melhora, 0 = sem melhora)
+res_tratamento = np.array([1]*11 + [0]*4)
+res_controle = np.array([1]*4 + [0]*11)
+
+# Tarefa 1: Estatistica observada
+p_tr = np.mean(res_tratamento)
+p_co = np.mean(res_controle)
+obs_diff = np.abs(p_tr - p_co)
+print(f"Taxa Tratamento: {p_tr:.4f}")
+print(f"Taxa Controle: {p_co:.4f}")
+print(f"Diferenca Absoluta Observada: {obs_diff:.4f}")
+
+# Tarefa 4: Simulacao de Permutacao
+todos_resultados = np.concatenate([res_tratamento, res_controle])
+N_tr = len(res_tratamento)
+repeticoes = 10000
+
+np.random.seed(42)
+distancias_simuladas = np.zeros(repeticoes)
+
+for i in range(repeticoes):
+    embaralhado = np.random.permutation(todos_resultados)
+    sim_tr = embaralhado[:N_tr]
+    sim_co = embaralhado[N_tr:]
+    distancias_simuladas[i] = np.abs(np.mean(sim_tr) - np.mean(sim_co))
+
+# Tarefa 5: P-valor e Histograma
+p_valor = np.count_nonzero(distancias_simuladas >= obs_diff) / repeticoes
+print(f"P-valor empirico: {p_valor:.5f}")
+
+fig, ax = plots.subplots()
+bins = np.arange(0.0, 0.7, 0.0667) # bins baseados no tamanho amostral
+n, bins_out, patches = ax.hist(distancias_simuladas, bins=bins, edgecolor='white', color='#2c3e50', density=True, label='Sob a Hipotese Nula')
+
+# Destacar a cauda
+for patch in patches:
+    if (patch.get_x() + patch.get_width()) > obs_diff:
+        patch.set_facecolor('#ff9900')
+
+ax.axvline(obs_diff, color='#e74c3c', linestyle='dashed', linewidth=3, label=f'Diferenca Obs. ({obs_diff:.3f})')
+
+from matplotlib.patches import Patch
+legenda_patches = [
+    Patch(facecolor='#2c3e50', edgecolor='white', label='Valores sob H0'),
+    Patch(facecolor='#ff9900', label='Diferenca >= Observada'),
+    ax.lines[0]
+]
+ax.legend(handles=legenda_patches)
+ax.set_title('Distribuicao Nula vs. Observado (RCT Hortela-Chinesa)')
+ax.set_xlabel('Distancia entre Proporcoes (Valor Absoluto)')
+ax.set_ylabel('Densidade')
+
+despine(ax)
+plots.tight_layout()
+plots.savefig('histograma_causalidade.png', dpi=150)
+plots.close()
+print("Grafico histograma_causalidade.png salvo!")
+\end{lstlisting}
+
+\end{document}

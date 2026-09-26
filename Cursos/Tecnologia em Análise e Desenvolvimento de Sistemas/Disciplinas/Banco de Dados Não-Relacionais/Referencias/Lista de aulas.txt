@@ -1,0 +1,20 @@
+29/09/2026 Aula 01 - Apresentação e Paradigma NoSQL: Limitações do Modelo Relacional e Alta Escala
+06/10/2026 Aula 02 - Fundamentos Arquiteturais: Teorema CAP, PACELC e Propriedades BASE vs ACID
+10/10/2026 Aula 03 - Sábado Letivo (Sem conteúdo novo: Oficina Docker/Compose & Resolução Lista 1)
+13/10/2026 Aula 04 - Modelo Chave-Valor: Arquitetura em Memória e Estruturas Nativas do Redis
+20/10/2026 Aula 05 - Redis na Prática: Estratégias de Cache (TTL), Controle de Sessão e Filas
+27/10/2026 Aula 06 - Modelo de Documentos: JSON/BSON e Decisões de Modelagem no MongoDB (Embedding vs Referencing)
+03/11/2026 Aula 07 - MongoDB: Operações CRUD Avançadas, Operadores e Otimização com Índices
+10/11/2026 Aula 08 - MongoDB: Framework de Agregação (Pipelines analíticos com $match, $group, $lookup)
+14/11/2026 Aula 09 - Sábado Letivo (Sem conteúdo novo: Laboratório de Fixação Preparatório para AVP1/AVT1)
+17/11/2026 Aula 10 - Avaliação Prática 1 (AVP1 em Laboratório: Redis + MongoDB)
+24/11/2026 Aula 11 - Avaliação Teórica 1 (AVT1) + Fechamento e Entrega da Lista de Exercícios 1 (AV3)
+01/12/2026 Aula 12 - Modelo de Família de Colunas: Arquitetura Peer-to-Peer e Particionamento (Cassandra)
+08/12/2026 Aula 13 - Modelagem Orientada a Consultas (Query-Driven) e Linguagem CQL
+15/12/2026 Aula 14 - Modelo Orientado a Grafos: Teoria dos Grafos Aplicada a Bancos de Dados e Cenários de Uso
+26/01/2027 Aula 15 - Neo4j e Linguagem Cypher na Prática: Consultas, Relacionamentos e Recomendações
+02/02/2027 Aula 16 - Modernização: Bancos de Dados Vetoriais (Vector DBs), Embeddings e IA Generativa (RAG)
+16/02/2027 Aula 17 - Integração NoSQL com Aplicações (Back-end Python/FastAPI), Pools e Segurança
+23/02/2027 Aula 18 - Persistência Poliglota e Padrões Arquiteturais Modernos (CQRS e Microsserviços)
+02/03/2027 Aula 19 - Avaliação Prática 2 (AVP2 em Laboratório / Projeto Integrado NoSQL)
+09/03/2027 Aula 20 - Avaliação Teórica 2 (AVT2) + Fechamento da Lista de Exercícios 2 (AV3) e Encerramento

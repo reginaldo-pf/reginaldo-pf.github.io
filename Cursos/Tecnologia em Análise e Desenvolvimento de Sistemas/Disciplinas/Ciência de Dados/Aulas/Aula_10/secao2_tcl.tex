@@ -1,0 +1,65 @@
+\section{O Método Clássico e o Teorema Central do Limite}
+
+\begin{frame}{O Teorema Central do Limite (TCL)}
+    \begin{block}{Definição}
+        Independentemente da distribuição da população original, a distribuição da média amostral $\bar{X}$ se aproxima de uma distribuição normal à medida que o tamanho da amostra $N$ cresce.
+    \end{block}
+    
+    \begin{block}{Intervalo de Confiança (IC) Clássico}
+        O intervalo de 95\% de confiança para a média é dado por:
+        $$IC = \bar{X} \pm 1.96 \times \frac{s}{\sqrt{N}}$$
+        Onde $s$ é o desvio padrão amostral e $\frac{s}{\sqrt{N}}$ é o erro padrão (SE).
+    \end{block}
+\end{frame}
+
+\begin{frame}{Limitações da Abordagem Clássica}
+    \begin{alertblock}{Por que o TCL nem sempre é suficiente?}
+        \begin{itemize}
+            \item \textbf{Amostras pequenas:} Se a população for muito assimétrica e $N$ for pequeno, a aproximação normal falha.
+            \item \textbf{Estatísticas complexas:} E se quisermos construir um intervalo de confiança para a \textbf{mediana}, \textbf{variância} ou uma razão entre variáveis? A matemática clássica torna-se extremamente complexa ou indisponível.
+            \item \textbf{Outliers:} Presença de valores extremos distorce o desvio padrão e o erro padrão.
+        \end{itemize}
+    \end{alertblock}
+    \centering
+    \textbf{Solução em Ciência de Dados: Métodos Computacionais (Bootstrap)}
+\end{frame}
+
+\begin{frame}{Exemplo Matemático: IC via TCL}
+    \begin{block}{Problema}
+        Amostra de $N=36$ tempos de atendimento com média $\bar{X}=100\text{ s}$ e desvio padrão $s=15\text{ s}$. Queremos o IC de 95\% para a média populacional $\mu$.
+    \end{block}
+    \begin{block}{Cálculo Analítico (TCL)}
+        \begin{itemize}
+            \item \textbf{Erro padrão da média ($SE$):} $SE = \frac{s}{\sqrt{N}} = \frac{15}{\sqrt{36}} = 2.5\text{ s}$
+            \item \textbf{Margem de erro (para $z = 1.96$):} $1.96 \times 2.5 = 4.9\text{ s}$
+            \item \textbf{Intervalo de Confiança (95\%):} $IC = 100 \pm 4.9 = [95.1\text{ s}, 104.9\text{ s}]$
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Demonstração em Python: IC Clássico}
+    \begin{lstlisting}[language=Python]
+import numpy as np
+import scipy.stats as ss
+
+# Dados amostrais simulados (N=36, media=100, std=15)
+np.random.seed(42)
+dados = np.random.normal(loc=100, scale=15, size=36)
+
+# Calculos intermediarios
+n = len(dados)
+media = np.mean(dados)
+desvio = np.std(dados, ddof=1) # Desvio padrao amostral
+erro_padrao = desvio / np.sqrt(n)
+
+# Encontrando o z critico para 95%
+z_critico = ss.norm.ppf(0.975)
+
+# Limites do intervalo
+lim_inf = media - z_critico * erro_padrao
+lim_sup = media + z_critico * erro_padrao
+print(f"IC Classico: [{lim_inf:.2f}, {lim_sup:.2f}]")
+# Saida aproximada: IC Classico: [94.59, 104.07]
+    \end{lstlisting}
+\end{frame}
+

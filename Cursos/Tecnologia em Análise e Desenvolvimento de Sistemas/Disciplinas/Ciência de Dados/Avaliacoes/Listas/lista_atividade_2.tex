@@ -1,0 +1,121 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[portuguese]{babel}
+\usepackage{geometry}
+\geometry{a4paper, margin=2.5cm}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+}
+
+\begin{document}
+
+\begin{center}
+    \vspace{0.5cm}
+    \textbf{INSTITUTO FEDERAL DO CEARÁ -- CAMPUS TAUÁ} \\
+    \textbf{Tecnologia em Análise e Desenvolvimento de Sistemas} \\
+    \textbf{Disciplina: Ciência de Dados / Análise de Dados} \\
+    \textbf{Professor: Reginaldo Fernandes} \\
+    \vspace{0.5cm}
+    \large{\textbf{Atividade de Fixação 2 -- Intervalos de Confiança e Testes A/B (N2)}}
+    \vspace{0.3cm}
+\end{center}
+
+\hrule
+\vspace{0.4cm}
+
+\section*{Apresentação da Atividade}
+Esta atividade de fixação aborda a reamostragem via Bootstrap, a construção prática de Intervalos de Confiança, a estrutura formal de testes de hipóteses e a modelagem de experimentos por meio de testes A/B.
+
+\vspace{0.3cm}
+\hrule
+\vspace{0.5cm}
+
+\section*{Questões Teóricas e Computacionais}
+
+\begin{enumerate}[label=\textbf{Questão \arabic*}]
+    \item A técnica de Bootstrap é amplamente utilizada quando não conhecemos a distribuição populacional dos dados ou quando trabalhamos com amostras de tamanhos pequenos.
+    \begin{enumerate}[label=\alph*)]
+        \item Explique a mecânica de amostragem do Bootstrap (reamostragem). Por que é obrigatório que a amostragem seja feita \textbf{com reposição}?
+        \item Qual a diferença fundamental entre a população original, a amostra coletada e as amostras de bootstrap?
+    \end{enumerate}
+
+    \item Uma amostra de tamanho $N = 100$ de tempos de entrega de uma transportadora no Ceará apresentou média $\bar{X} = 45$ minutos e desvio padrão amostral $s = 15$ minutos.
+    \begin{enumerate}[label=\alph*)]
+        \item Construa o Intervalo de Confiança de 95\% para o tempo médio populacional de entrega utilizando o Teorema do Limite Central (TLC).
+        \item Se construíssemos um Intervalo de Confiança de 99\% utilizando a mesma amostra, o intervalo seria mais largo ou mais estreito do que o de 95\%? Explique a relação entre nível de confiança e precisão do intervalo.
+    \end{enumerate}
+
+    \item No contexto de testes de hipóteses, diferencie claramente:
+    \begin{enumerate}[label=\alph*)]
+        \item Hipótese Nula ($H_0$) vs. Hipótese Alternativa ($H_1$).
+        \item Erro Tipo I ($\alpha$) vs. Erro Tipo II ($\beta$). Dê um exemplo prático na área médica ou forense sobre as consequências de cometer cada um desses erros.
+    \end{enumerate}
+
+    \item Um e-commerce cearense de artesanato testou um novo layout de página de vendas para avaliar o impacto na taxa de conversão (Teste A/B). O grupo de controle (layout antigo) teve taxa de conversão observada de $2.0\%$, enquanto o grupo de tratamento (novo layout) teve taxa de conversão observada de $2.5\%$.
+    \begin{enumerate}[label=\alph*)]
+        \item Formule as hipóteses nula ($H_0$) e alternativa ($H_1$) para este teste.
+        \item Explique como você usaria o Bootstrap para simular o comportamento da diferença de taxas sob a hipótese nula $H_0$.
+    \end{enumerate}
+
+    \item Diferencie a lógica de amostragem e finalidade entre os seguintes métodos estatísticos:
+    \begin{enumerate}[label=\alph*)]
+        \item \textbf{Bootstrap}: Reamostragem com reposição.
+        \item \textbf{Permutação}: Embaralhado sem reposição.
+    \end{enumerate}
+    Em que cenários cada um é preferencialmente aplicado?
+
+    \item No exemplo dos salários da NBA analisado na Aula 11 (comparação entre Cleveland e Houston), a estatística de teste utilizada foi a diferença absoluta entre as médias salariais dos dois times. Explique por que, sob desvios padrões (variâncias) muito elevados na amostra, mesmo uma diferença grande entre as médias das duas equipes pode resultar em um $p$-valor alto (falhando em rejeitar $H_0$).
+\end{enumerate}
+
+\pagebreak
+
+\section*{Gabarito Comentado e Dicas de Resolução}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=yellow!50!black,title=\textbf{Dica de Estudo}]
+Use as resoluções comentadas abaixo para verificar suas respostas e orientar sua preparação para a avaliação teórica presencial.
+\end{tcolorbox}
+
+\begin{description}
+    \item[Resolução 1:] 
+    \begin{enumerate}[label=\alph*)]
+        \item O Bootstrap reamostra os dados observados para simular a variabilidade da população. A amostragem deve ser \textbf{com reposição} para simular sorteios repetidos da distribuição empírica. Se fizéssemos sem reposição, toda amostra gerada de tamanho $N$ conteria exatamente os mesmos elementos originais, resultando em variabilidade zero.
+        \item A população é o conjunto real invisível e completo. A amostra é o subconjunto de tamanho $N$ coletado em campo. As amostras de bootstrap são geradas via simulação computacional a partir da amostra única coletada.
+    \end{enumerate}
+
+    \item[Resolução 2:] 
+    \begin{enumerate}[label=\alph*)]
+        \item Utilizando a aproximação pelo TLC, com $SE = s/\sqrt{N} = 15/\sqrt{100} = 1.5$:
+        $$IC_{95\%} = \bar{X} \pm 1.96 \cdot SE = 45 \pm 1.96(1.5) = [42.06; 47.94] \text{ minutos}$$
+        \item O intervalo de 99\% será \textbf{mais largo}. Para ter maior certeza (confiança) sobre o parâmetro populacional, a amplitude do intervalo estimado deve necessariamente aumentar.
+    \end{enumerate}
+
+    \item[Resolução 3:] 
+    \begin{enumerate}[label=\alph*)]
+        \item $H_0$ (Hipótese Nula) assume ausência de efeito ou igualdade entre tratamentos. $H_1$ (Hipótese Alternativa) propõe a presença de efeito ou diferença sistemática.
+        \item O Erro Tipo I ($\alpha$) ocorre quando rejeitamos $H_0$ sendo esta verdadeira (Falso Positivo). O Erro Tipo II ($\beta$) ocorre quando falhamos em rejeitar $H_0$ sendo esta falsa (Falso Negativo). Exemplo forense: Erro Tipo I é condenar um inocente (Falso Positivo); Erro Tipo II é inocentar um culpado (Falso Negativo).
+    \end{enumerate}
+
+    \item[Resolução 4:] 
+    \begin{enumerate}[label=\alph*)]
+        \item Hipóteses: $H_0: p_{\text{tratamento}} = p_{\text{controle}}$ (as taxas são iguais); $H_1: p_{\text{tratamento}} \neq p_{\text{controle}}$ (as taxas diferem).
+        \item Bootstrap sob $H_0$: Une-se os dados de ambos os grupos (vetor unificado de 0s e 1s). Reamostra-se aleatoriamente com reposição esse vetor para formar grupos de tratamento e controle simulados de tamanhos originais, computando a diferença de taxas. Repetindo esse sorteio $10.000$ vezes, obtemos a distribuição nula da diferença por puro acaso.
+    \end{enumerate}
+
+    \item[Resolução 5:] O \textbf{Bootstrap} reamostra com reposição e é utilizado para estimar a variabilidade e construir intervalos de confiança para um estimador de interesse. A \textbf{Permutação} reatribui os rótulos de grupo sem reposição (embaralhando as etiquetas) e serve especificamente para testar a hipótese de igualdade de distribuições entre grupos independentes sob $H_0$.
+
+    \item[Resolução 6:] Sob variância (desvio padrão) muito elevada na amostra, os salários individuais variam radicalmente. Sob essa grande dispersão natural, o teste de permutação (embaralhamento) frequentemente gera grandes diferenças entre as médias das equipes por puro acaso. Assim, a diferença observada no estudo de caso parecerá comum sob o modelo do acaso, gerando um $p$-valor alto e não permitindo a rejeição de $H_0$.
+\end{description}
+
+\end{document}

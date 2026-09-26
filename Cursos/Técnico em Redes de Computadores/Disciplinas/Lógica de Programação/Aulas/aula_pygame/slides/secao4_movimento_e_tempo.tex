@@ -1,0 +1,82 @@
+\section{Animação, FPS e Interatividade}
+
+\begin{frame}{Como Criar a Ilusão de Movimento?}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \textbf{A Lógica da Física:}
+            \begin{itemize}
+                \item Uma animação consiste em mudar levemente as coordenadas $(x, y)$ de um objeto a cada passagem pelo laço principal.
+                \item Equação básica da velocidade constante:
+                \[
+                    x \leftarrow x + v_x
+                \]
+                \[
+                    y \leftarrow y + v_y
+                \]
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{alertblock}{O Erro Clássico do Rastro}
+                Se você esquecer de chamar \texttt{tela.fill(COR)} antes de desenhar o novo quadro, a tela não será limpa!
+                \vspace{0.2cm}
+                
+                O objeto desenhado no quadro anterior continuará lá, criando um rastro borrado infinito.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{O Papel Crucial de \texttt{pygame.time.Clock()}}
+    \begin{block}{O que acontece sem o controle de FPS?}
+        \begin{itemize}
+            \item O computador rodará o \texttt{while} na velocidade máxima que o processador aguentar (milhares de ciclos por segundo).
+            \item O jogo consumirá \textbf{100\% de CPU}, e rodará ultra rápido em máquinas potentes e lento em computadores antigos!
+        \end{itemize}
+    \end{block}
+
+    \vspace{0.3cm}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{block}{Com \texttt{relogio.tick(60)}}
+                \begin{itemize}
+                    \item O Pygame calcula quanto tempo o quadro demorou e coloca a CPU para dormir (\textit{sleep}) pelo tempo restante.
+                    \item Garante que o jogo rode a exatos \textbf{60 FPS} em qualquer computador.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \textbf{Fórmula do Tempo de Quadro:}
+            \[
+                \Delta t = \frac{1000\text{ ms}}{60\text{ FPS}} \approx 16{,}6\text{ ms por quadro}
+            \]
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Movimentação Interativa pelo Teclado}
+    Para movimentar personagens de forma contínua e suave, utilizamos \texttt{pygame.key.get\_pressed()}:
+
+    \begin{lstlisting}[language=Python]
+# Captura o estado continuo de todas as teclas
+teclas = pygame.key.get_pressed()
+
+# Movimento Horizontal (Setas ou A / D)
+if teclas[pygame.K_LEFT] or teclas[pygame.K_a]:
+    jogador_x -= velocidade
+if teclas[pygame.K_RIGHT] or teclas[pygame.K_d]:
+    jogador_x += velocidade
+
+# Movimento Vertical (Setas ou W / S)
+if teclas[pygame.K_UP] or teclas[pygame.K_w]:
+    jogador_y -= velocidade
+if teclas[pygame.K_DOWN] or teclas[pygame.K_s]:
+    jogador_y += velocidade
+    \end{lstlisting}
+
+    \vspace{0.2cm}
+    \textbf{Diferença Fundamental:}
+    \begin{itemize}
+        \item \texttt{pygame.KEYDOWN} (na fila de eventos): Dispara \textbf{uma única vez} quando a tecla desce (ótimo para tiro ou pulo).
+        \item \texttt{pygame.key.get\_pressed()}: Responde \textbf{enquanto a tecla estiver pressionada} (ótimo para corrida).
+    \end{itemize}
+\end{frame}

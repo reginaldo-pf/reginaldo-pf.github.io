@@ -1,0 +1,43 @@
+\changecolours{ScoutNavy}
+\section{Contexto Histórico \& Big Data}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Domínio do Modelo Relacional (1970 -- 2000)},leftcol=7cm,rightcol=7cm]{%
+  \alert{A Era Codd e a Álgebra Relacional}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item Proposto por Edgar F. Codd em 1970 (IBM).
+    \item Base matemática na álgebra relacional e conjuntos.
+    \item Tabelas rígidas com chaves primárias e integridade.
+    \item \textbf{Premissa Central:} Modelo desenhado para operar em \textbf{um único servidor centralizado}.
+  \end{itemize}
+}{%
+  \alert{Garantias Transacionais ACID}\par
+  \itemseps[topsepi=2mm,itemsepi=2.5mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{A}tomicidade: Tudo ou nada na transação.
+    \item \textbf{C}onsistência: Regras e restrições sempre válidas.
+    \item \textbf{I}solamento: Concorrência sem interferência.
+    \item \textbf{D}urabilidade: Persistência garantida em disco.
+    \item \textbf{Sucesso:} Eliminou inconsistências por 30 anos.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Ponto de Inflexão: A Web 2.0 e os 3 Vs},leftcol=7cm,rightcol=7cm]{%
+  \alert{Volume \& Velocidade}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Volume:} Salto de gigabytes para terabytes e petabytes diários gerados por bilhões de usuários.
+    \item Volume total excede o hardware de uma única máquina.
+    \item \textbf{Velocidade:} Milhões de requisições por segundo.
+    \item Exigência de tempo de resposta em milissegundos.
+  \end{itemize}
+}{%
+  \alert{Variedade}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item Dados heterogêneos: JSON, logs, redes e sensores IoT.
+    \item Esquemas que mudam diariamente sem possibilidade de paradas programadas para migração (\texttt{ALTER TABLE}).
+  \end{itemize}
+}

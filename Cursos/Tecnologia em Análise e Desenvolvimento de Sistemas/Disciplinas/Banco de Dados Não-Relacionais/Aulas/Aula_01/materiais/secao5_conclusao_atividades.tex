@@ -1,0 +1,82 @@
+\changecolours{ScoutTeal}
+\section{Prática \& Conclusão}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Demonstração Prática: JSON vs 4 Tabelas Relacionais}
+  \vspace{-0.2cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{Relacional: 4 Tabelas + 3 JOINs}\par
+      \begin{lstlisting}[language=SQL]
+SELECT c.nome, e.cidade, p.id_pedido, 
+       i.produto, i.quantidade
+FROM clientes c
+JOIN enderecos e ON c.id = e.id_cliente
+JOIN pedidos p ON c.id = p.id_cliente
+JOIN itens_pedido i 
+  ON p.id_pedido = i.id_pedido
+WHERE c.id = 1;
+      \end{lstlisting}
+      \scriptsize Exige remontar objetos a partir de múltiplas linhas tabulares com redundâncias.
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \alert{NoSQL: Documento Agregado}\par
+      \begin{lstlisting}
+{
+  "_id": 1,
+  "nome": "Maria Clara Silva",
+  "endereco": {"cidade": "Taua", "uf": "CE"},
+  "pedidos": [
+    {
+      "id_pedido": "PED-001",
+      "itens": [
+        {"produto": "Notebook", "qtd": 1}
+      ]
+    }
+  ]
+}
+      \end{lstlisting}
+      \scriptsize Leitura e escrita direta em 1 único I/O atômico de disco.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Matriz Comparativa: Relacional vs NoSQL}
+  \vspace{-0.1cm}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{>{\raggedright\arraybackslash}p{3.5cm} >{\raggedright\arraybackslash}p{5.8cm} >{\raggedright\arraybackslash}p{6.0cm}}
+    \toprule
+    \textbf{Dimensão} & \textbf{Relacional (RDBMS)} & \textbf{Não-Relacional (NoSQL)} \\
+    \midrule
+    \textbf{Estrutura} & Esquema rígido e normalizado & Esquema dinâmico e flexível (\textit{schemaless}) \\
+    \textbf{Escalabilidade} & Predominantemente Vertical (\textit{Scale-Up}) & Horizontal nativa em cluster (\textit{Scale-Out}) \\
+    \textbf{Consistência} & Imediata e estrita (ACID) & Eventual ajustável (BASE / CAP) \\
+    \textbf{Relacionamentos} & Otimizado para \texttt{JOIN}s locais & Desnormalização ou Grafos dedicados \\
+    \textbf{Cenário Ideal} & Sistemas bancários, ERPs, sistemas financeiros & E-commerce, telemetria IoT, Big Data, IA / RAG \\
+    \bottomrule
+  \end{tabular}%
+  }
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Próximos Passos \& Atividades},leftcol=7cm,rightcol=7cm]{%
+  \alert{Próximo Encontro: 06/10/2026}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \textbf{Aula 02 -- Teorema CAP e BASE}
+  \begin{itemize}
+    \item O Teorema CAP de Eric Brewer detalhado.
+    \item Teorema PACELC: a troca entre consistência e latência.
+    \item Comparação formal: ACID vs BASE.
+  \end{itemize}
+}{%
+  \alert{Tarefas do Estudante}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item Executar o script didático de apoio:
+      \texttt{codigo/demonstracao\_aula01.py}.
+    \item Iniciar os exercícios do Bloco 1 da \textbf{Lista de Exercícios 1 (AV3)}.
+    \item Instalar o Docker para a oficina do primeiro sábado letivo (10/10).
+  \end{itemize}
+}

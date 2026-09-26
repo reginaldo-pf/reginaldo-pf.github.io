@@ -1,0 +1,80 @@
+\section{Introdução e Problema da Inferência}
+
+\begin{frame}{Como Conhecer a População?}
+    \begin{block}{O Problema da Inferência}
+        \begin{itemize}
+            \item Temos acesso apenas a uma \textbf{amostra} de tamanho $N$.
+            \item Nosso objetivo é descrever ou estimar propriedades da \textbf{população} (como a média $\mu$).
+            \item Não temos orçamento ou meios para auditar a população completa.
+        \end{itemize}
+    \end{block}
+    
+    \begin{alertblock}{As Duas Abordagens Principais}
+        \begin{enumerate}
+            \item \textbf{Abordagem Clássica:} Utiliza fórmulas matemáticas baseadas em suposições rígidas de distribuição (ex: Teorema Central do Limite).
+            \item \textbf{Abordagem Computacional:} Utiliza simulação e reamostragem a partir dos próprios dados observados (Bootstrap).
+        \end{enumerate}
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{O que é um Teste A/B?}
+    \begin{block}{Definição Básica}
+        Um experimento controlado para comparar duas versões de uma variável (A e B) com o objetivo de determinar qual delas é mais eficaz.
+    \end{block}
+    
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \textbf{Grupo A (Controle)}
+            \begin{itemize}
+                \item Versão clássica do sistema.
+                \item Experiência do usuário padrão.
+                \item Medicamento placebo (em saúde).
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \textbf{Grupo B (Tratamento)}
+            \begin{itemize}
+                \item Nova funcionalidade ou design.
+                \item Novo layout de checkout rápido.
+                \item Novo princípio ativo.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+    
+    \vspace{0.4cm}
+    \centering
+    \textit{Queremos provar que a diferença observada entre os grupos é real, e não mera flutuação aleatória!}
+\end{frame}
+
+\begin{frame}{Exemplo Matemático: Estimativa de Parâmetros}
+    \begin{block}{Problema de Negócio}
+        Imagine que medimos o tempo de carregamento de uma página em 5 visitas (em segundos):
+        $$X = \{1.5, 2.3, 1.8, 3.0, 2.4\}$$
+        A estimativa pontual da média populacional $\mu$ é a média amostral $\bar{X}$:
+        $$\bar{X} = \frac{1.5 + 2.3 + 1.8 + 3.0 + 2.4}{5} = \frac{11.0}{5} = 2.2\text{ s}$$
+    \end{block}
+    \begin{block}{Questão Fundamental}
+        Essa estimativa pontual ($2.2\text{ s}$) é representativa? Se coletarmos outra amostra de 5 visitas, qual será a variação da média?
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Demonstração em Python: Média Amostral e Variabilidade}
+    \begin{lstlisting}[language=Python]
+import numpy as np
+
+# Amostra de tempos de carregamento (em segundos)
+X = np.array([1.5, 2.3, 1.8, 3.0, 2.4])
+
+# Estimativa pontual da media
+media_amostral = np.mean(X)
+print(f"Media amostral: {media_amostral:.2f} s")
+# Saida: Media amostral: 2.20 s
+
+# Simulando a variabilidade amostral (se a populacao fosse conhecida)
+np.random.seed(42)
+populacao = np.random.normal(loc=2.2, scale=0.5, size=10000)
+novas_medias = [np.random.choice(populacao, size=5).mean() for _ in range(1000)]
+print(f"Desvio padrao das medias (erro padrao): {np.std(novas_medias):.3f}")
+    \end{lstlisting}
+\end{frame}
+

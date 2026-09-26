@@ -1,0 +1,94 @@
+\section{Coordenadas 2D e Cores RGB}
+
+\begin{frame}{O Plano Cartesiano na Computação Gráfica}
+    \textbf{Atenção:} As coordenadas de tela na computação gráfica são diferentes do plano cartesiano que aprendemos na matemática tradicional!
+
+    \vspace{0.2cm}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{center}
+            \begin{tikzpicture}[scale=0.65]
+                % Moldura da tela
+                \draw[thick, fill=gray!10] (0,0) rectangle (5, -4);
+                
+                % Origem
+                \fill[red] (0,0) circle (3pt) node[above right, font=\tiny\bfseries] {(0, 0) Origem};
+                
+                % Eixo X
+                \draw[-{Stealth[scale=1.2]}, blue, very thick] (0,0) -- (5.2, 0) node[right, font=\tiny\bfseries] {+X};
+                
+                % Eixo Y
+                \draw[-{Stealth[scale=1.2]}, red, very thick] (0,0) -- (0, -4.2) node[below, font=\tiny\bfseries] {+Y (Para baixo!)};
+                
+                % Ponto de exemplo
+                \fill[blue!80] (3, -2) circle (3pt) node[right, font=\tiny] {(x=300, y=200)};
+                \draw[dashed, gray] (3,0) -- (3,-2) -- (0,-2);
+                
+                % Borda inferior direita
+                \node[above left, font=\tiny] at (5, -4) {(800, 600)};
+            \end{tikzpicture}
+            \end{center}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{block}{Regras Fundamentais}
+                \begin{itemize}
+                    \item O ponto \textbf{(0, 0)} fica no canto \textbf{superior esquerdo} (\textit{Top-Left}).
+                    \item O eixo \textbf{X} cresce para a \textbf{DIREITA}.
+                    \item O eixo \textbf{Y} cresce para \textbf{BAIXO}!
+                    \item Logo, para descer um objeto na tela, \textbf{somamos} em $Y$; para subir, \textbf{subtraímos} de $Y$.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{O Modelo de Cores Aditivas: RGB}
+    As cores no Pygame são representadas por tuplas de 3 números inteiros variando entre $0$ e $255$: \textbf{(Red, Green, Blue)}.
+
+    \vspace{0.3cm}
+    \begin{table}[h]
+        \centering
+        \small
+        \begin{tabular}{l c l}
+            \toprule
+            \textbf{Cor} & \textbf{Tupla (R, G, B)} & \textbf{Significado} \\
+            \midrule
+            Preto & \texttt{(0, 0, 0)} & Ausência total de luz \\
+            Branco & \texttt{(255, 255, 255)} & Intensidade máxima de todos os canais \\
+            Vermelho & \texttt{(255, 0, 0)} & Apenas canal R ativo \\
+            Verde & \texttt{(0, 255, 0)} & Apenas canal G ativo \\
+            Azul & \texttt{(0, 0, 255)} & Apenas canal B ativo \\
+            Amarelo & \texttt{(255, 255, 0)} & Mistura de Vermelho + Verde \\
+            Ciano & \texttt{(0, 255, 255)} & Mistura de Verde + Azul \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+
+    \begin{block}{Dica de Código}
+        Defina cores como constantes no topo do arquivo com nomes em MAIÚSCULAS para deixar seu código legível: \texttt{AZUL = (50, 150, 250)}.
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Desenhando Primitivos com \texttt{pygame.draw}}
+    O módulo \texttt{pygame.draw} permite criar formas na tela sem precisar de imagens externas:
+
+    \begin{lstlisting}[language=Python]
+# 1. Retangulo: (tela, cor, (x, y, largura, altura), espessura)
+pygame.draw.rect(tela, (0, 120, 255), (100, 150, 80, 50))
+
+# 2. Circulo: (tela, cor, (centro_x, centro_y), raio, espessura)
+pygame.draw.circle(tela, (255, 50, 50), (400, 300), 40)
+
+# 3. Linha: (tela, cor, (inicio_x, inicio_y), (fim_x, fim_y), espessura)
+pygame.draw.line(tela, (255, 255, 255), (50, 50), (200, 50), 3)
+
+# 4. Poligono (ex: triangulo): (tela, cor, [(x1,y1), (x2,y2), ...])
+pygame.draw.polygon(tela, (255, 220, 0), [(300, 80), (250, 180), (350, 180)])
+    \end{lstlisting}
+
+    \vspace{0.2cm}
+    \begin{itemize}
+        \item Se o argumento de espessura (\texttt{width}) for omitido ou for $0$, a forma é \textbf{totalmente preenchida}.
+        \item Se for maior que $0$, é desenhada apenas a \textbf{borda}.
+    \end{itemize}
+\end{frame}

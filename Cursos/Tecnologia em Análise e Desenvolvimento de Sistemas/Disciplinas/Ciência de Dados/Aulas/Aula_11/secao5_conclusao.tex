@@ -1,0 +1,75 @@
+\section{Limites de Significância e Erros de Decisão}
+
+\begin{frame}{O Limiar de Significância e Sir Ronald Fisher}
+    \begin{block}{A Convenção de 5\%}
+        Sir Ronald Fisher publicou em 1925 que o limiar de 5\% ($\alpha = 0.05$) é conveniente para julgar se um desvio deve ou não ser considerado significativo.
+    \end{block}
+    \begin{alertblock}{Cuidado com o Limiar}
+        \begin{itemize}
+            \item Trata-se de uma convenção histórica, não uma verdade matemática absoluta.
+            \item Em conjuntos de dados muito grandes, é recomendável buscar limites muito menores (ex: $0.01$ ou $0.001$) para evitar falsos positivos.
+            \item Cuidado com a prática do ``P-hacking'' (manipulação de dados até atingir o $p < 0.05$).
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Erros de Decisão Estatística}
+    \begin{block}{Erro do Tipo I (Falso Positivo)}
+        Ocorre quando rejeitamos a Hipótese Nula $H_0$, embora ela seja verdadeira. A probabilidade máxima de cometer esse erro é igual ao nível de significância $\alpha$.
+    \end{block}
+    \begin{block}{Erro do Tipo II (Falso Negativo)}
+        Ocorre quando falhamos em rejeitar a Hipótese Nula $H_0$, embora a Hipótese Alternativa $H_1$ seja verdadeira. A probabilidade desse erro é representada por $\beta$.
+    \end{block}
+    \begin{alertblock}{Poder do Teste}
+        Representado por $1 - \beta$, é a capacidade do teste estatístico de detectar um sinal real quando ele realmente existe.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Matriz de Decisão Estatística}
+    \begin{table}
+        \centering
+        \footnotesize
+        \begin{tabular}{lcc}
+            \toprule
+            \textbf{Realidade} & \textbf{Decisão: Não Rejeitar $H_0$} & \textbf{Decisão: Rejeitar $H_0$} \\
+            \midrule
+            $H_0$ é Verdadeira & Decisão Correta & \textbf{Erro Tipo I} ($\alpha$ Falso Positivo) \\ \addlinespace
+            $H_1$ é Verdadeira & \textbf{Erro Tipo II} ($\beta$ Falso Negativo) & Decisão Correta (Poder: $1-\beta$) \\
+            \bottomrule
+        \end{tabular}
+        \caption{Matriz de decisão e probabilidades de erro}
+    \end{table}
+    \centering
+    \textit{Existe um compromisso entre $\alpha$ e $\beta$: diminuir a tolerância a falsos positivos ($\alpha$) tipicamente reduz o poder do teste, aumentando os falsos negativos ($\beta$).}
+\end{frame}
+
+\begin{frame}{Resumo e Principais Aprendizados}
+    \begin{block}{Pontos-Chave da Aula}
+        \begin{itemize}
+            \item \textbf{Modelo Nulo:} O modelo do acaso no qual conseguimos realizar simulações computacionais.
+            \item \textbf{TVD:} Estatística de teste robusta para comparar distribuições com múltiplas categorias.
+            \item \textbf{Teste de Permutação:} Método de reamostragem ideal para Testes A/B, pois não exige premissas distributivas.
+            \item \textbf{P-Valor:} Mede a compatibilidade entre a amostra observada e o modelo nulo.
+        \end{itemize}
+    \end{block}
+    \centering
+    \textbf{Dica:} Sempre comece definindo com clareza a Hipótese Nula ($H_0$) e a Estatística de Teste apropriada!
+\end{frame}
+
+\begin{frame}{Referências Bibliográficas}
+    \begin{block}{Leituras Recomendadas}
+        \footnotesize
+        \begin{itemize}
+            \item \textbf{Learning Data Science} \\
+            Sam Lau, Joey Gonzalez, and Deb Nolan. \\
+            Capítulo 17: Inference, Prediction, and Generalization. \\
+            \url{https://learningds.org/ch/17/inf_pred_gen_HT.html}
+            \vspace{0.3cm}
+            \item \textbf{Computational and Inferential Thinking} \\
+            Ani Adhikari and John DeNero. \\
+            Capítulo 11: Testing Hypotheses. \\
+            \url{https://inferentialthinking.com/chapters/11/testing-hypotheses/}
+        \end{itemize}
+    \end{block}
+\end{frame}
+

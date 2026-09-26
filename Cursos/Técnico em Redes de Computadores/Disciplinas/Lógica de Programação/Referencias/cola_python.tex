@@ -1,0 +1,354 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[portuguese]{babel}
+\usepackage{geometry}
+\geometry{top=1.2cm,bottom=1.2cm,left=1.2cm,right=1.2cm}
+\usepackage{multicol}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{booktabs}
+
+% Impede que o LaTeX estique os espacos verticais
+\raggedbottom
+
+% Configuracoes do listings para Python
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue!70!black}\bfseries,
+    commentstyle=\color{gray!90}\itshape,
+    stringstyle=\color{teal},
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{gray!30},
+    backgroundcolor=\color{gray!5},
+    xleftmargin=2pt,
+    xrightmargin=2pt,
+    aboveskip=4pt,
+    belowskip=4pt
+}
+
+\begin{document}
+
+\begin{center}
+    {\Large \textbf{Cola de Python: Referência Rápida para Lógica}} \\
+    \vspace{0.1cm}
+    {\small Redes de Computadores -- IFCE Campus Tauá}
+\end{center}
+\vspace{0.4cm}
+
+\begin{multicols}{2}
+
+\noindent
+\begin{minipage}{\linewidth}
+\section*{1. Entrada, Saída e Conversão}
+Para interagir com o usuário, ler do teclado e exibir dados formatados.
+\begin{lstlisting}
+# Entrada de dados (lidos como texto/string)
+texto = input("Digite algo: ")
+# Conversao de tipos
+inteiro = int(input("Digite um inteiro: "))
+decimal = float(input("Digite um decimal: "))
+
+# Saida com f-strings (chaves {} para variaveis)
+print(f"Texto: {texto} | Inteiro: {inteiro}")
+# Formatar com casas decimais (Ex: 2 casas)
+print(f"Decimal formatado: {decimal:.2f}")
+\end{lstlisting}
+\end{minipage}
+\vspace{0.4cm}
+
+\noindent
+\begin{minipage}{\linewidth}
+\section*{2. Operações Matemáticas}
+Operadores aritméticos básicos para cálculos no Python.
+\begin{lstlisting}
+a = 10
+b = 3
+
+soma = a + b        # 13
+sub = a - b         # 7
+mult = a * b        # 30
+div = a / b         # 3.3333... (divisao real)
+div_inteira = a // b # 3 (descarta a parte decimal)
+resto = a % b       # 1 (resto da divisao, util p/ par/impar)
+potencia = a ** b   # 1000 (10 elevado a 3)
+\end{lstlisting}
+\end{minipage}
+\vspace{0.4cm}
+
+\noindent
+\begin{minipage}{\linewidth}
+\section*{3. Manipulação de Strings}
+Métodos úteis para tratar textos e strings.
+\begin{lstlisting}
+texto = "  Algoritmos em Python!  "
+
+maiusculo = texto.upper()     # "  ALGORITMOS EM PYTHON!  "
+minusculo = texto.lower()     # "  algoritmos em python!  "
+limpo = texto.strip()         # "Algoritmos em Python!" (remove espacos)
+trocado = texto.replace("Python", "C") # "  Algoritmos em C!  "
+
+# Dividir texto em lista por um separador
+frase = "arroz,feijao,carne"
+itens = frase.split(",")       # ['arroz', 'feijao', 'carne']
+
+# Juntar lista em texto
+junto = "-".join(itens)        # "arroz-feijao-carne"
+\end{lstlisting}
+\end{minipage}
+\vspace{0.4cm}
+
+\noindent
+\begin{minipage}{\linewidth}
+\section*{4. Decisões e Condições (\texttt{if})}
+Executa blocos de código com base em testes lógicos.
+\begin{lstlisting}
+# Comparadores: ==, !=, >, <, >=, <=
+# Operadores logicos: and, or, not
+
+# --- IF SIMPLES (Verificacao unica) ---
+nota = 8.5
+if nota >= 7.0:
+    print("Aprovado!")
+
+# --- IF COMPOSTO (Multiplos caminhos) ---
+idade = 17
+tem_autorizacao = True
+
+if idade >= 18:
+    print("Acesso liberado (Maior de idade)")
+elif idade >= 16 and tem_autorizacao:
+    print("Acesso liberado (Com autorizacao)")
+else:
+    print("Acesso negado")
+\end{lstlisting}
+\end{minipage}
+\vspace{0.4cm}
+
+\noindent
+\begin{minipage}{\linewidth}
+\section*{5. Repetições (Loops: \texttt{for} e \texttt{while})}
+Repete um bloco de código de forma controlada.
+\begin{lstlisting}
+# --- LOOP FOR COM RANGE ---
+# range(fim) -> vai de 0 ate fim-1
+for i in range(5):  # 0, 1, 2, 3, 4
+    print(i)
+
+# range(inicio, fim) -> de inicio ate fim-1
+for i in range(2, 6):  # 2, 3, 4, 5
+    print(i)
+
+# range(inicio, fim, passo) -> com saltos
+for i in range(10, 21, 2):  # 10, 12, 14, 16, 18, 20
+    print(i)
+
+# --- LOOP WHILE (Enquanto) ---
+contador = 1
+while contador <= 5:
+    print(contador)
+    contador += 1  # Evita loop infinito!
+\end{lstlisting}
+\end{minipage}
+\vspace{0.4cm}
+
+\noindent
+\begin{minipage}{\linewidth}
+\section*{6. Listas (Vetores de 1 Dimensão)}
+Armazena múltiplos valores ordenados.
+\begin{lstlisting}
+numeros = [10, 20, 30, 40]
+primeiro = numeros[0]    # 10
+ultimo = numeros[-1]     # 40 (fim da lista)
+
+# Inserir e Modificar
+numeros[1] = 25       # [10, 25, 30, 40]
+numeros.append(50)    # Final: [10, 25, 30, 40, 50]
+numeros.insert(1, 15) # No indice 1: [10, 15, 25, 30, 40, 50]
+
+# Remover
+numeros.pop()         # Remove ultimo: [10, 15, 25, 30, 40]
+numeros.pop(1)        # Remove do indice 1: [10, 25, 30, 40]
+numeros.remove(30)    # Remove valor 30: [10, 25, 40]
+
+# Ordenacao e Inversao
+valores = [5, 2, 9, 1]
+valores.sort()        # Altera p/ crescente: [1, 2, 5, 9]
+valores.sort(reverse=True) # Decrescente: [9, 5, 2, 1]
+valores.reverse()     # Inverte a ordem da lista
+
+# Iterar com indices
+for i, num in enumerate(valores):
+    print(f"Indice {i} tem o valor {num}")
+\end{lstlisting}
+\end{minipage}
+\vspace{0.4cm}
+
+\noindent
+\begin{minipage}{\linewidth}
+\section*{7. Matrizes (Listas de Listas)}
+Coleções organizadas em linhas e colunas (2 dimensões).
+\begin{lstlisting}
+matriz = [
+    [1, 2, 3],  # Linha 0
+    [4, 5, 6],  # Linha 1
+    [7, 8, 9]   # Linha 2
+]
+
+# Acesso: matriz[linha][coluna]
+valor = matriz[1][2]  # Linha 1, Coluna 2 -> valor 6
+matriz[0][0] = 99     # Altera valor na Linha 0, Coluna 0
+
+# Percorrer linha por linha
+for linha in matriz:
+    for elemento in linha:
+        print(elemento, end="\t")
+    print()  # Quebra de linha ao fim de cada linha
+
+# Percorrer usando indices
+linhas = len(matriz)
+colunas = len(matriz[0])
+for i in range(linhas):
+    for j in range(colunas):
+        print(f"matriz[{i}][{j}] = {matriz[i][j]}")
+\end{lstlisting}
+\end{minipage}
+\vspace{0.4cm}
+
+\noindent
+\begin{minipage}{\linewidth}
+\section*{8. Dicionários (Chave-Valor)}
+Armazena dados associados a rótulos (chaves).
+\begin{lstlisting}
+aluno = {
+    "nome": "Joao Pedro",
+    "idade": 20,
+    "curso": "ADS"
+}
+print(aluno["nome"])  # "Joao Pedro"
+
+# Adicionar/Modificar
+aluno["media"] = 8.5  # Cria nova chave
+aluno["idade"] = 21   # Modifica chave existente
+
+# Remocao
+del aluno["curso"]
+valor = aluno.pop("idade")
+
+# Percorrer Chaves e Valores
+for chave, valor in aluno.items():
+    print(f"{chave}: {valor}")
+\end{lstlisting}
+\end{minipage}
+\vspace{0.4cm}
+
+\noindent
+\begin{minipage}{\linewidth}
+\section*{9. Funções Embutidas Úteis}
+Funções globais que facilitam cálculos comuns.
+
+\noindent\begin{tabular}{@{}llp{3cm}@{}}
+\toprule
+\textbf{Função} & \textbf{Descrição} & \textbf{Exemplo} \\ \midrule
+\texttt{len(c)} & Tamanho da coleção & \texttt{len([4, 8, 2])} $\rightarrow$ \texttt{3} \\
+\texttt{sum(c)} & Soma elementos & \texttt{sum([4, 8, 2])} $\rightarrow$ \texttt{14} \\
+\texttt{min(c)} & Menor elemento & \texttt{min([4, 8, 2])} $\rightarrow$ \texttt{2} \\
+\texttt{max(c)} & Maior elemento & \texttt{max([4, 8, 2])} $\rightarrow$ \texttt{8} \\
+\texttt{sorted(c)} & Cria lista ordenada & \texttt{sorted([4, 8, 2])} $\rightarrow$ \texttt{[2, 4, 8]} \\
+\texttt{abs(n)} & Valor absoluto & \texttt{abs(-15)} $\rightarrow$ \texttt{15} \\
+\texttt{round(n,d)}& Arredonda p/ $d$ casas & \texttt{round(3.1415, 2)} $\rightarrow$ \texttt{3.14} \\ \bottomrule
+\end{tabular}
+\end{minipage}
+\vspace{0.4cm}
+
+\noindent
+\begin{minipage}{\linewidth}
+\section*{10. Padrões de Algoritmos}
+Soluções clássicas aplicadas a listas de dados.
+\vspace{0.2cm}
+\subsection*{A. Acumulador (Soma acumulada)}
+Soma valores com base em critérios.
+\begin{lstlisting}
+valores = [12, 5, 8, 21, 30, 4]
+soma_pares = 0
+for v in valores:
+    if v % 2 == 0:
+        soma_pares += v
+\end{lstlisting}
+\end{minipage}
+\vspace{0.3cm}
+
+\noindent
+\begin{minipage}{\linewidth}
+\subsection*{B. Contador}
+Conta ocorrências de determinado critério.
+\begin{lstlisting}
+notas = [6.5, 8.0, 5.5, 9.0, 4.0, 7.0]
+aprovados = 0
+for nota in notas:
+    if nota >= 6.0:
+        aprovados += 1
+\end{lstlisting}
+\end{minipage}
+\vspace{0.3cm}
+
+\noindent
+\begin{minipage}{\linewidth}
+\subsection*{C. Maior/Menor Elemento (Manual)}
+Algoritmo de extremos sem usar funções embutidas.
+\begin{lstlisting}
+idades = [25, 42, 18, 50, 31]
+maior_idade = idades[0]
+for idade in idades:
+    if idade > maior_idade:
+        maior_idade = idade
+\end{lstlisting}
+\end{minipage}
+\vspace{0.3cm}
+
+\noindent
+\begin{minipage}{\linewidth}
+\subsection*{D. Filtragem de Listas}
+Gera uma nova lista com elementos filtrados.
+\begin{lstlisting}
+numeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+impares = []
+for n in numeros:
+    if n % 2 != 0:
+        impares.append(n)
+\end{lstlisting}
+\end{minipage}
+\vspace{0.4cm}
+
+\noindent
+\begin{minipage}{\linewidth}
+\section*{11. List Comprehension}
+Forma curta de criar e filtrar listas em Python.
+\begin{lstlisting}
+# --- SINTAXE BASICA ---
+# [expressao for item in colecao]
+quadrados = [x**2 for x in range(5)] # [0, 1, 4, 9, 16]
+
+# --- SINTAXE COM FILTRO (IF) ---
+# [expressao for item in colecao if condicao]
+pares = [x for x in range(10) if x % 2 == 0] # [0, 2, 4, 6, 8]
+
+# --- EXEMPLOS TEMATICOS (REDES) ---
+# 1. Limpar espacos de strings em uma lista de IPs
+hosts = [" 192.168.1.1 ", " 10.0.0.1", "172.16.0.254 "]
+ips_limpos = [ip.strip() for ip in hosts]
+# Resultado: ['192.168.1.1', '10.0.0.1', '172.16.0.254']
+
+# 2. Filtrar apenas IPs locais (comecam com "192.")
+ips = ["192.168.1.5", "10.0.0.3", "192.168.2.10", "8.8.8.8"]
+ips_locais = [ip for ip in ips if ip.startswith("192.")]
+# Resultado: ['192.168.1.5', '192.168.2.10']
+\end{lstlisting}
+\end{minipage}
+
+\end{multicols}
+\end{document}

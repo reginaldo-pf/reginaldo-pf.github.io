@@ -1,0 +1,148 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[brazilian]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage[hyphens]{url} 
+\usepackage[colorlinks=true, urlcolor=blue, linkcolor=blue]{hyperref}
+\usepackage{dirtree} 
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{enumitem}
+
+\geometry{left=2cm, right=2cm, top=3cm, bottom=2cm}
+
+\hypersetup{
+	colorlinks=true,
+	urlcolor=blue,
+	linkcolor=blue
+}
+
+\begin{document}
+	
+	% Cabeçalho da Avaliação
+	\noindent
+	\begin{center}
+		\LARGE \textbf{Avaliação Prática Unificada (Parte 1)} \\
+		\vspace{0.2cm}
+		\large \textbf{Construção de Pipeline de Dados com Fundamentação em Ciência de Dados} \\
+		\vspace{0.4cm}
+		\normalsize \textit{Disciplina: Ciência de Dados} \\
+		\textbf{Data de Entrega: 28/06/2026} \\
+		\normalsize Formato: Grupos ou Individual
+	\end{center}
+	
+	\vspace{0.2cm}
+	\noindent\rule{\textwidth}{0.4pt}
+	\vspace{0.5cm}
+	
+	\section{Objetivo da Avaliação}
+	Esta avaliação visa integrar os conhecimentos práticos de manipulação de dados com os fundamentos teóricos de Ciência de Dados (Inferência Causal, Amostragem, Análise Exploratória e Estatística). O objetivo é construir um pipeline reprodutível que não apenas processe os dados, mas que seja projetado com plena consciência sobre a natureza, as limitações estatísticas e a integridade analítica da informação.
+	
+	\section{Escolha do Tema e Fontes de Dados (Kaggle)}
+	Cada equipe deverá escolher \textbf{um} dos temas abaixo. O processo de extração deve obrigatoriamente consumir as fontes indicadas do Kaggle.
+	
+	\begin{itemize}[leftmargin=*]
+		\item \textbf{Opção A: Logística e Segurança Viária} \\
+		{\footnotesize \url{https://www.kaggle.com/datasets/rafaelborgesgraunke/traffic-accidents-brazil-pt-br}}
+		\item \textbf{Fonte Secundária Auxiliar:} \\
+		{\footnotesize \url{https://www.kaggle.com/datasets/liamarguedas/brazil-total-highway-crashes-2010-2023}}
+		
+		\item \textbf{Opção B: Finanças e E-Commerce} \\
+		{\footnotesize \url{https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce}}
+		
+		\item \textbf{Opção C: Meio Ambiente (Queimadas)} \\
+		{\footnotesize \url{https://www.kaggle.com/datasets/gustavomodelli/forest-fires-in-brazil}}
+		
+		\item \textbf{Opção D: Saúde Pública (COVID-19)} \\
+		{\footnotesize \url{https://www.kaggle.com/datasets/gpreda/covid-world-vaccination-progress}}
+		
+		\item \textbf{Opção E: Educação e Desempenho} \\
+		{\footnotesize \url{https://www.kaggle.com/datasets/csafrit2/higher-education-students-performance-evaluation}}
+		
+		\item \textbf{Opção F: Energia, Clima e Recursos Renováveis} \\
+		{\footnotesize \url{https://www.kaggle.com/datasets/pythonafroz/renewable-power-generation-and-weather-conditions}}
+	\end{itemize}
+	
+	\section{Detalhamento das Atividades (Aplicação de Conceitos)}
+	
+	\subsection{Camada de Ingestão (Amostragem e Viés)}
+	Vocês devem construir o script de captura e leitura inicial dos dados brutos (\texttt{extractor.py}).
+	\begin{itemize}
+		\item \textbf{Desenvolvimento:} Implementar a leitura automatizada dos arquivos \texttt{.csv} originais e isolar falhas de caminhos de arquivos por meio de tratamento de erros. O script deve registrar um log simples informando as dimensões iniciais da matriz de dados (volumetria bruta).
+		\item \textbf{Aplicação Teórica (README):} Na documentação do projeto, identifique explicitamente qual seria a \textbf{População-alvo} ideal que os dados do seu tema deveriam representar e qual é a \textbf{Estrutura de Acesso} (\textit{Access Frame}) real oferecida pelo dataset disponível no Kaggle. Discuta criticamente se há riscos de \textbf{Viés de Seleção} na forma como esses dados foram originalmente coletados.
+	\end{itemize}
+	
+	\subsection{Análise Exploratória e Tratamento Estatístico (EDA)}
+	Vocês devem estruturar as regras de transformação e higienização das variáveis (\texttt{cleaner.py}).
+	\begin{itemize}
+		\item \textbf{Desenvolvimento (Sanitização e IQR):} Identificar e tratar falhas de codificação de texto (\textit{encoding}) e padronizar strings categóricas. Implementar algoritmicamente o cálculo estatístico do \textbf{Intervalo Interquartil (IQR)} para as colunas numéricas contínuas mais relevantes, isolando os \textit{outliers} de forma automatizada para evitar distorções estatísticas.
+		\item \textbf{Dicionário de Dados:} No \texttt{README.md}, monte uma tabela com o esquema final do dataset. Classifique obrigatoriamente cada variável tratada sob a ótica da modelagem estatística como \textbf{Discreta}, \textbf{Contínua} ou \textbf{Categórica}.
+		\item \textbf{Tratamento de Nulos (Viés vs Variância):} Justifique explicitamente no relatório a estratégia adotada (exclusão de registros ou imputação por medidas de tendência central). Explique o impacto teórico dessa decisão no \textbf{Viés} (erros sistemáticos) e na \textbf{Variância} (sensibilidade a novos dados) do seu conjunto final.
+		\item \textbf{Consolidação Lógica (Merge):} Realizar o cruzamento das tabelas por chaves comuns (ex: códigos geográficos, IDs). O código deve mitigar disparidades nas chaves para evitar a perda silenciosa de amostras significativas durante o \textit{join}.
+	\end{itemize}
+	
+	\subsection{Análise de Domínio (Inferência Causal e Ceteris Paribus)}
+	Esta seção será avaliada exclusivamente pela profundidade conceitual e científica demonstrada na documentação.
+	\begin{itemize}
+		\item \textbf{Aplicação Teórica (README):} Escolha uma relação hipotética ou lógica entre duas variáveis do tema do seu dataset (ex: \textit{Intensidade de Chuva} e \textit{Volume de Acidentes}; \textit{Renda Familiar} e \textit{Acesso à Educação superior}; \textit{Radiação Solar} e \textit{Eficiência do Painel}). Responda com rigor científico:
+		\begin{enumerate}[label=\alph*)]
+			\item Explique detalhadamente por que uma forte correlação matemática encontrada entre essas variáveis não é evidência suficiente para comprovar um nexo de causalidade.
+			\item Identifique e disserte sobre pelo menos duas possíveis \textbf{Variáveis de Confusão} (\textit{confounders}) omitidas que poderiam enviesar os resultados caso fossem ignoradas.
+			\item Descreva conceitualmente como seria o desenho de um cenário ideal sob a ótica do princípio do \textbf{Ceteris Paribus} para isolar e validar adequadamente o efeito causal dessa relação.
+		\end{enumerate}
+	\end{itemize}
+	
+	\subsection{Visualização Científica (Integridade Visual)}
+	Vocês devem criar uma camada visual dedicada para traduzir graficamente os insights coletados.
+	\begin{itemize}
+		\item \textbf{Desenvolvimento:} Construa o script \texttt{visualize.py} que utilize a base de dados tratada pelo pipeline para gerar de forma automatizada \textbf{um} dos seguintes gráficos:
+		\begin{itemize}
+			\item Evolução temporal da métrica principal (Gráfico de Linhas).
+			\item Distribuição proporcional de atributos qualitativos (Gráfico de Barras).
+			\item Relação e dispersão entre duas variáveis numéricas (Gráfico de Dispersão).
+		\end{itemize}
+		\item \textbf{Integridade Visual:} O gráfico exportado deve respeitar estritamente os princípios de ética e honestidade visual em Ciência de Dados, contendo eixos devidamente identificados, unidades de medida explícitas, escalas proporcionais coerentes (eixos numéricos iniciando em zero onde aplicável) e ausência total de distorções visuais.
+	\end{itemize}
+	
+	\section{Estrutura do Projeto e Entregáveis}
+	O repositório do projeto no \textbf{Git} deve seguir o formato mínimo e organizado especificado abaixo para garantir a reprodutibilidade analítica:
+	
+	\vspace{0.3cm}
+	\begin{minipage}{\textwidth}
+		\dirtree{%
+			.1 meu-projeto-data-science/.
+			.2 src/.
+			.3 extract/.
+			.4 extractor.py \hfill\begin{minipage}[t]{8.5cm}\textit{Script de ingestão e leitura de arquivos}\end{minipage}.
+			.3 transform/.
+			.4 cleaner.py \hfill\begin{minipage}[t]{8.5cm}\textit{Script com tratamento estatístico (Nulos e IQR)}\end{minipage}.
+			.3 visualize.py \hfill\begin{minipage}[t]{8.5cm}\textit{Script focado em gráficos de integridade visual}\end{minipage}.
+			.3 main.py \hfill\begin{minipage}[t]{8.5cm}\textit{Orquestrador central de execução do pipeline}\end{minipage}.
+			.2 requirements.txt \hfill\begin{minipage}[t]{8.5cm}\textit{Dependências de bibliotecas de análise}\end{minipage}.
+			.2 README.md \hfill\begin{minipage}[t]{8.5cm}\textit{Relatório científico e documentação teórica}\end{minipage}.
+		}
+	\end{minipage}
+	\vspace{0.4cm}
+	
+	O pipeline de execução deve gerar de forma automatizada o arquivo final limpo na raiz do projeto sob o nome \texttt{dados\_limpos\_final.csv} (ou \texttt{.json}), representando a base consolidada para futuras inferências.
+	
+	\section{Critérios de Avaliação}
+	\begin{center}
+		\begin{tabular}{p{11cm}cc}
+			\toprule
+			\textbf{Critério de Avaliação Científica} & \textbf{Peso} \\
+			\midrule
+			\textbf{Manipulação Estatística de Dados (EDA):} Qualidade algorítmica no tratamento de nulos, inconsistências de tipos, pareamento de dados e isolamento matemático de outliers via IQR. & 40\% \\
+			\addlinespace
+			\textbf{Fundamentação de Ciência de Dados:} Rigor conceitual na análise de viés de amostragem, modelagem de variáveis e justificativa das hipóteses de inferência causal e confusão no README. & 40\% \\
+			\addlinespace
+			\textbf{Visualização e Integridade:} Geração via script automatizado do gráfico escolhido sob os critérios de honestidade estatística e ética visual. & 20\% \\
+			\bottomrule
+		\end{tabular}
+	\end{center}
+	
+\end{document}

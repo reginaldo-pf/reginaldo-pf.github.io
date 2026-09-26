@@ -1,0 +1,171 @@
+\ProvidesPackage{IfbaProvas}
+\usepackage[brazilian]{babel}
+%\usepackage[latin1]{inputenc}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[top=1.5cm,left=1.0cm,right=1.0cm,bottom=2cm]{geometry}%margens
+\usepackage{url}
+\usepackage[colorlinks=true,urlcolor=magenta,citecolor=red,linkcolor=blue,bookmarks=true]{hyperref}%Links e citações
+\usepackage{cancel} %para utilizar os comandos \cancel{} e \cancelto{}{}
+\usepackage{graphicx}
+\usepackage{amssymb,amsthm,amsmath,amsfonts}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{silence}
+\WarningsOff[everypage]% suprimir advertências relacionas ao pacote everypage
+%\usepackage{everypage}
+\usepackage[export]{adjustbox}
+\usepackage{lastpage}
+\usepackage{amsmath,amsthm,amssymb,amsfonts, color, graphicx}
+\usepackage{listings} % Mostrar código-fonte
+\usepackage{multicol,paralist}
+\usepackage{verbatim}
+\usepackage{xcolor}
+\usepackage{ifthen}
+\usepackage{etoolbox}%PARA UTILIZAR if para testar comando vazio
+%\usepackage{xwatermark}%marca d'agua
+\usepackage{qrcode}%gerar QR code
+\usepackage[sharp]{easylist}%listas personalizadas
+\usepackage[shortlabels]{enumitem} %personalizar amb. enumerate e itemize com [A]
+\usepackage{background}
+\setcounter{page}{1}
+\pagenumbering{arabic}
+
+\newcolumntype{x}[1]{%
+{\centering\hspace{0pt}}p{#1}}%
+
+%definição dos novos comandos
+\newcommand{\nomeInst}[1]{
+\newcommand{\inst}{#1}
+}
+\newcommand{\logoInst}[1]{
+\newcommand{\logo}{#1}
+}
+
+\newcommand{\Campus}[1]{
+\newcommand{\campus}{#1}
+}
+
+\newcommand{\NivelEnsino}[1]{
+\newcommand{\nivel}{#1}
+}
+
+\newcommand{\ImagemFundo}[1]{
+\newcommand{\fundo}{#1}
+}
+
+\newcommand{\nomeCurso}[1]{
+\newcommand{\curso}{#1}
+}
+
+\newcommand{\nomeProfessor}[1]{
+\newcommand{\professor}{#1}
+}
+
+\newcommand{\nomeDisciplina}[1]{
+\newcommand{\disciplina}{#1}
+}
+
+\newcommand{\Semestre}[1]{
+\newcommand{\semestre}{#1}
+}
+
+\newcommand{\matriculaAluno}[1]{
+\newcommand{\matricula}{#1}
+}
+
+\newcommand{\DataProva}[1]{
+\newcommand{\data}{#1}
+}
+
+\newcommand{\tipoAvaliacao}[1]{
+\newcommand{\avaliacao}{#1}
+}
+
+\newcommand{\Aluno}[1]{
+\newcommand{\aluno}{#1}
+}
+
+\newcommand{\Turma}[1]{
+\newcommand{\turma}{#1}
+}
+
+\newcommand{\primeiraInst}[1]{
+\newcommand{\instUm}{#1}
+}
+
+\newcommand{\segundaInst}[1]{
+\newcommand{\instDois}{#1}
+}
+
+\newcommand{\terceiraInst}[1]{
+\newcommand{\instTres}{#1}
+}
+
+\newcommand{\quartaInst}[1]{
+\newcommand{\instQuatro}{#1}
+}
+
+\newcommand{\quintaInst}[1]{
+\newcommand{\instcinco}{#1}
+}
+
+\newcommand{\sextaInst}[1]{
+\newcommand{\instseis}{#1}
+}
+\renewcommand{\arraystretch}{1.2} %aumentar espaçamento na linha superior de tabelas 
+\newcommand{\info}{
+\begin{center}
+ \begin{table}[h] %\small
+\begin{tabular}{|l|p{0.55\linewidth}p{0.25\linewidth}|}
+\hline
+   \multirow{7}{*}{\logo} &\ifdef{\campus}{\multicolumn{2}{c|}{\textbf{\MakeUppercase{\inst}}} \\  
+                    & \multicolumn{2}{c|}{\textbf{Campus \campus}}}
+                    {\multicolumn{2}{c|}{\multirow{2}{*}{\textbf{\MakeUppercase{\inst}}}}\\
+                    &\multicolumn{2}{c|}{} } 
+                    \\ \cline{2-3} 
+                & \textbf{Disciplina:} \disciplina & \textbf{Data:} \data \\ \cline{2-3}
+                & \multicolumn{2}{l|}{\textbf{Professor(a):} \professor}                 \\ \cline{2-3} 
+                 & \textbf{Discente:} \aluno      & \textbf{Matrícula:} \matricula          \\ \cline{2-3} 
+               \ifdef{\campus}{& \textbf{Curso:} \curso & \textbf{Semestre:} \semestre}{& \textbf{Série:}  & \textbf{Unidade:}  }\\ \cline{2-3}  
+                &\multicolumn{2}{c|}{{\bf \avaliacao}}  \\ \hline 
+\multicolumn{3}{|l|}{Orientações gerais:}\\
+\ifdefempty{\primeiraInst}{}{\multicolumn{3}{|l|}{\scriptsize 1- \primeiraInst}\\}
+\ifdefempty{\segundaInst}{}{\multicolumn{3}{|l|}{\scriptsize 2- \segundaInst}\\}
+\ifdefempty{\terceiraInst}{}{\multicolumn{3}{|l|}{\scriptsize 3- \terceiraInst}\\}
+\ifdefempty{\quartaInst}{}{\multicolumn{3}{|l|}{\scriptsize 4- \quartaInst}\\}
+\ifdefempty{\quintaInst}{}{\multicolumn{3}{|l|}{\scriptsize 5- \quintaInst}\\}
+\ifdefempty{\sextaInst}{}{\multicolumn{3}{|l|}{\scriptsize 6- \sextaInst}\\}
+\hline
+\end{tabular}
+\end{table}
+\end{center}
+}
+% NOVOS COMANDOS PARA FUNCIONAMENTO DAS OBSERVAÇÕES
+\newcommand{\instum}[1]{\def\primeiraInst{#1}}
+\newcommand{\instdois}[1]{\def\segundaInst{#1}}
+\newcommand{\insttres}[1]{\def\terceiraInst{#1}}
+\newcommand{\instquatro}[1]{\def\quartaInst{#1}}
+\newcommand{\instcinco}[1]{\def\quintaInst{#1}}
+\newcommand{\instseis}[1]{\def\sextaInst{#1}}
+
+
+%====================================================================
+%DEFINÇÃO DE COMANDOS DE PARÊTESES, COLCHETES E CHAVES
+\newcommand{\pr}[1]{\ensuremath{\left[#1\right]}} %colchetes que acompanham o tamano da expressão matemática
+\newcommand{\pc}[1]{\ensuremath{\left(#1\right)}} %idem anterior: parenteses curvos
+\newcommand{\chav}[1]{\ensuremath{\left\{#1\right\}}} %idem: chaves
+
+\everymath{\displaystyle}%para as formulas math ficar do msm tamanho do texto
+%=======================================================================
+
+%TRADUÇÕES DA CLASSE EXAME
+\totalformat{Total: \totalpoints\ \points}
+\pointpoints{ponto}{pontos}
+\hqword{Questão:}
+\hpword{Valor:}
+\hsword{Pontuação:}
+\htword{\textcolor{blue}{Total}}
+\renewcommand{\solutiontitle}{\noindent\textbf{Solução:}\enspace}
+\bonuspointpoints{Questão Desafio - bônus}{Questão Desafio - bônus}

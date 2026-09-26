@@ -1,0 +1,26 @@
+\section{Consolidação e Exercícios}
+
+\begin{frame}{Resumo e Melhores Práticas}
+    \begin{block}{Quando usar o Bootstrap?}
+        \begin{itemize}
+            \item Distribuições altamente distorcidas (Ex: renda, acessos a servidores).
+            \item Amostras médias e pequenas onde as premissas clássicas falham.
+            \item Ao estimar estatísticas não-lineares (mediana, variâncias, razões).
+        \end{itemize}
+    \end{block}
+    
+    \begin{alertblock}{Armadilhas em Testes A/B}
+        \begin{itemize}
+            \item \textbf{Peeking (Espiadinha):} Olhar os resultados do teste toda hora e parar assim que der significância infla falsos positivos.
+            \item \textbf{Significância Estatística vs. Prática:} Ganho estatisticamente comprovado de 0,001\% pode não valer o custo de engenharia.
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Exercícios Propostos}
+    \begin{enumerate}
+        \item \textbf{Modifique para a Mediana:} Altere a função \texttt{bootstrap\_mean} para calcular a mediana e compare os resultados de renda da base de dados fornecida.
+        \item \textbf{Análise do Tamanho Amostral ($N$):} Varie o tamanho da amostra inicial no script de apoio e responda: Como o tamanho da amostra inicial impacta a largura final do Intervalo de Confiança Bootstrap?
+        \item \textbf{Construção de Histograma:} Utilizando o script \texttt{aula10\_pratica.py}, execute o exemplo de e-commerce, salve a imagem gerada e plote os limites no gráfico.
+    \end{enumerate}
+\end{frame}

@@ -1,0 +1,55 @@
+\section{Funções Com Parâmetros e Sem Retorno}
+
+\begin{frame}[fragile]{2. Com Parâmetros e Sem Retorno}
+    Essas funções aceitam dados de entrada (chamados de \textbf{parâmetros} ou \textbf{argumentos}) para personalizar sua execução. Contudo, elas apenas realizam a ação e não devolvem um valor final ao programa.
+    
+    \vspace{0.3cm}
+    \textbf{Analogia de Redes:}
+    \begin{itemize}
+        \item Pense no comando \texttt{ping 8.8.8.8}. O IP \texttt{8.8.8.8} é o parâmetro. Se você mudar o parâmetro para \texttt{192.168.1.1}, a função faz a mesma tarefa básica (enviar pacotes), mas direcionada a outro destino.
+        \item O comando exibe as linhas na tela, mas você não armazena a resposta em uma variável do Python.
+    \end{itemize}
+    
+    \vspace{0.3cm}
+    \textbf{Sintaxe:}
+    \begin{lstlisting}[language=Python]
+def minha_funcao(parametro):
+    # Usa o parametro para realizar uma acao
+    print(f"Processando dado: {parametro}")
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Exemplo 1: Simulador de Ping}
+    Vamos criar uma função que simula o utilitário \texttt{ping} (que usa pacotes ICMP -- \textit{Internet Control Message Protocol}) para testar a conectividade de um IP.
+    
+    \begin{lstlisting}[language=Python]
+def ping(ip_destino):
+    # Simula o teste de conectividade ICMP
+    print(f"Disparando contra {ip_destino} com 32 bytes de dados:")
+    print(f"Resposta de {ip_destino}: bytes=32 tempo=12ms TTL=64")
+    print(f"Resposta de {ip_destino}: bytes=32 tempo=10ms TTL=64")
+    print(f"Estatisticas do Ping para {ip_destino}: Concluido com sucesso.")
+
+# Utilizando a funcao com alvos diferentes:
+ping("10.0.0.1")
+print("-" * 30)
+ping("google.com")
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Exemplo 2: Bloqueio de Portas no Firewall}
+    Função para simular o bloqueio de portas vulneráveis no Firewall do switch, registrando o motivo de segurança.
+    
+    \begin{lstlisting}[language=Python]
+def bloquear_porta(porta, motivo):
+    # Simula comando para bloquear porta no Firewall
+    print(f"[FIREWALL] BLOQUEADO: Trafego na porta TCP {porta} suspenso.")
+    print(f"[MOTIVO] Alerta de seguranca: {motivo}")
+    print("Regra aplicada com sucesso na tabela IPTables.")
+
+# Bloqueando portas suspeitas na rede da escola
+bloquear_porta(21, "Tentativas excessivas de login no FTP")
+print("-" * 30)
+bloquear_porta(23, "Protocolo Telnet nao criptografado detectado")
+    \end{lstlisting}
+\end{frame}

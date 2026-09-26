@@ -1,0 +1,73 @@
+\documentclass[aspectratio=169,utf8,t]{beamer}
+
+% Idioma e Codificacao
+\usepackage[brazilian]{babel}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+
+% Carrega o Tema Modelo dos Scouts (Widescreen 16:9, Nunito Sans)
+\usetheme{scouts}
+
+% Configuracao para Codigo-Fonte (SQL / JSON / Python)
+\lstset{
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\bfseries\color{ScoutNavy},
+    stringstyle=\color{ScoutGreen},
+    commentstyle=\itshape\color{gray},
+    backgroundcolor=\color{black!3},
+    frame=single,
+    rulecolor=\color{black!15},
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=2
+}
+
+% Metadados Institucionais
+\author{Prof. Me. Reginaldo Fernandes}
+\institute{Instituto Federal do Ceará -- Campus Tauá \\ Tecnologia em Análise e Desenvolvimento de Sistemas}
+\title{Bancos de Dados Não-Relacionais}
+\subtitle{Aula 01: O Paradigma Pós-Relacional \& Diretrizes da Disciplina}
+\date{29 de Setembro de 2026}
+
+\begin{document}
+
+% ------------------------------------------------------------------------------
+% Capa da Apresentacao
+% ------------------------------------------------------------------------------
+\changecolours[inverse]{ScoutGreen}
+\frame[plain]{\titlepage}
+
+% ------------------------------------------------------------------------------
+% Sumario Executivo da Aula
+% ------------------------------------------------------------------------------
+\changecolours{ScoutGreen}
+\begin{frame}{Agenda do Encontro}
+  \vspace{0.4cm}
+  \tableofcontents
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% Modulos da Aula
+% ------------------------------------------------------------------------------
+\input{secao1_diretrizes}
+\input{secao2_contexto_historico}
+\input{secao3_gargalos_relacionais}
+\input{secao4_movimento_nosql}
+\input{secao5_conclusao_atividades}
+
+% ------------------------------------------------------------------------------
+% Encerramento
+% ------------------------------------------------------------------------------
+\changecolours[inverse]{ScoutGreen}
+\begin{frame}[plain]
+  \vspace{2cm}
+  \centering
+  {\Huge \textbf{Dúvidas \& Discussão}}\par
+  \vspace{0.8cm}
+  {\large IFCE Campus Tauá -- ADS16}\par
+  \vspace{0.3cm}
+  {\small reginaldo.fernandes@ifce.edu.br}
+\end{frame}
+
+\end{document}

@@ -1,0 +1,68 @@
+\section{Laboratório Prático e Conclusão}
+
+\begin{frame}{Resumo dos Pilares Aprendidos}
+    Nesta aula introdutória de 90 minutos, dominamos os quatro alicerces fundamentais da computação gráfica 2D:
+
+    \vspace{0.3cm}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{itemize}
+                \item \textbf{Game Loop:} A espinha dorsal contínua que processa entradas, física e renderização.
+                \item \textbf{Plano Cartesiano 2D:} Origem $(0, 0)$ no topo esquerdo e coordenada $Y$ invertida para baixo.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{itemize}
+                \item \textbf{Controle de Tempo:} Uso de \texttt{Clock.tick(60)} para garantir taxa estável em qualquer hardware.
+                \item \textbf{Colisões com Rect:} Otimização e praticidade através do método \texttt{colliderect()}.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+
+    \vspace{0.4cm}
+    \begin{block}{Boas Práticas de Engenharia de Jogos}
+        \begin{itemize}
+            \item Sempre limpe a tela com \texttt{tela.fill()} antes de desenhar.
+            \item Trate o evento \texttt{pygame.QUIT} para não congelar o sistema operacional.
+            \item Separe a lógica de atualização da renderização visual.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Laboratório Prático: Desafios para a Turma}
+    \begin{block}{Desafio 1: A Bola Multicolorida (Nível Fácil)}
+        \begin{itemize}
+            \item Execute o arquivo \texttt{desafio1\_bola\_quicando.py}.
+            \item Faça a bola quicar continuamente nas 4 paredes da janela.
+            \item \textbf{Bônus:} A cada batida, sorteie uma nova cor aleatória com \texttt{random.randint(50, 255)}.
+        \end{itemize}
+    \end{block}
+
+    \vspace{0.2cm}
+    \begin{block}{Desafio 2: Esquiva de Meteoros (Nível Intermediário)}
+        \begin{itemize}
+            \item Execute o arquivo \texttt{desafio2\_esquiva\_obstaculo.py}.
+            \item Mova seu personagem na horizontal para desviar de blocos caindo do topo da tela.
+            \item Utilize \texttt{colliderect()} para descontar vidas do jogador se for atingido!
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Próximos Passos no Curso}
+    \begin{center}
+        \Large{\textbf{O que exploraremos nas próximas aulas?}}
+    \end{center}
+
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item \textbf{Sprites e Grupos:} Uso da classe \texttt{pygame.sprite.Sprite} e \texttt{pygame.sprite.Group} para gerenciar dezenas de entidades com POO.
+        \item \textbf{Carregamento de Imagens:} Substituir formas geométricas por Spritesheets e animações de personagens.
+        \item \textbf{Sistemas de Partículas e Câmera:} Efeitos visuais dinâmicos e mundos maiores que a tela.
+    \end{itemize}
+
+    \vspace{0.5cm}
+    \begin{center}
+        \textbf{Obrigado!} \\
+        \footnotesize{IFCE Campus Tauá -- Curso de Análise e Desenvolvimento de Sistemas}
+    \end{center}
+\end{frame}

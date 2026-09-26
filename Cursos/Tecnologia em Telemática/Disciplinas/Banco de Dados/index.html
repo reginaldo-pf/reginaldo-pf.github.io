@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Banco de Dados | Tecnologia em Telemática | Prof. Reginaldo Fernandes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            ifce: {
+              green: '#2F855A',
+              red: '#C53030',
+              dark: '#1C4532',
+              emerald: '#059669'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- Navbar -->
+  <header class="border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="../../../../index.html" class="flex items-center space-x-2 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium text-sm transition-colors">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Voltar ao Portal Geral</span>
+        </a>
+      </div>
+      <div class="flex items-center space-x-4">
+        <button id="themeToggle" class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Alternar tema">
+          <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 py-8 w-full">
+
+    <!-- Breadcrumb -->
+    <nav class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-6 flex items-center space-x-2 flex-wrap">
+      <a href="../../../../index.html" class="hover:underline">Início</a>
+      <span>/</span>
+      <span>Tecnologia em Telemática</span>
+      <span>/</span>
+      <span class="text-blue-600 dark:text-blue-400 font-medium">Banco de Dados</span>
+    </nav>
+
+    <!-- Header da Disciplina -->
+    <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 rounded-2xl p-6 sm:p-8 text-white shadow-lg mb-8 relative overflow-hidden">
+      <div class="relative z-10">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-500/30 text-blue-200 border border-blue-400/30">Telemática</span>
+          <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-white/20 text-white">80 Horas</span>
+          <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-400 text-slate-900 font-bold">🟢 Piloto Ativo</span>
+        </div>
+        <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight mb-2">Banco de Dados</h1>
+        <p class="text-blue-100 text-sm sm:text-base max-w-3xl">
+          Curso Superior de Tecnologia em Telemática -- IFCE Campus Tauá.
+        </p>
+        <p class="text-xs text-blue-200 mt-2">
+          <strong>Docente:</strong> Prof. Reginaldo Pereira Fernandes
+        </p>
+      </div>
+      <div class="absolute -right-8 -bottom-8 opacity-10 text-white text-9xl">
+        <i class="fa-solid fa-server"></i>
+      </div>
+    </div>
+
+    <!-- Grid de Destaques: Aulas, Ementa e Referências -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      
+      <!-- Card: Aulas -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4 text-xl">
+            <i class="fa-solid fa-chalkboard-user"></i>
+          </div>
+          <h3 class="font-bold text-lg mb-2">Aulas e Práticas</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+            Roteiros de aula, modelagem conceitual e laboratórios práticos com SGBDs relacionais (PostgreSQL / MySQL).
+          </p>
+          <ul class="text-xs space-y-2 text-slate-700 dark:text-slate-300">
+            <li class="flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+              <a href="Aulas/Aula_01/README.md" class="hover:underline font-medium text-blue-600 dark:text-blue-400">Aula 01: Introdução & Modelagem Conceitual</a>
+            </li>
+            <li class="flex items-center space-x-2 text-slate-400">
+              <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+              <span>Aula 02: Modelo Entidade-Relacionamento (MER)</span>
+            </li>
+            <li class="flex items-center space-x-2 text-slate-400">
+              <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+              <span>Aula 03: Mapeamento MER para Modelo Relacional</span>
+            </li>
+          </ul>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700">
+          <a href="Aulas/Aula_01/README.md" class="inline-flex items-center text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700">
+            Acessar Aula 01 <i class="fa-solid fa-arrow-right ml-1"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Card: Ementa e Competências -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4 text-xl">
+            <i class="fa-solid fa-list-check"></i>
+          </div>
+          <h3 class="font-bold text-lg mb-2">Ementa Central</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+            Tópicos fundamentais abordados ao longo do semestre:
+          </p>
+          <ul class="text-xs space-y-1.5 text-slate-700 dark:text-slate-300">
+            <li>• Introdução aos SGBDs e Abstração de Dados</li>
+            <li>• Modelo Entidade-Relacionamento e DER</li>
+            <li>• Modelo Lógico Relacional e Restrições de Integridade</li>
+            <li>• Álgebra Relacional e Teoria da Normalização</li>
+            <li>• Linguagem SQL: DDL, DML, DCL e DQL avançada</li>
+            <li>• Visões, Índices e Introdução a Transações ACID</li>
+          </ul>
+        </div>
+        <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700 text-xs text-slate-500">
+          Fundamentação teórica com aplicação prática imediata.
+        </div>
+      </div>
+
+      <!-- Card: Bibliografia e Ferramentas -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-4 text-xl">
+            <i class="fa-solid fa-book-bookmark"></i>
+          </div>
+          <h3 class="font-bold text-lg mb-2">Referências e Ferramentas</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+            Bibliografia de apoio e ambiente de software:
+          </p>
+          <div class="text-xs space-y-2 text-slate-600 dark:text-slate-400">
+            <p><strong>Livro Base:</strong> ELMASRI & NAVATHE. <em>Sistemas de Banco de Dados</em>.</p>
+            <p><strong>SGBD Prático:</strong> PostgreSQL & DBeaver / pgAdmin.</p>
+            <p><strong>Modelagem:</strong> Ferramenta brModelo / Draw.io.</p>
+          </div>
+        </div>
+        <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700 text-xs text-slate-500">
+          Ambiente reproduzível e padronizado em sala de aula.
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-6xl mx-auto px-4">
+      <p>© 2026 Instituto Federal do Ceará -- Campus Tauá. Todos os direitos reservados.</p>
+      <p class="mt-1">Prof. Reginaldo Pereira Fernandes | Tecnologia em Telemática</p>
+    </div>
+  </footer>
+
+  <!-- Script Modo Escuro -->
+  <script>
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const html = document.documentElement;
+
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      html.classList.add('dark');
+      themeIcon.className = 'fa-solid fa-sun text-lg text-amber-400';
+    } else {
+      html.classList.remove('dark');
+      themeIcon.className = 'fa-solid fa-moon text-lg';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        localStorage.theme = 'light';
+        themeIcon.className = 'fa-solid fa-moon text-lg';
+      } else {
+        html.classList.add('dark');
+        localStorage.theme = 'dark';
+        themeIcon.className = 'fa-solid fa-sun text-lg text-amber-400';
+      }
+    });
+  </script>
+</body>
+</html>

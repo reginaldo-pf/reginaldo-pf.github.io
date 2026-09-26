@@ -1,0 +1,216 @@
+\documentclass[aspectratio=169,10pt,xcolor={dvipsnames,table}]{beamer}
+
+% Tema Moderno Metropolis
+\usetheme{metropolis}
+
+% Pacotes Fundamentais
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazilian]{babel}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fontawesome5}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,raster}
+\usepackage{bookmark}
+\usepackage{tikz}
+
+% ==============================================================================
+% Paleta de Cores Institucional IFCE Campus Taua + Modern Tech
+% ==============================================================================
+\definecolor{IFCEGreen}{RGB}{47, 158, 65}       % Verde IFCE oficial vibrante
+\definecolor{IFCEDarkGreen}{RGB}{20, 102, 46}    % Verde escuro institucional elegante
+\definecolor{IFCELightGreen}{RGB}{236, 253, 243} % Fundo verde claro moderno
+\definecolor{IFCERed}{RGB}{200, 16, 46}          % Vermelho IFCE oficial
+\definecolor{IFCELightRed}{RGB}{254, 242, 242}   % Fundo vermelho suave
+\definecolor{TechDark}{RGB}{15, 23, 42}          % Slate escuro premium para texto
+\definecolor{TechGray}{RGB}{71, 85, 105}         % Cinza moderno para subtitulos
+\definecolor{TechLight}{RGB}{248, 250, 252}      % Fundo clean suave
+\definecolor{TechBorder}{RGB}{226, 232, 240}     % Borda sutil
+\definecolor{NetBlue}{RGB}{2, 132, 199}          % Azul redes / nuvem
+\definecolor{NetLightBlue}{RGB}{240, 249, 255}   % Fundo azul suave
+\definecolor{CyberPurple}{RGB}{124, 58, 237}     % Roxo seguranca / tecnologia
+\definecolor{CyberLightPurple}{RGB}{245, 243, 255}
+\definecolor{GoldAmber}{RGB}{217, 119, 6}        % Ambar / destaque visual
+
+% Configuracao de Cores no Metropolis Beamer
+\setbeamercolor{palette primary}{fg=white, bg=IFCEDarkGreen}
+\setbeamercolor{palette secondary}{fg=white, bg=IFCEGreen}
+\setbeamercolor{palette tertiary}{fg=white, bg=TechDark}
+\setbeamercolor{structure}{fg=IFCEDarkGreen}
+\setbeamercolor{titlelike}{fg=white}
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{normal text}{fg=TechDark}
+\setbeamercolor{progress bar}{fg=IFCERed, bg=IFCEGreen!30}
+\setbeamercolor{alerted text}{fg=IFCERed}
+\setbeamercolor{frametitle}{fg=white, bg=IFCEDarkGreen}
+
+% Configuracao do cabecalho e rodape do Metropolis
+\metroset{
+  progressbar=frametitle,
+  block=fill,
+  numbering=fraction
+}
+
+% Logo Institucional IFCE Taua no canto superior direito de todos os slides de conteudo
+\addtobeamertemplate{frametitle}{}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[anchor=north east, yshift=-0.11cm, xshift=-0.32cm] at (current page.north east) {
+      \includegraphics[height=0.68cm]{logo_ifce_taua.png}
+    };
+  \end{tikzpicture}%
+}
+
+% ==============================================================================
+% Cards e Caixas Estilizadas (TColorBox) com Visual Moderno
+% ==============================================================================
+\newtcolorbox{moderncard}[2][]{
+  enhanced,
+  colback=white,
+  colframe=TechDark!80!black,
+  colbacktitle=TechDark!85!black,
+  coltitle=white,
+  fonttitle=\bfseries\footnotesize,
+  arc=2.2mm,
+  boxrule=0.7pt,
+  left=2.5mm, right=2.5mm, top=2mm, bottom=2mm,
+  title={#2},
+  #1
+}
+
+\newtcolorbox{greencard}[2][]{
+  enhanced,
+  colback=white,
+  colframe=IFCEDarkGreen,
+  colbacktitle=IFCEDarkGreen,
+  coltitle=white,
+  fonttitle=\bfseries\footnotesize,
+  arc=2.2mm,
+  boxrule=0.7pt,
+  left=2.5mm, right=2.5mm, top=2mm, bottom=2mm,
+  title={#2},
+  #1
+}
+
+\newtcolorbox{bluecard}[2][]{
+  enhanced,
+  colback=white,
+  colframe=NetBlue!90!black,
+  colbacktitle=NetBlue!90!black,
+  coltitle=white,
+  fonttitle=\bfseries\footnotesize,
+  arc=2.2mm,
+  boxrule=0.7pt,
+  left=2.5mm, right=2.5mm, top=2mm, bottom=2mm,
+  title={#2},
+  #1
+}
+
+\newtcolorbox{purplecard}[2][]{
+  enhanced,
+  colback=white,
+  colframe=CyberPurple!85!black,
+  colbacktitle=CyberPurple!85!black,
+  coltitle=white,
+  fonttitle=\bfseries\footnotesize,
+  arc=2.2mm,
+  boxrule=0.7pt,
+  left=2.5mm, right=2.5mm, top=2mm, bottom=2mm,
+  title={#2},
+  #1
+}
+
+\newtcolorbox{redcard}[2][]{
+  enhanced,
+  colback=white,
+  colframe=IFCERed,
+  colbacktitle=IFCERed,
+  coltitle=white,
+  fonttitle=\bfseries\footnotesize,
+  arc=2.2mm,
+  boxrule=0.7pt,
+  left=2.5mm, right=2.5mm, top=2mm, bottom=2mm,
+  title={#2},
+  #1
+}
+
+\newtcolorbox{statcard}[1][]{
+  enhanced,
+  colback=TechLight,
+  colframe=TechBorder,
+  arc=2.2mm,
+  boxrule=0.6pt,
+  left=2mm, right=2mm, top=1.8mm, bottom=1.8mm,
+  halign=center,
+  #1
+}
+
+\newtcolorbox{highlightbox}[3][]{
+  enhanced,
+  colback=#2,
+  colframe=#3,
+  arc=2.2mm,
+  boxrule=0.8pt,
+  left=2.5mm, right=2.5mm, top=2mm, bottom=2mm,
+  #1
+}
+
+% ==============================================================================
+% Badges Modernas Estilo Tag
+% ==============================================================================
+\newcommand{\pilltag}[2]{%
+  \tcbox[
+    on line,
+    arc=1.5mm,
+    colback=#1,
+    colframe=#1,
+    boxrule=0pt,
+    left=1.5mm, right=1.5mm, top=0.6mm, bottom=0.6mm,
+    boxsep=0pt
+  ]{\textcolor{white}{\tiny\bfseries #2}}%
+}
+
+\newcommand{\greenbadge}[1]{\pilltag{IFCEGreen}{#1}}
+\newcommand{\redbadge}[1]{\pilltag{IFCERed}{#1}}
+\newcommand{\bluebadge}[1]{\pilltag{NetBlue}{#1}}
+\newcommand{\purplebadge}[1]{\pilltag{CyberPurple}{#1}}
+
+% Metadados da Apresentacao
+\title[Técnico em Redes - IFCE Tauá]{\textbf{Curso Técnico Integrado em Redes de Computadores}}
+\subtitle{Ensino Médio de Excelência + Formação Tecnológica Federal no Campus Tauá}
+\author[IFCE Tauá]{Instituto Federal de Educação, Ciência e Tecnologia do Ceará\texorpdfstring{\\ \textbf{Campus Tauá}}{ - Campus Tauá}}
+\institute[IFCE]{Especial para Estudantes do 9º Ano do Ensino Fundamental}
+\date{\today}
+
+% ==============================================================================
+% Início do Documento Modular
+% ==============================================================================
+\begin{document}
+
+% Secao 1: Capa, Decisao do 9º Ano e o que e o Ensino Medio Integrado
+\input{secao1_capa_visao}
+
+% Secao 2: O que e Redes de Computadores? (A magica por tras da internet)
+\input{secao2_o_que_e_redes}
+
+% Secao 3: Mercado de Trabalho e Portas para o Futuro (Emprego e Universidade)
+\input{secao3_mercado_carreira}
+
+% Secao 4: A Jornada dos 3 Anos (Matriz Curricular ano a ano)
+\input{secao4_jornada_formativa}
+
+% Secao 5: Mao na Massa (Laboratorios de Ponta, Racks e Projetos)
+\input{secao5_pratica_laboratorios}
+
+% Secao 6: Vida no Campus (Bolsas em Dinheiro, Intercambio Exterior e Esportes)
+\input{secao6_vida_no_campus}
+
+% Secao 7: Assistencia Estudantil e Acolhimento (Alimentacao, Saude e Permanencia)
+\input{secao7_assistencia_apoio}
+
+% Secao 8: Mitos vs. Verdades, Como Ingressar (35 Vagas) e Encerramento
+\input{secao8_ingresso_encerramento}
+
+\end{document}

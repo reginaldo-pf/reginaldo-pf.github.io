@@ -1,0 +1,151 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[brazilian]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage[hyphens]{url} % CORREÇÃO: [hyphens] força a quebra automática de URLs longas na margem
+\usepackage{hyperref}
+\usepackage{dirtree} 
+\usepackage{xcolor}
+
+\geometry{left=2cm, right=2cm, top=3cm, bottom=2cm}
+
+% Configuração de links para impressão (mantém o texto preto e legível no papel)
+\hypersetup{
+	colorlinks=true,
+	linkcolor=black,
+	filecolor=black,      
+	urlcolor=black,
+}
+
+\begin{document}
+	
+	% Cabeçalho da Avaliação
+	\noindent
+	\begin{center}
+		\LARGE \textbf{Avaliação Prática (Parte 1)} \\
+		\vspace{0.2cm}
+		\large \textbf{Pipeline de Extração e Limpeza de Dados (ETL)} \\
+		\vspace{0.4cm}
+		\normalsize \textit{Ciência de Dados} \\
+		\text{Formato: Grupos ou Individual}
+	\end{center}
+	
+	\vspace{0.2cm}
+	\noindent\rule{\textwidth}{0.4pt}
+	\vspace{0.5cm}
+	
+	\section{Objetivo da Avaliação}
+	O objetivo desta primeira etapa é construir o motor de ingestão e tratamento de dados de um pipeline de ETL. Vocês deverão buscar dados reais no \textbf{Kaggle} (utilizando as fontes recomendadas abaixo) e tratá-los utilizando boas práticas de Programação Orientada a Objetos (POO) e o \textbf{Princípio da Responsabilidade Única (SRP)}, garantindo que o dado final esteja limpo, tipado e unificado.
+	
+	\section{Escolha do Tema e Fontes de Dados (Kaggle)}
+	Cada equipe deverá escolher \textbf{um} dos temas abaixo. O processo de \textbf{Extração (\textit{Extract})} deve obrigatoriamente consumir as fontes indicadas do Kaggle.
+	
+	\subsection*{Opção A: Logística, Transportes e Segurança Viária}
+	\begin{itemize}
+		\item \textbf{Contexto:} Mapear o perfil dos acidentes nas rodovias federais para criar rotas mais seguras e prever custos de seguro de frotas.
+		\item \textbf{Fonte Principal (Kaggle):} \\
+		\url{https://www.kaggle.com/datasets/rafaelborgesgraunke/traffic-accidents-brazil-pt-br}
+		\item \textbf{Fonte Secundária (Kaggle):} \\
+		\url{https://www.kaggle.com/datasets/liamarguedas/brazil-total-highway-crashes-2010-2023}
+	\end{itemize}
+	
+	\subsection*{Opção B: Finanças, Mercado e E-Commerce}
+	\begin{itemize}
+		\item \textbf{Contexto:} Cruzar o comportamento de compras, meios de pagamento e categorias para entender a saúde do comércio eletrônico no ecossistema brasileiro.
+		\item \textbf{Fonte de Dados (Kaggle):} \\
+		\url{https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce} \\
+		\textit{Nota: Este repositório contém múltiplas tabelas relacionais que devem ser integradas.}
+	\end{itemize}
+	
+	\subsection*{Opção C: Meio Ambiente e Emergências Climáticas}
+	\begin{itemize}
+		\item \textbf{Contexto:} Analisar o histórico de queimadas por estado brasileiro para identificar padrões de degradação ao longo do tempo.
+		\item \textbf{Fonte de Dados (Kaggle):} \\
+		\url{https://www.kaggle.com/datasets/gustavomodelli/forest-fires-in-brazil}
+	\end{itemize}
+	
+	\subsection*{Opção D: Saúde Pública (Dados do SUS e Leitos)}
+	\begin{itemize}
+		\item \textbf{Contexto:} Cruzar dados de infraestrutura e capacidade de atendimento para identificar vulnerabilidades regionais na rede de saúde pública.
+		\item \textbf{Fonte de Dados (Kaggle):} \\
+		\url{https://www.kaggle.com/datasets/gpreda/covid19-vaccination-track-everywhere-in-the-world} \\
+		\textit{Nota: Filtrar os registros correspondentes ao Brasil no processo de extração.}
+	\end{itemize}
+	
+	\subsection*{Opção E: Educação e Desempenho Acadêmico}
+	\begin{itemize}
+		\item \textbf{Contexto:} Analisar fatores socioeconômicos e correlacioná-los com o desempenho e a avaliação final dos estudantes.
+		\item \textbf{Fonte de Dados (Kaggle):} \\
+		\url{https://www.kaggle.com/datasets/cansa23/higher-education-students-performance-evaluation}
+	\end{itemize}
+	
+	\section{Detalhamento das Atividades Solicitadas}
+	O pipeline deve ser desenvolvido em camadas isoladas utilizando Programação Orientada a Objetos (POO).
+	
+	\subsection{Camada de Extração (\textit{Extract})}
+	Vocês devem criar uma classe especializada exclusivamente na ingestão dos dados.
+	\begin{itemize}
+		\item \textbf{Requisito 1 (Ingestão Programática):} O pipeline deve ser capaz de ler os arquivos baixados do Kaggle (\texttt{.csv}). Como bônus técnico, a equipe pode utilizar a biblioteca oficial \texttt{KaggleApi} para baixar os arquivos direto por código.
+		\item \textbf{Requisito 2 (Resiliência):} Implementar tratamento de exceções robusto (\texttt{try/except}). O código deve prever falhas de arquivos corrompidos, caminhos errados ou colunas ausentes, encerrando o programa sem gerar um \textit{crash} no sistema.
+		\item \textbf{Requisito 3 (Logs):} Criar uma classe auxiliar de Log que exiba no terminal o progresso da operação (Ex: \texttt{[INFO] Iniciando extração do arquivo... [SUCCESS] Processo concluído.}).
+	\end{itemize}
+	
+	\subsection{Camada de Limpeza e Transformação (\textit{Transform})}
+	Os dados brutos do Kaggle possuem anomalias propositais. Esta classe deve purificá-los.
+	\begin{itemize}
+		\item \textbf{Requisito 1 (Padronização e Codificação):} Tratar erros de codificação de caracteres (acentuações quebradas). Corrigir textos com espaços desnecessários e padronizar strings para letras maiúsculas ou minúsculas.
+		\item \textbf{Requisito 2 (Normalização de Datas e Tipos):} Unificar todas as colunas de data para o padrão ISO \texttt{YYYY-MM-DD}. Colunas numéricas e de coordenadas devem ser convertidas estritamente para valores numéricos (\texttt{float} / \texttt{int}).
+		\item \textbf{Requisito 3 (Tratamento de Nulos e Outliers):} Decidir estrategicamente o que fazer com campos críticos nulos (descarte ou preenchimento com valor padrão coerente). A decisão deve ser documentada no código.
+		\item \textbf{Requisito 4 (Cruzamento/Merge):} Realizar o \texttt{join/merge} das tabelas através de suas chaves comuns (Ex: \texttt{order\_id}, \texttt{id\_municipio}, etc.).
+	\end{itemize}
+	
+	\section{Estrutura do Projeto e Entregáveis}
+	O projeto deve ser versionado no \textbf{Git} e seguir rigorosamente a estrutura arquitetural gerada abaixo:
+	
+	\vspace{0.3cm}
+	\begin{minipage}{\textwidth}
+		\dirtree{%
+			.1 meu-projeto-etl/.
+			.2 src/.
+			.3 extract/.
+			.4 extractor.py\hfill\begin{minipage}[t]{8cm}\textit{Classe de leitura dos dados}\end{minipage}.
+			.3 transform/.
+			.4 cleaner.py\hfill\begin{minipage}[t]{8cm}\textit{Regras de negócio, limpeza e merge}\end{minipage}.
+			.3 utils/.
+			.4 logger.py\hfill\begin{minipage}[t]{8cm}\textit{Mecanismo de log}\end{minipage}.
+			.3 main.py\hfill\begin{minipage}[t]{8cm}\textit{Orquestrador do Pipeline}\end{minipage}.
+			.2 requirements.txt.
+			.2 README.md.
+		}
+	\end{minipage}
+	\vspace{0.4cm}
+	
+	\subsection*{O que deve conter no \texttt{README.md}:}
+	\begin{enumerate}
+		\item \textbf{Explicação do Domínio:} Qual tema foi escolhido e por que o cruzamento dessas bases é importante para o negócio.
+		\item \textbf{Instruções de Execução:} Passos exatos para rodar o projeto (Ex: \texttt{pip install -r requirements.txt} seguido de \texttt{python src/main.py}).
+		\item \textbf{Dicionário de Dados:} Tabela mostrando quais colunas sobreviveram ao processo de limpeza, seus novos tipos (\texttt{string}, \texttt{int}, \texttt{date}, \texttt{float}) e uma breve descrição.
+	\end{enumerate}
+	
+	\subsection*{Resultado Final Esperado:}
+	Ao rodar o \texttt{main.py}, o pipeline deve processar os dados brutos e gerar um arquivo unificado chamado \texttt{dados\_limpos\_final.csv} (ou \texttt{.json}) dentro do diretório do projeto, contendo a base pronta que será exportada para o banco de dados na \textbf{Parte 2 do Projeto}.
+	
+	\section{Critérios de Avaliação}
+	\begin{center}
+		\begin{tabular}{lc}
+			\toprule
+			\textbf{Critério} & \textbf{Peso} \\
+			\midrule
+			Padrões de Projeto, POO e SRP & 30\% \\
+			Qualidade da Limpeza e Lógica do Merge & 30\% \\
+			Tratamento de Erros e Logs & 20\% \\
+			Documentação e Git & 20\% \\
+			\bottomrule
+		\end{tabular}
+	\end{center}
+	
+\end{document}

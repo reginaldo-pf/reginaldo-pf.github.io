@@ -1,0 +1,64 @@
+\documentclass[10pt]{beamer}
+
+% Tema Limpo e Profissional
+\usetheme{Madrid}
+\usecolortheme{whale}
+
+% Pacotes Essenciais
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric}
+
+% Configuracoes de Codigo (Python)
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue}\bfseries,
+    stringstyle=\color{orange},
+    commentstyle=\color{gray!80!black}\itshape,
+    breaklines=true,
+    showstringspaces=false,
+    backgroundcolor=\color{gray!5},
+    frame=single,
+    rulecolor=\color{gray!30},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt
+}
+
+% Metadados da Apresentacao
+\title[Pygame - Introdução 2D]{Introdução ao Desenvolvimento de Jogos com Pygame}
+\subtitle{Arquitetura do Game Loop, Coordenadas 2D e Interatividade}
+\author[Prof. Reginaldo]{Prof. Reginaldo Fernandes\texorpdfstring{\\ \small{Programação de Computadores / ADS}}{}}
+\institute[IFCE]{Instituto Federal do Ceará -- Campus Tauá \\ Tecnologia em Análise e Desenvolvimento de Sistemas}
+\date{\today}
+
+\begin{document}
+
+% Slide de Titulo
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% Sumario
+\begin{frame}{Sumário da Aula (Duração: 90 min)}
+    \tableofcontents
+\end{frame}
+
+% Blocos Modulares de Slides
+\input{secao1_introducao}
+\input{secao2_game_loop}
+\input{secao3_coordenadas_e_cores}
+\input{secao4_movimento_e_tempo}
+\input{secao5_colisoes_e_jogo}
+\input{secao6_exercicios_conclusao}
+
+\end{document}

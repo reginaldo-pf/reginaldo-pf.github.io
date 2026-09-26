@@ -1,0 +1,70 @@
+\section{Funções Sem Parâmetros e Sem Retorno}
+
+\begin{frame}[fragile]{1. Sem Parâmetros e Sem Retorno}
+    Essas funções executam tarefas fixas. Elas não precisam de nenhuma informação externa para rodar (sem parâmetros) e não devolvem valores para o programa principal (sem retorno).
+    
+    \vspace{0.3cm}
+    \textbf{Analogia de Redes:}
+    \begin{itemize}
+        \item É como o comando \texttt{clear} no terminal do Linux ou \texttt{show clock} no switch Cisco.
+        \item Você digita o comando, ele executa uma ação na tela, mas não te dá nenhum dado para guardar em uma variável.
+    \end{itemize}
+    
+    \vspace{0.3cm}
+    \textbf{Sintaxe:}
+    \begin{lstlisting}[language=Python]
+def minha_funcao():
+    # Executa acao direta
+    print("Acao executada!")
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Exemplo 1: Banner da Rede do IFCE}
+    Vamos criar uma função para exibir o cabeçalho de boas-vindas do terminal da rede do campus.
+    
+    \begin{lstlisting}[language=Python]
+def exibir_banner():
+    # Exibe cabecalho estatico no console da rede
+    print("+" + "-"*40 + "+")
+    print("|   SISTEMA DE GERENCIAMENTO DE REDES    |")
+    print("|         IFCE CAMPUS TAUA               |")
+    print("+" + "-"*40 + "+")
+
+# Como utilizar a funcao no script principal:
+exibir_banner()
+    \end{lstlisting}
+    
+    \vspace{0.2cm}
+    \textbf{Resultado no Terminal:}
+    \begin{block}{Saída}
+        \texttt{+----------------------------------------+}\\
+        \texttt{|   SISTEMA DE GERENCIAMENTO DE REDES    |}\\
+        \texttt{|         IFCE CAMPUS TAUA               |}\\
+        \texttt{+----------------------------------------+}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Exemplo 2: Alerta de Reinicialização}
+    Função para exibir um aviso sonoro (usando caracteres de alerta) e aviso de texto que o roteador principal será reiniciado.
+    
+    \begin{lstlisting}[language=Python]
+def avisar_reboot():
+    # Emite aviso sobre desligamento do roteador
+    print("[ATENCAO] O Roteador Central sera reiniciado em 5 minutos!")
+    print("Por favor, salvem as configuracoes pendentes.")
+    print("Todas as conexoes ativas serao interrompidas.")
+
+# Simulando o agendamento de manutencao:
+print("Iniciando rotina de manutencao...")
+avisar_reboot()
+    \end{lstlisting}
+    
+    \vspace{0.2cm}
+    \textbf{Saída:}
+    \begin{block}{Saída}
+        \texttt{Iniciando rotina de manutencao...}\\
+        \texttt{[ATENCAO] O Roteador Central sera reiniciado em 5 minutos!}\\
+        \texttt{Por favor, salvem as configuracoes pendentes.}\\
+        \texttt{Todas as conexoes ativas serao interrompidas.}
+    \end{block}
+\end{frame}

@@ -1,0 +1,111 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[portuguese]{babel}
+\usepackage{geometry}
+\geometry{a4paper, margin=2.5cm}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+}
+
+\begin{document}
+
+\begin{center}
+    \vspace{0.5cm}
+    \textbf{INSTITUTO FEDERAL DO CEARÁ -- CAMPUS TAUÁ} \\
+    \textbf{Tecnologia em Análise e Desenvolvimento de Sistemas} \\
+    \textbf{Disciplina: Ciência de Dados / Análise de Dados} \\
+    \textbf{Professor: Reginaldo Fernandes} \\
+    \vspace{0.5cm}
+    \large{\textbf{Atividade de Fixação 1 -- Inferência Estatística e TLC (N2)}}
+    \vspace{0.3cm}
+\end{center}
+
+\hrule
+\vspace{0.4cm}
+
+\section*{Apresentação da Atividade}
+Esta atividade de fixação abrange as propriedades da média, variabilidade, Teorema do Limite Central (TLC) e introdução aos Intervalos de Confiança. As questões visam consolidar a base estatística clássica indispensável para o entendimento de testes empíricos de hipóteses.
+
+\vspace{0.3cm}
+\hrule
+\vspace{0.5cm}
+
+\section*{Questões Teóricas e Computacionais}
+
+\begin{enumerate}[label=\textbf{Questão \arabic*}]
+    \item Demonstre matematicamente que a soma dos desvios de um conjunto de dados $\{x_1, x_2, \dots, x_N\}$ em relação à sua média amostral $\bar{X}$ é igual a zero. Ou seja, prove que:
+    $$\sum_{i=1}^{N} (x_i - \bar{X}) = 0$$
+
+    \item Em termos geométricos e analíticos, explique qual a propriedade que diferencia a média da mediana em relação à minimização de erros de previsão. \\
+    \textit{Dica: Compare a minimização da soma dos desvios absolutos ($\sum |x_i - c|$) com a soma dos desvios quadrados ($\sum (x_i - c)^2$).}
+
+    \item Explique a regra empírica da Curva Normal (Regra 68-95-99.7). Se a distribuição dos salários de uma empresa cearense é aproximadamente normal, com média de R\$ 3.500,00 e desvio padrão de R\$ 400,00, qual é a proporção esperada de funcionários que recebem:
+    \begin{enumerate}[label=\alph*)]
+        \item Entre R\$ 3.100,00 e R\$ 3.900,00?
+        \item Entre R\$ 2.700,00 e R\$ 4.300,00?
+        \item Mais do que R\$ 4.700,00?
+    \end{enumerate}
+
+    \item O Teorema do Limite Central (TLC) é considerado o pilar da inferência estatística clássica. 
+    \begin{enumerate}[label=\alph*)]
+        \item Enuncie o Teorema do Limite Central em termos simples, explicando o que acontece com a distribuição das médias amostrais à medida que o tamanho da amostra ($N$) cresce.
+        \item Explique a diferença conceitual entre o desvio padrão da população ($\sigma$) e o Erro Padrão da Média ($SE$). Qual a relação matemática entre eles?
+    \end{enumerate}
+
+    \item Deseja-se estimar a média de consumo diário de água por habitante em uma cidade do Sertão dos Inhamuns. Sabendo que o desvio padrão histórico é de 30 litros por dia, calcule o tamanho de amostra ($N$) necessário para que o erro da estimativa (margem de erro) não ultrapasse 3 litros, com um nível de confiança de 95\% ($z \approx 1.96$).
+
+    \item Explique o significado exato da frase: \textit{``Construímos um Intervalo de Confiança de 95\% para a média populacional $\mu$ que resultou em $[150, 180]$''}. \\
+    É correto dizer que existe 95\% de probabilidade de o parâmetro populacional $\mu$ estar contido neste intervalo específico? Justifique sua resposta com base na definição teórica frequentista de probabilidade.
+\end{enumerate}
+
+\pagebreak
+
+\section*{Gabarito Comentado e Dicas de Resolução}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=yellow!50!black,title=\textbf{Dica de Estudo}]
+Use as resoluções comentadas abaixo para verificar suas respostas e orientar sua preparação para a avaliação teórica presencial.
+\end{tcolorbox}
+
+\begin{description}
+    \item[Resolução 1:] A soma dos desvios em relação à média é expressa por:
+    $$\sum_{i=1}^{N} (x_i - \bar{X}) = \sum_{i=1}^{N} x_i - \sum_{i=1}^{N} \bar{X}$$
+    Como $\bar{X}$ é uma constante para a amostra, somá-la $N$ vezes equivale a multiplicá-la por $N$:
+    $$\sum_{i=1}^{N} (x_i - \bar{X}) = \sum_{i=1}^{N} x_i - N\bar{X}$$
+    Pela definição de média amostral, temos $\bar{X} = \frac{1}{N} \sum x_i \Rightarrow N\bar{X} = \sum x_i$. Substituindo:
+    $$\sum_{i=1}^{N} (x_i - \bar{X}) = \sum_{i=1}^{N} x_i - \sum_{i=1}^{N} x_i = 0 \quad \blacksquare$$
+
+    \item[Resolução 2:] A \textbf{média} amostral minimiza a soma dos erros quadráticos ($\sum (x_i - c)^2$), sendo o ponto de equilíbrio geométrico das distâncias elevadas ao quadrado (mínimos quadrados), o que a torna sensível a valores extremos (\textit{outliers}). A \textbf{mediana} minimiza a soma dos desvios absolutos ($\sum |x_i - c|$), caracterizando-se como o valor central da distribuição ordenada de dados (mais robusto a \textit{outliers}).
+
+    \item[Resolução 3:] Dados: $\mu = 3500$, $\sigma = 400$.
+    \begin{enumerate}[label=\alph*)]
+        \item Intervalo $[3100, 3900]$ corresponde a $\mu \pm 1\sigma$. Pela regra empírica, contém aproximadamente \textbf{68\%} dos dados.
+        \item Intervalo $[2700, 4300]$ corresponde a $\mu \pm 2\sigma$, contendo aproximadamente \textbf{95\%} dos dados.
+        \item R\$ 4.700,00 equivale a $\mu + 3\sigma$. A área total externa ao intervalo de $3\sigma$ ($\pm 3\sigma$) é $100\% - 99.7\% = 0.3\%$. Como a distribuição normal é perfeitamente simétrica, a cauda direita (acima de $3\sigma$) possui metade dessa área: $0.3\% / 2 = \mathbf{0.15\%}$.
+    \end{enumerate}
+
+    \item[Resolução 4:] 
+    \begin{enumerate}[label=\alph*)]
+        \item O TLC enuncia que para qualquer população de média $\mu$ e desvio padrão $\sigma$, a distribuição da média amostral $\bar{X}$ se aproxima de uma distribuição normal com média $\mu$ e desvio padrão $SE = \sigma/\sqrt{N}$, conforme o tamanho da amostra $N$ tende ao infinito (na prática, $N \geq 30$).
+        \item O desvio padrão ($\sigma$) mede a dispersão de observações individuais. O Erro Padrão ($SE$) mede a variabilidade amostral da estimativa da média. Sua relação matemática é dada por $SE = \sigma / \sqrt{N}$.
+    \end{enumerate}
+
+    \item[Resolução 5:] A margem de erro desejada é $E \le 3$, com desvio padrão $\sigma = 30$ e $z = 1.96$. A fórmula da margem de erro é:
+    $$E = z \cdot \frac{\sigma}{\sqrt{N}} \Rightarrow 3 = 1.96 \cdot \frac{30}{\sqrt{N}} \Rightarrow \sqrt{N} = 19.6 \Rightarrow N = 19.6^2 = 384.16$$
+    Arredondando para cima, necessitamos de uma amostra de no mínimo \textbf{385 habitantes}.
+
+    \item[Resolução 6:] Significa que o método de construção de intervalos de confiança acerta em 95\% das reamostragens possíveis. \textbf{Não é correto} atribuir probabilidade de 95\% ao intervalo $[150, 180]$ já calculado, pois a média real $\mu$ é uma constante fixa (embora desconhecida). Logo, o intervalo específico $[150, 180]$ contém ou não contém a média $\mu$ (probabilidade 1 ou 0). A confiança é uma propriedade estatística do \textit{processo amostral}, não de um resultado numérico fixado.
+\end{description}
+
+\end{document}

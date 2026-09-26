@@ -1,0 +1,59 @@
+\section{Introdução e Filosofia do Pygame}
+
+\begin{frame}{O que é o Pygame?}
+    \begin{itemize}
+        \item O \textbf{Pygame} é um conjunto de módulos em Python projetados para a criação de jogos bidimensionais (2D) e aplicações multimídia.
+        \item Ele é construído sobre a biblioteca em C \textbf{SDL} (\textit{Simple DirectMedia Layer}), combinando a agilidade do Python com a performance do hardware gráfico.
+    \end{itemize}
+
+    \vspace{0.3cm}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \textbf{O que o Pygame gerencia?}
+            \begin{itemize}
+                \item Criação de janelas gráficas.
+                \item Renderização de formas e imagens.
+                \item Captura de teclado, mouse e controles.
+                \item Reprodução de sons e efeitos de áudio.
+                \item Controle fino do relógio (FPS).
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{block}{Instalação Simples}
+                No terminal do laboratório:
+                \begin{center}
+                    \texttt{pip install pygame-ce}
+                \end{center}
+                \small{\textit{pygame-ce} (Community Edition) é a versão moderna mantida pela comunidade.}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Programas Tradicionais vs.\ Jogos em Tempo Real}
+    \begin{columns}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Aplicações Tradicionais (Web/CLI)}
+                \begin{itemize}
+                    \item Modelo \textbf{orientado a eventos passivo}.
+                    \item O programa fica \textbf{em repouso} aguardando o usuário digitar ou clicar.
+                    \item Se ninguém interagir, nada acontece na tela.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Jogos em Tempo Real}
+                \begin{itemize}
+                    \item Modelo de \textbf{Laço Contínuo} (\textit{Game Loop}).
+                    \item O mundo virtual continua acontecendo \textbf{60 vezes por segundo}.
+                    \item Inimigos andam, física se aplica e a tela redesenha, mesmo sem comandos.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+
+    \vspace{0.4cm}
+    \begin{center}
+        \textbf{Conclusão Didática:} Um jogo é essencialmente uma animação interativa calculada em tempo real dentro de um laço de repetição infinito!
+    \end{center}
+\end{frame}

@@ -1,0 +1,163 @@
+\documentclass[aspectratio=169,10pt,xcolor={dvipsnames,table}]{beamer}
+
+% Tema Moderno Metropolis
+\usetheme{metropolis}
+
+% Pacotes Fundamentais
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazilian]{babel}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fontawesome5}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,raster}
+\usepackage{bookmark}
+
+% Cores Institucionais e Tecnologicas (IFCE + Tech Modern)
+\definecolor{IFCEGreen}{RGB}{47, 158, 65}       % Verde IFCE oficial
+\definecolor{IFCEDarkGreen}{RGB}{24, 107, 43}    % Verde escuro institucional
+\definecolor{IFCERed}{RGB}{200, 16, 46}          % Vermelho IFCE oficial
+\definecolor{TechDark}{RGB}{30, 41, 59}          % Azul ardosia escuro para texto
+\definecolor{TechLight}{RGB}{248, 250, 252}      % Cinza suave para fundos
+\definecolor{TechBorder}{RGB}{226, 232, 240}     % Borda sutil
+\definecolor{AccentBlue}{RGB}{2, 132, 199}       % Azul vibrante (web/nuvem)
+\definecolor{AccentPurple}{RGB}{124, 58, 237}    % Roxo IA/Inovacao
+\definecolor{AccentOrange}{RGB}{234, 88, 12}     % Laranja Empreendedorismo
+
+% Configuracao de Cores no Metropolis Beamer
+\setbeamercolor{palette primary}{fg=white, bg=IFCEDarkGreen}
+\setbeamercolor{palette secondary}{fg=white, bg=IFCEGreen}
+\setbeamercolor{palette tertiary}{fg=white, bg=TechDark}
+\setbeamercolor{structure}{fg=IFCEDarkGreen}
+\setbeamercolor{titlelike}{fg=IFCEDarkGreen}
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{normal text}{fg=TechDark}
+\setbeamercolor{progress bar}{fg=IFCERed, bg=IFCEGreen!30}
+\setbeamercolor{alerted text}{fg=IFCERed}
+
+% Configuracao do cabecalho e rodape do Metropolis
+\metroset{
+  progressbar=frametitle,
+  block=fill,
+  numbering=fraction
+}
+
+% Boxes e Cards Estilizados com TColorBox
+\newtcolorbox{moderncard}[2][]{
+  enhanced,
+  colback=white,
+  colframe=TechDark!75!black,
+  colbacktitle=TechDark!80!black,
+  coltitle=white,
+  fonttitle=\bfseries\footnotesize,
+  arc=2mm,
+  boxrule=0.8pt,
+  left=2mm, right=2mm, top=1.5mm, bottom=1.5mm,
+  title={#2},
+  #1
+}
+
+\newtcolorbox{greencard}[2][]{
+  enhanced,
+  colback=white,
+  colframe=IFCEDarkGreen,
+  colbacktitle=IFCEDarkGreen,
+  coltitle=white,
+  fonttitle=\bfseries\footnotesize,
+  arc=2mm,
+  boxrule=0.8pt,
+  left=2mm, right=2mm, top=1.5mm, bottom=1.5mm,
+  title={#2},
+  #1
+}
+
+\newtcolorbox{bluecard}[2][]{
+  enhanced,
+  colback=white,
+  colframe=AccentBlue!90!black,
+  colbacktitle=AccentBlue!90!black,
+  coltitle=white,
+  fonttitle=\bfseries\footnotesize,
+  arc=2mm,
+  boxrule=0.8pt,
+  left=2mm, right=2mm, top=1.5mm, bottom=1.5mm,
+  title={#2},
+  #1
+}
+
+\newtcolorbox{purplecard}[2][]{
+  enhanced,
+  colback=white,
+  colframe=AccentPurple!85!black,
+  colbacktitle=AccentPurple!85!black,
+  coltitle=white,
+  fonttitle=\bfseries\footnotesize,
+  arc=2mm,
+  boxrule=0.8pt,
+  left=2mm, right=2mm, top=1.5mm, bottom=1.5mm,
+  title={#2},
+  #1
+}
+
+\newtcolorbox{redcard}[2][]{
+  enhanced,
+  colback=white,
+  colframe=IFCERed,
+  colbacktitle=IFCERed,
+  coltitle=white,
+  fonttitle=\bfseries\footnotesize,
+  arc=2mm,
+  boxrule=0.8pt,
+  left=2mm, right=2mm, top=1.5mm, bottom=1.5mm,
+  title={#2},
+  #1
+}
+
+\newtcolorbox{statcard}[2][]{
+  enhanced,
+  colback=TechLight,
+  colframe=TechBorder,
+  arc=2mm,
+  boxrule=0.6pt,
+  left=2mm, right=2mm, top=1.5mm, bottom=1.5mm,
+  halign=center,
+  #1
+}
+
+% Metadados da Apresentacao
+\title[ADS - IFCE Campus Tauá]{\textbf{Tecnologia em Análise e Desenvolvimento de Sistemas}}
+\subtitle{Construa sua Carreira Tech Global a Partir do Sertão dos Inhamuns}
+\author[IFCE Tauá]{Instituto Federal de Educação, Ciência e Tecnologia do Ceará\texorpdfstring{\\ \textbf{Campus Tauá}}{ - Campus Tauá}}
+\institute[IFCE]{Curso Superior de Graduação Tecnológica}
+\date{\today}
+
+\begin{document}
+
+% Secao 1: Capa e Visao Geral do Curso
+\input{secao1_capa_visao}
+
+% Secao 2: O Profissional de ADS e as Fronteiras do Mercado
+\input{secao2_mercado}
+
+% Secao 3: A Grade Curricular e os Eixos da SBC
+\input{secao3_grade_sbc}
+
+% Secao 4: Impulso na Carreira Dev, Inteligência Artificial (LLMs) e Pesquisa
+\input{secao4_carreira_ia_pesquisa}
+
+% Secao 5: Diferenciais Práticos e Curricularização da Extensão
+\input{secao5_extensao_pratica}
+
+% Secao 6: Oportunidades Além da Sala de Aula (Intercâmbio, Bolsas e Monitoria)
+\input{secao6_oportunidades_pesquisa}
+
+% Secao 7: Infraestrutura de Ponta (Laboratórios e Biblioteca)
+\input{secao7_infraestrutura}
+
+% Secao 8: Como Entrar, Assistência Estudantil e Encerramento
+\input{secao8_ingresso_apoio}
+
+\end{document}

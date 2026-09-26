@@ -1,0 +1,191 @@
+\section{Parte 4: Funções e Modularização}
+
+% Slide de Abertura da Secao 4
+\begin{frame}
+    \begin{center}
+        \LARGE \textbf{Parte 4: Modularização com Funções}\\
+        \vspace{0.3cm}
+        \normalsize \textit{Parâmetros, Retornos e Escopo de Variáveis}\\
+        \vspace{0.4cm}
+        \small Questões 16 a 25 (10 Desafios Didáticos)
+    \end{center}
+    \vspace{0.3cm}
+    \begin{alertblock}{Conceito Central}
+        Funções dividem problemas complexos em sub-rotinas reutilizáveis. Variam em dois eixos: se recebem entradas (\textbf{parâmetros}) e se devolvem respostas (\textbf{\texttt{return}}).
+    \end{alertblock}
+\end{frame}
+
+% Questao 16
+\begin{frame}{Questão 16: Função Sem Parâmetro e Sem Retorno}
+    \begin{block}{Quesito: Cabeçalho Padrão Institucional}
+        Crie a função \texttt{exibir\_cabecalho()} que imprima na tela um banner formatado com:
+        \begin{itemize}
+            \item Instituição: \textbf{IFCE Campus Tauá};
+            \item Curso: \textbf{Técnico em Redes de Computadores};
+            \item Molduras decorativas com o caractere \texttt{"="}.
+        \end{itemize}
+        Invoque essa função no início do programa principal.
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Declare com \texttt{def exibir\_cabecalho():} (parênteses vazios).
+            \item Não utilize a instrução \texttt{return}; utilize comandos \texttt{print()}.
+            \item Chame a função no código principal apenas escrevendo: \texttt{exibir\_cabecalho()}.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% Questao 17
+\begin{frame}{Questão 17: Função Sem Parâmetro e Sem Retorno}
+    \begin{block}{Quesito: Menu de Ajuda ao Operador}
+        Implemente a função \texttt{exibir\_menu\_ajuda()} que mostre opções de teclas de atalho de um terminal (\texttt{[S] Salvar}, \texttt{[C] Carregar}, \texttt{[Q] Sair}). \\
+        O programa principal deve chamar a função quando o usuário digitar \texttt{"ajuda"}.
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Escreva a rotina contendo apenas saídas de tela organizadas.
+            \item No fluxo principal, compare a entrada lida: \texttt{if opcao == "ajuda":}.
+            \item Dentro do \texttt{if}, invoque a função pelo seu nome.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% Questao 18
+\begin{frame}{Questão 18: Função Com Parâmetro e Sem Retorno}
+    \begin{block}{Quesito: Notificador de Serviços de Infraestrutura}
+        Crie a função \texttt{notificar\_servico(nome, porta, status)} onde \texttt{status} é booleano. A função deve exibir:
+        \begin{itemize}
+            \item Se \texttt{True}: \texttt{"[OK] Serviço: <nome> | Porta: <porta> -> ATIVO"}.
+            \item Se \texttt{False}: \texttt{"[FALHA] Serviço: <nome> | Porta: <porta> -> PARADO"}.
+        \end{itemize}
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Receba 3 argumentos: \texttt{def notificar\_servico(nome, porta, status):}.
+            \item Avalie o parâmetro booleano com \texttt{if status: ... else: ...}.
+            \item Exiba a mensagem formatada com f-string sem usar \texttt{return}.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% Questao 19
+\begin{frame}{Questão 19: Função Com Parâmetro e Sem Retorno}
+    \begin{block}{Quesito: Divisor Visual Parametrizado}
+        Crie a função \texttt{desenhar\_separador(simbolo, comprimento)} que receba um caractere textual e a quantidade de repetições horizontais. A função deve imprimir a linha gerada no console.
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Em Python, multiplicar string por número repete o texto: \texttt{simbolo * comprimento}.
+            \item Imprima a string resultante diretamente na tela.
+            \item Teste com diferentes argumentos, como: \texttt{desenhar\_separador("-", 30)}.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% Questao 20
+\begin{frame}{Questão 20: Função Sem Parâmetro e Com Retorno}
+    \begin{block}{Quesito: Leitor com Validação de Entrada Estrita}
+        Implemente a função \texttt{ler\_inteiro\_positivo()} sem parâmetros.
+        \begin{itemize}
+            \item Solicite continuamente um número inteiro até que seja maior que zero;
+            \item Assim que receber um valor estritamente positivo, devolva-o com \texttt{return}.
+        \end{itemize}
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Use um laço \texttt{while True:} dentro da função.
+            \item Leia o número com \texttt{int(input())}.
+            \item Se \texttt{valor > 0}, execute \texttt{return valor}.
+            \item O \texttt{return} encerra o laço e a função no mesmo instante.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% Questao 21
+\begin{frame}{Questão 21: Função Sem Parâmetro e Com Retorno}
+    \begin{block}{Quesito: Gerador de Código de Autenticação (OTP)}
+        Escreva a função \texttt{gerar\_token\_acesso()} sem parâmetros que sorteie e retorne um código de $6$ dígitos inteiros (entre $100000$ e $999999$), simulando um token de segurança de dois fatores.
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Utilize o módulo \texttt{random} do Python.
+            \item Use a função \texttt{random.randint(100000, 999999)}.
+            \item Retorne o valor sorteado com a instrução \texttt{return}.
+            \item No programa principal, guarde o retorno em uma variável.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% Questao 22
+\begin{frame}{Questão 22: Função Com Parâmetro e Com Retorno}
+    \begin{block}{Quesito: Conversor Multi-Escalas de Temperatura}
+        Crie a função \texttt{converter\_celsius(temp\_c, escala)} onde escala é \texttt{"F"} ou \texttt{"K"}:
+        \begin{itemize}
+            \item Fórmulas: $F = C \times 1.8 + 32$ e $K = C + 273.15$.
+            \item Calcule e retorne o resultado numérico; se a escala for inválida, retorne \texttt{None}.
+        \end{itemize}
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Use \texttt{escala.upper()} para aceitar maiúsculas e minúsculas.
+            \item Estruture um \texttt{if-elif-else} para checar \texttt{"F"} e \texttt{"K"}.
+            \item Calcule a conversão e faça \texttt{return} do valor obtido.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% Questao 23
+\begin{frame}{Questão 23: Função Com Parâmetro e Com Retorno}
+    \begin{block}{Quesito: Predicado Booleano de Número Primo}
+        Crie a função \texttt{eh\_primo(numero)} que receba um inteiro positivo e retorne \texttt{True} se for primo, ou \texttt{False} caso não seja.
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Se o número for $\le 1$, retorne imediatamente \texttt{False}.
+            \item Faça um laço \texttt{for d in range(2, int(numero**0.5) + 1):}.
+            \item Se encontrar divisor com resto zero (\texttt{numero \% d == 0}), retorne \texttt{False}.
+            \item Se o laço terminar sem divisores, retorne \texttt{True}.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% Questao 24
+\begin{frame}{Questão 24: Função Com Parâmetro e Retorno Múltiplo}
+    \begin{block}{Quesito: Localizador de Extremos e Posição em Vetor}
+        Crie a função \texttt{analisar\_pico(leituras)} que receba uma lista de números reais. \\
+        A função deve retornar dois valores simultaneamente: o maior valor encontrado e o índice da primeira ocorrência desse maior valor.
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Inicialize \texttt{maior = leituras[0]} e \texttt{posicao = 0}.
+            \item Percorra a lista com índices usando \texttt{for i in range(1, len(leituras)):}.
+            \item Se \texttt{leituras[i] > maior}, atualize ambas as variáveis.
+            \item Devolva as duas variáveis com \texttt{return maior, posicao}.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% Questao 25
+\begin{frame}{Questão 25: Função Com Parâmetro e Com Retorno de Vetor}
+    \begin{block}{Quesito: Filtro e Higienização de Conjunto de Dados}
+        Crie a função \texttt{filtrar\_acima\_limiar(valores, limiar)} que receba uma lista e um número de corte. Retorne uma \textbf{nova lista} apenas com os elementos estritamente maiores que o limiar.
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Inicialize uma lista vazia: \texttt{resultado = []}.
+            \item Itere sobre os itens com \texttt{for item in valores:}.
+            \item Se \texttt{item > limiar:}, adicione à nova lista com \texttt{resultado.append(item)}.
+            \item Finalize retornando a nova lista: \texttt{return resultado}.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}

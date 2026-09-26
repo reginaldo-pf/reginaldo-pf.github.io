@@ -1,0 +1,57 @@
+\section{Funções Com Parâmetros e Com Retorno}
+
+\begin{frame}[fragile]{4. Com Parâmetros e Com Retorno}
+    Este é o tipo mais completo e comum de função. Ela \textbf{recebe} dados de entrada para trabalhar, executa o processamento matemático ou lógico e \textbf{retorna} o resultado final para o programa.
+    
+    \vspace{0.3cm}
+    \textbf{Analogia de Redes:}
+    \begin{itemize}
+        \item Pense em uma \textbf{Calculadora de Sub-Rede}: Você insere o endereço IP e a máscara CIDR (\textit{Classless Inter-Domain Routing}) (parâmetros), a função realiza os cálculos binários (processamento) e te entrega a quantidade de hosts válidos na rede (retorno).
+        \item É como um roteador decidindo rotas: entra o IP de destino $\rightarrow$ processa na tabela $\rightarrow$ retorna a interface de saída.
+    \end{itemize}
+    
+    \vspace{0.3cm}
+    \textbf{Sintaxe:}
+    \begin{lstlisting}[language=Python]
+def calcular_soma(a, b):
+    resultado = a + b
+    return resultado
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Exemplo 1: Conversor de Mbps para Kbps}
+    Para configurar a largura de banda (\textit{bandwidth}) de interfaces em roteadores Cisco, muitas vezes precisamos informar o valor em Kilobits por segundo (Kbps). Vamos criar uma função que converte Megabits por segundo (Mbps) para Kbps.
+    
+    \begin{lstlisting}[language=Python]
+def converter_mbps_para_kbps(mbps):
+    # Converte largura de banda para configuracao de interfaces
+    kbps = mbps * 1024
+    return kbps
+
+# Configurando um link de internet de 50 Mbps:
+banda_config = converter_mbps_para_kbps(50)
+
+print(f"Comando Cisco: bandwidth {banda_config}")
+# Saida: Comando Cisco: bandwidth 51200
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Exemplo 2: Classificador de IPs (Público vs Privado)}
+    Função que recebe um IP como string e verifica se ele pertence às faixas privadas comuns de redes locais (\texttt{192.168.x.x} ou \texttt{10.x.x.x}), retornando \texttt{True} se for privado e \texttt{False} se for público.
+    
+    \begin{lstlisting}[language=Python]
+def verificar_ip_privado(ip):
+    # Verifica se o IP fornecido eh da rede privada local
+    if ip.startswith("192.168.") or ip.startswith("10."):
+        return True
+    else:
+        return False
+
+# Testando pacotes vindos da Internet e da Intranet:
+ip_origem1 = "192.168.1.50"
+ip_origem2 = "8.8.8.8"
+
+print(f"O IP {ip_origem1} eh privado? {verificar_ip_privado(ip_origem1)}")
+print(f"O IP {ip_origem2} eh privado? {verificar_ip_privado(ip_origem2)}")
+    \end{lstlisting}
+\end{frame}

@@ -1,0 +1,254 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[portuguese]{babel}
+\usepackage{geometry}
+\geometry{a4paper, margin=2.5cm}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+
+% Configuracao de hiperlinks
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+}
+
+\begin{document}
+
+% Cabecalho Padrao do IFCE Campus Taua
+\begin{center}
+    \vspace{0.5cm}
+    \textbf{INSTITUTO FEDERAL DO CEARÁ -- CAMPUS TAUÁ} \\
+    \textbf{Tecnologia em Análise e Desenvolvimento de Sistemas} \\
+    \textbf{Disciplina: Ciência de Dados / Análise de Dados} \\
+    \textbf{Professor: Reginaldo Fernandes} \\
+    \vspace{0.5cm}
+    \large{\textbf{Lista de Exercícios 1 -- Período N2 (Aulas 08 a 12)}}
+    \vspace{0.3cm}
+\end{center}
+
+\hrule
+\noindent\textbf{Nome do Aluno:} \hrulefill \\
+\noindent\textbf{Matrícula:} \hrulefill \hfill \textbf{Data:} \hrulefill
+
+\vspace{0.5cm}
+
+\section*{Apresentação da Atividade}
+Esta lista de exercícios abrange toda a teoria estatística e computacional ministrada nas \textbf{Aulas 08 a 12}. O objetivo é consolidar o aprendizado sobre propriedades da média, variabilidade, Teorema do Limite Central (TLC), Intervalos de Confiança (IC), testes A/B, Testes de Permutação e Causalidade. Além de computar a nota de atividade do período N2, as questões abaixo servem como guia oficial de estudo para a prova teórica.
+
+\vspace{0.3cm}
+\hrule
+\vspace{0.5cm}
+
+\section*{Questões Teóricas e Computacionais}
+
+\subsection*{Bloco 1: Propriedades da Média, Variabilidade e TLC (Aula 08)}
+
+\begin{enumerate}[label=\textbf{Questão \arabic*}]
+    \item Demonstre matematicamente que a soma dos desvios de um conjunto de dados $\{x_1, x_2, \dots, x_N\}$ em relação à sua média amostral $\bar{X}$ é igual a zero. Ou seja, prove que:
+    $$\sum_{i=1}^{N} (x_i - \bar{X}) = 0$$
+
+    \item Em termos geométricos e analíticos, explique qual a propriedade que diferencia a média da mediana em relação à minimização de erros de previsão. \\
+    \textit{Dica: Compare a minimização da soma dos desvios absolutos ($\sum |x_i - c|$) com a soma dos desvios quadrados ($\sum (x_i - c)^2$).}
+
+    \item Explique a regra empírica da Curva Normal (Regra 68-95-99.7). Se a distribuição dos salários de uma empresa cearense é aproximadamente normal, com média de R\$ 3.500,00 e desvio padrão de R\$ 400,00, qual é a proporção esperada de funcionários que recebem:
+    \begin{enumerate}[label=\alph*)]
+        \item Entre R\$ 3.100,00 e R\$ 3.900,00?
+        \item Entre R\$ 2.700,00 e R\$ 4.300,00?
+        \item Mais do que R\$ 4.700,00?
+    \end{enumerate}
+
+    \item O Teorema do Limite Central (TLC) é considerado o pilar da inferência estatística clássica. 
+    \begin{enumerate}[label=\alph*)]
+        \item Enuncie o Teorema do Limite Central em termos simples, explicando o que acontece com a distribuição das médias amostrais à medida que o tamanho da amostra ($N$) cresce.
+        \item Explique a diferença conceitual entre o desvio padrão da população ($\sigma$) e o Erro Padrão da Média ($SE$). Qual a relação matemática entre eles?
+    \end{enumerate}
+
+    \item Deseja-se estimar a média de consumo diário de água por habitante em uma cidade do Sertão dos Inhamuns. Sabendo que o desvio padrão histórico é de 30 litros por dia, calcule o tamanho de amostra ($N$) necessário para que o erro da estimativa (margem de erro) não ultrapasse 3 litros, com um nível de confiança de 95\% ($z \approx 1.96$).
+\end{enumerate}
+
+\subsection*{Bloco 2: Intervalos de Confiança: Paramétricos e Bootstrap (Aula 09)}
+
+\begin{enumerate}[label=\textbf{Questão \arabic*}, resume]
+    \item Explique o significado exato da frase: \textit{``Construímos um Intervalo de Confiança de 95\% para a média populacional $\mu$ que resultou em $[150, 180]$''}. \\
+    É correto dizer que existe 95\% de probabilidade de o parâmetro populacional $\mu$ estar contido neste intervalo específico? Justifique sua resposta com base na definição teórica frequentista de probabilidade.
+
+    \item A técnica de Bootstrap é amplamente utilizada quando não conhecemos a distribuição populacional dos dados ou quando trabalhamos com amostras de tamanhos pequenos.
+    \begin{enumerate}[label=\alph*)]
+        \item Explique a mecânica de amostragem do Bootstrap (reamostragem). Por que é obrigatório que a amostragem seja feita \textbf{com reposição}?
+        \item Qual a diferença fundamental entre a população original, a amostra coletada e as amostras de bootstrap?
+    \end{enumerate}
+
+    \item Uma amostra de tamanho $N = 100$ de tempos de entrega de uma transportadora no Ceará apresentou média $\bar{X} = 45$ minutos e desvio padrão amostral $s = 15$ minutos.
+    \begin{enumerate}[label=\alph*)]
+        \item Construa o Intervalo de Confiança de 95\% para o tempo médio populacional de entrega utilizando o Teorema do Limite Central (TLC).
+        \item Se construíssemos um Intervalo de Confiança de 99\% utilizando a mesma amostra, o intervalo seria mais largo ou mais estreito do que o de 95\%? Explique a relação entre nível de confiança e precisão do intervalo.
+    \end{enumerate}
+\end{enumerate}
+
+\pagebreak
+
+\subsection*{Bloco 3: Testes de Hipóteses e Testes A/B (Aula 10)}
+
+\begin{enumerate}[label=\textbf{Questão \arabic*}, resume]
+    \item No contexto de testes de hipóteses, diferencie claramente:
+    \begin{enumerate}[label=\alph*)]
+        \item Hipótese Nula ($H_0$) vs. Hipótese Alternativa ($H_1$).
+        \item Erro Tipo I ($\alpha$) vs. Erro Tipo II ($\beta$). Dê um exemplo prático na área médica ou forense sobre as consequências de cometer cada um desses erros.
+    \end{enumerate}
+
+    \item Um e-commerce cearense de artesanato testou um novo layout de página de vendas para avaliar o impacto na taxa de conversão (Teste A/B). O grupo de controle (layout antigo) teve taxa de conversão observada de $2.0\%$, enquanto o grupo de tratamento (novo layout) teve taxa de conversão observada de $2.5\%$.
+    \begin{enumerate}[label=\alph*)]
+        \item Formule as hipóteses nula ($H_0$) e alternativa ($H_1$) para este teste.
+        \item Explique como você usaria o Bootstrap para simular o comportamento da diferença de taxas sob a hipótese nula $H_0$.
+    \end{enumerate}
+\end{enumerate}
+
+\subsection*{Bloco 4: Total Variation Distance (TVD) e Teste de Permutação (Aula 11)}
+
+\begin{enumerate}[label=\textbf{Questão \arabic*}, resume]
+    \item O caso \textit{Robert Swain vs. Alabama (1965)} e o julgamento em \textit{Alameda County} evidenciaram o papel da estatística na avaliação da representatividade racial em júris.
+    \begin{enumerate}[label=\alph*)]
+        \item Defina matematicamente a estatística de teste Total Variation Distance (TVD). Para que tipo de variáveis essa estatística é ideal?
+        \item Suponha que a distribuição racial de um município cearense seja: $70\%$ Parda, $20\%$ Branca e $10\%$ Preta. Um júri sorteado de 100 pessoas apresentou a seguinte composição: $50\%$ Parda, $40\%$ Branca e $10\%$ Preta. Calcule o valor do TVD observado para esta amostra.
+    \end{enumerate}
+
+    \item Diferencie a lógica de amostragem e finalidade entre os seguintes métodos estatísticos:
+    \begin{enumerate}[label=\alph*)]
+        \item \textbf{Bootstrap}: Reamostragem com reposição.
+        \item \textbf{Permutação}: Embaralhado sem reposição.
+    \end{enumerate}
+    Em que cenários cada um é preferencialmente aplicado?
+
+    \item No exemplo dos salários da NBA analisado na Aula 11 (comparação entre Cleveland e Houston), a estatística de teste utilizada foi a diferença absoluta entre as médias salariais dos dois times. Explique por que, sob desvios padrões (variâncias) muito elevados na amostra, mesmo uma diferença grande entre as médias das duas equipes pode resultar em um $p$-valor alto (falhando em rejeitar $H_0$).
+\end{enumerate}
+
+\subsection*{Bloco 5: Causalidade e Método Científico (Aula 12)}
+
+\begin{enumerate}[label=\textbf{Questão \arabic*}, resume]
+    \item Diferencie um \textbf{Estudo Observacional} de um \textbf{Experimento Controlado Aleatório (RCT)}. Por que apenas o segundo permite inferir causalidade direta de um tratamento?
+
+    \item Explique o conceito de \textbf{Fator de Confundimento (Confounding Variable)} e dê um exemplo de como ele pode invalidar as conclusões de um estudo de correlação estatística em saúde pública.
+
+    \item Explique o modelo de \textbf{Resultados Potenciais (Potential Outcomes)} através da metáfora didática do ``bilhete de dois lados''. \\
+    Por que dizemos que o problema fundamental da inferência causal é a impossibilidade de ler as duas faces do bilhete para o mesmo paciente?
+
+    \item A meta-análise é uma ferramenta fundamental no método científico contemporâneo.
+    \begin{enumerate}[label=\alph*)]
+        \item O que é uma Meta-Análise e por que ela oferece maior robustez científica do que estudos clínicos individuais com amostras pequenas?
+        \item Relacione a meta-análise com o conceito de replicação científica.
+    \end{enumerate}
+
+    \item Muitas revistas científicas e sociedades de estatística têm criticado o uso excessivo e mecânico de $p$-valores na tomada de decisão (especialmente a barreira arbitrária de $p < 0.05$).
+    \begin{enumerate}[label=\alph*)]
+        \item Explique dois problemas práticos decorrentes do uso inadequado de $p$-valores (ex: \textit{p-hacking}, viés de publicação).
+        \item Quais informações adicionais um analista de dados deve sempre reportar ao divulgar o resultado de um teste de hipóteses para garantir o rigor estatístico?
+    \end{enumerate}
+\end{enumerate}
+
+\pagebreak
+
+% Gabarito
+\section*{Gabarito Comentado e Dicas de Resolução}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=yellow!50!black,title=\textbf{Dica de Estudo}]
+Use as resoluções comentadas abaixo para verificar suas respostas e orientar sua preparação para a avaliação teórica presencial.
+\end{tcolorbox}
+
+\subsection*{Resoluções Comentadas}
+
+\begin{description}
+    \item[Resolução 1:] A soma dos desvios em relação à média é expressa por:
+    $$\sum_{i=1}^{N} (x_i - \bar{X}) = \sum_{i=1}^{N} x_i - \sum_{i=1}^{N} \bar{X}$$
+    Como $\bar{X}$ é uma constante para a amostra, somá-la $N$ vezes equivale a multiplicá-la por $N$:
+    $$\sum_{i=1}^{N} (x_i - \bar{X}) = \sum_{i=1}^{N} x_i - N\bar{X}$$
+    Pela definição de média amostral, temos $\bar{X} = \frac{1}{N} \sum x_i \Rightarrow N\bar{X} = \sum x_i$. Substituindo:
+    $$\sum_{i=1}^{N} (x_i - \bar{X}) = \sum_{i=1}^{N} x_i - \sum_{i=1}^{N} x_i = 0 \quad \blacksquare$$
+
+    \item[Resolução 2:] A \textbf{média} amostral minimiza a soma dos erros quadráticos ($\sum (x_i - c)^2$), sendo o ponto de equilíbrio geométrico das distâncias elevadas ao quadrado (mínimos quadrados), o que a torna sensível a valores extremos (\textit{outliers}). A \textbf{mediana} minimiza a soma dos desvios absolutos ($\sum |x_i - c|$), caracterizando-se como o valor central da distribuição ordenada de dados (mais robusto a \textit{outliers}).
+
+    \item[Resolução 3:] Dados: $\mu = 3500$, $\sigma = 400$.
+    \begin{enumerate}[label=\alph*)]
+        \item Intervalo $[3100, 3900]$ corresponde a $\mu \pm 1\sigma$. Pela regra empírica, contém aproximadamente \textbf{68\%} dos dados.
+        \item Intervalo $[2700, 4300]$ corresponde a $\mu \pm 2\sigma$, contendo aproximadamente \textbf{95\%} dos dados.
+        \item R\$ 4.700,00 equivale a $\mu + 3\sigma$. A área total externa ao intervalo de $3\sigma$ ($\pm 3\sigma$) é $100\% - 99.7\% = 0.3\%$. Como a distribuição normal é perfeitamente simétrica, a cauda direita (acima de $3\sigma$) possui metade dessa área: $0.3\% / 2 = \mathbf{0.15\%}$.
+    \end{enumerate}
+
+    \item[Resolução 4:] 
+    \begin{enumerate}[label=\alph*)]
+        \item O TLC enuncia que para qualquer população de média $\mu$ e desvio padrão $\sigma$, a distribuição da média amostral $\bar{X}$ se aproxima de uma distribuição normal com média $\mu$ e desvio padrão $SE = \sigma/\sqrt{N}$, conforme o tamanho da amostra $N$ tende ao infinito (na prática, $N \geq 30$).
+        \item O desvio padrão ($\sigma$) mede a dispersão de observações individuais. O Erro Padrão ($SE$) mede a variabilidade amostral da estimativa da média. Sua relação matemática é dada por $SE = \sigma / \sqrt{N}$.
+    \end{enumerate}
+
+    \item[Resolução 5:] A margem de erro desejada é $E \le 3$, com desvio padrão $\sigma = 30$ e $z = 1.96$. A fórmula da margem de erro é:
+    $$E = z \cdot \frac{\sigma}{\sqrt{N}} \Rightarrow 3 = 1.96 \cdot \frac{30}{\sqrt{N}} \Rightarrow \sqrt{N} = 19.6 \Rightarrow N = 19.6^2 = 384.16$$
+    Arredondando para cima, necessitamos de uma amostra de no mínimo \textbf{385 habitantes}.
+
+    \item[Resolução 6:] Significa que o método de construção de intervalos de confiança acerta em 95\% das reamostragens possíveis. \textbf{Não é correto} atribuir probabilidade de 95\% ao intervalo $[150, 180]$ já calculado, pois a média real $\mu$ é uma constante fixa (embora desconhecida). Logo, o intervalo específico $[150, 180]$ contém ou não contém a média $\mu$ (probabilidade 1 ou 0). A confiança é uma propriedade estatística do \textit{processo amostral}, não de um resultado numérico fixado.
+
+    \item[Resolução 7:] 
+    \begin{enumerate}[label=\alph*)]
+        \item O Bootstrap reamostra os dados observados para simular a variabilidade da população. A amostragem deve ser \textbf{com reposição} para simular sorteios repetidos da distribuição empírica. Se fizéssemos sem reposição, toda amostra gerada de tamanho $N$ conteria exatamente os mesmos elementos originais, resultando em variabilidade zero.
+        \item A população é o conjunto real invisível e completo. A amostra é o subconjunto de tamanho $N$ coletado em campo. As amostras de bootstrap são geradas via simulação computacional a partir da amostra única coletada.
+    \end{enumerate}
+
+    \item[Resolução 8:] 
+    \begin{enumerate}[label=\alph*)]
+        \item Utilizando a aproximação pelo TLC, com $SE = s/\sqrt{N} = 15/\sqrt{100} = 1.5$:
+        $$IC_{95\%} = \bar{X} \pm 1.96 \cdot SE = 45 \pm 1.96(1.5) = [42.06; 47.94] \text{ minutos}$$
+        \item O intervalo de 99\% será \textbf{mais largo}. Para ter maior certeza (confiança) sobre o parâmetro populacional, a amplitude do intervalo estimado deve necessariamente aumentar.
+    \end{enumerate}
+
+    \item[Resolução 9:] 
+    \begin{enumerate}[label=\alph*)]
+        \item $H_0$ (Hipótese Nula) assume ausência de efeito ou igualdade entre tratamentos. $H_1$ (Hipótese Alternativa) propõe a presença de efeito ou diferença sistemática.
+        \item O Erro Tipo I ($\alpha$) ocorre quando rejeitamos $H_0$ sendo esta verdadeira (Falso Positivo). O Erro Tipo II ($\beta$) ocorre quando falhamos em rejeitar $H_0$ sendo esta falsa (Falso Negativo). Exemplo forense: Erro Tipo I é condenar um inocente (Falso Positivo); Erro Tipo II é inocentar um culpado (Falso Negativo).
+    \end{enumerate}
+
+    \item[Resolução 10:] 
+    \begin{enumerate}[label=\alph*)]
+        \item Hipóteses: $H_0: p_{\text{tratamento}} = p_{\text{controle}}$ (as taxas são iguais); $H_1: p_{\text{tratamento}} \neq p_{\text{controle}}$ (as taxas diferem).
+        \item Bootstrap sob $H_0$: Une-se os dados de ambos os grupos (vetor unificado de 0s e 1s). Reamostra-se aleatoriamente com reposição esse vetor para formar grupos de tratamento e controle simulados de tamanhos originais, computando a diferença de taxas. Repetindo esse sorteio $10.000$ vezes, obtemos a distribuição nula da diferença por puro acaso.
+    \end{enumerate}
+
+    \item[Resolução 11:] 
+    \begin{enumerate}[label=\alph*)]
+        \item O TVD (Total Variation Distance) é a metade da soma das diferenças absolutas entre as proporções observadas e as esperadas de cada categoria: $TVD = \frac{1}{2}\sum |P_i^{\text{obs}} - P_i^{\text{esp}}|$. É ideal para comparar distribuições de variáveis categóricas.
+        \item Cálculo do TVD:
+        \begin{align*}
+        TVD &= \frac{1}{2} \left( |0.50 - 0.70| + |0.40 - 0.20| + |0.10 - 0.10| \right) \\
+        &= \frac{1}{2} (0.20 + 0.20 + 0.00) = \mathbf{0.20}
+        \end{align*}
+    \end{enumerate}
+
+    \item[Resolução 12:] O \textbf{Bootstrap} reamostra com reposição e é utilizado para estimar a variabilidade e construir intervalos de confiança para um estimador de interesse. A \textbf{Permutação} reatribui os rótulos de grupo sem reposição (embaralhando as etiquetas) e serve especificamente para testar a hipótese de igualdade de distribuições entre grupos independentes sob $H_0$.
+
+    \item[Resolução 13:] Sob variância (desvio padrão) muito elevada na amostra, os salários individuais variam radicalmente. Sob essa grande dispersão natural, o teste de permutação (embaralhamento) frequentemente gera grandes diferenças entre as médias das equipes por puro acaso. Assim, a diferença observada no estudo de caso parecerá comum sob o modelo do acaso, gerando um $p$-valor alto e não permitindo a rejeição de $H_0$.
+
+    \item[Resolução 14:] Em estudos observacionais, os indivíduos decidem sua exposição, o que permite a presença de variáveis de confundimento que distorcem o efeito causal. Em Experimentos Controlados Aleatórios (RCTs), a alocação aleatória sorteia a exposição de cada paciente, distribuindo uniformemente as variáveis ocultas entre controle e tratamento, neutralizando o confundimento e isolando o efeito direto do tratamento.
+
+    \item[Resolução 15:] Fator de confundimento é uma variável não observada que está correlacionada tanto com o tratamento quanto com o resultado de interesse. Exemplo clássico: Observa-se que pessoas que consomem mais café apresentam maior incidência de problemas cardíacos. Porém, o tabagismo atua como fator de confundimento (fumantes consomem mais café e o cigarro causa os problemas cardíacos). Se não controlarmos o cigarro, culparemos erroneamente o café.
+
+    \item[Resolução 16:] Pelo modelo de resultados potenciais, cada participante possui dois resultados possíveis: o resultado sob tratamento e sob controle (bilhete de dois lados). O problema fundamental da inferência causal é que, ao alocarmos o paciente em um grupo, só podemos ver um dos lados da resposta (a outra face torna-se contrafactual/desconhecida). Por isso, inferir causalidade a nível individual é impossível, restando-nos comparar as médias agregadas de grupos estatisticamente idênticos.
+
+    \item[Resolução 17:] 
+    \begin{enumerate}[label=\alph*)]
+        \item Meta-análise é uma metodologia estatística para combinar os resultados quantitativos de múltiplos estudos independentes. Ela aumenta o tamanho amostral acumulado ($N$), o que eleva consideravelmente o poder do teste estatístico e reduz a margem de erro.
+        \item A meta-análise valida a replicação: ela verifica se diferentes experimentos em contextos distintos confirmam sistematicamente o mesmo efeito biológico ou clínico.
+    \end{enumerate}
+
+    \item[Resolução 18:] 
+    \begin{enumerate}[label=\alph*)]
+        \item O \textit{p-hacking} consiste na realização de múltiplos testes sucessivos, alteração de critérios de exclusão de dados ou inclusão de variáveis até que um $p$-valor ficticiamente significativo ($p < 0.05$) seja encontrado. O \textit{viés de publicação} ocorre porque periódicos científicos priorizam a publicação de estudos com resultados positivos significativos, gerando distorções na literatura médica (estudos com efeitos nulos são engavetados).
+        \item O analista de dados deve sempre reportar: (1) O P-valor exato, (2) O tamanho amostral ($N$), (3) O tamanho do efeito (effect size) e (4) O método estatístico com todas as suas premissas declaradas.
+    \end{enumerate}
+\end{description}
+
+\end{document}

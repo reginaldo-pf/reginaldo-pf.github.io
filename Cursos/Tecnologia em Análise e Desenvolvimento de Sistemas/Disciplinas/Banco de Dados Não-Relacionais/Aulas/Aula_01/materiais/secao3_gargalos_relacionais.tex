@@ -1,0 +1,66 @@
+\changecolours{ScoutBlue}
+\section{Gargalos do Relacional}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Escala Vertical vs. Escala Horizontal},leftcol=7cm,rightcol=7cm]{%
+  \alert{Escala Vertical (Scale-Up)}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \textbf{A abordagem clássica dos RDBMS:}
+  \begin{itemize}
+    \item Expandir CPU, memória RAM e SSD do servidor principal.
+    \item \textbf{Custo Exponencial:} Máquinas de topo custam valores astronômicos.
+    \item \textbf{Limite Físico:} Teto de barramento e processamento.
+    \item \textbf{Ponto Único de Falha:} Queda do servidor paralisa o sistema.
+  \end{itemize}
+}{%
+  \alert{Escala Horizontal (Scale-Out)}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \textbf{A abordagem nativa do NoSQL:}
+  \begin{itemize}
+    \item Adicionar servidores comuns em cluster (\textit{commodity hardware}).
+    \item \textbf{Custo Linear:} Expansão elástica sob demanda na nuvem.
+    \item \textbf{Alta Resiliência:} Queda de nós não derruba o cluster.
+    \item \textbf{Escala Elástica:} Novos nós dividem a carga.
+  \end{itemize}
+}
+
+\twocolframe[title={O Custo dos JOINs em Clusters},leftcol=7cm,rightcol=7cm]{%
+  \alert{Execução Local vs Distribuída}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item Em uma máquina, um \texttt{JOIN} busca ponteiros em memória RAM ou disco local.
+    \item Em um cluster particionado, tabelas diferentes residem em servidores físicos distintos.
+  \end{itemize}
+}{%
+  \alert{O Gargalo do Network Shuffle}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item Cruzar dados exige tráfego massivo de rede entre múltiplos servidores.
+    \item \textbf{Consequência:} A latência salta de milissegundos para dezenas de segundos!
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Descasamento de Impedância Objeto-Relacional},leftcol=7cm,rightcol=7cm]{%
+  \alert{A Visão da Aplicação (OO)}\par
+  \itemseps[topsepi=1mm,itemsepi=2mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item Código em Python trabalha com grafos ricos de objetos em memória.
+    \item Objeto \texttt{Cliente} contém listas de \texttt{pedidos} e objetos de \texttt{endereço}.
+  \end{itemize}
+  \vspace{0.15cm}
+  \alert{A Fricção do Mapeamento (ORM)}\par
+  \itemseps[topsepi=1mm,itemsepi=2mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item Para salvar, o ORM precisa fatiar o objeto em 4 tabelas relacionais.
+    \item Para ler, exige múltiplos \texttt{JOIN}s para remontar o estado em memória.
+  \end{itemize}
+}{%
+  \alert{A Solução em Documentos NoSQL}\par
+  \itemseps[topsepi=1mm,itemsepi=2mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item Documento JSON/BSON armazenado \textbf{exatamente} no formato do objeto.
+    \item Gravação e leitura em \textbf{um único I/O atômico de disco}.
+    \item Elimina camadas complexas e lentas de tradução objeto-relacional.
+  \end{itemize}
+}

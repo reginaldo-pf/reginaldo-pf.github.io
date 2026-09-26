@@ -1,0 +1,62 @@
+\documentclass[10pt]{beamer}
+
+% Tema Limpo e Profissional
+\usetheme{Madrid}
+\usecolortheme{whale}
+
+% Pacotes Essenciais
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Configuracoes de Codigo (Python)
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue}\bfseries,
+    stringstyle=\color{orange},
+    commentstyle=\color{gray!80!black}\itshape,
+    breaklines=true,
+    showstringspaces=false,
+    backgroundcolor=\color{gray!5},
+    frame=single,
+    rulecolor=\color{gray!30},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt
+}
+
+% Metadados da Apresentacao
+\title[Python - Funções]{Introdução às Funções em Python}
+\subtitle{Automatizando Tarefas como Administradores de Redes}
+\author[Prof. Reginaldo]{Prof. Reginaldo Fernandes\texorpdfstring{\\ \small{Programação de Computadores}}{}}
+\institute[IFCE]{Instituto Federal do Ceará -- Campus Tauá \\ Curso Técnico em Redes de Computadores}
+\date{\today}
+
+\begin{document}
+
+% Slide de Titulo
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% Sumario
+\begin{frame}{Sumário da Aula}
+    \tableofcontents
+\end{frame}
+
+% Blocos Modulares de Slides
+\input{secao1_introducao}
+\input{secao2_sem_param_sem_retorno}
+\input{secao3_com_param_sem_retorno}
+\input{secao4_sem_param_com_retorno}
+\input{secao5_com_param_com_retorno}
+\input{secao6_conclusao}
+
+\end{document}

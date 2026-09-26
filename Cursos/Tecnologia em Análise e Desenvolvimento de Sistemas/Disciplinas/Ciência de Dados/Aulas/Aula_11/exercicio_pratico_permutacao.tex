@@ -1,0 +1,204 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[portuguese]{babel}
+\usepackage{geometry}
+\geometry{a4paper, margin=2.5cm}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Configuração de Listings para Python
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    commentstyle=\color{green!60!black},
+    breaklines=true,
+    showstringspaces=false
+}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+}
+
+\begin{document}
+
+\begin{center}
+    \vspace{0.5cm}
+    \textbf{INSTITUTO FEDERAL DO CEARÁ -- CAMPUS TAUÁ} \\
+    \textbf{Tecnologia em Análise e Desenvolvimento de Sistemas} \\
+    \textbf{Disciplina: Ciência de Dados / Análise de Dados} \\
+    \textbf{Professor: Reginaldo Fernandes} \\
+    \vspace{0.5cm}
+    \large{\textbf{Exercício Prático de Fixação: Testes de Hipótese e Permutação (N2)}}
+    \vspace{0.3cm}
+\end{center}
+
+\hrule
+\vspace{0.4cm}
+
+\section*{Contexto: O Impacto da Monitoria no IFCE Campus Tauá}
+No curso de Tecnologia em Análise e Desenvolvimento de Sistemas do IFCE Campus Tauá, foi implementado um programa piloto de monitoria para a disciplina de Ciência de Dados. Ao final do semestre, o professor Reginaldo coletou as notas finais de dois grupos de alunos para investigar se a participação ativa na monitoria resultou em um desempenho sistematicamente superior.
+
+\begin{itemize}
+    \item \textbf{Grupo Monitoria ($N_A = 12$):} Alunos que participaram de pelo menos 75\% das sessões de monitoria.
+    \item \textbf{Grupo Regular ($N_B = 15$):} Alunos que frequentaram apenas as aulas regulares.
+\end{itemize}
+
+Os vetores de notas obtidos foram:
+\begin{itemize}
+    \item \lstinline|notas_monitoria = [8.5, 9.0, 7.5, 8.0, 9.5, 8.5, 7.0, 9.0, 8.0, 8.5, 9.5, 7.0]|
+    \item \lstinline|notas_regular = [7.0, 6.5, 8.0, 7.5, 6.0, 7.0, 8.5, 6.5, 7.5, 8.0, 6.0, 7.0, 6.5, 7.5, 6.0]|
+\end{itemize}
+
+O professor deseja testar se a diferença observada entre as notas médias dos dois grupos pode ser explicada por puro acaso (variabilidade amostral) ou se há evidências estatísticas significativas de que o programa de monitoria causou uma melhoria nas notas.
+
+\vspace{0.3cm}
+\hrule
+\vspace{0.5cm}
+
+\section*{Atividades Práticas}
+
+Escreva um script Python modularizado (no arquivo \texttt{pratica\_permutacao.py}) que realize as seguintes etapas e responda às questões no relatório LaTeX correspondente:
+
+\begin{enumerate}[label=\textbf{Tarefa \arabic*}]
+    \item \textbf{Cálculo Estatístico Inicial:}
+    Calcule e exiba as médias amostrais de cada grupo ($\bar{X}_{\text{monitoria}}$ e $\bar{X}_{\text{regular}}$) e a estatística de teste observada ($\text{Observed\_Diff} = \bar{X}_{\text{monitoria}} - \bar{X}_{\text{regular}}$).
+    
+    \item \textbf{Formulação de Hipóteses:}
+    Formule detalhadamente a Hipótese Nula ($H_0$) e a Hipótese Alternativa ($H_1$) para este problema. Explique se o teste adequado para avaliar a eficácia do programa deve ser unilateral (cauda direita) ou bicaudal.
+    
+    \item \textbf{Simulação sob $H_0$ (Embaralhamento):}
+    Implemente o algoritmo do Teste de Permutação. Para isso:
+    \begin{itemize}
+        \item Agrupe todas as 27 notas em um único vetor do NumPy.
+        \item Realize $10.000$ repetições de embaralhamento sem reposição usando \lstinline|np.random.permutation|.
+        \item Em cada iteração, divida os dados simulados em dois grupos fictícios de tamanhos 12 e 15, e armazene a diferença entre suas médias em um vetor \lstinline|diferencas_simuladas|.
+    \end{itemize}
+    
+    \item \textbf{Cálculo do $P$-valor Empírico:}
+    Calcule o $p$-valor empírico unilateral sob a distribuição simulada. Explique teoricamente o significado do $p$-valor obtido neste contexto.
+    
+    \item \textbf{Visualização dos Resultados:}
+    Gere um histograma com a distribuição empírica das diferenças simuladas. Adicione:
+    \begin{itemize}
+        \item Uma linha vertical tracejada vermelha no valor da diferença observada.
+        \item Destaque na cor dourada (\texttt{\#ff9900}) a cauda do histograma que representa as diferenças iguais ou maiores que a observada.
+        \item Remova as bordas superior e direita do gráfico utilizando uma função de limpeza visual (\texttt{despine}).
+        \item Salve a imagem como \texttt{histograma\_notas.png}.
+    \end{itemize}
+    
+    \item \textbf{Tomada de Decisão:}
+    Considerando o nível de significância de $\alpha = 5\%$, você rejeita a hipótese nula $H_0$? Escreva uma conclusão formal a ser apresentada à coordenação de curso sobre a viabilidade do programa de monitoria.
+\end{enumerate}
+
+\pagebreak
+
+\section*{Gabarito Comentado e Código de Referência}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=yellow!50!black,title=\textbf{Gabarito das Tarefas Teóricas}]
+\textbf{Resolução das Hipóteses (Tarefa 2):}
+\begin{itemize}
+    \item $H_0$: A distribuição das notas dos alunos que fizeram monitoria é idêntica à dos que não fizeram ($H_0: \mu_{\text{monitoria}} = \mu_{\text{regular}}$). O programa de monitoria não tem efeito.
+    \item $H_1$: A distribuição de notas do grupo monitoria apresenta média sistematicamente maior do que a do grupo regular ($H_1: \mu_{\text{monitoria}} > \mu_{\text{regular}}$).
+    \item \textbf{Tipo de Teste:} Como a monitoria é desenhada para melhorar o rendimento, estamos interessados apenas em detectar se as notas aumentaram. O teste adequado é unilateral (cauda direita).
+\end{itemize}
+
+\textbf{Decisão Estatística (Tarefa 6):}
+\begin{itemize}
+    \item Diferença Observada: $1.3000$ pontos.
+    \item P-valor Empírico: $0.0007$ ($0.07\%$).
+    \item \textbf{Conclusão:} Como o $p$-valor ($0.07\%$) é consideravelmente menor que $\alpha = 5\%$, rejeitamos categoricamente $H_0$. Há fortes evidências de que a participação na monitoria causou uma melhoria nas notas. Recomenda-se a continuidade do programa.
+\end{itemize}
+\end{tcolorbox}
+
+\subsection*{Script Python de Referência}
+\begin{lstlisting}[language=Python]
+import numpy as np
+import matplotlib.pyplot as plots
+
+# Estilo visual limpo
+plots.style.use('seaborn-v0_8-colorblind')
+plots.rcParams.update({
+    'figure.figsize': (10, 6),
+    'axes.labelsize': 12,
+    'axes.titlesize': 14,
+    'lines.linewidth': 2.5
+})
+
+def despine(ax):
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
+# Dados originais
+notas_monitoria = np.array([8.5, 9.0, 7.5, 8.0, 9.5, 8.5, 7.0, 9.0, 8.0, 8.5, 9.5, 7.0])
+notas_regular = np.array([7.0, 6.5, 8.0, 7.5, 6.0, 7.0, 8.5, 6.5, 7.5, 8.0, 6.0, 7.0, 6.5, 7.5, 6.0])
+
+# Tarefa 1: Estatisticas observadas
+media_mon = np.mean(notas_monitoria)
+media_reg = np.mean(notas_regular)
+obs_diff = media_mon - media_reg
+print(f"Media Monitoria: {media_mon:.4f}")
+print(f"Media Regular: {media_reg:.4f}")
+print(f"Diferenca Observada: {obs_diff:.4f}")
+
+# Tarefa 3: Simulacao
+todas_notas = np.concatenate([notas_monitoria, notas_regular])
+N_mon = len(notas_monitoria)
+repeticoes = 10000
+
+np.random.seed(42)
+diferencas_simuladas = np.zeros(repeticoes)
+
+for i in range(repeticoes):
+    embaralhado = np.random.permutation(todas_notas)
+    sim_mon = embaralhado[:N_mon]
+    sim_reg = embaralhado[N_mon:]
+    diferencas_simuladas[i] = np.mean(sim_mon) - np.mean(sim_reg)
+
+# Tarefa 4: P-valor
+p_valor = np.count_nonzero(diferencas_simuladas >= obs_diff) / repeticoes
+print(f"P-valor empirico: {p_valor:.5f}")
+
+# Tarefa 5: Visualizacao
+fig, ax = plots.subplots()
+bins = np.arange(-2.0, 2.1, 0.2)
+n, bins_out, patches = ax.hist(diferencas_simuladas, bins=bins, edgecolor='white', color='#2c3e50', density=True, label='Sob a Hipotese Nula')
+
+# Destacar a cauda
+for patch in patches:
+    if (patch.get_x() + patch.get_width()) > obs_diff:
+        patch.set_facecolor('#ff9900')
+
+ax.axvline(obs_diff, color='#e74c3c', linestyle='dashed', linewidth=3, label=f'Diferenca Obs. ({obs_diff:.2f})')
+
+from matplotlib.patches import Patch
+legenda_patches = [
+    Patch(facecolor='#2c3e50', edgecolor='white', label='Diferencas sob H0'),
+    Patch(facecolor='#ff9900', label='Diferenca >= Observada (P-valor)'),
+    ax.lines[0]
+]
+ax.legend(handles=legenda_patches)
+ax.set_title('Distribuicao Nula de Diferenca de Notas vs. Observado')
+ax.set_xlabel('Diferenca de Medias (Monitoria - Regular)')
+ax.set_ylabel('Densidade')
+
+despine(ax)
+plots.tight_layout()
+plots.savefig('histograma_notas.png', dpi=150)
+plots.close()
+print("Grafico histograma_notas.png salvo!")
+\end{lstlisting}
+
+\end{document}

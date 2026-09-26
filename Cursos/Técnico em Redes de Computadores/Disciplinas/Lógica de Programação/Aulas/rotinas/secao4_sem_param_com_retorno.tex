@@ -1,0 +1,60 @@
+\section{Funções Sem Parâmetros e Com Retorno}
+
+\begin{frame}[fragile]{3. Sem Parâmetros e Com Retorno}
+    Essas funções não necessitam de informações externas para iniciar. No entanto, ao finalizarem seu processamento, elas \textbf{devolvem (retornam)} um resultado para o programa principal usando a palavra-chave \textbf{return}.
+    
+    \vspace{0.3cm}
+    \textbf{Analogia de Redes:}
+    \begin{itemize}
+        \item É como a placa de rede de um computador buscando seu próprio endereço físico (Endereço MAC -- \textit{Media Access Control}). O script da placa não precisa de entrada para descobrir seu próprio MAC, mas ela precisa devolver esse valor para o sistema operacional poder usá-lo nas comunicações.
+        \item O valor retornado é guardado em uma variável para uso futuro.
+    \end{itemize}
+    
+    \vspace{0.3cm}
+    \textbf{Sintaxe:}
+    \begin{lstlisting}[language=Python]
+def obter_dado():
+    resultado = "Informacao Interna"
+    return resultado
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Exemplo 1: Endereço de Loopback}
+    Vamos criar uma função que retorna o IP de loopback padrão da máquina local (\texttt{127.0.0.1}), usado para testes locais de rede.
+    
+    \begin{lstlisting}[language=Python]
+def obter_ip_loopback():
+    # Retorna o IP padrao para testes locais
+    ip_local = "127.0.0.1"
+    return ip_local
+
+# Capturando o valor de retorno em uma variavel:
+meu_teste = obter_ip_loopback()
+
+print(f"Iniciando conexao de teste no host: {meu_teste}")
+# Agora podemos usar a variavel para disparar conexoes
+    \end{lstlisting}
+    
+    \vspace{0.2cm}
+    \textbf{Nota didática:} A função \texttt{obter\_ip\_loopback()} não recebeu nada entre os parênteses, mas entregou um texto contendo o IP ao ser executada.
+\end{frame}
+
+\begin{frame}[fragile]{Exemplo 2: Gerador de Chave SSH Provisória}
+    Esta função gera uma senha de acesso rápido de administrador para o SSH (geração de string com números aleatórios) para fins de teste temporário.
+    
+    \begin{lstlisting}[language=Python]
+import random
+
+def gerar_token_ssh():
+    # Gera uma chave numerica aleatoria para sessao SSH
+    token = random.randint(100000, 999999)
+    return token
+
+# Solicita uma nova chave para o analista de redes:
+chave_acesso = gerar_token_ssh()
+
+print("--- SOLICITACAO DE CREDENCIAIS ---")
+print(f"Sua chave SSH provisoria eh: {chave_acesso}")
+print("Esta chave expira em 60 segundos.")
+    \end{lstlisting}
+\end{frame}

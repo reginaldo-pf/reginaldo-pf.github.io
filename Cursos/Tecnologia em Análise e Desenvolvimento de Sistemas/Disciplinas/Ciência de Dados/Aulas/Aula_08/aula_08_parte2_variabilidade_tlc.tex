@@ -1,0 +1,384 @@
+\documentclass[10pt, aspectratio=169]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usetikzlibrary{shapes, arrows.meta, positioning, calc}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Color Palette - Professional Data Science & Interactive Class Theme
+\definecolor{navyblue}{RGB}{30, 41, 59}       % #1E293B Primary dark
+\definecolor{skycyan}{RGB}{14, 165, 233}      % #0EA5E9 Secondary blue/cyan
+\definecolor{ambergold}{RGB}{245, 158, 11}    % #F59E0B Accent amber
+\definecolor{darkgray}{RGB}{51, 65, 85}       % Dark text / subheaders
+\definecolor{lightgray}{RGB}{241, 245, 249}   % Card / block background
+\definecolor{codebg}{RGB}{248, 249, 250}      % Code background
+\definecolor{codegreen}{RGB}{34, 197, 94}     % Code comments/strings
+\definecolor{crimsonred}{RGB}{225, 29, 72}     % Highlight red
+\definecolor{livepurple}{RGB}{147, 51, 234}    % Purple for Live Coding
+
+% Beamer Theme Settings
+\usetheme{Madrid}
+\usecolortheme{whale}
+
+\setbeamercolor{structure}{fg=navyblue}
+\setbeamercolor{palette primary}{bg=navyblue,fg=white}
+\setbeamercolor{palette secondary}{bg=skycyan,fg=white}
+\setbeamercolor{palette tertiary}{bg=darkgray,fg=white}
+\setbeamercolor{titlelike}{bg=navyblue,fg=white}
+
+\setbeamercolor{block title}{bg=navyblue,fg=white}
+\setbeamercolor{block body}{bg=lightgray,fg=black}
+
+\setbeamercolor{block title alert}{bg=crimsonred,fg=white}
+\setbeamercolor{block body alert}{bg=lightgray,fg=black}
+
+\setbeamercolor{block title example}{bg=skycyan,fg=white}
+\setbeamercolor{block body example}{bg=lightgray,fg=black}
+
+% Custom Block for Live Coding
+\newenvironment{liveblock}[1]{%
+    \setbeamercolor{block title}{bg=livepurple,fg=white}%
+    \setbeamercolor{block body}{bg=lightgray,fg=black}%
+    \begin{block}{#1}%
+}{%
+    \end{block}%
+}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+
+% Python Listing Setup
+\lstset{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\scriptsize\color{navyblue},
+    keywordstyle=\bfseries\color{skycyan},
+    stringstyle=\color{codegreen},
+    commentstyle=\itshape\color{gray},
+    numbers=none,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{lightgray}
+}
+
+% Title Slide Metadata
+\title[Ciência de Dados: Variabilidade e TLC]{Ciência de Dados -- Aula 08 (Parte 2)}
+\subtitle{Variabilidade, Curva Normal, Teorema do Limite Central e Tamanho de Amostra\\{\small Explicação Detalhada de Fórmulas, Variáveis e Solução dos Estudos de Caso}}
+\author[ADS]{Curso de Análise e Desenvolvimento de Sistemas (ADS)}
+\institute[ADS]{Disciplina: Ciência de Dados}
+\date{\today}
+
+\begin{document}
+
+% -----------------------------------------------------------------------------
+% Slide 1: Title
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% -----------------------------------------------------------------------------
+% Slide 2: Agenda
+% -----------------------------------------------------------------------------
+\begin{frame}{Agenda da Parte 2}
+    \tableofcontents
+\end{frame}
+
+% =============================================================================
+\section{1. Medindo a Variabilidade: Desvio Padrão (SD) e Z-Scores}
+% =============================================================================
+
+\begin{frame}{1.1 A Necessidade de Medir a Dispersão dos Dados}
+    \vspace{-0.2cm}
+    \begin{block}{Por que a Média Sozinha Pode Ser Enganosa?}
+        Duas distribuições podem apresentar \textbf{exatamente a mesma média}, mas comportamentos de espalhamento totalmente distintos.
+        \begin{itemize}
+            \item Coleção A: $\{4, 4, 4, 4\} \implies \text{Média} = 4, \quad \text{Sem dispersão (Variabilidade Zero)}$
+            \item Coleção B: $\{-10, 0, 8, 18\} \implies \text{Média} = 4, \quad \text{Alta dispersão ao redor da média}$
+        \end{itemize}
+    \end{block}
+    \begin{exampleblock}{O Desvio Padrão (Standard Deviation - SD)}
+        O \textbf{Desvio Padrão (SD)} mede a distância "típica" ou média das observações em relação à média do conjunto.
+        \vspace{-0.4cm}
+        \[ \text{Desvio Individual} = x_i - \bar{x} \]
+        \[ \text{SD} = \sqrt{\text{Variância}} = \sqrt{\frac{1}{N} \sum_{i=1}^N (x_i - \bar{x})^2} \]
+        \vspace{-0.4cm}
+        {\footnotesize \begin{itemize}
+            \item $\text{SD}$: Desvio Padrão (na mesma unidade de medida dos dados originais).
+            \item $N$: Quantidade total de observações na coleção.
+            \item $x_i$: Valor do $i$-ésimo elemento.
+            \item $\bar{x}$: Média aritmética dos dados.
+            \item $(x_i - \bar{x})^2$: Desvio ao quadrado (evita que desvios positivos e negativos se anulem).
+        \end{itemize}}
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{1.2 Unidades Padrão ($Z$-Scores) e Normalização}
+    \begin{block}{Fórmula do Z-Score (Padronização)}
+        \[ z = \frac{x - \bar{x}}{\text{SD}} \]
+        \textbf{Significado Explicado das Variáveis:}
+        \begin{itemize}
+            \item $z$: O valor em \textbf{Unidades Padrão ($Z$-score)}. Mede \textbf{quantos desvios padrões} o valor $x$ está acima ($z>0$) ou abaixo ($z<0$) da média.
+            \item $x$: O valor bruto observado.
+            \item $\bar{x}$: Média do conjunto de dados.
+            \item $\text{SD}$: Desvio padrão do conjunto de dados.
+        \end{itemize}
+    \end{block}
+
+    \vspace{0.2cm}
+
+    \begin{exampleblock}{Aplicação Essencial em Machine Learning (ADS)}
+        \begin{itemize}
+            \item \textbf{Normalização de Features (StandardScaler):} Algoritmos como K-NN, Regressão Logística e Redes Neurais exigem que atributos com escalas diferentes (ex: Idade [20-60] e Renda [2000-50000]) sejam convertidos para Z-scores ($z$) para que nenhuma variável domine o cálculo de distância.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{[LIVE CODING] Prática 1: Estudo de Caso Passo a Passo do SD}
+    \begin{liveblock}{[PRÁTICA EM SALA] Resolução Numérica da Coleção \{1, 2, 2, 10\}}
+        Executando a tabela de desvios e Z-scores em Python:
+    \end{liveblock}
+
+\begin{lstlisting}
+import numpy as np
+import pandas as pd
+
+any_numbers = np.array([1, 2, 2, 10])
+media = np.mean(any_numbers)            # 3.75
+desvios = any_numbers - media           # [-2.75, -1.75, -1.75, 6.25]
+desvios_quad = desvios ** 2             # [7.5625, 3.0625, 3.0625, 39.0625]
+variancia = np.mean(desvios_quad)        # 13.1875
+sd = np.sqrt(variancia)                 # 3.6314
+
+df_calculo = pd.DataFrame({
+    'x': any_numbers,
+    'x - media': desvios,
+    '(x - media)^2': desvios_quad,
+    'Z-score': (any_numbers - media) / sd
+})
+print(df_calculo)
+print(f"Resultado Final: Media={media:.2f}, Variancia={variancia:.2f}, SD={sd:.2f}")
+\end{lstlisting}
+\end{frame}
+
+% =============================================================================
+\section{2. Limite de Chebyshev e a Curva Normal}
+% =============================================================================
+
+\begin{frame}{2.1 Desigualdade de Chebyshev e a Regra Empírica}
+    \begin{block}{Desigualdade de Chebyshev (Validade Universal para Qualquer Formato)}
+        Para \textbf{qualquer conjunto de dados} (mesmo com assimetria severa):
+        \[ \text{Proporção de dados em } (\bar{x} - k \cdot \text{SD}, \bar{x} + k \cdot \text{SD}) \ge 1 - \frac{1}{k^2} \]
+        \textbf{Significado da Variável $k$:} Número de desvios padrões ($k > 1$).
+        \begin{itemize}
+            \item Para $k=2 \implies 1 - 1/2^2 = 1 - 1/4 = 0{,}75 \implies$ \textbf{Pelo menos 75\% dos dados} estão em Média $\pm 2 \text{ SD}$.
+        \end{itemize}
+    \end{block}
+
+    \vspace{0.2cm}
+
+    \begin{exampleblock}{A Regra Empírica para Distribuições Normais ($68\% - 95\% - 99{,}7\%$)}
+        Quando o histograma tem formato de sino (Curva Normal):
+        \begin{itemize}
+            \item $\bar{x} \pm 1 \text{ SD}$ contém \textbf{$\approx 68{,}27\%$} dos dados.
+            \item $\bar{x} \pm 2 \text{ SD}$ contém \textbf{$\approx 95{,}45\%$} dos dados.
+            \item $\bar{x} \pm 3 \text{ SD}$ contém \textbf{$\approx 99{,}73\%$} dos dados.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{2.2 Os Pontos de Inflexão da Curva Normal}
+    \begin{block}{Identificando o SD Visualmente no Histograma}
+        Em uma Curva Normal Padrão:
+        \begin{itemize}
+            \item O pico central está na média ($\bar{x}$).
+            \item Os \textbf{pontos de inflexão} (onde a curva muda de côncava para convexa) ocorrem exatamente em $z = +1$ e $z = -1$.
+        \end{itemize}
+    \end{block}
+
+    \vspace{0.2cm}
+
+    \begin{center}
+    \begin{tikzpicture}[scale=0.85]
+    	\draw[thick, ->] (-5.5,0) -- (5.5,0) node[right] {$z$};
+    	
+    	% Coordenadas x multiplicadas por 1.5 para dar espaço lateral
+    	\draw[smooth, ultra thick, color=navyblue] plot coordinates {
+    		(-5.25,0.05) (-3.75,0.3) (-2.25,1.2) (-1.5,2.0) (0,3.2) (1.5,2.0) (2.25,1.2) (3.75,0.3) (5.25,0.05)
+    	};
+    	
+    	\draw[dashed, crimsonred, thick] (0,0) node[below=4pt, align=center] {$0$ \\[0.3em] \small (Média)} -- (0,3.2);
+    	\draw[dashed, ambergold, thick] (1.5,0) node[below=4pt, align=center] {$+1 \text{ SD}$ \\[0.3em] \small (Inflexão)} -- (1.5,2.0);
+    	\draw[dashed, ambergold, thick] (-1.5,0) node[below=4pt, align=center] {$-1 \text{ SD}$ \\[0.3em] \small (Inflexão)} -- (-1.5,2.0);
+    \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{[LIVE CODING] Prática 2: Áreas Acumuladas com \texttt{scipy.stats}}
+    \begin{liveblock}{[PRÁTICA EM SALA] Função CDF (Cumulative Distribution Function)}
+        Calculando as probabilidades da Regra Empírica em Python:
+    \end{liveblock}
+
+\begin{lstlisting}
+from scipy import stats
+
+# norm.cdf(z) calcula P(Z <= z)
+area_1sd = stats.norm.cdf(1) - stats.norm.cdf(-1) # Media +- 1 SD
+area_2sd = stats.norm.cdf(2) - stats.norm.cdf(-2) # Media +- 2 SD
+area_3sd = stats.norm.cdf(3) - stats.norm.cdf(-3) # Media +- 3 SD
+
+print(f"Area entre Media +- 1 SD: {area_1sd:.2%} (Esperado: 68.27%)")
+print(f"Area entre Media +- 2 SD: {area_2sd:.2%} (Esperado: 95.45%)")
+print(f"Area entre Media +- 3 SD: {area_3sd:.2%} (Esperado: 99.73%)")
+\end{lstlisting}
+\end{frame}
+
+% =============================================================================
+\section{3. O Teorema do Limite Central (TLC)}
+% =============================================================================
+
+\begin{frame}{3.1 Enunciado Formal e Equações do TLC}
+    \begin{alertblock}{O Teorema do Limite Central (TLC)}
+        Ao extrair uma amostra aleatória grande ($n \ge 30$) com reposição de \textbf{qualquer população} com média $\mu$ e desvio padrão $\sigma$:
+        \begin{itemize}
+            \item A distribuição de probabilidade da \textbf{média amostral ($\bar{X}$)} aproxima-se de uma \textbf{Distribuição Normal}:
+                  \[ \bar{X} \sim \mathcal{N}\left(\mu, \frac{\sigma}{\sqrt{n}}\right) \]
+        \end{itemize}
+    \end{alertblock}
+
+    \vspace{0.2cm}
+
+    \begin{block}{Explicação Detalhada das Variáveis da Equação}
+        \begin{itemize}
+            \item $\bar{X}$: A variável aleatória correspondente às médias das amostras.
+            \item $\mathcal{N}(\text{Média}, \text{SD})$: Notação da Distribuição Normal.
+            \item $\mu$ (mu): Média da população original (centro da curva normal de médias).
+            \item $\sigma$ (sigma): Desvio padrão da população original.
+            \item $n$: Tamanho de cada amostra aleatória extraída.
+            \item $\frac{\sigma}{\sqrt{n}}$: O \textbf{Erro Padrão da Média (Standard Error - SE)}.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{[LIVE CODING] Prática 3: Demonstração Prática do TLC}
+    \begin{liveblock}{[PRÁTICA EM SALA] Experimento de Atrasos de Voos}
+        Demonstrando em código como a distribuição das médias torna-se normal:
+    \end{liveblock}
+
+\begin{lstlisting}
+np.random.seed(42)
+populacao_atrasos = np.random.exponential(scale=15, size=10000) # Assimetrica!
+
+# Extraindo 10.000 amostras de tamanho N=100
+amostras = np.random.choice(populacao_atrasos, size=(10000, 100))
+medias = np.mean(amostras, axis=1)
+
+sd_pop = np.std(populacao_atrasos)
+sd_teorico = sd_pop / np.sqrt(100)
+sd_observado = np.std(medias)
+
+print(f"Media Populacional: {np.mean(populacao_atrasos):.2f}")
+print(f"Media das Medias:   {np.mean(medias):.2f}")
+print(f"SD Teorico (sigma / sqrt(n)): {sd_teorico:.2f}")
+print(f"SD Observado das Medias:      {sd_observado:.2f}")
+\end{lstlisting}
+\end{frame}
+
+% =============================================================================
+\section{4. A Lei da Raiz Quadrada e Acurácia}
+% =============================================================================
+
+\begin{frame}{4.1 A Lei da Raiz Quadrada e o Custo da Precisão}
+    \begin{block}{Análise da Fórmula da Acurácia}
+        \[ \text{SD da Média Amostral} = \frac{\sigma}{\sqrt{n}} \]
+        Como $n$ está sob uma raiz quadrada no denominador:
+    \end{block}
+
+    \vspace{0.2cm}
+
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Exemplo Explicado: Quadruplicar $n$}
+                Se a amostra aumentar de $n=25$ para $n=100$ ($4\times$ maior):
+                \[ \text{Erro Padrão} = \frac{\sigma}{\sqrt{100}} = \frac{\sigma}{10} = \frac{1}{2} \cdot \left(\frac{\sigma}{\sqrt{25}}\right) \]
+                \textbf{Resultado:} O erro cai pela metade ($\sqrt{4} = 2$). A precisão \textbf{dobra}.
+            \end{alertblock}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Exemplo Explicado: Aumentar Precisão por 10x}
+                Para reduzir a variabilidade por um fator de $10$:
+                \[ \sqrt{n_{\text{novo}}} = 10 \cdot \sqrt{n} \implies n_{\text{novo}} = 100 \cdot n \]
+                \textbf{Resultado:} É necessário aumentar o tamanho de amostra em \textbf{100 vezes}!
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =============================================================================
+\section{5. Aplicação Prática em ADS: Tamanho de Amostra Mínimo}
+% =============================================================================
+
+\begin{frame}{5.1 Estudo de Caso Explicado: Pesquisa Eleitoral (Candidato A)}
+	\vspace{-0.2cm}
+    \begin{block}{O Problema do Cientista de Dados}
+        Deseja-se estimar a proporção de votos do Candidato A com um intervalo de confiança de 95\% e largura total máxima de \textbf{1\%} ($0{,}01$).
+        Qual o tamanho de amostra mínimo ($n$) garantido?
+    \end{block}
+
+    \begin{exampleblock}{Resolução Passo a Passo e Explicação da Fórmula}
+        \begin{enumerate}
+            \item \textbf{Largura do Intervalo de 95\%:} Na Normal, o intervalo abrange $4 \text{ SDs}$ de cada lado ($\pm 2 \text{ SDs}$).
+            \vspace{-0.2cm}
+                  \[ 4 \times \text{SD da Proporção Amostral} \le 0{,}01 \implies 4 \times \frac{\text{SD}_{\text{pop}}}{\sqrt{n}} \le 0{,}01 \]
+            \vspace{-0.6cm}
+            \item \textbf{Cota Superior para SD Binário ($0/1$):} O desvio padrão máximo de qualquer população binária ocorre quando $P=0{,}5$ ($50\%$ sim, $50\%$ não):
+            \vspace{-0.2cm}
+                  \[ \text{SD}_{\max} = \sqrt{0{,}5 \times (1 - 0{,}5)} = 0{,}5 \]
+             \vspace{-0.6cm}
+            \item \textbf{Isolando o tamanho de amostra $n$:}
+            \vspace{-0.2cm}
+                  \[ \sqrt{n} \ge 4 \times \frac{0{,}5}{0{,}01} = \frac{2}{0{,}01} = 200 \implies n \ge 200^2 = 40.000 \]
+                  \vspace{-0.6cm}
+            \item \textbf{Resposta Final Explicada:} São necessários no mínimo \textbf{40.000 eleitores} para garantir a precisão de 1\% em 95\% de confiança.
+        \end{enumerate}
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{5.2 Estudo de Caso Explicado: Latência de API Web em ADS}
+    \begin{block}{O Problema Real de Engenharia de Software}
+        Uma API de pagamento processa 1.000 requisições: 95\% respondem em $\approx 100\text{ms}$, mas 5\% sofrem atraso/timeout ($\approx 3000\text{ms}$).
+        \begin{itemize}
+            \item \textbf{Média Calculada:} $268{,}39 \text{ ms}$
+            \item \textbf{Mediana Calculada:} $100{,}59 \text{ ms}$
+        \end{itemize}
+    \end{block}
+
+    \vspace{0.2cm}
+
+    \begin{exampleblock}{Soluição Passo a Passo para o Engenheiro de ADS}
+        \begin{itemize}
+            \item \textbf{Para o SLA do Cliente (Painel do Usuário):} Usar a \textbf{Mediana} ($100{,}59\text{ms}$) ou o Percentil 95/99. A média de $268\text{ms}$ faria parecer que a maioria dos usuários experiência lentidão, o que é falso para 95\% dos acessos!
+            \item \textbf{Para o Dimensionamento do Servidor (Infraestrutura):} Usar a \textbf{Média} ($268{,}39\text{ms}$), pois o tempo total de processamento exigido da CPU é $N \times \text{Média} = 1000 \times 268{,}39 = 268.390\text{ms}$.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Resumo Geral das Aulas 1 e 2}
+    \begin{block}{Síntese dos Conceitos de Ciência de Dados para ADS}
+        \begin{enumerate}
+            \item \textbf{Probabilidade e Amostragem:} Regras da adição, multiplicação e amostragem com/sem reposição em Python.
+            \item \textbf{Propriedades da Média:} Ponto de equilíbrio do histograma $\bar{x} = \sum x_j p_j$ e representação de proporções binárias.
+            \item \textbf{Média vs. Mediana:} Mediana é robusta a assimetrias; Média é atraída pela cauda longa.
+            \item \textbf{Desvio Padrão e Z-Scores:} Medição de dispersão e padronização para Machine Learning.
+            \item \textbf{Teorema do Limite Central:} A média de amostras grandes é Normal, com variabilidade $\sigma/\sqrt{n}$.
+            \item \textbf{Dimensionamento $n$:} Aplicação da Lei da Raiz Quadrada para garantir margens de erro em projetos reais.
+        \end{enumerate}
+    \end{block}
+\end{frame}
+
+\end{document}

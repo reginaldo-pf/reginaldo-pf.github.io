@@ -1,0 +1,307 @@
+\documentclass[a4paper,12pt,addpoints]{exam}
+\usepackage[brazilian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[top=1.5cm,left=1.0cm,right=1.0cm,bottom=2cm]{geometry}
+\printanswers
+
+\begin{document}
+	
+	\begin{questions}
+		
+		\question[1]
+		Um estudo observacional identificou que pessoas que consomem chocolate regularmente apresentam menor incidência de doenças cardiovasculares.
+		
+		Explique por que essa observação não é suficiente para concluir que o consumo de chocolate causa melhora da saúde cardiovascular. Cite duas possíveis variáveis de confusão e explique como elas podem afetar a interpretação dos resultados.
+		
+		\begin{solution}
+			A observação apresentada não é suficiente para estabelecer uma relação de causalidade, pois estudos observacionais permitem identificar associações, mas não garantem que uma variável seja a causa da outra.
+			
+			Duas possíveis variáveis de confusão são:
+			
+			\begin{itemize}
+				\item Renda: pessoas com maior renda podem consumir mais chocolate e também ter melhor acesso a serviços de saúde.
+				\item Estilo de vida: indivíduos fisicamente ativos podem apresentar melhor saúde cardiovascular independentemente do consumo de chocolate.
+			\end{itemize}
+			
+			Essas variáveis podem explicar simultaneamente o consumo de chocolate e a redução da incidência de doenças cardiovasculares.
+		\end{solution}
+		
+		\question[1]
+		
+		Explique o papel da randomização em um experimento controlado.
+		
+		Na sua resposta, descreva:
+		
+		\begin{parts}
+			\part O que é um grupo de tratamento;
+			\part O que é um grupo de controle;
+			\part Como a randomização reduz o efeito das variáveis de confusão.
+		\end{parts}
+		
+		\begin{solution}
+			\begin{parts}
+				\part Grupo de tratamento é o grupo que recebe a intervenção ou condição que está sendo estudada.
+				
+				\part Grupo de controle é o grupo que não recebe a intervenção e serve como referência para comparação.
+				
+				\part A randomização distribui os participantes aleatoriamente entre os grupos, reduzindo a influência de variáveis de confusão e tornando os grupos mais comparáveis.
+			\end{parts}
+		\end{solution}
+		
+		\question[1]
+		
+		O conceito de \textit{ceteris paribus} é frequentemente utilizado em estudos observacionais.
+		
+		Explique:
+		
+		\begin{parts}
+			\part O significado da expressão;
+			\part Por que ela é importante na inferência causal;
+			\part Por que é mais difícil obter um cenário \textit{ceteris paribus} em estudos observacionais do que em experimentos controlados.
+		\end{parts}
+		
+		\begin{solution}
+			\begin{parts}
+				\part A expressão \textit{ceteris paribus} significa ``mantendo todo o resto constante''.
+				
+				\part Ela é importante porque permite avaliar o efeito de uma variável sem a interferência de outros fatores.
+				
+				\part Em estudos observacionais não existe controle completo sobre os participantes, dificultando a obtenção de grupos equivalentes. Em experimentos controlados a randomização ajuda a aproximar essa condição.
+			\end{parts}
+		\end{solution}
+		
+		\question[1]
+		
+		Considere um estudo que deseja analisar o perfil dos estudantes universitários brasileiros.
+		
+		Foram coletadas respostas apenas de usuários ativos de uma rede social específica.
+		
+		Explique a diferença entre:
+		
+		\begin{parts}
+			\part População-alvo;
+			\part Estrutura de acesso (\textit{access frame});
+			\part Amostra coletada.
+		\end{parts}
+		
+		Discuta também como um viés de seleção pode comprometer os resultados do estudo mesmo quando milhões de respostas são obtidas.
+		
+		\begin{solution}
+			\begin{parts}
+				\part População-alvo: todos os estudantes universitários brasileiros.
+				
+				\part Estrutura de acesso (\textit{access frame}): conjunto de indivíduos que podem ser alcançados pela pesquisa.
+				
+				\part Amostra coletada: conjunto dos indivíduos que efetivamente responderam ao questionário.
+			\end{parts}
+			
+			Mesmo uma amostra muito grande pode produzir resultados enviesados caso determinados grupos da população estejam sub-representados ou ausentes. Esse problema é conhecido como viés de seleção.
+		\end{solution}
+		
+		\question[1]
+		
+		Defina os conceitos de:
+		
+		\begin{parts}
+			\part Parâmetro populacional;
+			\part Estimador;
+			\part Estimativa.
+		\end{parts}
+		
+		Explique por que a média amostral é considerada uma variável aleatória enquanto a média populacional é um valor fixo.
+		
+		\begin{solution}
+			\begin{parts}
+				\part Parâmetro populacional é uma característica da população.
+				
+				\part Estimador é uma regra ou fórmula utilizada para estimar um parâmetro populacional.
+				
+				\part Estimativa é o valor numérico obtido após aplicar um estimador a uma amostra.
+			\end{parts}
+			
+			A média populacional é fixa porque descreve toda a população. Já a média amostral depende da amostra selecionada e pode variar de uma amostra para outra, sendo portanto uma variável aleatória.
+		\end{solution}
+		
+		\question[1]
+		
+		Considere uma moeda justa.
+		
+		Explique o que afirma a Lei dos Grandes Números e por que ela é importante para a construção de modelos estatísticos.
+		
+		Utilize o lançamento de moedas como exemplo.
+		
+		\begin{solution}
+			A Lei dos Grandes Números afirma que, à medida que o tamanho da amostra aumenta, a média observada tende a se aproximar do valor esperado da população.
+			
+			Por exemplo, ao lançar uma moeda justa poucas vezes é possível obter resultados bastante diferentes de 50\% de caras. Entretanto, com milhares de lançamentos, a proporção observada tende a se aproximar de 50\%.
+			
+			Essa lei fundamenta grande parte da inferência estatística.
+		\end{solution}
+		
+		\question[1]
+		
+		Considere dois modelos de previsão:
+		
+		\begin{itemize}
+			\item Modelo A: produz resultados muito próximos entre si, porém sistematicamente acima do valor real.
+			\item Modelo B: produz resultados centrados no valor real, porém bastante dispersos.
+		\end{itemize}
+		
+		Identifique qual modelo apresenta:
+		
+		\begin{parts}
+			\part Alto viés e baixa variância;
+			\part Baixo viés e alta variância.
+		\end{parts}
+		
+		Explique os riscos de cada situação para aplicações de Ciência de Dados.
+		
+		\begin{solution}
+			\begin{parts}
+				\part Modelo A: alto viés e baixa variância.
+				
+				\part Modelo B: baixo viés e alta variância.
+			\end{parts}
+			
+			O Modelo A produz previsões consistentes porém sistematicamente incorretas. O Modelo B produz previsões corretas em média, mas muito instáveis.
+		\end{solution}
+		
+		\question[1]
+		
+		Classifique cada variável como \textbf{discreta} ou \textbf{contínua}.
+		
+		\begin{enumerate}
+			\item Número de alunos matriculados em uma disciplina.
+			\item Tempo de resposta de um servidor.
+			\item Quantidade de acessos a um sistema.
+			\item Altura dos estudantes.
+			\item Número de erros encontrados em um software.
+		\end{enumerate}
+		
+		Justifique suas respostas.
+		
+		\begin{solution}
+			\begin{center}
+				\begin{tabular}{|l|c|}
+					\hline
+					Variável & Classificação \\
+					\hline
+					Número de alunos matriculados & Discreta \\
+					Tempo de resposta de um servidor & Contínua \\
+					Quantidade de acessos a um sistema & Discreta \\
+					Altura dos estudantes & Contínua \\
+					Número de erros encontrados em um software & Discreta \\
+					\hline
+				\end{tabular}
+			\end{center}
+			
+			Variáveis discretas são obtidas por contagem. Variáveis contínuas podem assumir infinitos valores em um intervalo.
+		\end{solution}
+		
+		\question[1]
+		
+		Dale e Krueger realizaram um estudo para investigar uma questão bastante discutida: estudantes que frequentam universidades mais prestigiadas realmente obtêm salários maiores por causa da instituição ou porque já eram alunos mais qualificados antes de ingressarem nela?
+		
+		Para responder a essa pergunta, os pesquisadores analisaram estudantes que haviam se candidatado às mesmas universidades.
+		
+		\begin{parts}
+			\part Por que comparar simplesmente alunos de universidades diferentes pode produzir conclusões equivocadas;
+			
+			\part Como o pareamento por aceitações e rejeições ajuda a aproximar um cenário de ``\textit{todo o resto igual}'';
+			
+			\part Qual problema metodológico essa estratégia procura reduzir.
+		\end{parts}
+		
+		\begin{solution}
+			\begin{parts}
+				\part Alunos de universidades diferentes podem possuir características prévias distintas, como desempenho acadêmico e renda familiar.
+				
+				\part O pareamento compara estudantes com perfis semelhantes, tornando os grupos mais comparáveis.
+				
+				\part A estratégia procura reduzir o viés de seleção e o efeito das variáveis de confusão.
+			\end{parts}
+		\end{solution}
+		
+		\question[1]
+		
+		Uma pesquisa deseja estimar a média das notas dos estudantes de uma instituição.
+		
+		Explique:
+		
+		\begin{parts}
+			\part Por que o tamanho da amostra influencia a qualidade da estimativa;
+			\part Por que uma amostra grande nem sempre é representativa;
+			\part O que caracteriza uma amostra representativa.
+		\end{parts}
+		
+		\begin{solution}
+			\begin{parts}
+				\part Amostras maiores tendem a produzir estimativas mais precisas.
+				
+				\part Uma amostra grande pode continuar enviesada se não representar adequadamente a população.
+				
+				\part Uma amostra representativa reproduz as características relevantes da população.
+			\end{parts}
+		\end{solution}
+		
+		\question[1]
+		
+		Um cientista de dados precisa apresentar os seguintes resultados para a diretoria:
+		
+		\begin{enumerate}
+			\item Evolução mensal da taxa de evasão dos alunos ao longo de três anos.
+			\item Distribuição dos estudantes por curso.
+			\item Relação entre horas de estudo e nota final dos alunos.
+		\end{enumerate}
+		
+		\begin{solution}
+			\begin{enumerate}
+				\item Gráfico de linhas.
+				\item Gráfico de barras.
+				\item Gráfico de dispersão.
+			\end{enumerate}
+			
+			O gráfico de linhas representa séries temporais, o gráfico de barras compara categorias e o gráfico de dispersão mostra relações entre variáveis quantitativas.
+		\end{solution}
+		
+		\question[1]
+		
+		Uma empresa apresentou o gráfico abaixo para demonstrar o crescimento das vendas entre 2023 e 2024.
+		
+		\begin{parts}
+			\part Por que iniciar o eixo vertical em 950 pode induzir interpretações equivocadas sobre os resultados?
+			\part O crescimento apresentado parece maior ou menor do que realmente é?
+			\part Quais princípios de visualização de dados estão sendo violados?
+			\part Como o gráfico poderia ser redesenhado?
+			\part Calcule a variação percentual das vendas entre 2023 e 2024.
+		\end{parts}
+		
+		\begin{solution}
+			\begin{parts}
+				
+				\part Iniciar o eixo em 950 amplia visualmente pequenas diferenças.
+				
+				\part O crescimento parece maior do que realmente é.
+				
+				\part Transparência, proporcionalidade visual e integridade gráfica.
+				
+				\part O eixo deveria iniciar em zero ou indicar claramente a quebra da escala.
+				
+				\part
+				
+				\[
+				\frac{1000-980}{980}\times100
+				=
+				\frac{20}{980}\times100
+				\approx 2.04\%
+				\]
+				
+				Portanto, as vendas cresceram aproximadamente 2,04\%.
+				
+			\end{parts}
+		\end{solution}
+		
+	\end{questions}
+	
+\end{document}

@@ -1,0 +1,200 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[brazilian]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage[hyphens]{url} 
+\usepackage[colorlinks=true, urlcolor=blue, linkcolor=blue]{hyperref}
+\usepackage{dirtree} 
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{enumitem}
+
+\geometry{left=2cm, right=2cm, top=3cm, bottom=2cm}
+
+\hypersetup{
+	colorlinks=true,
+	urlcolor=blue,
+	linkcolor=blue
+}
+
+\begin{document}
+	
+	% Cabeçalho da Avaliação
+	\noindent
+	\begin{center}
+		\LARGE \textbf{Avaliação Prática Unificada (Parte 2)} \\
+		\vspace{0.2cm}
+		\large \textbf{Inferência Estatística, Testes A/B e Causalidade} \\
+		\vspace{0.4cm}
+		\normalsize \textit{Disciplina: Ciência de Dados} \\
+		\textbf{Data de Entrega: 01/09/2026} \\
+		\normalsize Formato: Grupos (os mesmos da Parte 1) ou Individual
+	\end{center}
+	
+	\vspace{0.2cm}
+	\noindent\rule{\textwidth}{0.4pt}
+	\vspace{0.5cm}
+	
+	\section{Contextualização do Projeto}
+	Este projeto prático integrado é estruturado em duas etapas consecutivas:
+	\begin{itemize}
+		\item \textbf{Parte 1 (Já Implementada):} Focada na infraestrutura de engenharia e limpeza de dados (ETL). Cada equipe desenvolveu os mecanismos de ingestão programática (\texttt{extractor.py}), a higienização e imputação de valores nulos, o isolamento estatístico de valores extremos via Intervalo Interquartil (IQR), a unificação de tabelas relacionais (\texttt{cleaner.py}) e a exportação do arquivo final consolidado \texttt{dados\_limpos\_final.csv}.
+		\item \textbf{Parte 2 (Etapa Atual):} Focada na modelagem estatística, testagem empírica e raciocínio causal. A partir da base de dados limpa resultante da Parte 1, serão adicionados os novos conceitos inferenciais estudados em sala de aula (Bootstrap, Intervalos de Confiança, Testes de Permutação e Causalidade).
+	\end{itemize}
+
+	\section{Objetivo da Avaliação (Parte 2)}
+	Esta etapa visa aplicar os métodos de inferência computacional e estatística das Aulas 8 a 12 (Teorema Central do Limite, Bootstrap, Teste A/B, Testes de Permutação e Causalidade) para testar hipóteses e guiar tomadas de decisão baseadas em dados sobre o conjunto tratado anteriormente.
+	
+	\section{Dados de Entrada}
+	As equipes devem utilizar obrigatoriamente o dataset unificado e limpo (\texttt{dados\_limpos\_final.csv}) resultante do pipeline de ETL desenvolvido na Parte 1.
+	
+	\section{Detalhamento das Atividades (Estruturação Estatística)}
+	
+	\subsection{Estimação de Parâmetros e Bootstrap (Aulas 8, 9, 10)}
+	Nesta atividade, a equipe estimará parâmetros populacionais de interesse a partir das amostras observadas.
+	\begin{itemize}
+		\item \textbf{Desenvolvimento (\texttt{bootstrap.py}):} Escolha uma variável numérica contínua chave do seu dataset (Ex: valor de transação, tempo de atendimento, precipitação climática, nota de avaliação).
+		\begin{enumerate}
+			\item Calcule a Média Amostral ($\bar{X}$) e o Desvio Padrão Amostral ($s$) observados.
+			\item Implemente algoritmicamente um processo de \textbf{reamostragem Bootstrap} com pelo menos $2.000$ réplicas com reposição para gerar a distribuição empírica da média.
+			\item Construa um \textbf{Intervalo de Confiança} ($IC$) de 95\% para a média populacional utilizando duas metodologias:
+			\begin{itemize}
+				\item \textbf{Método Não-Paramétrico (Bootstrap):} Extraindo os percentis 2.5\% e 97.5\% da distribuição empírica.
+				\item \textbf{Método Paramétrico Tradicional:} Utilizando a aproximação normal com base no erro padrão analítico:
+				$$IC_{95\%} = \bar{X} \pm z_{95\%} \cdot \frac{s}{\sqrt{N}}$$
+				Onde $N$ representa o Tamanho da Amostra e $z_{95\%} \approx 1.96$ é o valor crítico de $z$.
+			\end{itemize}
+			\item Exporte um gráfico de distribuição mostrando o histograma das médias bootstrap com as linhas verticais indicando os limites dos dois intervalos calculados.
+		\end{enumerate}
+		\item \textbf{Discussão Científica (README):} Na documentação, descreva os limites encontrados e compare as duas metodologias de intervalo de confiança. Justifique se as condições do \textbf{Teorema Central do Limite (TCL)} se aplicam à sua variável amostral com base no tamanho da amostra $N$ e no comportamento de assimetria dos dados.
+	\end{itemize}
+	
+	\subsection{Teste de Hipóteses e Teste A/B (Aulas 10, 11)}
+	Nesta seção, a equipe modelará e testará estatisticamente uma hipótese nula de igualdade entre dois grupos (Cenários A e B).
+	\begin{itemize}
+		\item \textbf{Definição dos Grupos de Teste:} Cada equipe deve segmentar os dados em dois subgrupos mutuamente exclusivos com base em seu tema. Exemplos sugeridos:
+		\begin{itemize}
+			\item \textbf{Logística:} Acidentes graves/fatais (Grupo A) vs. Leves/sem vítimas (Grupo B) quanto à distância de frenagem ou velocidade.
+			\item \textbf{E-Commerce:} Compras pagas via Cartão de Crédito (Grupo A) vs. Boleto Bancário (Grupo B) quanto ao ticket médio.
+			\item \textbf{Meio Ambiente:} Focos de queimada no Período Seco (Grupo A) vs. Período Chuvoso (Grupo B).
+			\item \textbf{Saúde Pública:} Estados com Alta Cobertura Vacinal (Grupo A) vs. Baixa Cobertura (Grupo B) quanto à taxa de internações.
+			\item \textbf{Educação:} Estudantes com acesso a internet/apoio escolar (Grupo A) vs. Sem acesso (Grupo B) quanto às notas finais.
+		\end{itemize}
+		
+		\item \textbf{Desenvolvimento (\texttt{ab\_testing.py}):}
+		\begin{enumerate}
+			\item Formule e declare explicitamente a Hipótese Nula ($H_0$) e a Hipótese Alternativa ($H_1$) utilizando nomenclatura estatística formal.
+			\item Estabeleça o \textbf{Limite de Significância} ($\alpha$) padrão de 5\% ($\alpha = 0.05$).
+			\item Calcule a estatística de teste observada (ex: diferença entre as médias amostrais dos dois grupos, $\bar{X}_A - \bar{X}_B$).
+			\item Implemente um \textbf{Teste de Permutação} (embaralhamento de rótulos) com no mínimo $2.000$ iterações para simular a distribuição da estatística sob a validade de $H_0$.
+			\item Calcule o \textbf{Valor-p} (p-value) empírico bicaudal a partir da proporção de permutações que geraram estatísticas tão ou mais extremas que a observada.
+			\item Salve o gráfico contendo o histograma da distribuição sob a hipótese nula com uma linha de destaque indicando a posição da diferença observada na amostra real.
+		\end{enumerate}
+		\item \textbf{Análise Crítica (README):} Conclua formalmente se a hipótese nula ($H_0$) deve ser rejeitada ou não ao nível de significância de 5\%. Explique o significado prático desse resultado no domínio do negócio.
+	\end{itemize}
+	
+		\subsection{Modelagem Preditiva Supervisionada (Regressão e Classificação)}
+	Nesta etapa, a equipe utilizará modelos supervisionados para predição.
+	\begin{itemize}
+		\item \textbf{Desenvolvimento (Regressão Múltipla -- \texttt{regression.py}):}
+		\begin{enumerate}
+			\item Escolha uma variável resposta quantitativa $Y$ e pelo menos duas variáveis preditoras $X_1, X_2$.
+			\item Ajuste um modelo de \textbf{Regressão Linear Múltipla}.
+			\item Reporte e interprete os coeficientes estimados ($\beta_0, \beta_1, \beta_2$) sob a ótica do princípio do \textbf{\textit{Ceteris Paribus}} (tudo o mais constante).
+			\item Apresente a qualidade do ajuste através do \textbf{Coeficiente de Determinação} ($R^2$) e da \textbf{Raiz do Erro Quadrático Médio} (RMSE).
+		\end{enumerate}
+		
+		\item \textbf{Desenvolvimento (Modelos de Classificação -- \texttt{machine\_learning.py}):}
+		\begin{enumerate}
+			\item Defina uma tarefa de classificação binária no seu conjunto de dados (Ex: transação fraudulenta vs. legítima, acidente grave vs. leve, aprovação do aluno).
+			\item Implemente um pipeline usando a biblioteca \textbf{Scikit-Learn (SKLearn)}, contendo o pré-processamento dos dados (normalização/padronização).
+			\item Compare o desempenho de dois algoritmos estudados: \textbf{Regressão Logística} e \textbf{K-Vizinhos Mais Próximos (KNN)}.
+			\item Utilize a técnica de \textbf{Validação Cruzada} (\textit{Cross-Validation}) com o método \textbf{\textit{GridSearchCV}} para a busca e otimização dos melhores hiperparâmetros dos modelos.
+			\item Reporte a Matriz de Confusão, Acurácia, Precisão, Sensibilidade (\textit{Recall}) e a pontuação F1-Score no conjunto de teste.
+		\end{enumerate}
+	\end{itemize}
+
+	\subsection{Aprendizado Não Supervisionado e Redução de Dimensionalidade}
+	Nesta etapa, a equipe aplicará técnicas para agrupar observações e simplificar a estrutura de dados.
+	\begin{itemize}
+		\item \textbf{Desenvolvimento (\texttt{unsupervised.py}):}
+		\begin{enumerate}
+			\item \textbf{Redução de Dimensionalidade (PCA):} Aplique a técnica de \textbf{Análise de Componentes Principais (PCA)}, previamente fundamentada pela \textbf{Decomposição em Valores Singulares} (SVD), nas variáveis numéricas do seu dataset. Projete as observações no plano dos dois primeiros componentes principais e gere o gráfico de dispersão correspondente.
+			\item \textbf{Clusterização (K-Means):} Implemente o algoritmo de agrupamento \textbf{K-Means} para identificar grupos naturais de dados.
+			\item Utilize o \textbf{Método do Cotovelo} (\textit{Elbow Method}) para determinar o número ótimo de clusters ($k$), plotando a inércia contra $k$.
+			\item Salve a projeção dos dados identificando visualmente cada cluster por cores distintas.
+		\end{enumerate}
+		\item \textbf{Discussão Científica (README):} Explique a variância explicada acumulada pelos dois primeiros componentes do PCA. Disserte sobre o significado prático/físico dos clusters gerados pelo K-Means no contexto do seu tema.
+	\end{itemize}
+
+	\subsection{Inferência Causal e Tomada de Decisão (Aula 12)}
+	Esta seção avalia a maturidade teórica da análise para além da correlação estatística e preditiva.
+	\begin{itemize}
+		\item \textbf{Aplicação Teórica (README):} Com base nos modelos preditivos e testes realizados:
+		\begin{enumerate}[label=\alph*)]
+			\item Avalie criticamente se as relações identificadas pelos modelos supervisionados representam conexões causais ou apenas correlações complexas.
+			\item Identifique potenciais variáveis de confusão que violam a hipótese de independência estatística necessária para a validade dos modelos clássicos.
+			\item Proponha uma tomada de decisão operacional fundamentada no comportamento dos clusters ou das previsões obtidas.
+		\end{enumerate}
+	\end{itemize}
+	
+	\section{Estrutura do Projeto e Entregáveis}
+	O repositório do Git deve ser atualizado incluindo a nova camada de inferência estatística e modelagem, conforme a estrutura arquitetural expandida abaixo:
+	
+	\vspace{0.3cm}
+	\begin{minipage}{\textwidth}
+		\dirtree{%
+			.1 meu-projeto-data-science/.
+			.2 src/.
+			.3 extract/.
+			.4 extractor.py.
+			.3 transform/.
+			.4 cleaner.py.
+			.3 inference/.
+			.4 bootstrap.py \hfill\begin{minipage}[t]{8.5cm}\textit{Script para reamostragem bootstrap e ICs}\end{minipage}.
+			.4 ab\_testing.py \hfill\begin{minipage}[t]{8.5cm}\textit{Script para testes de permutação e p-valor}\end{minipage}.
+			.3 models/.
+			.4 regression.py \hfill\begin{minipage}[t]{8.5cm}\textit{Script para regressão linear e múltipla}\end{minipage}.
+			.4 machine\_learning.py \hfill\begin{minipage}[t]{8.5cm}\textit{Classificadores, KNN, Reg. Logística e GridSearchCV}\end{minipage}.
+			.4 unsupervised.py \hfill\begin{minipage}[t]{8.5cm}\textit{Agrupamento via K-Means e redução por PCA}\end{minipage}.
+			.3 visualize.py \hfill\begin{minipage}[t]{8.5cm}\textit{Script consolidado para geração de gráficos}\end{minipage}.
+			.3 main.py \hfill\begin{minipage}[t]{8.5cm}\textit{Orquestrador que executa todo o fluxo de ETL e modelagem}\end{minipage}.
+			.2 requirements.txt.
+			.2 README.md \hfill\begin{minipage}[t]{8.5cm}\textit{Relatório científico completo da análise e modelos}\end{minipage}.
+		}
+	\end{minipage}
+	\vspace{0.4cm}
+	
+	O orquestrador \texttt{main.py} deve executar de forma integrada todo o pipeline de dados, gerando e salvando na raiz do projeto as seguintes imagens estatísticas e analíticas:
+	\begin{itemize}
+		\item \texttt{distribuicao\_bootstrap.png}: Histograma de bootstrap e os limites do IC.
+		\item \texttt{distribuicao\_permutacao.png}: Teste de permutação sob a hipótese nula.
+		\item \texttt{curva\_cotovelo\_kmeans.png}: Método do cotovelo para definição do número de clusters.
+		\item \texttt{clusters\_kmeans.png}: Gráfico com a projeção dos clusters formados.
+		\item \texttt{pca\_projecao.png}: Gráfico com a projeção dos componentes principais.
+	\end{itemize}
+	
+	\section{Critérios de Avaliação}
+	\begin{center}
+		\begin{tabular}{p{11.5cm}cc}
+			\toprule
+			\textbf{Critério de Avaliação Prática 2} & \textbf{Peso} \\
+			\midrule
+			\textbf{Inferência e Estimação Estatística:} Lógica da reamostragem bootstrap, intervalos de confiança e teste de permutação para p-valor. & 25\% \\
+			\addlinespace
+			\textbf{Modelagem Preditiva Supervisionada:} Ajuste e interpretação da regressão múltipla, implementação do pipeline de classificação (KNN/Regressão Logística) com GridSearchCV e Validação Cruzada via SKLearn. & 30\% \\
+			\addlinespace
+			\textbf{Aprendizado Não Supervisionado:} Redução de dimensionalidade com PCA (SVD) e agrupamento K-Means selecionando $k$ pelo método do cotovelo. & 20\% \\
+			\addlinespace
+			\textbf{Raciocínio Causal e Discussão Teórica:} Discussão teórica de confundidores, Ceteris Paribus e interpretação dos modelos e clusters no README. & 15\% \\
+			\addlinespace
+			\textbf{Reprodutibilidade e Organização:} Orquestração de rotinas no \texttt{main.py}, gráficos de distribuição limpos e estruturação limpa do código Python. & 10\% \\
+			\bottomrule
+		\end{tabular}
+	\end{center}
+	
+\end{document}

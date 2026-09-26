@@ -1,0 +1,373 @@
+\documentclass[10pt, aspectratio=169]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usetikzlibrary{shapes, arrows.meta, positioning, calc}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Color Palette - Professional Data Science & Interactive Class Theme
+\definecolor{navyblue}{RGB}{30, 41, 59}       % #1E293B Primary dark
+\definecolor{skycyan}{RGB}{14, 165, 233}      % #0EA5E9 Secondary blue/cyan
+\definecolor{ambergold}{RGB}{245, 158, 11}    % #F59E0B Accent amber
+\definecolor{darkgray}{RGB}{51, 65, 85}       % Dark text / subheaders
+\definecolor{lightgray}{RGB}{241, 245, 249}   % Card / block background
+\definecolor{codebg}{RGB}{248, 249, 250}      % Code background
+\definecolor{codegreen}{RGB}{34, 197, 94}     % Code comments/strings
+\definecolor{crimsonred}{RGB}{225, 29, 72}     % Highlight red
+\definecolor{livepurple}{RGB}{147, 51, 234}    % Purple for Live Coding
+
+% Beamer Theme Settings
+\usetheme{Madrid}
+\usecolortheme{whale}
+
+\setbeamercolor{structure}{fg=navyblue}
+\setbeamercolor{palette primary}{bg=navyblue,fg=white}
+\setbeamercolor{palette secondary}{bg=skycyan,fg=white}
+\setbeamercolor{palette tertiary}{bg=darkgray,fg=white}
+\setbeamercolor{titlelike}{bg=navyblue,fg=white}
+
+\setbeamercolor{block title}{bg=navyblue,fg=white}
+\setbeamercolor{block body}{bg=lightgray,fg=black}
+
+\setbeamercolor{block title alert}{bg=crimsonred,fg=white}
+\setbeamercolor{block body alert}{bg=lightgray,fg=black}
+
+\setbeamercolor{block title example}{bg=skycyan,fg=white}
+\setbeamercolor{block body example}{bg=lightgray,fg=black}
+
+% Custom Block for Live Coding
+\newenvironment{liveblock}[1]{%
+    \setbeamercolor{block title}{bg=livepurple,fg=white}%
+    \setbeamercolor{block body}{bg=lightgray,fg=black}%
+    \begin{block}{#1}%
+}{%
+    \end{block}%
+}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+
+% Python Listing Setup
+\lstset{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\scriptsize\color{navyblue},
+    keywordstyle=\bfseries\color{skycyan},
+    stringstyle=\color{codegreen},
+    commentstyle=\itshape\color{gray},
+    numbers=none,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{lightgray}
+}
+
+% Title Slide Metadata
+\title[Ciência de Dados: ICs e Hipóteses]{Ciência de Dados -- Aula 09}
+\subtitle{Intervalos de Confiança Paramétricos e Testes de Hipóteses\\{\small Abordagens Empíricas via Simulação e Paramétricas via Teorema do Limite Central}}
+\author[ADS]{Curso de Análise e Desenvolvimento de Sistemas (ADS)}
+\institute[ADS]{Disciplina: Ciência de Dados}
+\date{\today}
+
+\begin{document}
+
+% -----------------------------------------------------------------------------
+% Slide 1: Title
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% -----------------------------------------------------------------------------
+% Slide 2: Agenda
+% -----------------------------------------------------------------------------
+\begin{frame}{Agenda da Aula 09}
+    \tableofcontents
+\end{frame}
+
+% =============================================================================
+\section{1. Motivação Real e Conceito de Intervalo de Confiança (IC)}
+% =============================================================================
+
+\begin{frame}{1.1 Motivação Real: O Estudo da COVID-19 (UFPel 2020)}
+    \begin{block}{O Problema Real de Saúde Pública e Decisão}
+        Em maio de 2020, cientistas da Universidade Federal de Pelotas (UFPel) realizaram um estudo nacional de testagem sorológica para estimar a proporção de infectados por COVID-19 no Brasil.
+        \begin{itemize}
+            \item \textbf{Resultado da Amostra:} Prevalência estimada em \textbf{$1{,}9\%$}.
+            \item \textbf{Margem de Erro Comunicada:} Intervalo de Confiança de 95\% entre \textbf{$[1{,}7\%, 2{,}1\%]$}.
+        \end{itemize}
+    \end{block}
+
+    \vspace{0.2cm}
+
+    \begin{alertblock}{Testando a Hipótese de Imunidade de Rebanho}
+        \textbf{Pergunta:} "O Brasil atingiu a imunidade de rebanho (necessário pelo menos $50\%$ de soropositivos)?"
+        \begin{itemize}
+            \item \textbf{Resposta Explicada:} Não! Mesmo considerando a incerteza amostral, o valor de $50\%$ está extremamente distante do intervalo $[1{,}7\%, 2{,}1\%]$.
+            \item \textbf{Conclusão:} Rejeita-se a hipótese de imunidade de rebanho com menos de 5\% de chance de erro.
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{1.2 O que é um Intervalo de Confiança (IC)?}
+    \begin{block}{Definição Formal de Intervalo de Confiança}
+        Um 	\textbf{Intervalo de Confiança de 95\%} para um parâmetro populacional (como a média $\mu$) é um intervalo numérico calculado a partir de dados amostrais tal que:
+        \begin{itemize}
+            \item Se o experimento de amostragem for repetido 100 vezes nas mesmas condições, 	\textbf{95 desses intervalos conterão a verdadeira média da população ($\mu$)}.
+        \end{itemize}
+    \end{block}
+
+    \vspace{0.2cm}
+
+    \begin{alertblock}{Desmistificando Erros Comuns de Interpretação}
+        \begin{itemize}
+            \item \textbf{[INCORRETO]:} "Há 95\% de chance de um indivíduo aleatório estar dentro do IC." (IC não fala de indivíduos brutos!)
+            \item \textbf{[INCORRETO]:} "95\% dos dados da amostra estão dentro do IC." (IC não mede dispersão de dados!)
+            \item \textbf{[CORRETO]:} "Estimamos que a \textbf{média esperada da população} está entre o limite inferior e o limite superior com 95\% de confiança (5\% de chance de erro de amostragem)."
+        \end{itemize}
+    \end{alertblock}
+\end{frame}
+
+% =============================================================================
+\section{2. Abordagem 1: IC e Teste de Hipóteses via Simulação Empírica}
+% =============================================================================
+
+\begin{frame}{2.1 Estudo de Caso Explicado: O Teste da Moeda Viesada}
+    \begin{block}{O Problema do Experimento}
+        Você joga uma moeda para cima 30 vezes. A moeda cai em 	\textbf{cara 22 vezes}.
+        \textbf{Pergunta de Teste:} "A moeda é justa (não-viesada) ou possui vício a favor de cara?"
+    \end{block}
+
+    \vspace{0.2cm}
+
+    \begin{exampleblock}{Resolução via Abordagem Empírica (Sem Fórmulas Decoradas)}
+        \begin{enumerate}
+            \item \textbf{Hipótese Nula ($H_0$):} A moeda é justa ($P(\text{Cara}) = 0{,}5$). Sob $H_0$, esperamos $30 \times 0{,}5 = 15$ caras.
+            \item \textbf{Simulação Computacional:} Repetir 10.000 vezes o experimento de jogar 30 moedas justas e contar o número de caras.
+            \item \textbf{Construção do Intervalo Empírico de 95\%:} Extrair os percentis empíricos $2{,}5\%$ e $97{,}5\%$ das 10.000 simulações.
+            \item \textbf{Resultado:} O intervalo de 95\% para uma moeda justa em 30 jogadas é 	\textbf{$[10, 20]$ caras}.
+            \item \textbf{Decisão Final:} Como 22 caras está 	\textbf{fora} do intervalo $[10, 20]$, a chance de ver 22 caras ao acaso em uma moeda justa é de apenas $0{,}69\%$ ($p < 0{,}05$). 	\textbf{Rejeitamos a hipótese de moeda justa!}
+        \end{enumerate}
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{[LIVE CODING] Prática 1: Simulação da Moeda Viesada em Python}
+    \begin{liveblock}{[PRÁTICA EM SALA] Execução do Teste Empírico via Percentis}
+        Executando a simulação de 10.000 lançamentos no Python:
+    \end{liveblock}
+
+\begin{lstlisting}
+import numpy as np
+
+# Simulando 10.000 experimentos de 30 moedas sob H0 (p=0.5)
+np.random.seed(42)
+simulacoes = np.random.binomial(n=30, p=0.5, size=10000)
+
+ic_low = np.percentile(simulacoes, 2.5)   # 10
+ic_high = np.percentile(simulacoes, 97.5) # 20
+p_valor = np.mean(simulacoes >= 22)       # 0.0069 (0.69%)
+
+print(f"Intervalo Empirico de 95% sob H0: [{ic_low:.0f}, {ic_high:.0f}] caras")
+print(f"P-Valor (Probabilidade de N >= 22): {p_valor:.4f}")
+
+if p_valor < 0.05:
+    print("Rejeitamos H0! A moeda possui vies estatisticamente significante.")
+\end{lstlisting}
+\end{frame}
+
+% =============================================================================
+\section{3. Abordagem 2: IC Paramétrico via Teorema do Limite Central (TCL)}
+% =============================================================================
+
+\begin{frame}{3.1 A Equação do IC Paramétrico e Suas Variáveis}
+    \begin{block}{Fórmula Geral do Intervalo de Confiança Paramétrico}
+        \[ \text{IC} = \bar{x} \pm z^* \cdot \text{SE} = \bar{x} \pm z^* \cdot \frac{s}{\sqrt{n}} \]
+        \textbf{Significado Explicado de Cada Símbolo e Variável:}
+        \begin{itemize}
+            \item $\bar{x}$ (x-barra): 	\textbf{Média amostral} calculada a partir dos dados (estimador pontual da média populacional $\mu$).
+            \item $z^*$: 	\textbf{Valor crítico} da Distribuição Normal Padrão associado ao nível de confiança escolhido.
+                  \begin{itemize}
+                      \item Para 95\% de confiança $\implies z^* = 1{,}96$.
+                      \item Para 98\% de confiança $\implies z^* = 2{,}33$.
+                      \item Para 99\% de confiança $\implies z^* = 2{,}58$.
+                  \end{itemize}
+            \item $s$: \textbf{Desvio padrão amostral} (medida de dispersão dos dados brutos).
+            \item $n$: \textbf{Tamanho da amostra} (quantidade de observações coletadas).
+            \item $\text{SE} = \frac{s}{\sqrt{n}}$: \textbf{Erro Padrão da Média} (\textbf{Standard Error}), que mede a variabilidade da estimativa amostral.
+            \item $\text{Margem de Erro} = z^* \cdot \frac{s}{\sqrt{n}}$: O raio de incerteza adicionado e subtraído da média.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{3.2 Estudo de Caso Explicado: Rendimento Acadêmico (RSG UFMG)}
+    \begin{block}{O Problema dos Dados Amostrais}
+        Entrevistou-se uma amostra aleatória de \textbf{$n = 50$ alunos} do curso de Computação da UFMG sobre seu Rendimento Semestral Global (RSG).
+        \begin{itemize}
+            \item \textbf{Média Amostral ($\bar{x}$):} $3{,}20$
+            \item \textbf{Desvio Padrão Amostral ($s$):} $1{,}74$
+        \end{itemize}
+        Qual é a estimativa da média real de RSG de toda a população de alunos com 95\% de confiança?
+    \end{block}
+
+    \vspace{0.2cm}
+
+    \begin{exampleblock}{Resolução Passo a Passo}
+        \begin{enumerate}
+            \item \textbf{Cálculo do Erro Padrão (SE):} $\text{SE} = \frac{s}{\sqrt{n}} = \frac{1{,}74}{\sqrt{50}} = \frac{1{,}74}{7{,}071} \approx 0{,}2461$.
+            \item \textbf{Cálculo da Margem de Erro (ME):} $\text{ME} = 1{,}96 \times 0{,}2461 \approx 0{,}4823 \approx 0{,}49$.
+            \item \textbf{Construção do Intervalo:} $\text{IC} = (3{,}20 - 0{,}49, \; 3{,}20 + 0{,}49) = (2{,}71, \; 3{,}69)$.
+            \item \textbf{Resposta Final Explicada:} Estimamos que a média populacional do RSG dos alunos está entre \textbf{$2{,}71$ e $3{,}69$} com 95\% de confiança.
+        \end{enumerate}
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{[LIVE CODING] Prática 2: IC Paramétrico do RSG em Python}
+    \begin{liveblock}{[PRÁTICA EM SALA] Execução do Cálculo de IC com \texttt{scipy.stats}}
+        Calculando os limites e o erro padrão exato do RSG:
+    \end{liveblock}
+
+\begin{lstlisting}
+from scipy import stats
+import numpy as np
+
+n = 50
+xbar = 3.2
+s = 1.74
+
+# 1. Erro Padrao (SE)
+se = s / np.sqrt(n) # 0.2461
+
+# 2. Valor critico z* para 95% (1.96)
+z_95 = stats.norm.ppf(0.975)
+
+# 3. Margem de Erro e Intervalo
+margem = z_95 * se # 0.4823
+ic_low, ic_high = xbar - margem, xbar + margem
+
+print(f"SE: {se:.4f} | Margem de Erro: {margem:.4f}")
+print(f"Intervalo de Confianca de 95%: ({ic_low:.2f}, {ic_high:.2f})")
+\end{lstlisting}
+\end{frame}
+
+% =============================================================================
+\section{4. Condições de Validade e Dinâmica do Tamanho do IC}
+% =============================================================================
+
+\begin{frame}{4.1 Condições Obrigatórias para Usar o IC Paramétrico}
+    \begin{block}{Para que o IC via TCL Funcione, Exigem-se 2 Condições:}
+        \begin{enumerate}
+            \item \textbf{Independência entre as Observações:}
+                  \begin{itemize}
+                      \item A amostra deve ser não-viesada.
+                      \item Se entrevistarmos apenas alunos de um mesmo laboratório, a amostra é viesada. Deve-se amostrar alunos de diferentes institutos/escolas.
+                  \end{itemize}
+            \item \textbf{Tamanho de Amostra Mínimo ($n \ge 30$):}
+                  \begin{itemize}
+                      \item O Teorema do Limite Central garante a distribuição normal das médias apenas para $n$ suficientemente grande ($n \ge 30$).
+                      \item Para amostras pequenas ($n < 30$), deve-se utilizar a \textbf{Distribuição $t$ de Student} ou \textbf{Bootstrap}.
+                  \end{itemize}
+        \end{enumerate}
+    \end{block}
+\end{frame}
+
+\begin{frame}{4.2 Como Alterar a Largura do Intervalo de Confiança?}
+    \begin{block}{Análise dos Fatores da Fórmula: $\text{IC} = \bar{x} \pm z^* \cdot \frac{s}{\sqrt{n}}$}
+        Como desenvolvedores e analistas de dados, podemos manipular a precisão do IC:
+    \end{block}
+
+    \vspace{0.2cm}
+
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Variando o Nível de Confiança ($z^*$)}
+                \begin{itemize}
+                    \item Aumentar a confiança ($95\% \to 98\% \to 99\%$) aumenta o valor de $z^*$ ($1{,}96 \to 2{,}33 \to 2{,}58$).
+                    \item \textbf{Efeito:} O intervalo fica \textbf{MAIS LARGO}.
+                    \item \textit{Trade-off:} Maior certeza, porém menor precisão.
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Variando o Tamanho da Amostra ($n$)}
+                \begin{itemize}
+                    \item Aumentar $n$ reduz o erro padrão $\text{SE} = s/\sqrt{n}$.
+                    \item \textbf{Efeito:} O intervalo fica \textbf{MAIS ESTREITO}.
+                    \item \textit{Vantagem:} Maior precisão sem perder a confiança de 95\%!
+                \end{itemize}
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{[LIVE CODING] Prática 3: Tabela de Sensibilidade de Confiança em Python}
+    \begin{liveblock}{[PRÁTICA EM SALA] Comparando Confianças de 90\%, 95\%, 98\% e 99\%}
+        Visualizando como o intervalo expande ao aumentar a confiança:
+    \end{liveblock}
+
+\begin{lstlisting}
+confs = [0.90, 0.95, 0.98, 0.99]
+for c in confs:
+    z = stats.norm.ppf(1 - (1 - c)/2)
+    me = z * se
+    print(f"Confianca: {c:.0%} | z*: {z:.3f} | Margem: {me:.3f} | IC: ({xbar-me:.2f}, {xbar+me:.2f})")
+\end{lstlisting}
+
+    \begin{table}
+        \centering
+        \tiny
+        \begin{tabular}{@{}llll@{}}
+            \toprule
+            \textbf{Nível de Confiança} & \textbf{Valor Crítico ($z^*$)} & \textbf{Margem de Erro (ME)} & \textbf{Intervalo de Confiança (RSG)} \\ \midrule
+            90\% & 1,645 & 0,405 & $(2{,}80, \; 3{,}60)$ \\
+            95\% & 1,960 & 0,482 & $(2{,}72, \; 3{,}68)$ \\
+            98\% & 2,326 & 0,572 & $(2{,}63, \; 3{,}77)$ \\
+            99\% & 2,576 & 0,634 & $(2{,}57, \; 3{,}83)$ \\ \bottomrule
+        \end{tabular}
+    \end{table}
+\end{frame}
+
+% =============================================================================
+\section{5. Desafio Prático em Python para ADS}
+% =============================================================================
+
+\begin{frame}[fragile]{[LIVE CODING] Desafio Prático: Calculadora Automática de IC para Latência de API}
+    \begin{liveblock}{[DESAFIO EM SALA] Criando uma Função Reutilizável em Python}
+        Construa uma função que receba uma série de latências de software e retorne o IC de 95\%:
+    \end{liveblock}
+
+\begin{lstlisting}
+def calcular_ic_api(dados, confianca=0.95):
+    n_elem = len(dados)
+    xbar_elem = np.mean(dados)
+    s_elem = np.std(dados, ddof=1)
+    se_elem = s_elem / np.sqrt(n_elem)
+    z_critico = stats.norm.ppf(1 - (1 - confianca)/2)
+    margem_elem = z_critico * se_elem
+    return xbar_elem, (xbar_elem - margem_elem, xbar_elem + margem_elem), margem_elem
+
+np.random.seed(123)
+latencias_api = np.random.normal(loc=120, scale=25, size=60)
+media_api, (ic_l, ic_h), me_api = calcular_ic_api(latencias_api)
+
+print(f"Media Amostral da API: {media_api:.2f} ms")
+print(f"IC 95% do Tempo Medio: ({ic_l:.2f} ms, {ic_h:.2f} ms) | Margem: +- {me_api:.2f} ms")
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Resumo da Aula 09}
+    \begin{block}{Síntese do Aprendizado da Aula 09}
+        \begin{enumerate}
+            \item \textbf{Intervalo de Confiança (IC):} Faixa que contém o verdadeiro valor do parâmetro populacional ($\mu$) em 95\% das amostragens repetidas.
+            \item \textbf{Abordagem Empírica vs Paramétrica:} Simulações via percentis empíricos de 95\% vs Fórmula paramétrica do TCL ($\bar{x} \pm 1{,}96 \cdot \text{SE}$).
+            \item \textbf{Erro Padrão ($\text{SE} = s/\sqrt{n}$):} Mede a precisão da média amostral.
+            \item \textbf{Tomada de Decisão:} Se o valor da hipótese nula $H_0$ cai fora do IC de 95\%, a hipótese é \textbf{rejeitada} com $p < 0{,}05$.
+            \item \textbf{Aumentar Precisão:} Aumentar $n$ estreita o intervalo sem perder o nível de confiança.
+        \end{enumerate}
+    \end{block}
+\end{frame}
+
+\end{document}

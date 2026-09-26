@@ -1,0 +1,121 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[brazilian]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage[hyphens]{url} 
+\usepackage[colorlinks=true, urlcolor=blue, linkcolor=blue]{hyperref}
+\usepackage{dirtree} 
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{enumitem}
+
+\geometry{left=2cm, right=2cm, top=3cm, bottom=2cm}
+
+\begin{document}
+
+	% Cabeçalho da Avaliação
+	\noindent
+	\begin{center}
+		\LARGE \textbf{Avaliação Prática Unificada} \\
+		\vspace{0.2cm}
+		\large \textbf{Construção de Pipeline ETL com Fundamentação em Ciência de Dados} \\
+		\vspace{0.4cm}
+		\normalsize \textit{Disciplina: Ciência de Dados} \\
+		\textbf{Data de Entrega: 23/06/2026} \\
+		\normalsize Formato: Grupos ou Individual
+	\end{center}
+
+	\vspace{0.2cm}
+	\noindent\rule{\textwidth}{0.4pt}
+	\vspace{0.5cm}
+
+	\section{Objetivo da Avaliação}
+	Esta avaliação visa integrar os conhecimentos técnicos de engenharia de dados (ETL, POO, SRP) com os fundamentos teóricos de Ciência de Dados (Inferência Causal, Amostragem e Estatística). O objetivo é construir um pipeline que não apenas processe dados, mas que seja projetado com consciência sobre a natureza e as limitações estatísticas da informação.
+
+	\section{Escolha do Tema e Fontes de Dados (Kaggle)}
+	Cada equipe deverá escolher \textbf{um} dos temas abaixo. O processo de \textbf{Extração (\textit{Extract})} deve obrigatoriamente consumir as fontes indicadas do Kaggle.
+
+	\begin{itemize}[leftmargin=*]
+		\item \textbf{Opção A: Logística e Segurança Viária} \\
+		{\footnotesize \url{https://www.kaggle.com/datasets/rafaelborgesgraunke/traffic-accidents-brazil-pt-br}}
+		
+		\item \textbf{Opção B: Finanças e E-Commerce} \\
+		{\footnotesize \url{https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce}}
+		
+		\item \textbf{Opção C: Meio Ambiente (Queimadas)} \\
+		{\footnotesize \url{https://www.kaggle.com/datasets/gustavomodelli/forest-fires-in-brazil}}
+		
+		\item \textbf{Opção D: Saúde Pública (COVID-19)} \\
+		{\footnotesize \url{https://www.kaggle.com/datasets/gpreda/covid19-vaccination-track-everywhere-in-the-world}}
+		
+		\item \textbf{Opção E: Educação e Desempenho} \\
+		{\footnotesize \url{https://www.kaggle.com/datasets/cansa23/higher-education-students-performance-evaluation}}
+	\end{itemize}
+
+	\section{Detalhamento das Atividades (Aplicação de Conceitos)}
+
+	\subsection{Camada de Extração (Amostragem e Viés)}
+	\begin{itemize}
+		\item \textbf{Desenvolvimento:} Implementar a classe de extração resiliente (try/except) conforme solicitado anteriormente.
+		\item \textbf{Aplicação Teórica (README):} No documento do projeto, identifique a \textbf{População-alvo} que os dados deveriam representar e qual é a \textbf{Estrutura de Acesso} (Access Frame) real oferecida pelo Kaggle. Discuta se há risco de \textbf{Viés de Seleção} na forma como esses dados foram coletados.
+	\end{itemize}
+
+	\subsection{Camada de Transformação (Tipagem e Variáveis)}
+	\begin{itemize}
+		\item \textbf{Desenvolvimento:} Padronização, limpeza e normalização de datas (ISO).
+		\item \textbf{Dicionário de Dados:} No README, além de listar os tipos técnicos (int, float), você deve classificar cada variável final como \textbf{Discreta} ou \textbf{Contínua}.
+		\item \textbf{Tratamento de Nulos (Viés vs Variância):} Justifique sua estratégia de tratamento de valores nulos (exclusão ou imputação). Explique o impacto dessa escolha no \textbf{Viés} e na \textbf{Variância} do seu dataset final.
+	\end{itemize}
+
+	\subsection{Análise de Domínio (Inferência Causal e Ceteris Paribus)}
+	\begin{itemize}
+		\item \textbf{Aplicação Teórica (README):} Escolha uma relação entre duas variáveis do seu tema (ex: Chuva e Acidentes). 
+		\begin{enumerate}
+			\item Explique por que uma correlação encontrada não implica necessariamente causalidade.
+			\item Cite duas possíveis \textbf{Variáveis de Confusão} que poderiam afetar essa análise.
+			\item Descreva como seria um cenário \textbf{Ceteris Paribus} ideal para testar essa relação.
+		\end{enumerate}
+	\end{itemize}
+
+	\subsection{Camada de Visualização (Integridade Visual)}
+	\begin{itemize}
+		\item \textbf{Desenvolvimento:} Crie um script \texttt{src/visualize.py} que utilize os dados limpos para gerar \textbf{um} dos gráficos abaixo, seguindo rigorosamente os princípios de visualização (ex: eixos iniciando em zero):
+		\begin{itemize}
+			\item Evolução temporal (Linhas).
+			\item Distribuição de categorias (Barras).
+			\item Relação entre duas variáveis numéricas (Dispersão).
+		\end{itemize}
+	\end{itemize}
+
+	\section{Estrutura do Projeto}
+	\begin{minipage}{\textwidth}
+		\dirtree{%
+			.1 meu-projeto-etl/.
+			.2 src/.
+			.3 extract/extractor.py.
+			.3 transform/cleaner.py.
+			.3 visualize.py \hfill\begin{minipage}[t]{8cm}\textit{Novo: Visualização de dados}\end{minipage}.
+			.3 utils/logger.py.
+			.3 main.py.
+			.2 README.md \hfill\begin{minipage}[t]{8cm}\textit{Contendo fundamentação teórica}\end{minipage}.
+		}
+	\end{minipage}
+
+	\section{Critérios de Avaliação}
+	\begin{center}
+		\begin{tabular}{lc}
+			\toprule
+			\textbf{Critério} & \textbf{Peso} \\
+			\midrule
+			Qualidade Técnica (POO, SRP, Resiliência) & 40\% \\
+			Fundamentação de Ciência de Dados (README e Análise) & 40\% \\
+			Visualização e Integridade de Dados & 20\% \\
+			\bottomrule
+		\end{tabular}
+	\end{center}
+
+\end{document}

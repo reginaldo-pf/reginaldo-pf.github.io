@@ -1,0 +1,86 @@
+\section{Colisões com \texttt{pygame.Rect} e o Mini-Jogo}
+
+\begin{frame}{O Poder da Classe \texttt{pygame.Rect}}
+    O \textbf{\texttt{pygame.Rect}} é a estrutura mais versátil do Pygame para representar a posição e as dimensões de objetos 2D.
+
+    \vspace{0.3cm}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{block}{Criação}
+                \texttt{r = pygame.Rect(x, y, larg, alt)}
+            \end{block}
+            \textbf{Propriedades automáticas:}
+            \begin{itemize}
+                \item \texttt{r.x}, \texttt{r.y}
+                \item \texttt{r.width}, \texttt{r.height}
+                \item \texttt{r.top}, \texttt{r.bottom}
+                \item \texttt{r.left}, \texttt{r.right}
+                \item \texttt{r.center}, \texttt{r.centerx}, \texttt{r.centery}
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{exampleblock}{Bloqueio de Bordas Fácil}
+                \begin{itemize}
+                    \item \texttt{if r.left < 0: r.left = 0}
+                    \item \texttt{if r.right > 800: r.right = 800}
+                    \item \texttt{if r.top < 0: r.top = 0}
+                    \item \texttt{if r.bottom > 600: r.bottom = 600}
+                \end{itemize}
+                \small{Não é necessário recalcular largura ou altura manualmente!}
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Detecção de Colisão: \texttt{colliderect()}}
+    Para saber se dois objetos se tocaram no espaço 2D, usamos a colisão por caixas alinhadas aos eixos (\textit{AABB - Axis-Aligned Bounding Box}):
+
+    \vspace{0.2cm}
+    \begin{lstlisting}[language=Python]
+jogador = pygame.Rect(100, 100, 40, 40)
+moeda   = pygame.Rect(300, 200, 20, 20)
+
+# O metodo colliderect devolve True se houver sobreposicao!
+if jogador.colliderect(moeda):
+    pontos += 1
+    # Reposiciona a moeda em outro local aleatorio
+    moeda.x = random.randint(50, 750)
+    moeda.y = random.randint(50, 550)
+    \end{lstlisting}
+
+    \vspace{0.2cm}
+    \begin{block}{Princípio Matemático AABB}
+        Dois retângulos colidem se, e somente se, houver sobreposição simultânea em ambos os eixos $X$ e $Y$:
+        \[
+            (A_{\text{left}} < B_{\text{right}}) \land (A_{\text{right}} > B_{\text{left}}) \land (A_{\text{top}} < B_{\text{bottom}}) \land (A_{\text{bottom}} > B_{\text{top}})
+        \]
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Escrevendo Textos na Tela (HUD de Pontuação)}
+    Para desenhar pontuações, vidas e mensagens na tela, seguimos três passos:
+
+    \vspace{0.2cm}
+    \begin{enumerate}
+        \item \textbf{Carregar a Fonte:}
+        \begin{lstlisting}[language=Python]
+fonte = pygame.font.SysFont("Arial", 24, bold=True)
+        \end{lstlisting}
+        
+        \item \textbf{Renderizar o Texto em uma Surface:}
+        \begin{lstlisting}[language=Python]
+# Argumentos: (texto, antialiasing_suave, cor_RGB)
+img_texto = fonte.render(f"Pontos: {pontos}", True, (255, 255, 255))
+        \end{lstlisting}
+
+        \item \textbf{Transferir a Imagem para a Tela (\texttt{blit}):}
+        \begin{lstlisting}[language=Python]
+# Posiciona a imagem de texto nas coordenadas (x=20, y=20)
+tela.blit(img_texto, (20, 20))
+        \end{lstlisting}
+    \end{enumerate}
+
+    \begin{alertblock}{Atenção}
+        A palavra \textbf{blit} vem de \textit{Block Image Transfer} (copiar blocos de pixels de uma superfície para outra).
+    \end{alertblock}
+\end{frame}

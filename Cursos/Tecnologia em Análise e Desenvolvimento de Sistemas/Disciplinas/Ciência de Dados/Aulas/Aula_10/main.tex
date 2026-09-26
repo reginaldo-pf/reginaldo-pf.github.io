@@ -1,0 +1,52 @@
+\documentclass[10pt]{beamer}
+
+% Aparência da apresentação (Tema moderno e limpo)
+\usetheme{Madrid}
+\usecolortheme{whale}
+
+% Pacotes básicos
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Configurações para exibição de códigos de programação
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\tiny,
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    commentstyle=\color{green!60!black},
+    breaklines=true,
+    showstringspaces=false
+}
+
+% Metadados da Apresentação
+\title[Bootstrap e Testes A/B]{Bootstrap e Testes A/B}
+\subtitle{Análise e Desenvolvimento de Sistemas}
+\author[IFCE]{Prof. Reginaldo Fernandes\texorpdfstring{\\ \small{Adaptação Didática}}{ (IFCE)}}
+\institute[IFCE Tauá]{Instituto Federal do Ceará -- Campus Tauá \\ Curso de Tecnologia em Análise e Desenvolvimento de Sistemas}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}{Sumário da Aula}
+    \tableofcontents
+\end{frame}
+
+% Importando as seções da aula (Modularizado)
+\input{secao1_introducao}
+\input{secao2_tcl}
+\input{secao3_bootstrap}
+\input{secao4_testes_ab}
+\input{secao5_conclusao}
+
+\end{document}

@@ -1,0 +1,34 @@
+\section{Resultados Potenciais e Hipóteses}
+
+\begin{frame}{Resultados Potenciais (Potential Outcomes)}
+    \begin{block}{O que aconteceria se...}
+        Antes da divisão do sorteio, cada paciente possui dois resultados potenciais:
+        \begin{enumerate}
+            \item O resultado obtido caso fosse sorteado para o grupo de tratamento.
+            \item O resultado obtido caso fosse sorteado para o grupo de controle.
+        \end{enumerate}
+    \end{block}
+    \begin{block}{A Metáfora do Bilhete de Dois Lados}
+        Imagine que cada um dos $31$ pacientes possui um bilhete. O lado esquerdo é a sua melhora com BTA, e o lado direito é sua melhora com salina.
+        \begin{itemize}
+            \item Para os 15 sorteados no tratamento, revelamos a face esquerda (BTA).
+            \item Para os 16 sorteados no controle, revelamos a face direita (salina).
+            \item A outra metade de cada bilhete permanece eternamente \textbf{desconhecida}.
+        \end{itemize}
+    \end{block}
+    \centering
+    \textit{Nosso desafio estatístico é comparar duas distribuições tendo acesso apenas a metade dos dados de cada bilhete.}
+\end{frame}
+
+\begin{frame}{As Hipóteses do Teste Clínico}
+    \begin{block}{Hipótese Nula ($H_0$): O Modelo do Acaso}
+        A distribuição de todos os $31$ resultados potenciais sob o tratamento é idêntica à distribuição sob o controle. A Toxina Botulínica Tipo A (BTA) não difere do soro fisiológico.
+        \begin{itemize}
+            \item Sob $H_0$, as faces esquerda e direita do bilhete de cada paciente têm o mesmo valor.
+            \item Qualquer diferença observada deve-se puramente ao acaso do sorteio dos grupos.
+        \end{itemize}
+    \end{block}
+    \begin{block}{Hipótese Alternativa ($H_1$): A Presença de Efeito}
+        A distribuição de resultados potenciais sob o tratamento é diferente daquela sob o controle. O remédio realmente causa um efeito diferente de um placebo.
+    \end{block}
+\end{frame}

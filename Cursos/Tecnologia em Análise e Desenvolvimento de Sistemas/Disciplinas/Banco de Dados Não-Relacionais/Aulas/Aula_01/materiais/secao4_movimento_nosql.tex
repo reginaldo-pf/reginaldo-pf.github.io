@@ -1,0 +1,82 @@
+\changecolours{ScoutPurple}
+\section{O Movimento NoSQL \& Modelos}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Conceito: \textit{Not Only SQL}},leftcol=7cm,rightcol=7cm]{%
+  \alert{Origem e Filosofia}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item Movimento consolidado em 2009 em São Francisco.
+    \item Não significa rejeitar o SQL, mas sim \textbf{\textit{Not Only SQL}} (Não Apenas SQL).
+    \item \textbf{Premissa Fundamental:} Nem todos os dados do mundo se comportam como tabelas relacionais estritas.
+    \item Foco em escalabilidade horizontal nativa, esquemas flexíveis (\textit{schemaless}) e alta disponibilidade.
+  \end{itemize}
+}{%
+  \alert{Persistência Poliglota}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item Sistemas modernos utilizam bancos relacionais e NoSQL juntos.
+    \item Escolhe-se a tecnologia mais adequada para cada domínio.
+    \item \textbf{Exemplo:} PostgreSQL (pagamentos) + Redis (cache de sessões) + MongoDB (catálogo flexível).
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Modelos NoSQL: Chave-Valor \& Documentos},leftcol=7cm,rightcol=7cm]{%
+  \alert{1. Chave-Valor (Key-Value)}\par
+  \itemseps[topsepi=2mm,itemsepi=2.5mm,labelsep=2mm,leftmargini=4mm]
+  \textbf{Exemplos:} Redis, DynamoDB, Memcached.
+  \begin{itemize}
+    \item Mapeamento direto \texttt{chave} $\rightarrow$ \texttt{valor} em memória.
+    \item Altíssima taxa de IOPS e latência sub-milissegundo.
+    \item \textbf{Casos de Uso:} Cache acelerador, controle de sessão de login e contadores em tempo real.
+  \end{itemize}
+}{%
+  \alert{2. Documentos (Document Store)}\par
+  \itemseps[topsepi=2mm,itemsepi=2.5mm,labelsep=2mm,leftmargini=4mm]
+  \textbf{Exemplos:} MongoDB, Couchbase, Firestore.
+  \begin{itemize}
+    \item Dados armazenados em documentos JSON/BSON aninhados.
+    \item Suporte nativo a arrays, objetos embutidos e índices.
+    \item \textbf{Casos de Uso:} Catálogos de e-commerce, perfis de usuários e cadastros com esquema evolutivo.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Modelos NoSQL: Colunas \& Grafos},leftcol=7cm,rightcol=7cm]{%
+  \alert{3. Família de Colunas (Wide-Column)}\par
+  \itemseps[topsepi=2mm,itemsepi=2.5mm,labelsep=2mm,leftmargini=4mm]
+  \textbf{Exemplos:} Apache Cassandra, ScyllaDB, HBase.
+  \begin{itemize}
+    \item Linhas com colunas dinâmicas em anel distribuído.
+    \item Otimizado para altíssimo volume de gravação contínua.
+    \item \textbf{Casos de Uso:} Telemetria IoT, séries temporais, métricas de monitoramento e logs analíticos.
+  \end{itemize}
+}{%
+  \alert{4. Grafos (Graph Database)}\par
+  \itemseps[topsepi=2mm,itemsepi=2.5mm,labelsep=2mm,leftmargini=4mm]
+  \textbf{Exemplos:} Neo4j, Amazon Neptune, ArangoDB.
+  \begin{itemize}
+    \item Vértices (nós), arestas (relacionamentos) e propriedades.
+    \item Travessia direta de ponteiros sem múltiplos JOINs.
+    \item \textbf{Casos de Uso:} Redes sociais, motores de recomendação e detecção de fraudes financeiras.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Bancos Vetoriais \& IA (Modernização)},leftcol=7cm,rightcol=7cm]{%
+  \alert{Vector Databases na Era da IA}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item Dados não estruturados convertidos em vetores matemáticos multidimensionais (\textbf{\textit{embeddings}}).
+    \item Busca por \textbf{proximidade semântica} (similaridade por cosseno), não por correspondência de texto exato.
+    \item \textbf{Exemplos:} ChromaDB, Pinecone, Qdrant, Milvus.
+  \end{itemize}
+}{%
+  \alert{Aplicações Críticas: RAG}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{RAG (Retrieval-Augmented Generation):} Recuperação semântica para abastecer Modelos de Linguagem (LLMs).
+    \item \textbf{Tópico Modernizado:} Nossa disciplina contará com uma aula prática dedicada (Aula 16) sobre este modelo!
+  \end{itemize}
+}

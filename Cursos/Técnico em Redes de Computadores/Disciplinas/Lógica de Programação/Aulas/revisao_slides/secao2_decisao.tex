@@ -1,0 +1,117 @@
+\section{Parte 2: Estruturas de Decisão}
+
+% Slide de Abertura da Secao 2
+\begin{frame}
+    \begin{center}
+        \LARGE \textbf{Parte 2: Estruturas de Decisão}\\
+        \vspace{0.3cm}
+        \normalsize \textit{Desvios Condicionais Simples, Compostos e Encadeados}\\
+        \vspace{0.4cm}
+        \small Questões 06 a 10
+    \end{center}
+    \vspace{0.3cm}
+    \begin{alertblock}{Conceito Central}
+        As estruturas de decisão permitem que o fluxo de execução tome caminhos distintos a depender da avaliação de condições lógicas em tempo de execução.
+    \end{alertblock}
+\end{frame}
+
+% Questao 6
+\begin{frame}{Questão 06: Decisão Simples e Composta}
+    \begin{block}{Quesito: Radar de Trânsito Inteligente}
+        Leia a velocidade registrada de um veículo em via com limite de $60\text{ km/h}$.
+        \begin{itemize}
+            \item Até $60\text{ km/h}$: exiba \texttt{"Velocidade permitida"}.
+            \item Acima de $60\text{ km/h}$: informe \texttt{"Multado!"}, calcule e exiba a multa a $\text{R\$ } 7{,}00$ por $\text{km/h}$ excedente.
+        \end{itemize}
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Estruture com \texttt{if-else} testando: \texttt{velocidade > 60}.
+            \item No bloco do \texttt{if}, calcule o excesso: $\text{excesso} = \text{velocidade} - 60$.
+            \item Multiplique o excesso por $7.00$ para obter o valor total da penalidade.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% Questao 7
+\begin{frame}{Questão 07: Decisão Encadeada (\texttt{if-elif-else})}
+    \begin{block}{Quesito: Triagem de Glicemia em Jejum}
+        Receba a glicose no sangue de um paciente ($\text{mg/dL}$) e classifique:
+        \begin{itemize}
+            \item Menor que $70\text{ mg/dL}$: \textbf{"Hipoglicemia"}
+            \item De $70$ a $99\text{ mg/dL}$: \textbf{"Normal"}
+            \item De $100$ a $125\text{ mg/dL}$: \textbf{"Pré-diabetes"}
+            \item $126\text{ mg/dL}$ ou mais: \textbf{"Diabetes Estabelecido"}
+        \end{itemize}
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Use uma cadeia ordenada de \texttt{if-elif-else} do menor para o maior.
+            \item Se o primeiro teste \texttt{glicose < 70} falhar, o próximo ramo já sabe que o valor é $\ge 70$, bastando testar \texttt{elif glicose <= 99:}.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% Questao 8
+\begin{frame}{Questão 08: Condições Múltiplas e Geometria}
+    \begin{block}{Quesito: Validação e Classificação de Triângulos}
+        Receba três lados $A$, $B$ e $C$. O programa deve:
+        \begin{enumerate}
+            \item Verificar se formam triângulo (cada lado menor que a soma dos outros dois);
+            \item Se formarem, classificar: \textbf{Equilátero} (3 iguais), \textbf{Isósceles} (2 iguais) ou \textbf{Escaleno} (todos diferentes);
+            \item Caso contrário, avisar que não formam um triângulo.
+        \end{enumerate}
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Valide a existência com \texttt{(A < B + C) and (B < A + C) and (C < A + B)}.
+            \item Aninhe a classificação dentro do bloco verdadeiro:
+            \begin{itemize}
+                \item Teste 3 lados iguais: \texttt{A == B == C} (Equilátero).
+                \item Teste 2 lados iguais: \texttt{(A == B) or (B == C) or (A == C)} (Isósceles).
+                \item O restante cai no \texttt{else} (Escaleno).
+            \end{itemize}
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% Questao 9
+\begin{frame}{Questão 09: Tabela Progressiva de Descontos}
+    \begin{block}{Quesito: Política Comercial de Descontos}
+        Um e-commerce aplica descontos conforme o valor bruto da compra:
+        \begin{itemize}
+            \item Até $\text{R\$ } 100{,}00$: $0\%$ | De $\text{R\$ } 100{,}01$ a $\text{R\$ } 300{,}00$: $10\%$
+            \item De $\text{R\$ } 300{,}01$ a $\text{R\$ } 500{,}00$: $15\%$ | Acima de $\text{R\$ } 500{,}00$: $20\%$
+        \end{itemize}
+        Exiba: taxa percentual, valor descontado em $\text{R\$}$ e valor final a pagar.
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Defina uma variável \texttt{taxa} e use \texttt{if-elif-else} apenas para ajustá-la ($0.0$, $0.10$, $0.15$ ou $0.20$).
+            \item Fora do bloco condicional, faça os cálculos apenas uma vez: $\text{desconto} = \text{valor} \times \text{taxa}$ e $\text{total} = \text{valor} - \text{desconto}$.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% Questao 10
+\begin{frame}{Questão 10: Menu de Operações e Prevenção de Falhas}
+    \begin{block}{Quesito: Mini Calculadora com Salvaguarda}
+        Apresente um menu (\texttt{1-Soma}, \texttt{2-Subtração}, \texttt{3-Multiplicação}, \texttt{4-Divisão}), receba dois números e execute a opção escolhida.
+        \begin{itemize}
+            \item Na divisão, evite falha no programa impedindo a divisão por zero.
+            \item Para opções inexistentes, exiba \texttt{"Opção Inválida"}.
+        \end{itemize}
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Estruture as escolhas usando \texttt{if-elif-else}.
+            \item Na opção de divisão, verifique se o segundo número é diferente de zero (\texttt{num2 != 0}) antes de calcular.
+            \item Use o \texttt{else} final para tratar qualquer opção digitada fora do intervalo $1$ a $4$.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}

@@ -1,0 +1,35 @@
+# Ambientes Virtuais Python
+.venv/
+venv/
+ENV/
+env/
+
+# Compilação e Caches Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Arquivos temporários e auxiliares de compilação LaTeX
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+
+# Bancos de dados locais
+*.sqlite3
+db.sqlite3
+
+# Arquivos binários pesados de temas Beamer arquivados (>50MB)
+*.zip
+wssdnmtdrhkyvymdhmdwyjspdcgtvvjq.pdf
+
+# Sistema Operacional
+.DS_Store
+Thumbs.db

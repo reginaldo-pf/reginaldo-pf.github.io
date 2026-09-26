@@ -1,0 +1,49 @@
+\documentclass[10pt]{beamer}
+
+% Tema Limpo e Profissional
+\usetheme{Madrid}
+\usecolortheme{whale}
+
+% Pacotes Essenciais
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Configuracoes de Codigo (Python)
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\tiny,
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    commentstyle=\color{green!60!black},
+    breaklines=true,
+    showstringspaces=false
+}
+
+% Metadados com Prevencao de Avisos de Metadados PDF
+\title[ADS - Aula 13]{Correlação Linear e Associação}
+\subtitle{Teoria, Computação e Tomada de Decisão Visual}
+\author[ADS - IFCE]{Tecnologia em Análise e Desenvolvimento de Sistemas\texorpdfstring{\\ \small{Ciência de Dados / Estatística Computacional}}{}}
+\institute[IFCE]{Instituto Federal do Ceará -- Campus Tauá}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}{Sumário da Aula}
+    \tableofcontents
+\end{frame}
+
+% Blocos Modulares de Slides
+\input{aula1_bloco1}
+\input{aula1_bloco2}
+
+\end{document}

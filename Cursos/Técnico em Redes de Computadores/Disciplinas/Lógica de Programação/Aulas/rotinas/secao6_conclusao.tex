@@ -1,0 +1,66 @@
+\section{Resumo e Atividade Prática}
+
+\begin{frame}{Tabela Resumo dos Tipos de Funções}
+    Aqui está o mapa mental para você nunca mais esquecer os tipos de funções no Python:
+    
+    \vspace{0.4cm}
+    \begin{table}
+        \centering
+        \begin{tabular}{lccl}
+            \toprule
+            \textbf{Tipo de Função} & \textbf{Entrada?} & \textbf{Saída?} & \textbf{Exemplo Prático (Redes)} \\
+            \midrule
+            Sem Param. e Sem Ret. & Não & Não & \texttt{exibir\_banner()} \\
+            Com Param. e Sem Ret. & Sim & Não & \texttt{ping("10.0.0.1")} \\
+            Sem Param. e Com Ret. & Não & Sim & \texttt{obter\_ip\_loopback()} \\
+            Com Param. e Com Ret. & Sim & Sim & \texttt{verificar\_ip\_privado(ip)} \\
+            \bottomrule
+        \end{tabular}
+        \caption{Comparação dos quatro tipos de funções em Python.}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Por que usar Funções? (Boas Práticas)}
+    Como técnicos em redes, sabemos que a organização evita desastres (como cabos espalhados no rack!). No código, é a mesma coisa:
+    
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item \textbf{Evita Duplicação (Princípio DRY - Don't Repeat Yourself):} Escreva uma vez, use quantas vezes quiser.
+        \item \textbf{Facilidade de Manutenção:} Se o cálculo da sub-rede mudar, você altera apenas dentro da função, e não em centenas de linhas de código.
+        \item \textbf{Organização e Legibilidade:} O código fica estruturado em módulos fáceis de ler, parecendo comandos do sistema operacional.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Laboratório de Redes: Mini Desafio}
+    \textbf{Exercício de Fixação:} Crie um script Python que automatize a verificação de uma lista de IPs da rede escolar.
+    
+    \begin{lstlisting}[language=Python]
+# 1. Crie uma funcao que recebe um IP e retorna se ele esta ativo
+# (Para o teste, retorne True se o IP terminar com par e False se impar)
+def testar_host(ip):
+    ultimo_octeto = int(ip.split(".")[-1])
+    if ultimo_octeto % 2 == 0:
+        return True
+    return False
+
+# 2. Varra uma lista de IPs e use a funcao criada para exibir o status
+ips_rede = ["192.168.1.10", "192.168.1.15", "192.168.1.20"]
+
+for ip in ips_rede:
+    if testar_host(ip):
+        print(f"Host {ip} -> ONLINE")
+    else:
+        print(f"Host {ip} -> OFFLINE")
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}{Conclusão: Próximos Passos}
+    \begin{center}
+        \LARGE \textbf{Parabéns! Você deu o primeiro passo na Automação de Redes!} \\
+        \vspace{0.5cm}
+        \normalsize Na próxima aula de Programação de Computadores, vamos integrar essas funções com a biblioteca \texttt{socket} para interagir com roteadores de verdade na nossa rede local! \\
+        \vspace{0.8cm}
+        \textbf{Dúvidas?} \\
+        \texttt{reginaldo.fernandes@ifce.edu.br}
+    \end{center}
+\end{frame}

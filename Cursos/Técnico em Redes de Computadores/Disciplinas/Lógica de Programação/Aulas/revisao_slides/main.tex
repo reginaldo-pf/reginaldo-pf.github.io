@@ -1,0 +1,88 @@
+\documentclass[10pt]{beamer}
+
+% Tema Limpo e Profissional
+\usetheme{Madrid}
+\usecolortheme{whale}
+
+% Pacotes Essenciais
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Configuracoes de Codigo (Python)
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue}\bfseries,
+    stringstyle=\color{orange},
+    commentstyle=\color{gray!80!black}\itshape,
+    breaklines=true,
+    showstringspaces=false,
+    backgroundcolor=\color{gray!5},
+    frame=single,
+    rulecolor=\color{gray!30},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt
+}
+
+% Metadados da Apresentacao
+\title[Revisão de Programação]{Maratona de Revisão: Lógica e Programação}
+\subtitle{25 Questões Práticas: De Operadores Básicos a Funções}
+\author[Prof. Reginaldo]{Prof. Reginaldo Fernandes\texorpdfstring{\\ \small{Lógica de Programação}}{}}
+\institute[IFCE]{Instituto Federal do Ceará -- Campus Tauá \\ Curso Técnico em Redes de Computadores}
+\date{\today}
+
+\begin{document}
+
+% Slide de Titulo
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% Visao Geral e Metodologia
+\begin{frame}{Como Utilizar esta Revisão}
+    \begin{block}{Objetivo Pedagógico}
+        Consolidar a capacidade analítica e algorítmica por meio de \textbf{25 desafios práticos progressivos}.
+    \end{block}
+
+    \vspace{0.2cm}
+    \begin{columns}
+        \begin{column}{0.48\textwidth}
+            \textbf{Distribuição dos Tópicos:}
+            \begin{itemize}
+                \item \textbf{Parte 1 (Q01-Q05):} Operadores Matemáticos, Relacionais e Lógicos.
+                \item \textbf{Parte 2 (Q06-Q10):} Estruturas de Decisão (\texttt{if-elif-else}).
+                \item \textbf{Parte 3 (Q11-Q15):} Laços de Repetição e Vetores.
+                \item \textbf{Parte 4 (Q16-Q25):} Funções (10 questões cobrindo todos os tipos).
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \textbf{Estrutura de Cada Slide:}
+            \begin{itemize}
+                \item \textbf{Quesito:} Enunciado claro do problema computacional e especificação de entrada/saída.
+                \item \textbf{Ajuda de Resolução:} Guia de raciocínio, dicas de sintaxe e operadores recomendados, \textbf{sem entregar o código final}.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% Sumario
+\begin{frame}{Sumário da Apresentação}
+    \tableofcontents
+\end{frame}
+
+% Blocos Modulares de Slides
+\input{secao1_operadores}
+\input{secao2_decisao}
+\input{secao3_repeticao_vetores}
+\input{secao4_funcoes}
+\input{secao5_conclusao}
+
+\end{document}

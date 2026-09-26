@@ -1,0 +1,115 @@
+\section{Parte 3: Estruturas de Repetição e Vetores}
+
+% Slide de Abertura da Secao 3
+\begin{frame}
+    \begin{center}
+        \LARGE \textbf{Parte 3: Repetição e Vetores}\\
+        \vspace{0.3cm}
+        \normalsize \textit{Laços de Repetição (\texttt{for}, \texttt{while}) e Manipulação de Listas}\\
+        \vspace{0.4cm}
+        \small Questões 11 a 15
+    \end{center}
+    \vspace{0.3cm}
+    \begin{alertblock}{Conceito Central}
+        Laços automatizam o processamento sequencial de dados, viabilizando cálculos estatísticos, buscas lineares e filtros em coleções.
+    \end{alertblock}
+\end{frame}
+
+% Questao 11
+\begin{frame}{Questão 11: Laço Contado e Vetor Acumulador}
+    \begin{block}{Quesito: Análise Térmica Semanal}
+        Leia a temperatura máxima dos $7$ dias da semana e guarde em uma lista. Ao final, determine e mostre:
+        \begin{enumerate}
+            \item A média aritmética simples das temperaturas;
+            \item A maior temperatura registrada;
+            \item Quantos dias tiveram temperatura estritamente superior à média.
+        \end{enumerate}
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Use um laço \texttt{for} para coletar as 7 entradas com \texttt{.append()}.
+            \item Obtenha a média com $\text{soma} / 7$ (usando \texttt{sum()} ou acumulador).
+            \item Em um segundo laço, conte quantos valores na lista são maiores que a média calculada usando uma condição \texttt{if temp > media:}.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% Questao 12
+\begin{frame}{Questão 12: Repetição com Sentinela (\texttt{while})}
+    \begin{block}{Quesito: Totalizador de Terminal de Saque}
+        Simule o fechamento de um caixa de autoatendimento bancário:
+        \begin{itemize}
+            \item Leia saques contínuos até que o usuário digite $0$ (parada).
+            \item Rejeite valores negativos com aviso e desconsidere-os da contagem.
+            \item Exiba o total de saques válidos efetuados e a soma total sacada.
+        \end{itemize}
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Use um laço \texttt{while True:} com leitura do valor a cada volta.
+            \item Se o valor for $0$, encerre a repetição com \texttt{break}.
+            \item Se for negativo, alerte o usuário e volte ao topo com \texttt{continue}.
+            \item Caso contrário, some o saque ao total e incremente o contador.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% Questao 13
+\begin{frame}{Questão 13: Varredura de Vetor e Filtragem}
+    \begin{block}{Quesito: Separação de Números Pares e Ímpares}
+        Leia $10$ números inteiros para uma lista inicial. Em seguida:
+        \begin{itemize}
+            \item Crie uma lista com os números pares e outra com os ímpares;
+            \item Exiba o tamanho e os elementos contidos nas três listas.
+        \end{itemize}
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Crie duas listas vazias: \texttt{pares = []} e \texttt{impares = []}.
+            \item Itere na lista com \texttt{for n in lista:}.
+            \item Verifique a paridade com \texttt{n \% 2 == 0}: adicione em \texttt{pares} ou em \texttt{impares} com \texttt{.append()}.
+            \item Exiba o número de itens com \texttt{len()}.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% Questao 14
+\begin{frame}{Questão 14: Busca Linear em Vetores com Flag}
+    \begin{block}{Quesito: Verificador de Matrícula em Lista de Acesso}
+        Dada uma lista com $8$ matrículas pré-cadastradas, leia uma matrícula informada pelo usuário e faça a busca:
+        \begin{itemize}
+            \item Se presente, mostre: \texttt{"Autorizado na posição X"}.
+            \item Se ausente, mostre: \texttt{"Acesso Negado: Matrícula não cadastrada"}.
+        \end{itemize}
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Inicie uma flag booleana de controle: \texttt{achou = False}.
+            \item Percorra os índices com \texttt{for i in range(len(lista)):}.
+            \item Se o item do índice for igual à busca, marque \texttt{achou = True}, exiba a posição \texttt{i} e interrompa com \texttt{break}.
+            \item Ao final do laço, teste: se \texttt{not achou:}, avise que não encontrou.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% Questao 15
+\begin{frame}{Questão 15: Inversão Algorítmica de Vetor}
+    \begin{block}{Quesito: Espelhamento de Elementos sem Métodos Prontos}
+        Preencha uma lista com $6$ números fornecidos pelo usuário. \\
+        Crie uma nova lista com os mesmos elementos em \textbf{ordem invertida}, sem usar \texttt{.reverse()} ou fatiamento \texttt{[::-1]}.
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item O último elemento está em $\text{tamanho} - 1$ e o primeiro em $0$.
+            \item Crie uma nova lista vazia para armazenar o resultado.
+            \item Percorra a lista de trás para frente usando: \\
+            \texttt{range(len(lista) - 1, -1, -1)}.
+            \item Insira cada elemento lido na nova lista com \texttt{.append()}.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}

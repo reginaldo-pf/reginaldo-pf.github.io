@@ -1,0 +1,87 @@
+\section{A Anatomia do Game Loop}
+
+\begin{frame}{O Ciclo de Vida de um Jogo}
+    Todo jogo de computador, do clássico Pong aos títulos AAA modernos, é executado dentro de quatro fases essenciais a cada quadro (\textit{frame}):
+
+    \vspace{0.3cm}
+    \begin{center}
+    \begin{tikzpicture}[
+        node distance=1.0cm and 1.5cm,
+        box/.style={rectangle, draw=blue!70, fill=blue!10, rounded corners, text centered, minimum width=2.8cm, minimum height=0.7cm, font=\footnotesize\bfseries},
+        arrow/.style={-{Stealth[scale=1.0]}, thick, color=blue!80}
+    ]
+        \node[box] (eventos) {1. Entrada (Eventos)};
+        \node[box, right=of eventos] (logica) {2. Lógica (Update)};
+        \node[box, below=of logica] (desenho) {3. Desenho (Render)};
+        \node[box, below=of eventos] (clock) {4. Relógio (Clock Tick)};
+
+        \draw[arrow] (eventos) -- (logica);
+        \draw[arrow] (logica) -- (desenho);
+        \draw[arrow] (desenho) -- (clock);
+        \draw[arrow] (clock) -- (eventos);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{1. Entrada:} Lê cliques do mouse, teclas pressionadas e fechamento da janela.
+        \item \textbf{2. Lógica:} Atualiza posições, calcula colisões, pontuação e regras.
+        \item \textbf{3. Desenho:} Limpa o buffer de vídeo e redesenha todos os elementos.
+        \item \textbf{4. Relógio:} Aguarda o tempo necessário para travar a taxa de quadros (ex: 60 FPS).
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{O Código Mínimo Essencial (Esqueleto)}
+    \begin{lstlisting}[language=Python]
+import pygame, sys
+
+pygame.init()
+tela = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("Meu Primeiro Jogo")
+relogio = pygame.time.Clock()
+
+executando = True
+while executando:
+    # 1. Eventos
+    for evento in pygame.event.get():
+        if evento.type == pygame.QUIT:
+            executando = False
+
+    # 2. Logica (vazio no momento)
+
+    # 3. Desenho
+    tela.fill((30, 30, 45))  # Limpa fundo com cinza escuro
+    pygame.display.flip()    # Exibe no monitor
+
+    # 4. Controle de FPS
+    relogio.tick(60)
+
+pygame.quit()
+sys.exit()
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}{Por que o programa trava sem \texttt{pygame.event.get()}?}
+    \begin{block}{O Sistema Operacional e a Fila de Mensagens}
+        \begin{itemize}
+            \item Os sistemas operacionais (Linux, Windows, macOS) enviam mensagens contínuas para as janelas abertas (foco, teclado, redimensionamento, botão de fechar).
+            \item Se o jogo não consumir essa fila através de \texttt{pygame.event.get()}, o sistema assume que o processo entrou em congelamento (\textit{loop infinito travado}) e exibe a mensagem de ``Não Respondendo''.
+        \end{itemize}
+    \end{block}
+
+    \vspace{0.3cm}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \textbf{O que faz \texttt{pygame.QUIT}?}
+            \begin{itemize}
+                \item Representa o clique no botão vermelho de fechar janela `X'.
+                \item Permite sair suavemente do laço \texttt{while}.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \textbf{O que faz \texttt{display.flip()}?}
+            \begin{itemize}
+                \item Implementa o \textbf{Double Buffering}: tudo é desenhado na memória oculta e depois trocado de uma só vez para a tela visível, evitando cintilação (\textit{flickering}).
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}

@@ -1,0 +1,121 @@
+\section{Parte 1: Programação Estruturada e Operadores}
+
+% Slide de Abertura da Secao 1
+\begin{frame}
+    \begin{center}
+        \LARGE \textbf{Parte 1: Programação Estruturada}\\
+        \vspace{0.3cm}
+        \normalsize \textit{Operadores Aritméticos, Relacionais e Lógicos}\\
+        \vspace{0.4cm}
+        \small Questões 01 a 05
+    \end{center}
+    \vspace{0.3cm}
+    \begin{alertblock}{Conceito Central}
+        A programação estruturada baseia-se no fluxo sequencial e na manipulação de dados na memória através de expressões matemáticas e booleanas.
+    \end{alertblock}
+\end{frame}
+
+% Questao 1
+\begin{frame}{Questão 01: Operadores Aritméticos Básicos}
+    \begin{block}{Quesito: Custo de Deslocamento e Consumo}
+        Desenvolva um programa que receba três valores:
+        \begin{enumerate}
+            \item Distância total da viagem em quilômetros (\texttt{km});
+            \item Consumo médio do veículo em quilômetros por litro (\texttt{km/l});
+            \item Preço do litro de combustível em reais (\texttt{R\$}).
+        \end{enumerate}
+        O programa deve calcular e exibir:
+        \begin{itemize}
+            \item O total de litros consumidos ($\text{Distância} / \text{Consumo}$);
+            \item O custo total em reais formatado com 2 casas decimais.
+        \end{itemize}
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Converta os dados lidos do teclado para \texttt{float}.
+            \item Calcule os litros com o operador de divisão (\texttt{/}).
+            \item Obtenha o custo multiplicando litros pelo preço unitário (\texttt{*}).
+            \item Exiba o resultado com \texttt{f"\{custo:.2f\}"}.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% Questao 2
+\begin{frame}{Questão 02: Divisão Inteira e Operador Módulo}
+    \begin{block}{Quesito: Conversão de Segundos para H:M:S}
+        Um monitor de infraestrutura registra o tempo de atividade de um servidor em segundos inteiros. \\
+        Escreva um programa que leia esse valor inteiro e o decomponha no formato: \textbf{Horas}, \textbf{Minutos} e \textbf{Segundos restantes}.
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Lembre-se: $1\text{ h} = 3600\text{ s}$ e $1\text{ min} = 60\text{ s}$.
+            \item Calcule as horas completas com divisão inteira: $\text{horas} = \text{total} // 3600$.
+            \item Extraia o que sobrou com o operador resto (\texttt{\%}): $\text{resto} = \text{total} \% 3600$.
+            \item Obtenha os minutos com $\text{minutos} = \text{resto} // 60$ e os segundos finais com $\text{segundos} = \text{resto} \% 60$.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% Questao 3
+\begin{frame}{Questão 03: Operadores Relacionais (Comparação)}
+    \begin{block}{Quesito: Monitor de Capacidade de Link de Rede}
+        Um link opera a $1000\text{ Mbps}$. Leia o tráfego atual (\texttt{Mbps}) e gere 3 variáveis booleanas (\texttt{True/False}), sem usar \texttt{if}:
+        \begin{itemize}
+            \item \textbf{Uso Seguro:} Tráfego estritamente menor que $80\%$ da capacidade;
+            \item \textbf{Atenção Crítica:} Tráfego atingiu ou superou $90\%$ da capacidade;
+            \item \textbf{Sobrecarga:} Tráfego estritamente superior a $100\%$ da capacidade.
+        \end{itemize}
+        Exiba o resultado booleano de cada uma das três avaliações.
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Operadores de comparação (\texttt{<}, \texttt{>=}, \texttt{>}) retornam diretamente \texttt{True} ou \texttt{False}.
+            \item Calcule os limites multiplicando a capacidade por $0.80$, $0.90$ e $1.0$.
+            \item Guarde cada comparação direto em uma variável booleana e a imprima.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% Questao 4
+\begin{frame}{Questão 04: Operadores Lógicos Comportamentais}
+    \begin{block}{Quesito: Controle de Acesso ao Datacenter}
+        A catraca eletrônica deve autorizar a abertura da porta quando:
+        \begin{itemize}
+            \item O usuário possui credencial (\texttt{True/False}) \textbf{E} o horário atual está dentro da janela permitida ($8\text{h}$ às $18\text{h}$);
+            \item \textbf{OU} o alarme de emergência está ativado (\texttt{True/False}).
+        \end{itemize}
+        Construa a expressão lógica em Python que determine se a porta deve destravar.
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Identifique: \texttt{tem\_cracha} (bool), \texttt{hora} (int) e \texttt{emergencia} (bool).
+            \item A janela de horário é: \texttt{(hora >= 8 and hora <= 18)}.
+            \item Conecte as condições com os operadores \texttt{and} e \texttt{or}.
+            \item Use parênteses para garantir que o \texttt{or} avalie a emergência como exceção geral.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% Questao 5
+\begin{frame}{Questão 05: Expressões Aritmético-Lógicas}
+    \begin{block}{Quesito: Verificador de Regra de Ano Bissexto}
+        Um ano é bissexto se atender às regras do calendário gregoriano:
+        \begin{itemize}
+            \item É divisível por $4$ \textbf{e} não é divisível por $100$; \textbf{OU}
+            \item É divisível por $400$.
+        \end{itemize}
+        Solicite um ano inteiro e avalie se ele é bissexto usando \textbf{uma única expressão booleana} (sem \texttt{if/else}). Imprima apenas o resultado booleano.
+    \end{block}
+
+    \begin{exampleblock}{Ajuda de Resolução (Como Pensar)}
+        \begin{itemize}
+            \item Divisibilidade por $N$ é avaliada com operador de resto: \texttt{ano \% N == 0}.
+            \item Não ser divisível por $100$: \texttt{ano \% 100 != 0}.
+            \item Combine as condições em uma só linha usando operadores \texttt{and} e \texttt{or} com parênteses adequados.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}

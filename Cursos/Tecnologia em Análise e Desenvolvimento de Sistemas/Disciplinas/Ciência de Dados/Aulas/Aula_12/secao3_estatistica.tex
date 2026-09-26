@@ -1,0 +1,63 @@
+\section{Estatística de Teste e Simulação de Permutação}
+
+\begin{frame}{Estatística de Teste: Distância de Proporções}
+    \begin{block}{Definição da Estatística}
+        Para testar a diferença entre os grupos, usamos a distância absoluta (valor absoluto da diferença) entre as proporções de melhora dos dois grupos:
+        $$\text{Estatística de Teste} = |p_{\text{tratamento}} - p_{\text{controle}}|$$
+    \end{block}
+    \begin{block}{Cálculo Observado na Amostra}
+        Com base nos dados coletados no HUWC Ceará:
+        \begin{itemize}
+            \item Proporção de melhora no Tratamento ($p_{\text{tratamento}}$): $9/15 = 0.600$ ($60.0\%$)
+            \item Proporção de melhora no Controle ($p_{\text{controle}}$): $2/16 = 0.125$ ($12.5\%$)
+            \item Distância Observada:
+                $$|0.600 - 0.125| = 0.475 \quad (47.5\%)$$
+        \end{itemize}
+    \end{block}
+    \centering
+    \textit{Valores grandes da estatística de teste indicam desvios do modelo do acaso e apoiam a hipótese alternativa ($H_1$).}
+\end{frame}
+
+\begin{frame}{Embaralhando Rótulos sob a Hipótese Nula}
+    \begin{block}{A Lógica da Simulação}
+        Se a hipótese nula $H_0$ é verdadeira, o tratamento não tem efeito. Ou seja, os $11$ pacientes que melhoraram teriam melhorado de qualquer forma, não importando a qual grupo foram alocados.
+    \end{block}
+    \begin{block}{Algoritmo do Teste de Permutação}
+        1. Junte todos os $31$ resultados ($11$ sucessos, $20$ insucessos).
+        2. Embaralhe aleatoriamente esses resultados (simulando que os rótulos de grupo foram sorteados novamente).
+        3. Separe o vetor embaralhado em um grupo de 16 (Controle) e outro de 15 (Tratamento).
+        4. Calcule a nova estatística de teste (distância absoluta).
+        5. Repita o processo $20.000$ vezes para obter a distribuição nula.
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Código em Python: Teste de Permutação (BTA)}
+\begin{lstlisting}[language=Python]
+import numpy as np
+
+# Dados: 11 sucessos (1) e 20 fracassos (0)
+resultados = np.array([1]*11 + [0]*20)
+tamanho_controle = 16
+tamanho_tratamento = 15
+distancias_simuladas = []
+
+np.random.seed(42)
+for _ in range(20000):
+    # Embaralha os resultados (rotulos sao fixos)
+    embaralhado = np.random.permutation(resultados)
+    
+    sim_controle = embaralhado[:tamanho_controle]
+    sim_tratamento = embaralhado[tamanho_controle:]
+    
+    # Calcula a diferenca absoluta das proporcoes
+    prop_c = np.mean(sim_controle)
+    prop_t = np.mean(sim_tratamento)
+    distancias_simuladas.append(np.abs(prop_t - prop_c))
+
+# Calcula o P-valor empirico
+obs_dist = np.abs(0.60 - 0.125)
+p_valor = np.count_nonzero(distancias_simuladas >= obs_dist) / 20000
+print(f"P-valor: {p_valor:.5f}")
+# Saida esperada: 0.00910
+\end{lstlisting}
+\end{frame}

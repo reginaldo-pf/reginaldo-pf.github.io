@@ -1,0 +1,764 @@
+=== SLIDE 1 ===
+Testes de Permutação
+‹#›
+
+=== SLIDE 2 ===
+TITLE: Testes de Hipótese
+Vamos explorar três exemplos
+A pergunta é: O valor observado é factível?
+‹#›
+
+=== SLIDE 3 ===
+TITLE: Testes de Hipótese
+Vamos explorar três exemplos
+A pergunta é: O valor observado é factível?
+Lembre que foi isso que respondemos no caso de COVID
+No caso das moedas
+No caso dos bebês
+Vamos explorar outra forma de responder tal pergunta
+‹#›
+
+=== SLIDE 4 ===
+TITLE: Swain vs Alabama
+“In the early 1960’s, in Talladega County in Alabama, a black man called Robert Swain was convicted of raping a white woman and was sentenced to death. He appealed his sentence, citing among other factors the all-white jury. At the time, only men aged 21 or older were allowed to serve on juries in Talladega County. In the county, 26% of the eligible jurors were black, but there were only 8 black men among the 100 selected for the jury panel in Swain’s trial. No black man was selected for the trial jury.”
+‹#›
+
+=== SLIDE 5 ===
+TITLE: Swain vs Alabama
+“In the early 1960’s, in Talladega County in Alabama, a black man called Robert Swain was convicted of raping a white woman and was sentenced to death. He appealed his sentence, citing among other factors the all-white jury. At the time, only men aged 21 or older were allowed to serve on juries in Talladega County. In the county, 26% of the eligible jurors were black, but there were only 8 black men among the 100 selected for the jury panel in Swain’s trial. No black man was selected for the trial jury.”
+‹#›
+
+=== SLIDE 6 ===
+TITLE: Perguntas
+Quais perguntas você faria neste momento?
+Será que podemos dar alguma validade estatística para elas?
+‹#›
+
+=== SLIDE 7 ===
+TITLE: Nossa análise
+Temos dois grupos
+Brancas
+Negras
+Sabemos que 26% da população é negra (acima de 21 anos)
+Foi realizada uma amostra de 100 pessoas
+‹#›
+
+=== SLIDE 8 ===
+TITLE: Então nós temos
+n = 100
+p = 8 / 100
+Podemos usar intervalos de confiança para fazer algum teste?
+‹#›
+
+=== SLIDE 9 ===
+TITLE: Então nós temos
+n = 100
+p = 8 / 100
+Podemos usar intervalos de confiança para fazer algum teste?
+Sim! (Fica para casa)
+‹#›
+
+=== SLIDE 10 ===
+TITLE: Então nós temos
+Dica, em uma VA Bernoulli →  X є {1, 0}.
+Média → p, 0.08 neste caso
+Variância →  p (1 - p).
+Só para fazer o IC clássico.
+Ou um Bootstrap
+‹#›
+
+=== SLIDE 11 ===
+TITLE: Qual a nossa hipótese?
+Temos dois grupos
+Brancos
+Negros
+Temos que 26% da população é negra (acima de 21 anos)
+Foi realizada uma amostra de 100 pessoas
+“Tal amostra é estatisticamente significante”ou“Tal amostra é estatisticamente não significante”
+‹#›
+
+=== SLIDE 12 ===
+TITLE: Ideia
+Quando falamos em hipóteses:
+Estamos querendo comparar nossos dados com um modelo aleatório!
+Simulação é uma das formas simples de entender estes casos.
+Note que a simulação do Bootstrap é a mesma coisa
+Amostras aleatórias
+Só que aqui podemos simular a população!
+‹#›
+
+=== SLIDE 13 ===
+TITLE: Ideia
+Quando falamos em hipóteses:
+Estamos querendo comparar nossos dados com um modelo aleatório!
+Simulação é uma das formas simples de entender estes casos.
+Note que a simulação do Bootstrap é a mesma coisa
+Amostras aleatórias
+Só que aqui podemos simular a população!
+‹#›
+População
+cria um vetor sem nada
+
+=== SLIDE 14 ===
+TITLE: Ideia
+Quando falamos em hipóteses:
+Estamos querendo comparar nossos dados com um modelo aleatório!
+Simulação é uma das formas simples de entender estes casos.
+Note que a simulação do Bootstrap é a mesma coisa
+Amostras aleatórias
+Só que aqui podemos simular a população!
+‹#›
+População
+SETA TODO PARA ‘W’
+
+=== SLIDE 15 ===
+TITLE: Ideia
+Quando falamos em hipóteses:
+Estamos querendo comparar nossos dados com um modelo aleatório!
+Simulação é uma das formas simples de entender estes casos.
+Note que a simulação do Bootstrap é a mesma coisa
+Amostras aleatórias
+Só que aqui podemos simular a população!
+‹#›
+População
+SETA OS PRIMEIROS 26% PARA ‘B’
+
+=== SLIDE 16 ===
+TITLE: Agora com a População
+“Em uma amostra uniforme da população da cidade de Talladega, quais sãos as chances de selecionarmos apenas 8 pessoas negras?”
+‹#›
+
+=== SLIDE 17 ===
+TITLE: Como simular
+Defina um tamanho para a população. Vamos assumir 10,000 pessoas.
+Não vai importar muito no fim
+É uma constante e vamos nos preocupar com uma fração dela
+Cada pessoa tem um número
+Os primeiros 26% dos números são de um grupo. Os outros 77% do outro.
+Realizar 10,000 (ou 1000, ou 5000) amostras.
+Criar um Júri com 100 pessoas aleatórias
+aqui uso o shuffle para embaralhar a população
+Contar quantas pessoas negras no júri, guardar
+Verificar o histograma.
+‹#›
+
+=== SLIDE 18 ===
+TITLE: Como simular
+Defina um tamanho para a população. Vamos assumir 10,000 pessoas.
+Não vai importar muito no fim
+É uma constante e vamos nos preocupar com uma fração dela
+Cada pessoa tem um número
+Os primeiros 26% dos números são de um grupo. Os outros 77% do outro.
+Realizar 10,000 (ou 1000, ou 5000) amostras.
+Criar um Júri com 100 pessoas aleatórias
+aqui uso o shuffle para embaralhar a população
+Contar quantas pessoas negras no júri, guardar
+Verificar o histograma.
+‹#›
+
+=== SLIDE 19 ===
+TITLE: Como simular
+Defina um tamanho para a população. Vamos assumir 10,000 pessoas.
+Não vai importar muito no fim
+É uma constante e vamos nos preocupar com uma fração dela
+Cada pessoa tem um número
+Os primeiros 26% dos números são de um grupo. Os outros 77% do outro.
+Realizar 10,000 (ou 1000, ou 5000) amostras.
+Criar um Júri com 100 pessoas aleatórias
+aqui uso o shuffle para embaralhar a população
+Contar quantas pessoas negras no júri, guardar
+Verificar o histograma.
+‹#›
+pega as 100 primeiras depois do shuffle
+
+=== SLIDE 20 ===
+TITLE: Como simular
+Defina um tamanho para a população. Vamos assumir 10,000 pessoas.
+Não vai importar muito no fim
+É uma constante e vamos nos preocupar com uma fração dela
+Cada pessoa tem um número
+Os primeiros 26% dos números são de um grupo. Os outros 77% do outro.
+Realizar 10,000 (ou 1000, ou 5000) amostras.
+Criar um Júri com 100 pessoas aleatórias
+aqui uso o shuffle para embaralhar a população
+Contar quantas pessoas negras no júri, guardar
+Verificar o histograma.
+‹#›
+
+=== SLIDE 21 ===
+TITLE: Resultado Final
+‹#›
+Observado (8)
+Probabilidade Caso fosse uniforme
+NOSSO HISTOGRAMA FINAL!
+
+=== SLIDE 22 ===
+TITLE: Resultado Final
+‹#›
+Observado (8)
+Probabilidade Caso fosse uniforme
+8 PESSOAS NEGRAS NÃO É IMPOSSÍVEL, É BEM RARO!
+
+ABAIXO DE 5% (NOSSA SIGNIFICÂNCIA)
+
+=== SLIDE 23 ===
+TITLE: Melhor
+“Em uma amostra uniforme da população da cidade de Talladega, quais sãos as chances de selecionarmos 8 ou menos pessoas negras? A chance é muito baixa, menos do que 5%. Pouca evidência de que a amostra foi uniformemente aleatória.”
+‹#›
+
+=== SLIDE 24 ===
+TITLE: Pontos Importantes
+“Em uma amostra uniforme da população da cidade de Talladega, quais sãos as chances de selecionarmos 8 ou menos pessoas negras? A chance é muito baixa, menos do que 5%. Pouca evidência de que a amostra foi uniformemente aleatória.”
+Qual o modelo nulo: uniforme
+Qual a significância: 5%
+Eu posso errar 5% das vezes!
+Podemos escolher outros valores, a resposta pode sim mudar.
+Precisamos deixar tais casos explícitos
+Qual a hipótese nula
+Qual a significância (5%)
+Qual o valor observado (8)
+Existe pouca chance, menos do que 5%, do valor 8 ocorrer caso a seleção fosse uniforme
+‹#›
+
+=== SLIDE 25 ===
+TITLE: Formalizando os Testes
+‹#›
+
+=== SLIDE 26 ===
+TITLE: Formalizando
+H0 é nossa hipótese nulaProcuramos evidências da para rejeitar hipótese nula. Este é um ponto importante do teste de hipóteses.Tal valor observado (0.08) é factível em em uma seleção uniforme?Não, com 5% de chance da minha afirmativa está errada!
+‹#›
+
+=== SLIDE 27 ===
+TITLE: Formalizando
+H0: É a nossa hipótese nulaH0: Estatisticamente falando	P(obs <= 0.08) no mundo nulo        O mundo nulo assume uma 0.26 (26%) pessoas negrasProcuramos evidências da para rejeitar hipótese nula. Tal valor observado (0.08) é factível em em uma seleção uniforme?Não, com 5% de chance da minha afirmativa está errada!
+‹#›
+
+=== SLIDE 28 ===
+TITLE: Em termos comuns
+No teste de hipóteses um dos pontos chance é definir H0
+É importante que a hipótese nula representa aleatoriedade
+Qual o motivo?
+Ao rejeitar H0 achamos um SINAL
+Existe algo nessa amostra que não pode ser explicado por CHANCE
+Claro que eu ainda posso errar (geralmente 5%) das vezes
+Mas 5% é raro!
+
+=== SLIDE 29 ===
+TITLE: Em termos comuns
+No teste de hipóteses um dos pontos chance é definir H0
+É importante que a hipótese nula representa aleatoriedade
+Qual o motivo?
+Ao rejeitar H0 achamos um SINAL
+Existe algo nessa amostra que não pode ser explicado por CHANCE
+Claro que eu ainda posso errar (geralmente 5%) das vezes
+Mas 5% é raro!
+Vamos voltar para uma suposta VACINA de COVID.
+Queremos que os resultados sejam explicados por chance?
+Não!
+Queremos rejeitar a hipótese nula!
+Evidência de SINAL!
+
+=== SLIDE 30 ===
+TITLE: Hipóteses Nulas e o Método Científico
+Testar hipóteses é a base do método científico
+Hipóteses nula são uma das formas de fazer ciência
+Com dados
+Afinal, a matéria se chama ciência de dados!
+Geralmente tais testes são feitos com grupos de controle/teste
+Lembre-se do início da matéria
+Queremos que a diferença entre os gruposNÃO SEJA EXPLICADA POR CHANCE
+Rejeitar a nula
+
+=== SLIDE 31 ===
+TITLE: Segundo Problema
+“In 2010, the American Civil Liberties Union (ACLU) of Northern California presented a report on jury selection in Alameda County, California. The report concluded that certain ethnic groups are underrepresented among jury panelists in Alameda County, and suggested some reforms of the process by which eligible jurors are assigned to panels. In this section, we will perform our own analysis of the data and examine some questions that arise as a result.”
+‹#›
+
+=== SLIDE 32 ===
+TITLE: Os Dados
+Temos as seguintes proporções nos dados
+‹#›
+
+=== SLIDE 33 ===
+TITLE: Segundo Problema
+Diferente do anterior temos vários grupos
+Precisamos de alguma forma de comparar distribuições
+‹#›
+
+=== SLIDE 34 ===
+TITLE: Total Variation Distance
+Compare as proporções de dois grupos em módulo
+Some das diferenças
+Retorne o 0.5 * a soma
+‹#›
+Observe como o caso extremo é 1d([0, 1], [1, 0]) = 0.5 * (1 + 1) = 1Caso de igualdaded([½, ½], [½, ½]) = 0.5 * (0 + 0) = 0
+
+=== SLIDE 35 ===
+TITLE: Total Variation Distance
+Compare as proporções de dois grupos em módulo
+Some das diferenças
+Retorne o 0.5 * a soma
+‹#›
+Observe como o caso extremo é 1d([0, 1], [1, 0]) = 0.5 * (1 + 1) = 1Caso de igualdaded([½, ½], [½, ½]) = 0.5 * (0 + 0) = 0
+O TVD É APENAS UMA ESTATÍSTICA QUE COMPARA VETORES. PODEMOS USAR OUTRAS!
+
+=== SLIDE 36 ===
+TITLE: Total Variation Distance
+No caso abaixo é de 0.14
+‹#›
+
+=== SLIDE 37 ===
+TITLE: Comparando com uma amostra
+Nos dados, a população tem tamanho de 1,423
+Vamos gerar uma amostra e comparar
+‹#›
+
+=== SLIDE 38 ===
+TITLE: Processo
+Gerar várias amostras
+Guardar o Total Variation Distance
+Verificar a chance de 0.14
+‹#›
+
+=== SLIDE 39 ===
+TITLE: Vamos fazer 10,000 amostras
+E computar o TVD.
+‹#›
+
+=== SLIDE 40 ===
+TITLE: Vamos fazer 10,000 amostras
+Nos dados, o TVD foi de 0.14. Ponto vermelho.
+‹#›
+
+=== SLIDE 41 ===
+TITLE: No mundo simulado, é menor.
+np.percentile(all_distances, 97.5) ---> 0.12
+‹#›
+
+=== SLIDE 42 ===
+TITLE: Neste caso
+O valor real está além do nosso mundo simulado
+Não parece ter sido por chance!
+‹#›
+
+=== SLIDE 43 ===
+TITLE: Hipóteses Nulas
+Dando nomes
+Quando temos um mundo aleatório, podemos verificar alguma estatística de teste neste mundo.
+Note que no exemplo acima, foi a TVD
+Antes foi a proporção em um grupo
+Hipótese Nula: Define um modelo aleatório do mundo. Um valor que esperamos neste caso.
+Teste: Compara o mundo real ao mundo nulo.
+‹#›
+
+=== SLIDE 44 ===
+TITLE: Intuição (Voltando para o Teorema Central do Limite)
+O TCL também mostra um acaso
+Acaso de médias
+95%dos casos
+na região branca.
+Aceitamos o acaso.
+2.5% na rosa da direita, raro de ocorrer
+2.5% na rosa da esquerda, raro de ocorrer
+
+=== SLIDE 45 ===
+TITLE: Testes A/B Novamente
+‹#›
+
+=== SLIDE 46 ===
+TITLE: Testes A/B [1]. Caso das mães que fumam
+Em uma amostra de recém nascidos e mães :
+(A) Peso dos bebês das mães que fumaram na gravidez 
+(B) Peso dos bebês das mães que não fumaram na gravidez 
+Pergunta: Será que diferença de pesos pode ter ocorrida ao acaso?
+
+‹#›
+
+=== SLIDE 47 ===
+TITLE: Hipóteses
+H0 -- Nula: 
+O peso dos bebês médio é o mesmo. Podemos explicar a variação de tais pesos devido a chance de que tal variação ocorre em uma seleção aleatória e uniforme de fumantes/não fumantes.
+
+‹#›
+
+=== SLIDE 48 ===
+TITLE: Hipóteses
+H0 -- Nula: 
+Peso Médio BBs de Mães Fumantes == Peso Médio BBs de Mães Não Fumantes
+
+‹#›
+
+=== SLIDE 49 ===
+TITLE: Estatística de Teste
+Grupo A: fumantes
+Grupo B: não fumantes
+Estatística: Diferença entre as médias
+Média grupo B - Média grupo A
+Valor-P: Probabilidade de encontrar uma estatística mais extrema do que essa na hipótese nula
+‹#›
+
+=== SLIDE 50 ===
+TITLE: Simulação no modelo nulo
+...
+Non-smoker
+Non-smoker
+Smoker
+Smoker
+120 oz
+113 oz
+128 oz
+108 oz
+Non-smoker
+136 oz
+
+Gráfico dedata8.org 
+‹#›
+
+=== SLIDE 51 ===
+TITLE: Simulação no modelo nulo
+...
+Non-smoker
+Non-smoker
+Smoker
+Smoker
+120 oz
+113 oz
+128 oz
+108 oz
+Non-smoker
+136 oz
+
+Gráfico dedata8.org 
+‹#›
+
+=== SLIDE 52 ===
+TITLE: Simulação no modelo nulo
+...
+Non-smoker
+Non-smoker
+Smoker
+Smoker
+120 oz
+113 oz
+128 oz
+108 oz
+Non-smoker
+136 oz
+
+Gráfico dedata8.org 
+‹#›
+
+=== SLIDE 53 ===
+TITLE: Simulação no modelo nulo
+Se o modelo nulo for verdade:A diferença dos pesos é igual assumindo a hipótese nula
+Se for falso (alternativa): A diferença de pesos observadas em várias permutações tem valores ainda mais extremos do que aqueles que eu observo
+Mais extremos do que:
+Média grupo B - Média grupo A
+Note que podemos pensar em outras alternativas:
+Média grupo A - Média grupo B
+Média grupo A != Média grupo B
+Cada uma muda a cauda que estamos testando
+‹#›
+
+=== SLIDE 54 ===
+TITLE: Simulação no modelo nulo
+‹#›
+Valor-P de quase zero
+É bem raro o acaso explicar meus dados!
+
+
+=== SLIDE 55 ===
+TITLE: Comparando a Permutação e o Bootstrap
+Permutação
+Bootstrap
+No Bootstrap, se o zero for explicado pelo acaso → não rejeitar
+O bootstrap está computando o IC da diferença, se não tem o zero indica diferença
+Na permutação é o contrário.
+A permutação está dizendo que a associação entre fumar e peso vem do caso
+
+=== SLIDE 56 ===
+TITLE: Comparando a Permutação e o Bootstrap
+Permutação
+Bootstrap
+A mensagem aqui é você pensar no seu modelo nulo
+Interpretar o resultado com base no mesmo
+Podemos ter mais de um modelo para o mesmo problema
+
+=== SLIDE 57 ===
+TITLE: Testes A/B (2)
+Estamos simulando de uma população
+Vamos voltar para o caso de testes A/B
+Comparar dois salários médios
+‹#›
+
+=== SLIDE 58 ===
+TITLE: Testes A/B (2)
+Estamos simulando de uma população
+Vamos voltar para o caso de testes A/B
+Como criar um modelo nulo?
+‹#›
+
+=== SLIDE 59 ===
+TITLE: Testes A/B (2)
+Serve para comparar dois grupos
+Trocar pessoas do grupo A para o grupo B
+Computar alguma estatística
+Repetir muitas vezes
+‹#›
+
+=== SLIDE 60 ===
+TITLE: Teste de Permutação em Texto
+Ao assumir que fazer parte de um grupo/time é um fator uniformemente aleatório (por isso fazemos as trocas), vamos mensurar as diferenças de salários no mundo aleatório. Então, a hipótese nula é de seleção uniforme! Caso a chance desta diferença ser superior ao valor real for acima do que 5%, o mundo aleatório é factível.
+‹#›
+
+=== SLIDE 61 ===
+TITLE: Hipótese
+H0: Hipótese Nula	Salário Médio Cleveland = Salário Médio Houston
+Se forem iguais, os salários não dependem de jogadores particulares.
+‹#›
+
+=== SLIDE 62 ===
+TITLE: Dados
+O código tem umpouco de magiaPandas para filtrar
+Resumindo, estouapenas pegandoos dois times deinteresse
+‹#›
+
+=== SLIDE 63 ===
+TITLE: Qual é o problema?
+Comparar dois salários médios.
+‹#›
+ $ 10.23M
+ $ 7.10M
+
+=== SLIDE 64 ===
+TITLE: Vamos iniciar
+Primeira permutação
+‹#›
+ $ 10.23M
+ $ 7.10M
+
+=== SLIDE 65 ===
+‹#›
+ $ 9.12M
+ $ 9.10M
+
+=== SLIDE 66 ===
+‹#›
+ $ 10.1M
+ $ 8.9M
+
+=== SLIDE 67 ===
+‹#›
+ $ 9.14M
+ $ 9.9M
+
+=== SLIDE 68 ===
+TITLE: Repetindo muitas vezes...
+‹#›
+
+=== SLIDE 69 ===
+TITLE: Repetindo muitas vezes...
+‹#›
+
+=== SLIDE 70 ===
+TITLE: Em algum momento estabiliza
+16% dos casos são maioresdo que a diferença real
+Isso é muito!
+Não existe diferença médiaentre os times
+É aleatório!
+‹#›
+
+=== SLIDE 71 ===
+TITLE: Resumindo
+Testes de Permutação
+‹#›
+
+=== SLIDE 72 ===
+TITLE: Revisão
+‹#›
+
+=== SLIDE 73 ===
+TITLE: Nosso Caso
+Valor Observado: diferença média de salários entre times da NBA: tobs
+Permutação de dados
+Assumir que a seleção de times é uniformemente aleatória
+Não foi escolhas/mercado/etc
+Computar a diferença de várias permutações: ti
+Como sempre, muitas vezes. 10,000
+Plotar histograma de ti
+Ver qual a chance de tobs com base neste histograma
+‹#›
+
+=== SLIDE 74 ===
+TITLE: Hipóteses e Chances
+O mundo das permutações define um modelo
+Seleção aleatória de times
+Verossimilhança: o valor de tobs nunca muda
+Seleção de acordo com o salário de outros jogadores por exemplo
+O teste de permutação é apenas uma hipótese! Captura aleatoriedade.
+P[T > tobs] ou P[T < tobs]:
+São as chances daquela hipótese explicar os meus dados
+Isto é o Valor-P
+Qual a probabilidade de observar tal valor observado no mundo aleatório
+Caso seja extremo? Rejeita a nula!
+‹#›
+
+=== SLIDE 75 ===
+TITLE: Hipóteses Nulas
+Hipótese Nula: Vem do modelo
+A diferença de salários pode ser explicada por chance/acaso (uniforme).
+Ou seja, a chance de ver diferenças tão extremas quanto esta são comuns no mundo uniforme.
+Hipótese Alternativa:
+A diferença de salários não pode ser explicada por chance/acaso (uniforme).
+‹#›
+
+=== SLIDE 76 ===
+TITLE: Termos
+H0: Hipótese NulaH1: Hipótese Alternativa (não nula, pode ter várias formas de expressar)
+‹#›
+
+=== SLIDE 77 ===
+TITLE: Caso do Basquete
+H0: A diferença do salário médio dos jogadores dois times é igual a zero.H1: As duas médias são diferentes
+‹#›
+
+=== SLIDE 78 ===
+TITLE: Caso do Basquete
+Como é feita a permutação
+Aleatorizados os grupos
+[J1, J2, J3, …, J8, J9,  …, Jn]
+[T1, T1, T1, …, T2, T2, …, T2] ← note que tenho dois timesPermutar
+‹#›
+
+=== SLIDE 79 ===
+TITLE: Caso do Basquete
+Como é feita a permutação
+Aleatorizados os grupos
+[J1, J2, J3, …, J8, J9,  …, Jn]
+[T1, T1, T1, …, T2, T2, …, T2] ← note que tenho dois timesPermutar
+[T1, T2, T1, …, T2, T2, …, T1] ← note que o time agora foi aleatório
+‹#›
+
+=== SLIDE 80 ===
+TITLE: Hipóteses Nulas
+No histograma podemos vera chance de rejeitar a hipótese nula
+Eixo y
+Caso a diferença seja muito extrema
+Não temos evidências para rejeitar ahipótese nula. 
+‹#›
+
+=== SLIDE 81 ===
+TITLE: Intuição
+Conseguimos falar da hipótese:
+Probabilidade da mesma ser aceita ou não
+No geral, buscamos rejeitar a mesma (p < 0.05)
+‹#›
+
+=== SLIDE 82 ===
+TITLE: Valores-P
+‹#›
+
+=== SLIDE 83 ===
+TITLE: Valores Extremos
+Ao testar hipóteses buscamos por valores extremos.
+‹#›
+
+=== SLIDE 84 ===
+TITLE: Valor-P
+Temos uma estatística de teste
+Valor-p: A probabilidade de observar um valor mais extremo do que o dos dados eu um mundo aleatório de acordo com algum modelo (nulo).
+Existe uma grande confusão nesta definição:
+Não é a probabilidade do valor na população
+Não é a probabilidade do valor na amostra
+Não é a probabilidade de rejeitar nem aceitar nada
+É apenas a chance de ver um valor maior/menor/diferente do que o daestatística de teste no mundo aleatório.
+‹#›
+
+=== SLIDE 85 ===
+TITLE: Valor-P < 0.05. Bem baixo!
+‹#›
+Observado (8)
+Probabilidade Caso fosse uniforme
+
+=== SLIDE 86 ===
+TITLE: Significa??
+‹#›
+Observado (8)
+Probabilidade Caso fosse uniforme
+
+=== SLIDE 87 ===
+TITLE: Valor-P
+Quando é muito baixo, a hipótese nula é pouco verossímil
+Meus dados observados  é valor muito extremo!
+‹#›
+
+=== SLIDE 88 ===
+TITLE: Valor-P Extremo → Rejeição da Nula
+Quando observamos um valor extremo
+Poucas razões para aceitar o modelo
+Hipótese nula
+Temos mais evidências do contrário
+‹#›
+
+=== SLIDE 89 ===
+TITLE: One vs Two Tails
+Figura do lado esquerdo, caso eu simular Grupo A - Grupo B(valor extremo do lado esquerdo do plot)
+Figura do lado direito, caso eu queira Grupo A != Grupo B
+
+=== SLIDE 90 ===
+TITLE: Valor-P Extremo → Rejeição da Nula
+Quando observamos um valor extremo
+Poucas razões para aceitar o modelo
+Hipótese nula
+Temos mais evidências do contrário
+
+CUIDADO: NO GERAL NÃO SE ACEITA HIPÓTESE ALTERNATIVA. NEM SEMPRE É O OPOSTO DA NULA, EXISTE UM MUNDO DE OUTRAS HIPÓTESES.
+‹#›
+
+=== SLIDE 91 ===
+TITLE: Significância
+Depois de computar o Valor-P decidimos se rejeitamos a nula ou não
+Para isso definimos um limiar de significância
+Quando temos uma verossimilhança baixa
+5%, 10%, 1%
+Temos evidências de que o modelo nulo não é válido
+Podemos errar! 
+‹#›
+
+=== SLIDE 92 ===
+TITLE: Sir Ronald Fisher, 1890-1962
+‹#›
+
+=== SLIDE 93 ===
+TITLE: Sir Ronald Fisher, 1925
+“It is convenient to take this point [5%] as a limit in judging whether a deviation is to be considered significant or not.”
+–– Statistical Methods for Research Workers
+‹#›
+
+=== SLIDE 94 ===
+TITLE: Sir Ronald Fisher, 1926
+“If one in twenty does not seem high enough odds, we may, if we prefer it, draw the line at one in fifty (the 2 percent point), or one in a hundred (the 1 percent point). Personally, the author prefers to set a low standard of significance at the 5 percent point …”
+‹#›
+
+=== SLIDE 95 ===
+TITLE: p < 0.05
+O importante é lembrar que isso é uma convenção
+Podemos manipular os dados para chegar nisso
+Dependendo do tamanho da amostra, pode ser melhor buscar valores mais extremos: p < 0.0001.
+‹#›
+
+=== SLIDE 96 ===
+TITLE: Referências
+‹#›
+Computational and Inferential ThinkingChapter 11: Testing Hypothesishttps://www.inferentialthinking.com/ 
+Principles and Techniques for Data ScienceChapter 18: Testing Hypothesishttps://www.textbook.ds100.org 
+
+=== SLIDE 97 ===
+TITLE: Contato
+Flavio Vinicius Diniz de Figueiredo
+flavio@dcc.ufmg.br 
+Introdução à Ciência dos Dados
+
+‹#›
+

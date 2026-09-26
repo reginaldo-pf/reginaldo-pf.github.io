@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Banco de Dados Não-Relacionais (ADS16) | Prof. Reginaldo Fernandes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            ifce: {
+              green: '#2F855A',
+              red: '#C53030',
+              dark: '#1C4532',
+              emerald: '#059669'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- Navbar -->
+  <header class="border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="../../../../index.html" class="flex items-center space-x-2 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium text-sm transition-colors">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Voltar ao Portal Geral</span>
+        </a>
+      </div>
+      <div class="flex items-center space-x-4">
+        <button id="themeToggle" class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Alternar tema">
+          <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 py-8 w-full">
+
+    <!-- Breadcrumb -->
+    <nav class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-6 flex items-center space-x-2 flex-wrap">
+      <a href="../../../../index.html" class="hover:underline">Início</a>
+      <span>/</span>
+      <span>Tecnologia em ADS</span>
+      <span>/</span>
+      <span class="text-emerald-600 dark:text-emerald-400 font-medium">Banco de Dados Não-Relacionais</span>
+    </nav>
+
+    <!-- Header da Disciplina -->
+    <div class="bg-gradient-to-r from-emerald-800 to-teal-900 rounded-2xl p-6 sm:p-8 text-white shadow-lg mb-8 relative overflow-hidden">
+      <div class="relative z-10">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-500/30 text-emerald-200 border border-emerald-400/30">ADS16</span>
+          <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-white/20 text-white">40 Horas (20 Encontros)</span>
+          <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-400/30 text-amber-200 border border-amber-300/30">Semestre 2026.2</span>
+          <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-400 text-slate-900 font-bold">🟢 Piloto Ativo</span>
+        </div>
+        <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight mb-2">Bancos de Dados Não-Relacionais (NoSQL)</h1>
+        <p class="text-emerald-100 text-sm sm:text-base max-w-3xl">
+          Curso Superior de Tecnologia em Análise e Desenvolvimento de Sistemas -- IFCE Campus Tauá.
+        </p>
+        <p class="text-xs text-emerald-200 mt-2">
+          <strong>Docente:</strong> Prof. Reginaldo Pereira Fernandes
+        </p>
+      </div>
+      <div class="absolute -right-8 -bottom-8 opacity-10 text-white text-9xl">
+        <i class="fa-solid fa-database"></i>
+      </div>
+    </div>
+
+    <!-- Grid de Destaques: Aulas, Diretrizes e Ementa -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      
+      <!-- Card: Aulas -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4 text-xl">
+            <i class="fa-solid fa-chalkboard-user"></i>
+          </div>
+          <h3 class="font-bold text-lg mb-2">Aulas e Roteiros</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+            Roteiros de laboratório, códigos de apoio e materiais didáticos organizados por encontro.
+          </p>
+          <ul class="text-xs space-y-2 text-slate-700 dark:text-slate-300">
+            <li class="flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <a href="Aulas/Aula_01/README.md" class="hover:underline font-medium text-emerald-600 dark:text-emerald-400">Aula 01: Paradigma NoSQL & Big Data</a>
+            </li>
+            <li class="flex items-center space-x-2 text-slate-400">
+              <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+              <span>Aula 02: Teorema CAP & BASE</span>
+            </li>
+            <li class="flex items-center space-x-2 text-slate-400">
+              <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+              <span>Aula 03: Docker & NoSQL (Sábado Letivo)</span>
+            </li>
+          </ul>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700">
+          <a href="Aulas/Aula_01/README.md" class="inline-flex items-center text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700">
+            Acessar Aula 01 <i class="fa-solid fa-arrow-right ml-1"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Card: Sistema de Avaliação -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4 text-xl">
+            <i class="fa-solid fa-clipboard-check"></i>
+          </div>
+          <h3 class="font-bold text-lg mb-2">Avaliações (ROD IFCE)</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+            Estrutura formal em dois períodos letivos (N1 e N2):
+          </p>
+          <div class="space-y-2 text-xs">
+            <div class="p-2 rounded bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+              <strong class="text-emerald-600 dark:text-emerald-400">Período N1:</strong> AVP1 (Prática MongoDB/Redis) + AVT1 (Teórica Teorema CAP/BASE) + Listas.
+            </div>
+            <div class="p-2 rounded bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+              <strong class="text-emerald-600 dark:text-emerald-400">Período N2:</strong> AVP2 (Projeto Grafos/Colunas/API) + AVT2 (Teórica Vetoriais/RAG) + Listas.
+            </div>
+          </div>
+        </div>
+        <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700 text-xs text-slate-500">
+          Pesos conforme Regulamento de Organização Didática.
+        </div>
+      </div>
+
+      <!-- Card: Ferramentas & Stack -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-4 text-xl">
+            <i class="fa-solid fa-cubes"></i>
+          </div>
+          <h3 class="font-bold text-lg mb-2">Ecossistema Tecnológico</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+            Ambiente prático modernizado para 2026/2027:
+          </p>
+          <div class="flex flex-wrap gap-1.5 text-xs">
+            <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">Docker</span>
+            <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">Docker Compose</span>
+            <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">Redis (Key-Value)</span>
+            <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">MongoDB (Docs)</span>
+            <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">Neo4j (Graph)</span>
+            <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">Vector DBs (RAG)</span>
+            <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">FastAPI</span>
+            <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">Python 3</span>
+          </div>
+        </div>
+        <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700 text-xs text-slate-500">
+          Laboratório com containers isolados e reproduzíveis.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Cronograma Detalhado dos 20 Encontros -->
+    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/60 p-6 shadow-sm mb-12">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-200 dark:border-slate-700 gap-2">
+        <div>
+          <h2 class="text-xl font-bold flex items-center space-x-2">
+            <i class="fa-solid fa-calendar-days text-emerald-600 dark:text-emerald-400"></i>
+            <span>Cronograma de Aulas (Semestre 2026.2)</span>
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Planejamento das 40 horas letivas da disciplina.</p>
+        </div>
+        <span class="text-xs bg-slate-100 dark:bg-slate-700 px-3 py-1 rounded-full text-slate-600 dark:text-slate-300 font-medium self-start sm:self-auto">
+          20 Encontros de 2h
+        </span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs sm:text-sm">
+          <thead>
+            <tr class="bg-slate-50 dark:bg-slate-900/50 text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
+              <th class="py-3 px-3">Aula</th>
+              <th class="py-3 px-3">Período</th>
+              <th class="py-3 px-6">Conteúdo Programático e Atividades</th>
+              <th class="py-3 px-3 text-center">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50 text-slate-700 dark:text-slate-300">
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/30">
+              <td class="py-3 px-3 font-semibold text-emerald-600 dark:text-emerald-400">01</td>
+              <td class="py-3 px-3 text-xs">Unidade I (N1)</td>
+              <td class="py-3 px-6">
+                <strong>Apresentação e Paradigma NoSQL:</strong> Limitações de escala vertical no modelo relacional, propriedades ACID sob concorrência maciça, os 3 Vs do Big Data.
+              </td>
+              <td class="py-3 px-3 text-center">
+                <a href="Aulas/Aula_01/README.md" class="inline-block px-2 py-0.5 text-xs bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 rounded font-medium hover:underline">
+                  Disponível
+                </a>
+              </td>
+            </tr>
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/30">
+              <td class="py-3 px-3 font-semibold">02</td>
+              <td class="py-3 px-3 text-xs">Unidade I (N1)</td>
+              <td class="py-3 px-6">
+                <strong>Fundamentos Arquiteturais:</strong> Teorema CAP (Brewer), Teorema PACELC, Propriedades BASE e taxonomia dos 4 modelos NoSQL.
+              </td>
+              <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
+            </tr>
+            <tr class="bg-amber-50/50 dark:bg-amber-950/20 hover:bg-amber-50 dark:hover:bg-amber-950/30">
+              <td class="py-3 px-3 font-semibold text-amber-600 dark:text-amber-400">03</td>
+              <td class="py-3 px-3 text-xs font-semibold text-amber-600 dark:text-amber-400">Sábado Letivo</td>
+              <td class="py-3 px-6">
+                <strong>Oficina Prática de DevOps NoSQL:</strong> Docker e Docker Compose para subir instâncias de Redis e MongoDB. Resolução assistida da Lista 1.
+              </td>
+              <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
+            </tr>
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/30">
+              <td class="py-3 px-3 font-semibold">04</td>
+              <td class="py-3 px-3 text-xs">Unidade I (N1)</td>
+              <td class="py-3 px-6">
+                <strong>Modelo Chave-Valor com Redis:</strong> Estruturas nativas (Strings, Hashes, Lists, Sets, Sorted Sets), volatilidade (TTL) e persistência.
+              </td>
+              <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
+            </tr>
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/30">
+              <td class="py-3 px-3 font-semibold">05</td>
+              <td class="py-3 px-3 text-xs">Unidade I (N1)</td>
+              <td class="py-3 px-6">
+                <strong>Laboratório Prático Redis:</strong> Caching em aplicações Web com Python/Redis para alívio de gargalos em BD Relacional.
+              </td>
+              <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
+            </tr>
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/30">
+              <td class="py-3 px-3 font-semibold">06</td>
+              <td class="py-3 px-3 text-xs">Unidade I (N1)</td>
+              <td class="py-3 px-6">
+                <strong>Modelo Orientado a Documentos (MongoDB):</strong> Formato BSON, coleções flexíveis, modelagem Embedding vs Referencing.
+              </td>
+              <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
+            </tr>
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/30">
+              <td class="py-3 px-3 font-semibold">07</td>
+              <td class="py-3 px-3 text-xs">Unidade I (N1)</td>
+              <td class="py-3 px-6">
+                <strong>CRUD Avançado e Indexação:</strong> Filtros complexos, índices simples, compostos e textuais para performance de busca.
+              </td>
+              <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
+            </tr>
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/30">
+              <td class="py-3 px-3 font-semibold">08</td>
+              <td class="py-3 px-3 text-xs">Unidade I (N1)</td>
+              <td class="py-3 px-6">
+                <strong>MongoDB Aggregation Pipeline:</strong> Operadores de análise analítica ($match, $group, $lookup, $project).
+              </td>
+              <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
+            </tr>
+            <tr class="bg-amber-50/50 dark:bg-amber-950/20 hover:bg-amber-50 dark:hover:bg-amber-950/30">
+              <td class="py-3 px-3 font-semibold text-amber-600 dark:text-amber-400">09</td>
+              <td class="py-3 px-3 text-xs font-semibold text-amber-600 dark:text-amber-400">Sábado Letivo</td>
+              <td class="py-3 px-6">
+                <strong>Laboratório Integrado (MongoDB + Redis):</strong> Simulado prático preparatório e plantão de dúvidas antes das avaliações.
+              </td>
+              <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
+            </tr>
+            <tr class="bg-red-50/40 dark:bg-red-950/20 hover:bg-red-50/60 dark:hover:bg-red-950/30">
+              <td class="py-3 px-3 font-bold text-red-600 dark:text-red-400">10</td>
+              <td class="py-3 px-3 text-xs font-semibold text-red-600 dark:text-red-400">Avaliação N1</td>
+              <td class="py-3 px-6 font-semibold">
+                <strong>Avaliação Prática (AVP1) & Teórica (AVT1):</strong> Aplicação individual em laboratório.
+              </td>
+              <td class="py-3 px-3 text-center text-slate-400 text-xs">Avaliação</td>
+            </tr>
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/30">
+              <td class="py-3 px-3 font-semibold">11 a 20</td>
+              <td class="py-3 px-3 text-xs">Unidade II (N2)</td>
+              <td class="py-3 px-6">
+                <strong>Grafos (Neo4j), Colunas, Bancos Vetoriais (RAG/IA), Persistência Poliglota com FastAPI e Avaliações N2.</strong>
+              </td>
+              <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-6xl mx-auto px-4">
+      <p>© 2026 Instituto Federal do Ceará -- Campus Tauá. Todos os direitos reservados.</p>
+      <p class="mt-1">Prof. Reginaldo Pereira Fernandes | Tecnologia em Análise e Desenvolvimento de Sistemas</p>
+    </div>
+  </footer>
+
+  <!-- Script Modo Escuro -->
+  <script>
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const html = document.documentElement;
+
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      html.classList.add('dark');
+      themeIcon.className = 'fa-solid fa-sun text-lg text-amber-400';
+    } else {
+      html.classList.remove('dark');
+      themeIcon.className = 'fa-solid fa-moon text-lg';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        localStorage.theme = 'light';
+        themeIcon.className = 'fa-solid fa-moon text-lg';
+      } else {
+        html.classList.add('dark');
+        localStorage.theme = 'dark';
+        themeIcon.className = 'fa-solid fa-sun text-lg text-amber-400';
+      }
+    });
+  </script>
+</body>
+</html>

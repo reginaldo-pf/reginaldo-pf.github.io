@@ -1,0 +1,231 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[brazilian]{babel}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\geometry{left=2cm, right=2cm, top=3cm, bottom=2cm}
+
+% Configuração de Cores para o Código Python
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+% Configuração do pacote Listings com mapeamento de caracteres acentuados
+\lstset{
+	language=Python,
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{blue},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\small,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=4,
+	frame=single,
+	extendedchars=true, % Permite suporte a caracteres estendidos
+	literate=
+	{á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+	{Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+	{à}{{\`a}}1 {è}{{\`e}}1 {ì}{{\`i}}1 {ò}{{\`o}}1 {ù}{{\`u}}1
+	{À}{{\`A}}1 {È}{{\'E}}1 {Ì}{{\`I}}1 {Ò}{{\`O}}1 {Ù}{{\`U}}1
+	{ä}{{\"a}}1 {ë}{{\"e}}1 {ï}{{\"i}}1 {ö}{{\"o}}1 {ü}{{\"u}}1
+	{Ä}{{\"A}}1 {Ë}{{\"E}}1 {Ï}{{\"I}}1 {Ö}{{\"O}}1 {Ü}{{\"U}}1
+	{â}{{\^a}}1 {ê}{{\^e}}1 {î}{{\^i}}1 {ô}{{\^o}}1 {û}{{\^u}}1
+	{Â}{{\^A}}1 {Ê}{{\^E}}1 {Î}{{\^I}}1 {Ô}{{\^O}}1 {Û}{{\^u}}1
+	{œ}{{\oe}}1 {Œ}{{\OE}}1 {æ}{{\ae}}1 {Æ}{{\AE}}1 {ß}{{\ss}}1
+	{ç}{{\c c}}1 {Ç}{{\c C}}1 {ø}{{\o}}1 {Ø}{{\O}}1 {å}{{\r a}}1
+	{Å}{{\r A}}1 {ñ}{{\~n}}1 {Ñ}{{\~N}}1 {ã}{{\~a}}1 {õ}{{\~o}}1
+	{Ã}{{\~A}}1 {Õ}{{\~O}}1
+}
+
+\begin{document}
+	
+	\noindent
+	\begin{center}
+		\LARGE \textbf{Guia de Apoio: Boilerplate do Pipeline} \\
+		\vspace{0.2cm}
+		\large \textbf{Estrutura de Código Base para a Atividade de Ciência de Dados} \\
+		\vspace{0.4cm}
+		\normalsize \textit{Material Complementar para Implementação Sem Pré-requisito de POO}
+	\end{center}
+	
+	\vspace{0.2cm}
+	\noindent\rule{\textwidth}{0.4pt}
+	\vspace{0.5cm}
+	
+	\section{Apresentação}
+	Este documento serve como guia e ponto de partida para o desenvolvimento do seu pipeline. Os blocos de código abaixo representam a estrutura mínima funcional necessária para garantir a reprodutibilidade científica da sua análise exploratória. Seu objetivo é preencher as lacunas marcadas com \texttt{TODO} utilizando as bibliotecas de análise de dados (como \texttt{pandas}, \texttt{numpy}, \texttt{matplotlib} ou \texttt{seaborn}).
+	
+	\section{Código Fonte Sugerido}
+	
+	\subsection{Ingestão de Dados: \texttt{src/extract/extractor.py}}
+	Este script é responsável estritamente por tentar carregar os dados brutos e reportar o diagnóstico inicial da matriz de dados.
+	
+	\begin{lstlisting}[language=Python]
+		import pandas as pd
+		import os
+		
+		def ler_dados_brutos(caminho_arquivo: str) -> pd.DataFrame:
+		"""
+		Realiza a leitura automatizada do arquivo CSV.
+		Garante resiliência tratando falhas físicas de IO ou arquivos ausentes.
+		"""
+		print(f"[INGESTÃO] Tentando ler o arquivo: {caminho_arquivo}")
+		
+		if not os.path.exists(caminho_arquivo):
+		raise FileNotFoundError(f"Erro Crítico: O arquivo especificado não foi encontrado em '{caminho_arquivo}'.")
+		
+		try:
+		# Dica: Ficar atento ao delimitador (sep) e encoding se necessário
+		df = pd.read_csv(caminho_arquivo, low_memory=False)
+		
+		# LOG DE VOLUMETRIA BRUTA
+		linhas, colunas = df.shape
+		print(f"[SUCCESS] Arquivo carregado com sucesso!")
+		print(f"[LOG] Volumetria Bruta Inicial: {linhas} linhas e {colunas} colunas.\n")
+		
+		return df
+		
+		except Exception as e:
+		print(f"[ERRO] Falha inesperada na leitura do arquivo: {str(e)}")
+		raise e
+	\end{lstlisting}
+	
+	\newpage
+	
+	\subsection{Processamento Estatístico: \texttt{src/transform/cleaner.py}}
+	Este script concentra a inteligência estatística e as regras de tratamento de dados (EDA).
+	
+	\begin{lstlisting}[language=Python]
+		import pandas as pd
+		import numpy as np
+		
+		def tratar_dados_ausentes(df: pd.DataFrame) -> pd.DataFrame:
+		"""
+		Identifica dados nulos e aplica a estratégia estatística escolhida.
+		"""
+		print("[EDA] Iniciando tratamento de dados ausentes...")
+		nulos_por_coluna = df.isnull().sum()
+		print(f"[LOG] Contagem de nulos:\n{nulos_por_coluna[nulos_por_coluna > 0]}\n")
+		
+		# TODO: Implementar a estratégia de imputação ou descarte aqui
+		df_tratado = df.copy() 
+		return df_tratado
+		
+		def filtrar_outliers_iqr(df: pd.DataFrame, coluna_numerica: str) -> pd.DataFrame:
+		"""
+		Aplica o método matemático do Intervalo Interquartil (IQR) para isolar anomalias.
+		"""
+		print(f"[EDA] Calculando limites de IQR para a coluna: '{coluna_numerica}'")
+		
+		# TODO: Implementar o cálculo do IQR e o filtro aqui
+		# Q1 = df[coluna_numerica].quantile(0.25)
+		# Q3 = df[coluna_numerica].quantile(0.75)
+		# IQR = Q3 - Q1
+		# limite_inferior = Q1 - 1.5 * IQR
+		# limite_superior = Q3 + 1.5 * IQR
+		
+		df_filtrado = df.copy() 
+		return df_filtrado
+		
+		def executar_transformacao_completa(df_principal: pd.DataFrame, df_secundario: pd.DataFrame = None) -> pd.DataFrame:
+		"""
+		Orquestra a higienização, tipagem, normalização temporal e junção lógica.
+		"""
+		df = df_principal.copy()
+		df = tratar_dados_ausentes(df)
+		
+		# TODO: Chamar o filtro de IQR nas colunas numéricas críticas
+		# df = filtrar_outliers_iqr(df, 'coluna_escolhida')
+		
+		# TODO: Executar o Merge se o seu tema exigir duas bases
+		return df
+	\end{lstlisting}
+	
+	\newpage
+	
+	\subsection{Visualização Científica: \texttt{src/visualize.py}}
+	Responsável por gerar o gráfico estrito seguindo os princípios de integridade analítica e ética visual.
+	
+	\begin{lstlisting}[language=Python]
+		import pandas as pd
+		import matplotlib.pyplot as plt
+		import seaborn as sns
+		
+		def gerar_visualizacao_cientifica(df_limpo: pd.DataFrame, caminho_saida: str = "grafico_integridade.png"):
+		"""
+		Gera e exporta um gráfico analítico respeitando a ética estatística.
+		Eixos iniciados em zero e unidades de medida explícitas.
+		"""
+		print("[VISUALIZAÇÃO] Gerando gráfico de integridade visual...")
+		
+		plt.figure(figsize=(10, 6))
+		
+		# TODO: Escolher a visualização adequada e plotar
+		# sns.scatterplot(data=df_limpo, x='variavel_x', y='variavel_y')
+		
+		# Garantindo a integridade visual (Princípio ético de Ciência de Dados)
+		plt.axhline(0, color='gray', linestyle='--', linewidth=0.8)
+		plt.title("Título Científico do Gráfico", fontsize=14, fontweight='bold')
+		plt.xlabel("Variável Independente (Unidade de Medida)", fontsize=11)
+		plt.ylabel("Variável Dependente (Unidade de Medida)", fontsize=11)
+		plt.grid(True, linestyle=':', alpha=0.6)
+		
+		plt.tight_layout()
+		plt.savefig(caminho_saida, dpi=300)
+		print(f"[SUCCESS] Gráfico científico exportado em: '{caminho_saida}'\n")
+		plt.close()
+	\end{lstlisting}
+	
+	\subsection{Orquestrador Central: \texttt{src/main.py}}
+	O arquivo principal que unifica e executa os scripts de forma linear e automatizada.
+	
+	\begin{lstlisting}[language=Python]
+		from extract.extractor import ler_dados_brutos
+		from transform.cleaner import executar_transformacao_completa
+		from visualize import gerar_visualizacao_cientifica
+		
+		def rodar_pipeline():
+		print("="*60)
+		print("EXECUTANDO PIPELINE REPRODUTÍVEL DE CIÊNCIA DE DADOS")
+		print("="*60 + "\n")
+		
+		CAMINHO_RAW_PRINCIPAL = "data/raw/dataset_principal.csv"
+		CAMINHO_SAIDA_FINAL = "dados_limpos_final.csv"
+		
+		try:
+		# 1. Ingestão
+		df_bruto = ler_dados_brutos(CAMINHO_RAW_PRINCIPAL)
+		
+		# 2. Transformação Estatística
+		df_limpo = executar_transformacao_completa(df_bruto)
+		df_limpo.to_csv(CAMINHO_SAIDA_FINAL, index=False)
+		print(f"[SUCCESS] Base exportada em '{CAMINHO_SAIDA_FINAL}'\n")
+		
+		# 3. Visualização Científica
+		gerar_visualizacao_cientifica(df_limpo)
+		
+		print("Pipeline finalizado com sucesso.")
+		
+		except FileNotFoundError as fnf_error:
+		print(f"\n[ERRO DE INFRAESTRUTURA] O pipeline parou: {fnf_error}")
+		except Exception as e:
+		print(f"\n[FALHA GERAL] Erro inesperado: {str(e)}")
+		
+		if __name__ == "__main__":
+		rodar_pipeline()
+	\end{lstlisting}
+	
+\end{document}
