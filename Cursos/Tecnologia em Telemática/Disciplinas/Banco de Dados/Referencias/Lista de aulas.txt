@@ -1,0 +1,40 @@
+29/09/2026 Aula 01 - Apresentação da Disciplina, Critérios Avaliativos e Introdução aos Bancos de Dados
+30/09/2026 Aula 02 - Arquitetura de SGBD (ANSI/SPARC), Independência de Dados e Catálogo do Sistema
+06/10/2026 Aula 03 - Fases do Projeto de BD e Introdução ao Modelo Entidade-Relacionamento (MER)
+10/10/2026 Aula 04 - Sábado Letivo: Aplicação da Lista de Exercícios 01 (N1 - Assíncrona)
+13/10/2026 Aula 05 - Modelagem Conceitual Avançada: Relacionamentos, Cardinalidade e Participação
+14/10/2026 Aula 06 - Entidades Fracas, Atributos Compostos/Multivalorados e Especialização/Generalização
+17/10/2026 Aula 07 - Sábado Letivo: Estudo Dirigido e Definição do Escopo do Projeto de BD (AVP1)
+20/10/2026 Aula 08 - Laboratório de Modelagem: Construção de DER com Ferramenta CASE (brModelo/Draw.io)
+21/10/2026 Aula 09 - Fundamentos Formais do Modelo Relacional e Restrições de Integridade
+27/10/2026 Aula 10 - Mapeamento Lógico Relacional (Parte 1): Entidades Regulares, Fracas e Relações 1:1 e 1:N
+03/11/2026 Aula 11 - Mapeamento Lógico Relacional (Parte 2): Relações N:M, Atributos Multivalorados e Ternários
+04/11/2026 Aula 12 - Álgebra Relacional (Parte 1): Operações Fundamentais (Seleção, Projeção, Produto Cartesiano)
+10/11/2026 Aula 13 - Álgebra Relacional (Parte 2): Junções (Natural, Theta, Outer Joins) e Divisão
+11/11/2026 Aula 14 - Cálculo Relacional de Tuplas e Domínios: Comparação e Otimização de Consultas
+14/11/2026 Aula 15 - Sábado Letivo: Aplicação da Lista de Exercícios 02 (N1 - Assíncrona)
+17/11/2026 Aula 16 - Teoria do Projeto Relacional, Anomalias e Dependências Funcionais (DF)
+18/11/2026 Aula 17 - Normalização de Dados Relacionais: Primeira (1FN) e Segunda Forma Normal (2FN)
+24/11/2026 Aula 18 - Normalização de Dados Relacionais: Terceira Forma Normal (3FN) e FNBC
+25/11/2026 Aula 19 - Oficina de Acompanhamento e Mentoria do Projeto Prático de Banco de Dados (AVP1)
+28/11/2026 Aula 20 - Sábado Letivo: Aplicação da Lista de Exercícios 03 (N1 - Assíncrona)
+01/12/2026 Aula 21 - Final N1: Avaliação Teórica 1 (AVT1) e Entrega do Projeto de BD - Fase 1 (AVP1)
+02/12/2026 Aula 22 - Início N2: Introdução ao PostgreSQL/DBeaver e Comandos DDL (CREATE TABLE)
+08/12/2026 Aula 23 - Integridade Referencial em DDL: FOREIGN KEY, Ações em Cascata e Constraints
+09/12/2026 Aula 24 - Manipulação de Dados em SQL (DML): INSERT INTO, UPDATE e DELETE com Condições
+15/12/2026 Aula 25 - Consultas Básicas com SQL DQL: Cláusula SELECT, WHERE, Filtros e Operadores
+16/12/2026 Aula 26 - Ordenação (ORDER BY), Paginação (LIMIT/OFFSET), Funções Escalares e Lançamento da Lista 04
+20/01/2027 Aula 27 - Retorno do Recesso: Funções de Agregação (COUNT, SUM, AVG) e Cláusula GROUP BY (Entrega Lista 04)
+26/01/2027 Aula 28 - Junção de Tabelas em SQL (Parte 1): INNER JOIN e Junções Múltiplas
+27/01/2027 Aula 29 - Junção de Tabelas em SQL (Parte 2): LEFT/RIGHT/FULL OUTER JOIN e Self-Join
+30/01/2027 Aula 30 - Sábado Letivo: Aplicação da Lista de Exercícios 05 (N2 - Assíncrona)
+02/02/2027 Aula 31 - Subconsultas (Subqueries) Correlacionadas, Operadores IN, EXISTS, ANY e CTEs
+03/02/2027 Aula 32 - Operadores de Conjunto (UNION, INTERSECT, EXCEPT) e Criação de Visões (VIEWs)
+16/02/2027 Aula 33 - Transações ACID e Controle de Concorrência no PostgreSQL (COMMIT, ROLLBACK)
+17/02/2027 Aula 34 - Introdução à Programação no SGBD: Funções e Stored Procedures em PL/pgSQL
+23/02/2027 Aula 35 - Gatilhos (Triggers) em Bancos de Dados: Validações e Logs de Auditoria
+24/02/2027 Aula 36 - Indexação (B-Tree/Hash), Otimização (EXPLAIN) e Integração de Aplicação Python
+27/02/2027 Aula 37 - Sábado Letivo: Aplicação da Lista de Exercícios 06 (N2 - Assíncrona)
+02/03/2027 Aula 38 - Laboratório do Projeto AVP2: Testes de Carga, Validação e Ajustes Finais
+03/03/2027 Aula 39 - Avaliação Teórica 2 (AVT2): Prova Individual Escrita sobre SQL e Tópicos Avançados
+09/03/2027 Aula 40 - Final N2: Apresentação e Demonstração do Projeto de BD - Fase 2 (AVP2) e Fechamento
