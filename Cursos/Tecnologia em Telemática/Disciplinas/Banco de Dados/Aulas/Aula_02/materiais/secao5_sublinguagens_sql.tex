@@ -1,0 +1,132 @@
+\changecolours{ScoutGreen}
+\section{Taxonomia das Sublinguagens SQL}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={A Linguagem SQL: Visão Global e Estrutura},leftcol=7cm,rightcol=7cm]{%
+  \alert{Natureza Declarativa da SQL}\par
+  \itemseps[topsepi=1.5mm,itemsepi=2.5mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Linguagem Declarativa:} O desenvolvedor especifica \textbf{o que} deseja obter, e o motor do SGBD define de forma autônoma \textbf{como} navegar pelos blocos físicos de dados.
+    \item \textbf{Padrão Internacional:} Normalizada pela ANSI e ISO (ISO/IEC 9075), evoluindo desde o SQL-86 até versões recentes (SQL:2016 e SQL:2023).
+    \item \textbf{Subdivisão Funcional:} Embora seja uma linguagem unificada, suas instruções são categorizadas formalmente em cinco sublinguagens especializadas.
+  \end{itemize}
+}{%
+  \alert{As Cinco Famílias de Comandos}\par
+  \itemseps[topsepi=1.5mm,itemsepi=2.5mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{DDL (\textit{Data Definition}):} Cria, modifica e extingue esquemas e tabelas no Catálogo do Sistema.
+    \item \textbf{DML (\textit{Data Manipulation}):} Insere, altera e remove tuplas (linhas) nas tabelas existentes.
+    \item \textbf{DQL (\textit{Data Query}):} Realiza buscas, filtros e projeções sem alterar o estado do banco.
+    \item \textbf{DCL (\textit{Data Control}):} Administra direitos de acesso, perfis e credenciais de segurança.
+    \item \textbf{TCL (\textit{Transaction Control}):} Gerencia a atomicidade e consistência das transações no banco.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{DDL: Linguagem de Definição de Dados}
+  \vspace{-0.3cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{Propósito e Impacto no Catálogo}\par
+      \vspace{0.05cm}
+      \begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}
+        \item \textbf{Definição:} Modifica o catálogo do SGBD.
+        \item \textbf{CREATE:} Instancia tabelas e índices.
+        \item \textbf{ALTER:} Modifica estruturas existentes.
+        \item \textbf{DROP:} Elimina objetos do banco.
+        \item \textbf{TRUNCATE:} Esvazia tabelas rapidamente.
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \alert{Exemplo Aplicado a Redes}\par
+      \vspace{0.05cm}
+\begin{lstlisting}[language=SQL,basicstyle=\ttfamily\tiny]
+CREATE TABLE interfaces_rede (
+  id SERIAL PRIMARY KEY,
+  disp_id INT REFERENCES dispositivos(id),
+  nome VARCHAR(32) NOT NULL,
+  mtu INT DEFAULT 1500
+);
+ALTER TABLE interfaces_rede 
+  ADD COLUMN vlan_id INT;
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{DML \& DQL: Manipulação e Consulta}
+  \vspace{-0.2cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{DML (Data Manipulation)}\par
+      \vspace{0.05cm}
+      \begin{itemize}\setlength{\itemsep}{2pt}
+        \item \textbf{Finalidade:} Modificar tuplas em tabelas.
+        \item \textbf{Comandos:} \texttt{INSERT}, \texttt{UPDATE}, \texttt{DELETE}.
+      \end{itemize}
+      \vspace{0.05cm}
+\begin{lstlisting}[language=SQL,basicstyle=\ttfamily\tiny]
+UPDATE interfaces_rede 
+SET mtu = 9000 
+WHERE nome = 'TenGigE0/1';
+\end{lstlisting}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \alert{DQL (Data Query)}\par
+      \vspace{0.05cm}
+      \begin{itemize}\setlength{\itemsep}{2pt}
+        \item \textbf{Finalidade:} Extrair dados sem alterar o banco.
+        \item \textbf{Comando Canônico:} \texttt{SELECT}.
+      \end{itemize}
+      \vspace{0.05cm}
+\begin{lstlisting}[language=SQL,basicstyle=\ttfamily\tiny]
+SELECT d.hostname, i.nome, i.mtu
+FROM dispositivos d
+JOIN interfaces_rede i 
+  ON i.dispositivo_id = d.id
+WHERE i.mtu = 9000;
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{DCL \& TCL: Segurança e Transações}
+  \vspace{-0.3cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{DCL (Data Control)}\par
+      \vspace{0.05cm}
+      \begin{itemize}\setlength{\itemsep}{2pt}
+        \item \textbf{Finalidade:} Gerenciar privilégios e perfis.
+        \item \textbf{Comandos:} \texttt{GRANT}, \texttt{REVOKE}.
+      \end{itemize}
+      \vspace{0.05cm}
+\begin{lstlisting}[language=SQL,basicstyle=\ttfamily\tiny]
+GRANT SELECT ON interfaces_rede 
+  TO operador_noc;
+REVOKE DROP ON ALL TABLES 
+  FROM operador_estagiario;
+\end{lstlisting}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \alert{TCL (Transaction Control)}\par
+      \vspace{0.05cm}
+      \begin{itemize}\setlength{\itemsep}{2pt}
+        \item \textbf{Finalidade:} Assegurar propriedades ACID.
+        \item \textbf{Comandos:} \texttt{COMMIT}, \texttt{ROLLBACK}, \texttt{SAVEPOINT}.
+      \end{itemize}
+      \vspace{0.05cm}
+\begin{lstlisting}[language=SQL,basicstyle=\ttfamily\tiny]
+SAVEPOINT sp_ponto_seguro;
+-- atualizacao de teste
+ROLLBACK TO sp_ponto_seguro;
+COMMIT;
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}

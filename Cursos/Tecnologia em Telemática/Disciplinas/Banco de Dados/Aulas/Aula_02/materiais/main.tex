@@ -1,0 +1,77 @@
+\documentclass[aspectratio=169,utf8,t]{beamer}
+
+% Idioma e Codificacao
+\usepackage[brazilian]{babel}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+
+% Carrega o Tema Modelo dos Scouts (Widescreen 16:9, Nunito Sans)
+\usetheme{scouts}
+
+% Configuracao para Codigo-Fonte (SQL / Python)
+\lstset{
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\bfseries\color{ScoutNavy},
+    stringstyle=\color{ScoutGreen},
+    commentstyle=\itshape\color{gray},
+    backgroundcolor=\color{black!3},
+    frame=single,
+    rulecolor=\color{black!15},
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=2
+}
+
+% Metadados Institucionais
+\author{Prof. Me. Reginaldo Fernandes}
+\institute{Instituto Federal do Ceará -- Campus Tauá \\ Tecnologia em Telemática}
+\title{Banco de Dados}
+\subtitle{Aula 02: Arquitetura ANSI/SPARC, Independência de Dados, Catálogo do Sistema \& Sublinguagens SQL}
+\date{30 de Setembro de 2026}
+
+\begin{document}
+
+% ------------------------------------------------------------------------------
+% Capa da Apresentacao
+% ------------------------------------------------------------------------------
+\changecolours[inverse]{ScoutGreen}
+\frame[plain]{\titlepage}
+
+% ------------------------------------------------------------------------------
+% Sumario Executivo da Aula
+% ------------------------------------------------------------------------------
+\changecolours{ScoutGreen}
+\begin{frame}{Agenda do Encontro}
+  \vspace{0.4cm}
+  \tableofcontents
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% Modulos Tematicos da Aula
+% ------------------------------------------------------------------------------
+\input{secao1_revisao_objetivos}
+\input{secao2_arquitetura_ansisparc}
+\input{secao3_independencia_dados}
+\input{secao4_catalogo_sistema}
+\input{secao5_sublinguagens_sql}
+\input{secao6_pratica_laboratorio}
+\input{secao7_conclusao_atividades}
+\input{secao8_referencias}
+
+% ------------------------------------------------------------------------------
+% Encerramento e Contato
+% ------------------------------------------------------------------------------
+\changecolours[inverse]{ScoutGreen}
+\begin{frame}[plain]
+  \vspace{2cm}
+  \centering
+  {\Huge \textbf{Dúvidas \& Discussão}}\par
+  \vspace{0.8cm}
+  {\large IFCE Campus Tauá -- Tecnologia em Telemática}\par
+  \vspace{0.3cm}
+  {\small Prof. Me. Reginaldo Pereira Fernandes}\par
+  {\scriptsize \texttt{reginaldo.fernandes@ifce.edu.br}}
+\end{frame}
+
+\end{document}

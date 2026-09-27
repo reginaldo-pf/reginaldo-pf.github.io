@@ -1,0 +1,65 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Copyright 2020 Mike Jones, <dr.mike.jones@gmail.com>
+%% AKA Grey Wolf <mike.jones@mansouthscouts.org>
+%% [23rd Manchester (Birch with Fallowfield)]
+%% Scout Membership number: 12114313
+%
+% This file is part of Grey Wolf's Scouts Beamer Theme.
+%
+% Grey Wolf's Scouts Beamer Theme is free software: you can redistribute
+% it and/or modify it under the terms of the GNU General Public License
+% as published by the Free Software Foundation, either version 3 of the
+% License, or (at your option) any later version.
+%
+% Grey Wolf's Scouts Beamer Theme is distributed in the hope that it will 
+% be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+% of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+% General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Grey Wolf's Scouts Beamer Theme.  If not, see
+% <https://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\mode<presentation>
+
+\pgfdeclareimage[height=11mm]{logolinearwhite}{logo_ifce_taua_white}
+\pgfdeclareimage[height=11mm]{logolinearblack}{logo_ifce_taua}
+\pgfdeclareimage[height=11mm]{logolinearpurple}{logo_ifce_taua}
+
+\pgfdeclareimage[height=11mm]{logonetworkwhite}{logo_ifce_taua_white}
+\pgfdeclareimage[height=11mm]{logonetworkblack}{logo_ifce_taua}
+\pgfdeclareimage[height=11mm]{logonetwork}{logo_ifce_taua}
+
+\pgfdeclareimage[height=11mm]{logoexplorers}{logo_ifce_taua}
+\pgfdeclareimage[height=11mm]{logoexplorerswhite}{logo_ifce_taua_white}
+\pgfdeclareimage[height=11mm]{logoexplorersblack}{logo_ifce_taua}
+
+\pgfdeclareimage[height=11mm]{logoscouts}{logo_ifce_taua}
+\pgfdeclareimage[height=11mm]{logoscoutswhite}{logo_ifce_taua_white}
+\pgfdeclareimage[height=11mm]{logoscoutsblack}{logo_ifce_taua}
+
+\pgfdeclareimage[height=11mm]{logocubs}{logo_ifce_taua}
+\pgfdeclareimage[height=11mm]{logocubswhite}{logo_ifce_taua_white}
+\pgfdeclareimage[height=11mm]{logocubsblack}{logo_ifce_taua}
+
+\pgfdeclareimage[height=11mm]{logobeavers}{logo_ifce_taua}
+\pgfdeclareimage[height=11mm]{logobeaversblack}{logo_ifce_taua}
+\pgfdeclareimage[height=11mm]{logobeaverswhite}{logo_ifce_taua_white}
+\pgfdeclareimage[height=11mm]{logobeaversmulti}{logo_ifce_taua}
+
+%\defbeamertemplate*{frametitle continuation}{scouts}{%There's a weird space anomily with continuation 
+%  (\insertcontinuationcountroman)\ifnum\beamer@autobreakcount>1\vspace{0.35mm}\fi%
+%}
+\defbeamertemplate*{frametitle}{scouts}{%
+  \begin{beamercolorbox}[ht=12mm,dp=1.2mm,sep=0mm]{title}%
+    \usebeamerfont{frametitle}\insertframetitle%
+  \end{beamercolorbox}%
+  \ifnum\beamer@autobreakcount>1\vspace{1.2mm}\fi% Actually the weird space anomily need fixing here now (Don't know what changed this
+}
+
+\defbeamertemplate*{navigation symbols}{scouts}{}
+
+
+\mode
+<all>

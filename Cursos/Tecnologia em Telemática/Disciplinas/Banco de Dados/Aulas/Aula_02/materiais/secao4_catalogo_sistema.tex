@@ -1,0 +1,61 @@
+\changecolours{ScoutGreen}
+\section{Catálogo do Sistema \& Dicionário de Metadados}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Coração do SGBD: O Catálogo do Sistema},leftcol=7cm,rightcol=7cm]{%
+  \alert{O Que São Metadados?}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Definição Clássica:} Metadados são \textit{dados sobre dados}. São as informações descritivas que qualificam a estrutura, formato e regras do banco.
+    \item \textbf{Auto-descrição:} A principal característica que distingue um SGBD de um sistema de arquivos é a sua capacidade de ser auto-descritivo através do catálogo.
+    \item \textbf{Uniformidade Relacional:} O próprio catálogo é modelado internamente na forma de tabelas relacionais, passíveis de consulta via SQL regular.
+  \end{itemize}
+}{%
+  \alert{Informações Armazenadas no Catálogo}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Esquemas de Objetos:} Nomes de tabelas, colunas, tipos de dados primitivos, precisão e valores padrão (\textit{default}).
+    \item \textbf{Regras de Integridade:} Definições de chaves primárias, chaves estrangeiras, restrições \texttt{UNIQUE} e checagens \texttt{CHECK}.
+    \item \textbf{Segurança e Auditoria:} Identidades de usuários, permissões concedidas e perfis de acesso atribuídos.
+    \item \textbf{Estatísticas de Otimização:} Cardinalidade de tabelas, profundidade de árvores de índice e distribuição estatística de valores.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Papel Operacional do Catálogo no Ciclo de Vida da Query},leftcol=7cm,rightcol=7cm]{%
+  \alert{1. Validação Sintática e Semântica}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Checagem de Existência:} Ao receber um \texttt{SELECT}, o SGBD consulta o catálogo para verificar se a tabela e as colunas referenciadas realmente existem.
+    \item \textbf{Verificação de Tipos:} Confere se os operadores são compatíveis com os tipos das colunas (ex: somar inteiros vs. concatenar textos).
+    \item \textbf{Autenticação de Privilégios:} Garante que a sessão conectada possui permissão de leitura sobre o recurso requisitado.
+  \end{itemize}
+}{%
+  \alert{2. Otimização Baseada em Custo (CBO)}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Seleção de Caminhos de Acesso:} O otimizador de consultas inspeciona o catálogo para identificar a presença de índices utilizáveis.
+    \item \textbf{Estimativa de Custo de E/S:} Utiliza as estatísticas do catálogo para decidir se é mais rápido realizar um \textit{Index Scan} ou uma varredura sequencial completa (\textit{Sequential Scan}).
+    \item \textbf{Ordem de Junção (\textit{Join}):} Determina qual tabela deve ser lida primeiro para minimizar o tamanho dos conjuntos de dados intermediários.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Implementação de Catálogos no Ecossistema de Bancos de Dados}
+  \vspace{-0.2cm}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{4.6cm} >{\raggedright\arraybackslash}p{7.6cm}}
+    \toprule
+    \textbf{SGBD / Padrão} & \textbf{Esquema do Catálogo} & \textbf{Tabelas Notáveis \& Descrição Prática} \\
+    \midrule
+    \textbf{Padrão ANSI SQL} & \texttt{information\_schema} & Visões padronizadas: \texttt{tables}, \texttt{columns}, \texttt{table\_constraints}. Portável entre SGBDs corporativos. \\
+    \addlinespace
+    \textbf{PostgreSQL} & \texttt{pg\_catalog} & Catálogo nativo: \texttt{pg\_class} (tabelas e índices), \texttt{pg\_attribute} (colunas), \texttt{pg\_type} (tipos de dados). \\
+    \addlinespace
+    \textbf{SQLite} & Tabela mestre especial & \texttt{sqlite\_master} (ou \texttt{sqlite\_schema}): armazena tipo (\textit{table, index, view}), nome e DDL original. \\
+    \addlinespace
+    \textbf{Oracle Database} & Dicionário em camadas & \texttt{USER\_TABLES} (tabelas próprias), \texttt{ALL\_TABLES} (acessíveis) e \texttt{DBA\_TABLES} (todos os objetos do banco). \\
+    \bottomrule
+  \end{tabular}%
+  }
+\end{frame}

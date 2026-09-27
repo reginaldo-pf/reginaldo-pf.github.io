@@ -1,0 +1,79 @@
+\changecolours{ScoutGreen}
+\section{Arquitetura ANSI/SPARC de Três Níveis}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Origem Histórica: O Relatório ANSI/X3/SPARC (1975)},leftcol=7cm,rightcol=7cm]{%
+  \alert{Contexto e Padronização}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{O Comitê ANSI/SPARC:} Em 1975, o comitê de planejamento da ANSI (\textit{Standards Planning and Requirements Committee}) propôs uma arquitetura tripartite para SGBDs.
+    \item \textbf{Objetivo Primário:} Separar estritamente as visões dos usuários individuais do modelo conceitual global da organização e dos detalhes de implementação física no disco.
+    \item \textbf{Legado Duradouro:} Mesmo após 50 anos, essa arquitetura orienta o projeto de todos os grandes motores relacionais modernos (PostgreSQL, Oracle, SQL Server).
+  \end{itemize}
+}{%
+  \alert{Benefícios da Separação em Camadas}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Privacidade e Segurança:} Cada perfil de usuário ou aplicação só enxerga os dados estritamente autorizados através de sua visão externa.
+    \item \textbf{Evolução Não Destrutiva:} Administradores podem otimizar índices ou trocar formatos de blocos físicos sem obrigar os desenvolvedores a reescrever consultas.
+    \item \textbf{Clareza Semântica:} O Administrador de Dados (DA) foca no modelo conceitual corporativo sem se preocupar com bytes e setores de disco.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Os Três Níveis da Arquitetura},leftcol=7cm,rightcol=7cm]{%
+  \alert{1. Nível Externo (Visões de Usuários)}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Definição:} Descreve a porção do banco de dados relevante para um usuário ou sistema específico (\textit{External Schemas} ou Views).
+    \item \textbf{Personalização:} Dados irrelevantes são ocultados; dados derivados podem ser apresentados como se fossem nativos.
+    \item \textbf{Exemplo Telemática:} O portal de chamados só vê o status operacional dos links, enquanto a equipe de engenharia vê os endereços IP e as rotas de BGP.
+  \end{itemize}
+}{%
+  \alert{2. Nível Conceitual (Esquema Global)}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Definição:} Descreve a estrutura lógica completa de todo o banco de dados corporativo (\textit{Conceptual Schema}).
+    \item \textbf{Elementos:} Contém todas as entidades, atributos, relacionamentos, regras de negócio e restrições de integridade.
+    \item \textbf{Foco Semântico:} Descreve \textbf{quais} dados estão armazenados e quais regras os governam, sem se ater a detalhes de como os bytes estão organizados no meio físico.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Nível Interno \& Os Mapeamentos},leftcol=7cm,rightcol=7cm]{%
+  \alert{3. Nível Interno (Esquema Físico)}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Definição:} Descreve a estrutura de armazenamento físico e os métodos de acesso aos dados em mídia magnética ou flash (\textit{Internal Schema}).
+    \item \textbf{Elementos:} Tamanho de blocos e páginas de disco, alocação de registros, estruturas de arquivos (heap, ordenado, hash), compressão e índices árvore B+.
+    \item \textbf{Foco de Hardware:} Define \textbf{como} os dados e relacionamentos são materializados nos arquivos do sistema operacional.
+  \end{itemize}
+}{%
+  \alert{Mapeamentos entre Camadas}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Mapeamento Externo/Conceitual:} O SGBD traduz uma requisição formulada na visão externa em uma consulta lógica sobre o esquema conceitual.
+    \item \textbf{Mapeamento Conceitual/Interno:} O SGBD traduz a operação lógica conceitual em leitura/escrita de blocos nos arquivos físicos e páginas de buffer.
+    \item \textbf{Custo de Processamento:} A camada de mapeamento adiciona um pequeno \textit{overhead}, amplamente compensado pelo isolamento e flexibilidade obtidos.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Quadro Sinótico: Comparação dos Três Níveis de Abstração}
+  \vspace{-0.2cm}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{>{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{3.8cm} >{\raggedright\arraybackslash}p{4.5cm} >{\raggedright\arraybackslash}p{4.2cm}}
+    \toprule
+    \textbf{Critério} & \textbf{Nível Externo} & \textbf{Nível Conceitual} & \textbf{Nível Interno} \\
+    \midrule
+    \textbf{Usuário Principal} & Usuários finais, analistas e aplicações clientes. & Administrador de Dados (DA) e projetistas lógicos. & Administrador de Banco de Dados (DBA) e engenharia de SGBD. \\
+    \addlinespace
+    \textbf{Escopo de Visão} & Parcial (visões restritas por perfil ou microsserviço). & Global (integração lógica corporativa de toda a instituição). & Físico (estruturas de blocos, páginas e ponteiros no disco). \\
+    \addlinespace
+    \textbf{Linguagem Típica} & Consultas DQL / Visões / APIs REST. & DDL de criação lógica de tabelas e restrições de negócio. & DDL interna, comandos de \textit{tablespace}, índices e partição. \\
+    \addlinespace
+    \textbf{Exemplo Telemática} & Relatório de consumo mensal de banda do cliente A. & Tabelas \texttt{roteadores}, \texttt{circuitos} e restrições FK. & Índice B+ sobre \texttt{ip\_gerencia} e páginas de 8KB no ext4. \\
+    \bottomrule
+  \end{tabular}%
+  }
+\end{frame}

@@ -1,0 +1,80 @@
+\changecolours{ScoutGreen}
+\section{Laboratório Prático: Catálogo, DDL \& TCL}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Passo 1: DDL \& Introspecção do Catálogo no SQLite}
+  \vspace{-0.3cm}
+  \alert{Criação de Tabelas e Inspeção Direta de Metadados em Python}\par
+  \vspace{0.05cm}
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\tiny]
+import sqlite3
+conn = sqlite3.connect(":memory:")
+cursor = conn.cursor()
+
+# DDL: Criando tabela de infraestrutura de rede
+cursor.execute("""
+CREATE TABLE roteadores (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    hostname TEXT NOT NULL UNIQUE,
+    ip_gerencia TEXT NOT NULL UNIQUE
+);""")
+
+# Introspeccao: Lendo metadados do catalogo interno
+cursor.execute("SELECT type, name, sql FROM sqlite_master WHERE type='table';")
+print(cursor.fetchall())
+\end{lstlisting}
+  \vspace{0.05cm}
+  \scriptsize
+  \textbf{Nota Didática:} O SGBD armazena a própria definição DDL no catálogo. Toda checagem futura de integridade consulta essa estrutura em memória.
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Passo 2: Demonstração de Independência Lógica e Física}
+  \vspace{-0.3cm}
+  \alert{Evolução Não Destrutiva do Esquema e Otimização Interna}\par
+  \vspace{0.1cm}
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\tiny]
+# 1. Independencia Logica: Adicionando coluna sem quebrar aplicacoes legadas
+cursor.execute("ALTER TABLE roteadores_core ADD COLUMN snmp_community TEXT DEFAULT 'public';")
+print("Coluna snmp_community adicionada com sucesso!")
+
+# 2. Independencia Fisica: Criando indice em arvore B para acelerar buscas por IP
+cursor.execute("CREATE INDEX idx_roteadores_ip ON roteadores_core(ip_gerencia);")
+print("Indice idx_roteadores_ip materializado no nivel interno!")
+
+# Inspecao do Catalogo: Comprovando o registro do indice
+cursor.execute("SELECT name, type FROM sqlite_master WHERE name = 'idx_roteadores_ip';")
+print("Objeto no Catalogo:", cursor.fetchone())
+\end{lstlisting}
+  \vspace{0.1cm}
+  \scriptsize
+  \textbf{Resultado:} As consultas já implementadas no nível externo permanecem válidas, enquanto o nível interno ganha um caminho indexado (\textit{Index Scan}).
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Passo 3: Controle Transacional TCL com Savepoints}
+  \vspace{-0.3cm}
+  \alert{Garantindo Atomicidade e Reversão Segura de Falhas}\par
+  \vspace{0.1cm}
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\tiny]
+# Definindo ponto de salvamento na sessao
+cursor.execute("SAVEPOINT sp_ponto_seguro;")
+
+# Atualizacao temporaria indesejada
+cursor.execute("UPDATE roteadores_core SET capacidade_gbps = 999 WHERE hostname = 'TAU-CORE-01';")
+
+# Reversao via TCL
+cursor.execute("ROLLBACK TO sp_ponto_seguro;")
+print("Estado revertido com sucesso via ROLLBACK TO SAVEPOINT!")
+
+# Teste de restricao CHECK (capacidade > 0)
+try:
+    cursor.execute("UPDATE roteadores_core SET capacidade_gbps = -10;")
+except sqlite3.IntegrityError as err:
+    print("SGBD impediu a violacao:", err)
+    cursor.execute("ROLLBACK TO sp_ponto_seguro;")
+
+cursor.execute("RELEASE SAVEPOINT sp_ponto_seguro;")
+conn.commit()
+\end{lstlisting}
+\end{frame}

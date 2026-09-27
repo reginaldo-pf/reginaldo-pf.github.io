@@ -1,0 +1,40 @@
+\changecolours{ScoutGreen}
+\section{Revisão \& Objetivos de Aprendizagem}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Retrospectiva: Da Aula 01 à Necessidade de Abstração},leftcol=7cm,rightcol=7cm]{%
+  \alert{O Que Vimos na Aula 01}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Limitações dos Arquivos Tradicionais:} Redundância descontrolada, inconsistência mútua, anomalias de acesso concorrente e ausência de segurança integrada.
+    \item \textbf{Surgimento do SGBD:} Software de mediação responsável por centralizar o controle, garantir integridade referencial e prover suporte a transações concorrentes.
+    \item \textbf{O Paradigma Relacional de Codd:} Estruturação de entidades do mundo real em tabelas bidimensionais ligadas por chaves primárias e estrangeiras.
+  \end{itemize}
+}{%
+  \alert{O Dilema do Acoplamento}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Dependência Programa-Dado:} Nos primeiros sistemas computacionais, qualquer alteração física no disco (como mudar o tamanho de um campo) exigia reescrever todos os programas.
+    \item \textbf{Multiplicidade de Usuários:} Diferentes setores (engenharia de rede, faturamento, suporte) demandam visões personalizadas e restritas do mesmo conjunto de dados.
+    \item \textbf{A Solução por Níveis:} Necessidade de isolar como o dado é visto pelos usuários de como ele é armazenado fisicamente em disco.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Objetivos de Aprendizagem da Aula 02},leftcol=7cm,rightcol=7cm]{%
+  \alert{Competências Conceituais}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Arquitetura ANSI/SPARC:} Identificar com clareza os níveis Externo, Conceitual e Interno, bem como a função de seus mapeamentos intermediários.
+    \item \textbf{Independência de Dados:} Analisar e diferenciar a Independência Lógica da Independência Física de Dados, avaliando seu valor na engenharia de software e redes.
+    \item \textbf{Catálogo do Sistema:} Compreender o papel dos metadados (\textit{dados sobre dados}) como elemento central de validação e otimização interna do SGBD.
+  \end{itemize}
+}{%
+  \alert{Habilidades Técnicas e Práticas}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Taxonomia das Sublinguagens SQL:} Diferenciar e aplicar comandos de DDL, DML, DQL, DCL e TCL de acordo com o padrão ISO/IEC 9075.
+    \item \textbf{Introspecção de Metadados:} Consultar o catálogo do SGBD via Python/SQL para inspecionar esquemas e estruturas persistidas.
+    \item \textbf{Controle Transacional:} Aplicar pontos de salvamento (\textit{savepoints}) e reversões controladas (\textit{rollback}) para salvaguardar a consistência dos dados.
+  \end{itemize}
+}

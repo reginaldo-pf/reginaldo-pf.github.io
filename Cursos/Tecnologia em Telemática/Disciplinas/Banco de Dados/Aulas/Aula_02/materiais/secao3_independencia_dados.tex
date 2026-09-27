@@ -1,0 +1,62 @@
+\changecolours{ScoutGreen}
+\section{Independência Lógica e Física de Dados}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Princípio da Independência de Dados},leftcol=7cm,rightcol=7cm]{%
+  \alert{Definição Clássica (Date, 2004)}\par
+  \itemseps[topsepi=1.5mm,itemsepi=2.5mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Conceito Central:} Imunidade das aplicações e usuários aos detalhes e transformações na estrutura de armazenamento e na organização lógica dos dados.
+    \item \textbf{Mecanismo de Ação:} Consegue-se alterando apenas os \textbf{mapeamentos} entre os níveis da arquitetura ANSI/SPARC, preservando as camadas superiores intactas.
+    \item \textbf{Meta de Engenharia:} Reduzir drasticamente o custo de manutenção de software e o tempo de indisponibilidade (\textit{downtime}) em sistemas de missão crítica.
+  \end{itemize}
+}{%
+  \alert{As Duas Dimensões Fundamentais}\par
+  \itemseps[topsepi=1.5mm,itemsepi=2.5mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Independência Lógica de Dados:} Isolamento entre o nível externo (aplicações e visões) e o nível conceitual (esquema global corporativo).
+    \item \textbf{Independência Física de Dados:} Isolamento entre o nível conceitual (tabelas e restrições) e o nível interno (estruturas físicas em disco).
+    \item \textbf{Prevenção de Efeito Cascata:} Alterações de hardware ou de arquivos físicos não alcançam o código-fonte dos programas clientes.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Independência Lógica de Dados},leftcol=7cm,rightcol=7cm]{%
+  \alert{Conceituação e Funcionamento}\par
+  \itemseps[topsepi=1.5mm,itemsepi=2mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Definição Formal:} Capacidade de modificar o esquema conceitual sem a necessidade de alterar os esquemas externos ou recompilar aplicações existentes.
+    \item \textbf{Exemplos de Operações:} Inclusão de novas colunas opcionais, criação de novas entidades e relacionamentos ou expansão de restrições.
+    \item \textbf{Mapeamento Externo/Conceitual:} O SGBD recompõe a interface original via visões (\textit{views}), mantendo transparentes as modificações lógicas.
+    \item \textbf{Desafio de Escrita:} Atualizações diretas em visões complexas com múltiplas junções nem sempre são trivialmente traduzíveis pelo motor.
+  \end{itemize}
+}{%
+  \alert{Cenário Prático em Telemática}\par
+  \itemseps[topsepi=1.5mm,itemsepi=2mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Cenário Operacional:} A rede corporativa cadastra roteadores core. Com a modernização do NOC, torna-se necessário registrar o protocolo de telemetria (\texttt{gRPC} ou \texttt{SNMPv3}).
+    \item \textbf{Evolução Lógica:} O DBA executa \texttt{ALTER TABLE roteadores ADD COLUMN protocolo\_telemetria}.
+    \item \textbf{Resultado:} O sistema de bilhetagem e relatórios antigos continua operando perfeitamente sem alteração em suas consultas SQL.
+    \item \textbf{Valor Estratégico:} Elimina retrabalho de programação e reduz riscos operacionais em ambientes distribuídos.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Independência Física de Dados},leftcol=7cm,rightcol=7cm]{%
+  \alert{Conceituação e Otimização}\par
+  \itemseps[topsepi=1.5mm,itemsepi=2mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Definição Formal:} Capacidade de modificar o esquema interno (arquivos, índices e blocos) sem afetar o esquema conceitual nem as visões externas.
+    \item \textbf{Operações Típicas:} Criação/remoção de índices Árvore B+ (\texttt{CREATE INDEX}), particionamento de tabelas em múltiplos discos ou migração para storages NVMe.
+    \item \textbf{Mapeamento Conceitual/Interno:} O otimizador de consultas ajusta o plano de acesso em tempo real, aproveitando novas estruturas de índice.
+    \item \textbf{Transparência Total:} Nenhuma instrução SQL declarativa precisa ser reescrita para usufruir dos ganhos de desempenho físico.
+  \end{itemize}
+}{%
+  \alert{Comparação Crítica de Complexidade}\par
+  \itemseps[topsepi=1.5mm,itemsepi=2mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Independência Física é mais Fácil:} Implementada com excelência nos SGBDs modernos, pois restringe-se a aspectos de hardware e desempenho de E/S.
+    \item \textbf{Independência Lógica é mais Complexa:} Exige planejamento antecipado do projeto lógico de visões, particionamento vertical e semântica de integridade referencial.
+    \item \textbf{Benefício Coletivo:} Juntas, conferem robustez à infraestrutura de dados para sustentar anos de evolução de sistemas de software e telecomunicações.
+  \end{itemize}
+}
