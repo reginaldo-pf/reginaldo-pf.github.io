@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,24 +26,33 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
   <style>
-    body { font-family: 'Inter', sans-serif; }
+    body {
+      font-family: 'Inter', sans-serif;
+    }
   </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+<body
+  class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
 
   <!-- Navbar -->
-  <header class="border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+  <header
+    class="border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur sticky top-0 z-50">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <a href="../../../../index.html" class="flex items-center space-x-2 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium text-sm transition-colors">
+        <a href="../../../../index.html"
+          class="flex items-center space-x-2 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium text-sm transition-colors">
           <i class="fa-solid fa-arrow-left"></i>
           <span>Voltar ao Portal Geral</span>
         </a>
       </div>
       <div class="flex items-center space-x-4">
-        <button id="themeToggle" class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Alternar tema">
+        <button id="themeToggle"
+          class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          title="Alternar tema">
           <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
         </button>
       </div>
@@ -62,13 +72,19 @@
     </nav>
 
     <!-- Header da Disciplina -->
-    <div class="bg-gradient-to-r from-emerald-800 to-teal-900 rounded-2xl p-6 sm:p-8 text-white shadow-lg mb-8 relative overflow-hidden">
+    <div
+      class="bg-gradient-to-r from-emerald-800 to-teal-900 rounded-2xl p-6 sm:p-8 text-white shadow-lg mb-8 relative overflow-hidden">
       <div class="relative z-10">
         <div class="flex flex-wrap items-center gap-2 mb-3">
-          <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-500/30 text-emerald-200 border border-emerald-400/30">Telemática</span>
-          <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-white/20 text-white">80 Horas (40 Encontros)</span>
-          <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-400/30 text-amber-200 border border-amber-300/30">Semestre 2026.2 / 2027.1</span>
-          <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-400 text-slate-900 font-bold">🟢 Piloto Ativo</span>
+          <span
+            class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-500/30 text-emerald-200 border border-emerald-400/30">Telemática</span>
+          <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-white/20 text-white">80 Horas (40
+            Encontros)</span>
+          <span
+            class="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-400/30 text-amber-200 border border-amber-300/30">Semestre
+            2026.2 / 2027.1</span>
+          <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-400 text-slate-900 font-bold">🟢 Piloto
+            Ativo</span>
         </div>
         <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight mb-2">Banco de Dados</h1>
         <p class="text-emerald-100 text-sm sm:text-base max-w-3xl">
@@ -85,11 +101,13 @@
 
     <!-- Grid de Destaques: Aulas, Diretrizes e Ementa -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-      
+
       <!-- Card: Aulas -->
-      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
+      <div
+        class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
         <div>
-          <div class="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4 text-xl">
+          <div
+            class="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4 text-xl">
             <i class="fa-solid fa-chalkboard-user"></i>
           </div>
           <h3 class="font-bold text-lg mb-2">Aulas e Roteiros</h3>
@@ -99,7 +117,9 @@
           <ul class="text-xs space-y-2 text-slate-700 dark:text-slate-300">
             <li class="flex items-center space-x-2">
               <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <a href="Aulas/Aula_01/index.html" class="hover:underline font-medium text-emerald-600 dark:text-emerald-400">Aula 01: Introdução & Modelagem Conceitual</a>
+              <a href="Aulas/Aula_01/index.html"
+                class="hover:underline font-medium text-emerald-600 dark:text-emerald-400">Aula 01: Introdução &
+                Modelagem Conceitual</a>
             </li>
             <li class="flex items-center space-x-2 text-slate-400">
               <span class="w-2 h-2 rounded-full bg-slate-400"></span>
@@ -112,16 +132,19 @@
           </ul>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700">
-          <a href="Aulas/Aula_01/index.html" class="inline-flex items-center text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700">
+          <a href="Aulas/Aula_01/index.html"
+            class="inline-flex items-center text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700">
             Acessar Aula 01 <i class="fa-solid fa-arrow-right ml-1"></i>
           </a>
         </div>
       </div>
 
       <!-- Card: Sistema de Avaliação -->
-      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
+      <div
+        class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
         <div>
-          <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4 text-xl">
+          <div
+            class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4 text-xl">
             <i class="fa-solid fa-clipboard-check"></i>
           </div>
           <h3 class="font-bold text-lg mb-2">Avaliações (ROD IFCE)</h3>
@@ -130,10 +153,12 @@
           </p>
           <div class="space-y-2 text-xs">
             <div class="p-2 rounded bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
-              <strong class="text-emerald-600 dark:text-emerald-400">Período N1:</strong> AVP1 (Projeto Fase 1: DER & 3FN) + AVT1 (Teórica Escrita) + Listas 1 a 3.
+              <strong class="text-emerald-600 dark:text-emerald-400">Período N1:</strong> AVP1 (Projeto Fase 1: DER &
+              3FN) + AVT1 (Teórica Escrita) + Listas 1 a 3.
             </div>
             <div class="p-2 rounded bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
-              <strong class="text-emerald-600 dark:text-emerald-400">Período N2:</strong> AVP2 (Projeto Fase 2: PostgreSQL, Triggers, Views & Python) + AVT2 (Teórica Escrita) + Listas 4 a 6.
+              <strong class="text-emerald-600 dark:text-emerald-400">Período N2:</strong> AVP2 (Projeto Fase 2:
+              PostgreSQL, Triggers, Views & Python) + AVT2 (Teórica Escrita) + Listas 4 a 6.
             </div>
           </div>
         </div>
@@ -143,9 +168,11 @@
       </div>
 
       <!-- Card: Ferramentas & Stack -->
-      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
+      <div
+        class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
         <div>
-          <div class="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-4 text-xl">
+          <div
+            class="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-4 text-xl">
             <i class="fa-solid fa-cubes"></i>
           </div>
           <h3 class="font-bold text-lg mb-2">Ecossistema Tecnológico</h3>
@@ -153,14 +180,22 @@
             Ambiente prático modernizado para 2026/2027:
           </p>
           <div class="flex flex-wrap gap-1.5 text-xs">
-            <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">PostgreSQL</span>
-            <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">DBeaver</span>
-            <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">SQL ANSI</span>
-            <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">brModelo</span>
-            <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">Draw.io</span>
-            <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">PL/pgSQL</span>
-            <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">Python 3</span>
-            <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">psycopg2</span>
+            <span
+              class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">PostgreSQL</span>
+            <span
+              class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">DBeaver</span>
+            <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">SQL
+              ANSI</span>
+            <span
+              class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">brModelo</span>
+            <span
+              class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">Draw.io</span>
+            <span
+              class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">PL/pgSQL</span>
+            <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">Python
+              3</span>
+            <span
+              class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">psycopg2</span>
           </div>
         </div>
         <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700 text-xs text-slate-500">
@@ -171,21 +206,21 @@
     </div>
 
     <!-- Cronograma Detalhado dos 40 Encontros -->
-    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/60 p-6 shadow-sm mb-12">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-200 dark:border-slate-700 gap-2">
+    <div
+      class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/60 p-6 shadow-sm mb-12">
+      <div
+        class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-200 dark:border-slate-700 gap-2">
         <div>
           <h2 class="text-xl font-bold flex items-center space-x-2">
             <i class="fa-solid fa-calendar-days text-emerald-600 dark:text-emerald-400"></i>
-            <span>Cronograma de Aulas (Semestre 2026.2 / 2027.1)</span>
+            <span>Cronograma de Aulas (Semestre 2026.2)</span>
           </h2>
-          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Planejamento das 80 horas letivas da disciplina.</p>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Planejamento das 80 horas letivas da
+            disciplina.</p>
         </div>
         <div class="flex items-center space-x-2">
-          <a href="Referencias/cronograma_aulas_telem%C3%A1tica.md" target="_blank" class="inline-flex items-center space-x-1.5 px-3 py-1 text-xs font-semibold rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 transition-colors">
-            <i class="fa-solid fa-file-lines"></i>
-            <span>Plano (.md)</span>
-          </a>
-          <span class="text-xs bg-slate-100 dark:bg-slate-700 px-3 py-1 rounded-full text-slate-600 dark:text-slate-300 font-medium self-start sm:self-auto">
+          <span
+            class="text-xs bg-slate-100 dark:bg-slate-700 px-3 py-1 rounded-full text-slate-600 dark:text-slate-300 font-medium self-start sm:self-auto">
             40 Encontros de 100 min
           </span>
         </div>
@@ -194,7 +229,8 @@
       <div class="overflow-x-auto">
         <table class="w-full text-left text-xs sm:text-sm">
           <thead>
-            <tr class="bg-slate-50 dark:bg-slate-900/50 text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
+            <tr
+              class="bg-slate-50 dark:bg-slate-900/50 text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
               <th class="py-3 px-3">Aula</th>
               <th class="py-3 px-3">Data</th>
               <th class="py-3 px-3">Período</th>
@@ -203,17 +239,19 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50 text-slate-700 dark:text-slate-300">
-            
+
             <!-- Aula 01 -->
             <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/30">
               <td class="py-3 px-3 font-semibold text-emerald-600 dark:text-emerald-400">01</td>
               <td class="py-3 px-3 text-xs whitespace-nowrap">29/09/2026 (Ter)</td>
               <td class="py-3 px-3 text-xs">Unidade I (N1)</td>
               <td class="py-3 px-6">
-                <strong>Apresentação e Fundamentos:</strong> Contrato didático, plano de ensino, critérios avaliativos e introdução aos Bancos de Dados vs. Arquivos convencionais em Telemática.
+                <strong>Apresentação e Fundamentos:</strong> Contrato didático, plano de ensino, critérios avaliativos e
+                introdução aos Bancos de Dados vs. Arquivos convencionais em Telemática.
               </td>
               <td class="py-3 px-3 text-center">
-                <a href="Aulas/Aula_01/index.html" class="inline-block px-2 py-0.5 text-xs bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 rounded font-medium hover:underline">
+                <a href="Aulas/Aula_01/index.html"
+                  class="inline-block px-2 py-0.5 text-xs bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 rounded font-medium hover:underline">
                   Disponível
                 </a>
               </td>
@@ -225,7 +263,8 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">30/09/2026 (Qua)</td>
               <td class="py-3 px-3 text-xs">Unidade I (N1)</td>
               <td class="py-3 px-6">
-                <strong>Arquitetura de SGBD:</strong> Esquema de 3 níveis ANSI/SPARC, independência física e lógica de dados, catálogo do sistema (metadados) e linguagens SQL (DDL, DML, DCL, DQL).
+                <strong>Arquitetura de SGBD:</strong> Esquema de 3 níveis ANSI/SPARC, independência física e lógica de
+                dados, catálogo do sistema (metadados) e linguagens SQL (DDL, DML, DCL, DQL).
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -236,7 +275,9 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">06/10/2026 (Ter)</td>
               <td class="py-3 px-3 text-xs">Unidade III (N1)</td>
               <td class="py-3 px-6">
-                <strong>Fases do Projeto de BD & Modelo Conceitual:</strong> Ciclo de requisitos, conceitual, lógico e físico. Conceitos de Entidades, Conjuntos de Entidades e Atributos (simples, compostos, multivalorados, derivados e identificadores).
+                <strong>Fases do Projeto de BD & Modelo Conceitual:</strong> Ciclo de requisitos, conceitual, lógico e
+                físico. Conceitos de Entidades, Conjuntos de Entidades e Atributos (simples, compostos, multivalorados,
+                derivados e identificadores).
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -244,10 +285,12 @@
             <!-- Aula 04: Sábado Letivo -->
             <tr class="bg-amber-50/50 dark:bg-amber-950/20 hover:bg-amber-50 dark:hover:bg-amber-950/30">
               <td class="py-3 px-3 font-semibold text-amber-600 dark:text-amber-400">04</td>
-              <td class="py-3 px-3 text-xs font-semibold text-amber-600 dark:text-amber-400 whitespace-nowrap">10/10/2026 (Sáb)</td>
+              <td class="py-3 px-3 text-xs font-semibold text-amber-600 dark:text-amber-400 whitespace-nowrap">
+                10/10/2026 (Sáb)</td>
               <td class="py-3 px-3 text-xs font-semibold text-amber-600 dark:text-amber-400">Sábado Letivo</td>
               <td class="py-3 px-6">
-                <strong>Aplicação da Lista de Exercícios 01 (N1):</strong> Atividade avaliativa assíncrona (sem conteúdo novo) sobre conceitos de SGBD, arquitetura e modelagem básica de entidades.
+                <strong>Aplicação da Lista de Exercícios 01 (N1):</strong> Atividade avaliativa assíncrona (sem conteúdo
+                novo) sobre conceitos de SGBD, arquitetura e modelagem básica de entidades.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -258,7 +301,8 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">13/10/2026 (Ter)</td>
               <td class="py-3 px-3 text-xs">Unidade III (N1)</td>
               <td class="py-3 px-6">
-                <strong>Relacionamentos no MER:</strong> Grau de relacionamento, papéis, restrições de cardinalidade (1:1, 1:N, N:M) e restrições de participação (total/obrigatória vs. parcial/opcional).
+                <strong>Relacionamentos no MER:</strong> Grau de relacionamento, papéis, restrições de cardinalidade
+                (1:1, 1:N, N:M) e restrições de participação (total/obrigatória vs. parcial/opcional).
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -269,7 +313,8 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">14/10/2026 (Qua)</td>
               <td class="py-3 px-3 text-xs">Unidade III (N1)</td>
               <td class="py-3 px-6">
-                <strong>Entidades Fracas e Especialização/Generalização:</strong> Chaves parciais (discriminadores), relacionamentos identificadores e introdução a herança de atributos no modelo EER.
+                <strong>Entidades Fracas e Especialização/Generalização:</strong> Chaves parciais (discriminadores),
+                relacionamentos identificadores e introdução a herança de atributos no modelo EER.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -277,10 +322,12 @@
             <!-- Aula 07: Sábado Letivo -->
             <tr class="bg-amber-50/50 dark:bg-amber-950/20 hover:bg-amber-50 dark:hover:bg-amber-950/30">
               <td class="py-3 px-3 font-semibold text-amber-600 dark:text-amber-400">07</td>
-              <td class="py-3 px-3 text-xs font-semibold text-amber-600 dark:text-amber-400 whitespace-nowrap">17/10/2026 (Sáb)</td>
+              <td class="py-3 px-3 text-xs font-semibold text-amber-600 dark:text-amber-400 whitespace-nowrap">
+                17/10/2026 (Sáb)</td>
               <td class="py-3 px-3 text-xs font-semibold text-amber-600 dark:text-amber-400">Sábado Letivo</td>
               <td class="py-3 px-6">
-                <strong>Estudo Dirigido do Projeto Prático (AVP1):</strong> Definição do escopo do minimundo do projeto prático em Telemática (monitoramento de redes, inventário de infraestrutura ou telecom).
+                <strong>Estudo Dirigido do Projeto Prático (AVP1):</strong> Definição do escopo do minimundo do projeto
+                prático em Telemática (monitoramento de redes, inventário de infraestrutura ou telecom).
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -291,7 +338,8 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">20/10/2026 (Ter)</td>
               <td class="py-3 px-3 text-xs">Unidade III (N1)</td>
               <td class="py-3 px-6">
-                <strong>Laboratório Prático de Modelagem (CASE):</strong> Construção de Diagramas Entidade-Relacionamento (DER) usando ferramentas como brModelo ou Draw.io para o projeto da disciplina.
+                <strong>Laboratório Prático de Modelagem (CASE):</strong> Construção de Diagramas
+                Entidade-Relacionamento (DER) usando ferramentas como brModelo ou Draw.io para o projeto da disciplina.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -302,7 +350,8 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">21/10/2026 (Qua)</td>
               <td class="py-3 px-3 text-xs">Unidade II (N1)</td>
               <td class="py-3 px-6">
-                <strong>Fundamentos Formais do Modelo Relacional:</strong> Relações, tuplas, atributos, domínios, chave primária (PK), chave estrangeira (FK), integridade de entidade e integridade referencial.
+                <strong>Fundamentos Formais do Modelo Relacional:</strong> Relações, tuplas, atributos, domínios, chave
+                primária (PK), chave estrangeira (FK), integridade de entidade e integridade referencial.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -313,7 +362,8 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">27/10/2026 (Ter)</td>
               <td class="py-3 px-3 text-xs">Unidade IV (N1)</td>
               <td class="py-3 px-6">
-                <strong>Mapeamento Lógico Relacional (Parte 1):</strong> Algoritmo de transformação MER &rarr; Modelo Relacional: mapeamento de entidades regulares, entidades fracas e relacionamentos 1:1 e 1:N.
+                <strong>Mapeamento Lógico Relacional (Parte 1):</strong> Algoritmo de transformação MER &rarr; Modelo
+                Relacional: mapeamento de entidades regulares, entidades fracas e relacionamentos 1:1 e 1:N.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -324,7 +374,8 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">03/11/2026 (Ter)</td>
               <td class="py-3 px-3 text-xs">Unidade IV (N1)</td>
               <td class="py-3 px-6">
-                <strong>Mapeamento Lógico Relacional (Parte 2):</strong> Mapeamento de relacionamentos N:M (tabelas associativas com chaves compostas), atributos multivalorados e ternários.
+                <strong>Mapeamento Lógico Relacional (Parte 2):</strong> Mapeamento de relacionamentos N:M (tabelas
+                associativas com chaves compostas), atributos multivalorados e ternários.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -335,7 +386,8 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">04/11/2026 (Qua)</td>
               <td class="py-3 px-3 text-xs">Unidade II (N1)</td>
               <td class="py-3 px-6">
-                <strong>Álgebra Relacional (Parte 1):</strong> Operações fundamentais: Seleção (&sigma;), Projeção (&pi;), União (&cup;), Diferença (&minus;), Produto Cartesiano (&times;) e Renomeação (&rho;).
+                <strong>Álgebra Relacional (Parte 1):</strong> Operações fundamentais: Seleção (&sigma;), Projeção
+                (&pi;), União (&cup;), Diferença (&minus;), Produto Cartesiano (&times;) e Renomeação (&rho;).
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -346,7 +398,8 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">10/11/2026 (Ter)</td>
               <td class="py-3 px-3 text-xs">Unidade II (N1)</td>
               <td class="py-3 px-6">
-                <strong>Álgebra Relacional (Parte 2):</strong> Junções: Junção Natural (&#8904;), Theta-join, Semi-join, Junções Externas (Left, Right, Full Outer Join) e Operador de Divisão (&divide;).
+                <strong>Álgebra Relacional (Parte 2):</strong> Junções: Junção Natural (&#8904;), Theta-join, Semi-join,
+                Junções Externas (Left, Right, Full Outer Join) e Operador de Divisão (&divide;).
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -357,7 +410,8 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">11/11/2026 (Qua)</td>
               <td class="py-3 px-3 text-xs">Unidade II (N1)</td>
               <td class="py-3 px-6">
-                <strong>Cálculo Relacional:</strong> Cálculo Relacional de Tuplas (CRT) e de Domínios (CRD). Comparação declarativa vs. procedural e princípios de otimização de consultas em SGBDs.
+                <strong>Cálculo Relacional:</strong> Cálculo Relacional de Tuplas (CRT) e de Domínios (CRD). Comparação
+                declarativa vs. procedural e princípios de otimização de consultas em SGBDs.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -365,10 +419,12 @@
             <!-- Aula 15: Sábado Letivo -->
             <tr class="bg-amber-50/50 dark:bg-amber-950/20 hover:bg-amber-50 dark:hover:bg-amber-950/30">
               <td class="py-3 px-3 font-semibold text-amber-600 dark:text-amber-400">15</td>
-              <td class="py-3 px-3 text-xs font-semibold text-amber-600 dark:text-amber-400 whitespace-nowrap">14/11/2026 (Sáb)</td>
+              <td class="py-3 px-3 text-xs font-semibold text-amber-600 dark:text-amber-400 whitespace-nowrap">
+                14/11/2026 (Sáb)</td>
               <td class="py-3 px-3 text-xs font-semibold text-amber-600 dark:text-amber-400">Sábado Letivo</td>
               <td class="py-3 px-6">
-                <strong>Aplicação da Lista de Exercícios 02 (N1):</strong> Atividade avaliativa assíncrona cobrindo Mapeamento MER &rarr; Relacional e formulação de consultas em Álgebra Relacional.
+                <strong>Aplicação da Lista de Exercícios 02 (N1):</strong> Atividade avaliativa assíncrona cobrindo
+                Mapeamento MER &rarr; Relacional e formulação de consultas em Álgebra Relacional.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -379,7 +435,9 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">17/11/2026 (Ter)</td>
               <td class="py-3 px-3 text-xs">Unidade IV (N1)</td>
               <td class="py-3 px-6">
-                <strong>Teoria do Projeto Relacional:</strong> Anomalias de inserção, exclusão e alteração; redundância. Definição formal de Dependência Funcional (DF), Axiomas de Armstrong e cálculo de fecho (<i>X</i><sup>+</sup>).
+                <strong>Teoria do Projeto Relacional:</strong> Anomalias de inserção, exclusão e alteração; redundância.
+                Definição formal de Dependência Funcional (DF), Axiomas de Armstrong e cálculo de fecho
+                (<i>X</i><sup>+</sup>).
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -390,7 +448,8 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">18/11/2026 (Qua)</td>
               <td class="py-3 px-3 text-xs">Unidade IV (N1)</td>
               <td class="py-3 px-6">
-                <strong>Normalização de Dados: 1FN e 2FN:</strong> Primeira Forma Normal (atomicidade e eliminação de atributos multivalorados/compostos) e Segunda Forma Normal (eliminação de dependências parciais).
+                <strong>Normalização de Dados: 1FN e 2FN:</strong> Primeira Forma Normal (atomicidade e eliminação de
+                atributos multivalorados/compostos) e Segunda Forma Normal (eliminação de dependências parciais).
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -401,7 +460,9 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">24/11/2026 (Ter)</td>
               <td class="py-3 px-3 text-xs">Unidade IV (N1)</td>
               <td class="py-3 px-6">
-                <strong>Normalização de Dados: 3FN e FNBC:</strong> Terceira Forma Normal (eliminação de dependências transitivas) e Forma Normal de Boyce-Codd. Decomposição sem perda de informação (<em>lossless join</em>).
+                <strong>Normalização de Dados: 3FN e FNBC:</strong> Terceira Forma Normal (eliminação de dependências
+                transitivas) e Forma Normal de Boyce-Codd. Decomposição sem perda de informação (<em>lossless
+                  join</em>).
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -412,7 +473,8 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">25/11/2026 (Qua)</td>
               <td class="py-3 px-3 text-xs">Unidade IV (N1)</td>
               <td class="py-3 px-6">
-                <strong>Oficina de Tutoria do Projeto AVP1:</strong> Validação final do DER do projeto do aluno, esquema lógico mapeado e normalizado em 3FN antes da entrega.
+                <strong>Oficina de Tutoria do Projeto AVP1:</strong> Validação final do DER do projeto do aluno, esquema
+                lógico mapeado e normalizado em 3FN antes da entrega.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -420,10 +482,12 @@
             <!-- Aula 20: Sábado Letivo -->
             <tr class="bg-amber-50/50 dark:bg-amber-950/20 hover:bg-amber-50 dark:hover:bg-amber-950/30">
               <td class="py-3 px-3 font-semibold text-amber-600 dark:text-amber-400">20</td>
-              <td class="py-3 px-3 text-xs font-semibold text-amber-600 dark:text-amber-400 whitespace-nowrap">28/11/2026 (Sáb)</td>
+              <td class="py-3 px-3 text-xs font-semibold text-amber-600 dark:text-amber-400 whitespace-nowrap">
+                28/11/2026 (Sáb)</td>
               <td class="py-3 px-3 text-xs font-semibold text-amber-600 dark:text-amber-400">Sábado Letivo</td>
               <td class="py-3 px-6">
-                <strong>Aplicação da Lista de Exercícios 03 (N1):</strong> Atividade avaliativa assíncrona sobre dependências funcionais, determinação de chaves candidatas e normalização de tabelas (1FN, 2FN, 3FN).
+                <strong>Aplicação da Lista de Exercícios 03 (N1):</strong> Atividade avaliativa assíncrona sobre
+                dependências funcionais, determinação de chaves candidatas e normalização de tabelas (1FN, 2FN, 3FN).
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -431,10 +495,12 @@
             <!-- Aula 21: Final N1 -->
             <tr class="bg-red-50/40 dark:bg-red-950/20 hover:bg-red-50/60 dark:hover:bg-red-950/30">
               <td class="py-3 px-3 font-bold text-red-600 dark:text-red-400">21</td>
-              <td class="py-3 px-3 text-xs font-semibold text-red-600 dark:text-red-400 whitespace-nowrap">01/12/2026 (Ter)</td>
+              <td class="py-3 px-3 text-xs font-semibold text-red-600 dark:text-red-400 whitespace-nowrap">01/12/2026
+                (Ter)</td>
               <td class="py-3 px-3 text-xs font-semibold text-red-600 dark:text-red-400">Avaliação N1</td>
               <td class="py-3 px-6 font-semibold">
-                <strong>Avaliação Prática (AVP1) & Teórica (AVT1):</strong> Aplicação individual em laboratório (Prova escrita individual e defesa da Fase 1 do Projeto de BD).
+                <strong>Avaliação Prática (AVP1) & Teórica (AVT1):</strong> Aplicação individual em laboratório (Prova
+                escrita individual e defesa da Fase 1 do Projeto de BD).
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Avaliação</td>
             </tr>
@@ -445,7 +511,9 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">02/12/2026 (Qua)</td>
               <td class="py-3 px-3 text-xs">Unidade II (N2)</td>
               <td class="py-3 px-6">
-                <strong>Introdução Prática ao PostgreSQL e SQL DDL:</strong> Conexão no DBeaver, criação de schemas (`CREATE SCHEMA`), `CREATE TABLE`, tipos de dados (INTEGER, VARCHAR, NUMERIC, TIMESTAMP) e restrições básicas (`PRIMARY KEY`, `NOT NULL`, `UNIQUE`).
+                <strong>Introdução Prática ao PostgreSQL e SQL DDL:</strong> Conexão no DBeaver, criação de schemas
+                (`CREATE SCHEMA`), `CREATE TABLE`, tipos de dados (INTEGER, VARCHAR, NUMERIC, TIMESTAMP) e restrições
+                básicas (`PRIMARY KEY`, `NOT NULL`, `UNIQUE`).
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -456,7 +524,9 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">08/12/2026 (Ter)</td>
               <td class="py-3 px-3 text-xs">Unidade II (N2)</td>
               <td class="py-3 px-6">
-                <strong>Integridade Referencial e Modificação de Esquemas em DDL:</strong> Criação de `FOREIGN KEY`, ações em cascata (`ON DELETE CASCADE`, `ON UPDATE RESTRICT`), constraints `CHECK` e alterações estruturais com `ALTER TABLE`.
+                <strong>Integridade Referencial e Modificação de Esquemas em DDL:</strong> Criação de `FOREIGN KEY`,
+                ações em cascata (`ON DELETE CASCADE`, `ON UPDATE RESTRICT`), constraints `CHECK` e alterações
+                estruturais com `ALTER TABLE`.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -467,7 +537,8 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">09/12/2026 (Qua)</td>
               <td class="py-3 px-3 text-xs">Unidade II (N2)</td>
               <td class="py-3 px-6">
-                <strong>Manipulação de Dados em SQL (DML):</strong> Comandos `INSERT INTO` (inserções simples, múltiplas e via subqueries), `UPDATE` condicional e `DELETE` com verificação de restrições referenciais.
+                <strong>Manipulação de Dados em SQL (DML):</strong> Comandos `INSERT INTO` (inserções simples, múltiplas
+                e via subqueries), `UPDATE` condicional e `DELETE` com verificação de restrições referenciais.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -478,7 +549,9 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">15/12/2026 (Ter)</td>
               <td class="py-3 px-3 text-xs">Unidade II (N2)</td>
               <td class="py-3 px-6">
-                <strong>Consultas Básicas com SQL DQL:</strong> Estrutura fundamental do `SELECT`: projeção de colunas, cláusula `WHERE`, operadores de comparação, operadores lógicos (`AND`, `OR`, `NOT`), `BETWEEN`, `IN`, `LIKE` e tratamento de valores `NULL`.
+                <strong>Consultas Básicas com SQL DQL:</strong> Estrutura fundamental do `SELECT`: projeção de colunas,
+                cláusula `WHERE`, operadores de comparação, operadores lógicos (`AND`, `OR`, `NOT`), `BETWEEN`, `IN`,
+                `LIKE` e tratamento de valores `NULL`.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -489,7 +562,9 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">16/12/2026 (Qua)</td>
               <td class="py-3 px-3 text-xs">Unidade II (N2)</td>
               <td class="py-3 px-6">
-                <strong>Ordenação, Paginação e Funções Escalares:</strong> Cláusula `ORDER BY` (ASC/DESC), paginação com `LIMIT/OFFSET`. Funções de manipulação de strings, datas e números. Lançamento da Lista de Exercícios 04 (N2).
+                <strong>Ordenação, Paginação e Funções Escalares:</strong> Cláusula `ORDER BY` (ASC/DESC), paginação com
+                `LIMIT/OFFSET`. Funções de manipulação de strings, datas e números. Lançamento da Lista de Exercícios 04
+                (N2).
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -500,7 +575,8 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">20/01/2027 (Qua)</td>
               <td class="py-3 px-3 text-xs">Unidade II (N2)</td>
               <td class="py-3 px-6">
-                <strong>Retorno e Funções de Agregação / Agrupamento:</strong> Entrega da Lista 04. Estudo de `COUNT`, `SUM`, `AVG`, `MIN`, `MAX`, cláusula `GROUP BY` e filtragem pós-agrupamento com `HAVING`.
+                <strong>Retorno e Funções de Agregação / Agrupamento:</strong> Entrega da Lista 04. Estudo de `COUNT`,
+                `SUM`, `AVG`, `MIN`, `MAX`, cláusula `GROUP BY` e filtragem pós-agrupamento com `HAVING`.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -511,7 +587,8 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">26/01/2027 (Ter)</td>
               <td class="py-3 px-3 text-xs">Unidade II (N2)</td>
               <td class="py-3 px-6">
-                <strong>Junção de Tabelas em SQL (Parte 1):</strong> Produto cartesiano vs. junções qualificadas. Uso prático de `INNER JOIN`, alias de tabelas e junção de múltiplas entidades relacionais.
+                <strong>Junção de Tabelas em SQL (Parte 1):</strong> Produto cartesiano vs. junções qualificadas. Uso
+                prático de `INNER JOIN`, alias de tabelas e junção de múltiplas entidades relacionais.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -522,7 +599,8 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">27/01/2027 (Qua)</td>
               <td class="py-3 px-3 text-xs">Unidade II (N2)</td>
               <td class="py-3 px-6">
-                <strong>Junção de Tabelas em SQL (Parte 2):</strong> Junções externas: `LEFT OUTER JOIN`, `RIGHT OUTER JOIN`, `FULL OUTER JOIN`, `CROSS JOIN` e autorrelacionamento (`Self-Join`).
+                <strong>Junção de Tabelas em SQL (Parte 2):</strong> Junções externas: `LEFT OUTER JOIN`, `RIGHT OUTER
+                JOIN`, `FULL OUTER JOIN`, `CROSS JOIN` e autorrelacionamento (`Self-Join`).
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -530,10 +608,12 @@
             <!-- Aula 30: Sábado Letivo -->
             <tr class="bg-amber-50/50 dark:bg-amber-950/20 hover:bg-amber-50 dark:hover:bg-amber-950/30">
               <td class="py-3 px-3 font-semibold text-amber-600 dark:text-amber-400">30</td>
-              <td class="py-3 px-3 text-xs font-semibold text-amber-600 dark:text-amber-400 whitespace-nowrap">30/01/2027 (Sáb)</td>
+              <td class="py-3 px-3 text-xs font-semibold text-amber-600 dark:text-amber-400 whitespace-nowrap">
+                30/01/2027 (Sáb)</td>
               <td class="py-3 px-3 text-xs font-semibold text-amber-600 dark:text-amber-400">Sábado Letivo</td>
               <td class="py-3 px-6">
-                <strong>Aplicação da Lista de Exercícios 05 (N2):</strong> Atividade avaliativa assíncrona cobrindo formulação de consultas complexas em SQL com múltiplos `JOINs`, `GROUP BY` e `HAVING`.
+                <strong>Aplicação da Lista de Exercícios 05 (N2):</strong> Atividade avaliativa assíncrona cobrindo
+                formulação de consultas complexas em SQL com múltiplos `JOINs`, `GROUP BY` e `HAVING`.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -544,7 +624,9 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">02/02/2027 (Ter)</td>
               <td class="py-3 px-3 text-xs">Unidade II (N2)</td>
               <td class="py-3 px-6">
-                <strong>Subconsultas (Subqueries) e Expressões CTE:</strong> Subqueries escalares, de linhas e tabelas. Subqueries correlacionadas vs. não-correlacionadas (`IN`, `EXISTS`, `NOT EXISTS`, `ALL`, `ANY`) e `WITH` (Common Table Expressions).
+                <strong>Subconsultas (Subqueries) e Expressões CTE:</strong> Subqueries escalares, de linhas e tabelas.
+                Subqueries correlacionadas vs. não-correlacionadas (`IN`, `EXISTS`, `NOT EXISTS`, `ALL`, `ANY`) e `WITH`
+                (Common Table Expressions).
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -555,7 +637,8 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">03/02/2027 (Qua)</td>
               <td class="py-3 px-3 text-xs">Unidade II (N2)</td>
               <td class="py-3 px-6">
-                <strong>Operadores de Conjunto e Visões (Views):</strong> `UNION`, `UNION ALL`, `INTERSECT` e `EXCEPT`. Criação, manutenção e vantagens de visões virtuais (`CREATE VIEW`) e noções de Materialized Views.
+                <strong>Operadores de Conjunto e Visões (Views):</strong> `UNION`, `UNION ALL`, `INTERSECT` e `EXCEPT`.
+                Criação, manutenção e vantagens de visões virtuais (`CREATE VIEW`) e noções de Materialized Views.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -566,7 +649,8 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">16/02/2027 (Ter)</td>
               <td class="py-3 px-3 text-xs">Unidade II (N2)</td>
               <td class="py-3 px-6">
-                <strong>Processamento de Transações e Propriedades ACID:</strong> Atomicidade, Consistência, Isolamento e Durabilidade. Comandos `BEGIN`, `COMMIT`, `ROLLBACK` e níveis de isolamento no PostgreSQL.
+                <strong>Processamento de Transações e Propriedades ACID:</strong> Atomicidade, Consistência, Isolamento
+                e Durabilidade. Comandos `BEGIN`, `COMMIT`, `ROLLBACK` e níveis de isolamento no PostgreSQL.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -577,7 +661,8 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">17/02/2027 (Qua)</td>
               <td class="py-3 px-3 text-xs">Unidade II (N2)</td>
               <td class="py-3 px-6">
-                <strong>Programação no SGBD com PL/pgSQL:</strong> Criação de funções e Stored Procedures: tipos de retorno, variáveis, blocos condicionais (`IF/THEN/ELSE`) e tratamento de exceções.
+                <strong>Programação no SGBD com PL/pgSQL:</strong> Criação de funções e Stored Procedures: tipos de
+                retorno, variáveis, blocos condicionais (`IF/THEN/ELSE`) e tratamento de exceções.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -588,7 +673,9 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">23/02/2027 (Ter)</td>
               <td class="py-3 px-3 text-xs">Unidade II (N2)</td>
               <td class="py-3 px-6">
-                <strong>Gatilhos (Triggers) em Bancos de Dados:</strong> Conceitos de trigger: eventos `BEFORE` vs. `AFTER`, `ROW` vs. `STATEMENT`, variáveis `NEW` e `OLD`. Implementação de logs de auditoria e validações de integridade.
+                <strong>Gatilhos (Triggers) em Bancos de Dados:</strong> Conceitos de trigger: eventos `BEFORE` vs.
+                `AFTER`, `ROW` vs. `STATEMENT`, variáveis `NEW` e `OLD`. Implementação de logs de auditoria e validações
+                de integridade.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -599,7 +686,8 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">24/02/2027 (Qua)</td>
               <td class="py-3 px-3 text-xs">Unidade II (N2)</td>
               <td class="py-3 px-6">
-                <strong>Indexação, Análise de Consultas e Integração Python:</strong> Índices B-Tree/Hash, análise de planos de execução com `EXPLAIN ANALYZE` e conexão do PostgreSQL com script Python via `psycopg2`.
+                <strong>Indexação, Análise de Consultas e Integração Python:</strong> Índices B-Tree/Hash, análise de
+                planos de execução com `EXPLAIN ANALYZE` e conexão do PostgreSQL com script Python via `psycopg2`.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -607,10 +695,12 @@
             <!-- Aula 37: Sábado Letivo -->
             <tr class="bg-amber-50/50 dark:bg-amber-950/20 hover:bg-amber-50 dark:hover:bg-amber-950/30">
               <td class="py-3 px-3 font-semibold text-amber-600 dark:text-amber-400">37</td>
-              <td class="py-3 px-3 text-xs font-semibold text-amber-600 dark:text-amber-400 whitespace-nowrap">27/02/2027 (Sáb)</td>
+              <td class="py-3 px-3 text-xs font-semibold text-amber-600 dark:text-amber-400 whitespace-nowrap">
+                27/02/2027 (Sáb)</td>
               <td class="py-3 px-3 text-xs font-semibold text-amber-600 dark:text-amber-400">Sábado Letivo</td>
               <td class="py-3 px-6">
-                <strong>Aplicação da Lista de Exercícios 06 (N2):</strong> Atividade avaliativa assíncrona sobre Transações ACID, criação de Views, Stored Procedures e Triggers em PL/pgSQL.
+                <strong>Aplicação da Lista de Exercícios 06 (N2):</strong> Atividade avaliativa assíncrona sobre
+                Transações ACID, criação de Views, Stored Procedures e Triggers em PL/pgSQL.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -621,7 +711,8 @@
               <td class="py-3 px-3 text-xs whitespace-nowrap">02/03/2027 (Ter)</td>
               <td class="py-3 px-3 text-xs">Unidade II (N2)</td>
               <td class="py-3 px-6">
-                <strong>Oficina do Projeto AVP2:</strong> Sessão de tutoria para validação dos scripts finais, teste de carga de dados, execução de relatórios SQL e alinhamento prévio da defesa final.
+                <strong>Oficina do Projeto AVP2:</strong> Sessão de tutoria para validação dos scripts finais, teste de
+                carga de dados, execução de relatórios SQL e alinhamento prévio da defesa final.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Em breve</td>
             </tr>
@@ -629,10 +720,12 @@
             <!-- Aula 39: AVT2 -->
             <tr class="bg-red-50/40 dark:bg-red-950/20 hover:bg-red-50/60 dark:hover:bg-red-950/30">
               <td class="py-3 px-3 font-bold text-red-600 dark:text-red-400">39</td>
-              <td class="py-3 px-3 text-xs font-semibold text-red-600 dark:text-red-400 whitespace-nowrap">03/03/2027 (Qua)</td>
+              <td class="py-3 px-3 text-xs font-semibold text-red-600 dark:text-red-400 whitespace-nowrap">03/03/2027
+                (Qua)</td>
               <td class="py-3 px-3 text-xs font-semibold text-red-600 dark:text-red-400">Avaliação N2</td>
               <td class="py-3 px-6 font-semibold">
-                <strong>Avaliação Teórica 2 (AVT2):</strong> Prova escrita individual abordando consultas avançadas SQL, operadores de conjunto, transações ACID, controle de concorrência e triggers.
+                <strong>Avaliação Teórica 2 (AVT2):</strong> Prova escrita individual abordando consultas avançadas SQL,
+                operadores de conjunto, transações ACID, controle de concorrência e triggers.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Avaliação</td>
             </tr>
@@ -640,10 +733,12 @@
             <!-- Aula 40: Final N2 -->
             <tr class="bg-red-50/40 dark:bg-red-950/20 hover:bg-red-50/60 dark:hover:bg-red-950/30">
               <td class="py-3 px-3 font-bold text-red-600 dark:text-red-400">40</td>
-              <td class="py-3 px-3 text-xs font-semibold text-red-600 dark:text-red-400 whitespace-nowrap">09/03/2027 (Ter)</td>
+              <td class="py-3 px-3 text-xs font-semibold text-red-600 dark:text-red-400 whitespace-nowrap">09/03/2027
+                (Ter)</td>
               <td class="py-3 px-3 text-xs font-semibold text-red-600 dark:text-red-400">Avaliação N2</td>
               <td class="py-3 px-6 font-semibold">
-                <strong>Avaliação Prática (AVP2) & Fechamento:</strong> Demonstração do Projeto de Banco de Dados Fase 2 com SGBD PostgreSQL ativo, queries e consolidação das notas.
+                <strong>Avaliação Prática (AVP2) & Fechamento:</strong> Demonstração do Projeto de Banco de Dados Fase 2
+                com SGBD PostgreSQL ativo, queries e consolidação das notas.
               </td>
               <td class="py-3 px-3 text-center text-slate-400 text-xs">Avaliação</td>
             </tr>
@@ -654,23 +749,28 @@
     </div>
 
     <!-- Referências Bibliográficas da Ementa (PUD) -->
-    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/60 p-6 shadow-sm mb-12">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-6 border-b border-slate-200 dark:border-slate-700 gap-2">
+    <div
+      class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/60 p-6 shadow-sm mb-12">
+      <div
+        class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-6 border-b border-slate-200 dark:border-slate-700 gap-2">
         <div>
           <h2 class="text-xl font-bold flex items-center space-x-2 text-slate-900 dark:text-white">
             <i class="fa-solid fa-book-bookmark text-emerald-600 dark:text-emerald-400"></i>
             <span>Referências Bibliográficas da Ementa</span>
           </h2>
           <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-            Bibliografia oficial do Programa de Unidade Didática (PUD • Telemática - 80h) aprovado pelo IFCE Campus Tauá.
+            Bibliografia oficial do Programa de Unidade Didática (PUD • Telemática - 80h) aprovado pelo IFCE Campus
+            Tauá.
           </p>
         </div>
         <div class="flex items-center space-x-2">
-          <a href="Referencias/Ementa%20Banco%20de%20dados.pdf" target="_blank" class="inline-flex items-center space-x-1.5 px-3 py-1 text-xs font-semibold rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 transition-colors">
+          <a href="Referencias/Ementa%20Banco%20de%20dados.pdf" target="_blank"
+            class="inline-flex items-center space-x-1.5 px-3 py-1 text-xs font-semibold rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 transition-colors">
             <i class="fa-solid fa-file-pdf text-red-500"></i>
             <span>Baixar Ementa (PDF)</span>
           </a>
-          <span class="text-xs bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 font-semibold px-3 py-1 rounded-full self-start sm:self-auto border border-emerald-300 dark:border-emerald-800">
+          <span
+            class="text-xs bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 font-semibold px-3 py-1 rounded-full self-start sm:self-auto border border-emerald-300 dark:border-emerald-800">
             PUD • Telemática
           </span>
         </div>
@@ -679,49 +779,66 @@
       <div class="space-y-6">
         <!-- Bibliografia Básica -->
         <div>
-          <h3 class="text-sm font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-3 flex items-center space-x-2">
+          <h3
+            class="text-sm font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-3 flex items-center space-x-2">
             <i class="fa-solid fa-graduation-cap"></i>
             <span>Bibliografia Básica</span>
           </h3>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            
+
             <!-- Livro 1 -->
-            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between">
+            <div
+              class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between">
               <div>
-                <span class="inline-block px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 mb-2">Livro Texto</span>
-                <h4 class="font-bold text-sm text-slate-900 dark:text-white leading-snug">Introdução a Sistemas de Bancos de Dados</h4>
+                <span
+                  class="inline-block px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 mb-2">Livro
+                  Texto</span>
+                <h4 class="font-bold text-sm text-slate-900 dark:text-white leading-snug">Introdução a Sistemas de
+                  Bancos de Dados</h4>
                 <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 font-medium">DATE, C. J.</p>
                 <p class="text-[11px] text-slate-500 mt-2">8ª edição. Rio de Janeiro: Campus, 2004. 865 p.</p>
               </div>
-              <div class="mt-3 pt-2 border-t border-slate-200 dark:border-slate-800 text-[10px] text-slate-500 flex justify-between items-center">
+              <div
+                class="mt-3 pt-2 border-t border-slate-200 dark:border-slate-800 text-[10px] text-slate-500 flex justify-between items-center">
                 <span>ISBN: 9788535212730</span>
                 <span class="text-emerald-600 dark:text-emerald-400 font-medium">Biblioteca IFCE</span>
               </div>
             </div>
 
             <!-- Livro 2 -->
-            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between">
+            <div
+              class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between">
               <div>
-                <span class="inline-block px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 mb-2">E-book & Físico</span>
-                <h4 class="font-bold text-sm text-slate-900 dark:text-white leading-snug">Sistemas de Banco de Dados</h4>
-                <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 font-medium">ELMASRI, Ramez; NAVATHE, Shamkant B.</p>
-                <p class="text-[11px] text-slate-500 mt-2">6ª edição. São Paulo: Pearson Education do Brasil, 2011. 788 p.</p>
+                <span
+                  class="inline-block px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 mb-2">E-book
+                  & Físico</span>
+                <h4 class="font-bold text-sm text-slate-900 dark:text-white leading-snug">Sistemas de Banco de Dados
+                </h4>
+                <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 font-medium">ELMASRI, Ramez; NAVATHE, Shamkant
+                  B.</p>
+                <p class="text-[11px] text-slate-500 mt-2">6ª edição. São Paulo: Pearson Education do Brasil, 2011. 788
+                  p.</p>
               </div>
-              <div class="mt-3 pt-2 border-t border-slate-200 dark:border-slate-800 text-[10px] text-slate-500 flex justify-between items-center">
+              <div
+                class="mt-3 pt-2 border-t border-slate-200 dark:border-slate-800 text-[10px] text-slate-500 flex justify-between items-center">
                 <span>ISBN: 9788579360855</span>
                 <span class="text-emerald-600 dark:text-emerald-400 font-medium">BV Pearson IFCE</span>
               </div>
             </div>
 
             <!-- Livro 3 -->
-            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between">
+            <div
+              class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between">
               <div>
-                <span class="inline-block px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 mb-2">Clássico</span>
+                <span
+                  class="inline-block px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 mb-2">Clássico</span>
                 <h4 class="font-bold text-sm text-slate-900 dark:text-white leading-snug">Sistema de Banco de Dados</h4>
-                <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 font-medium">SILBERSCHATZ, A.; KORTH, H. F.; SUDARSHAN, S.</p>
+                <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 font-medium">SILBERSCHATZ, A.; KORTH, H. F.;
+                  SUDARSHAN, S.</p>
                 <p class="text-[11px] text-slate-500 mt-2">6ª edição. Rio de Janeiro: Elsevier, 2012. 861 p.</p>
               </div>
-              <div class="mt-3 pt-2 border-t border-slate-200 dark:border-slate-800 text-[10px] text-slate-500 flex justify-between items-center">
+              <div
+                class="mt-3 pt-2 border-t border-slate-200 dark:border-slate-800 text-[10px] text-slate-500 flex justify-between items-center">
                 <span>ISBN: 9788535245356</span>
                 <span class="text-emerald-600 dark:text-emerald-400 font-medium">Biblioteca IFCE</span>
               </div>
@@ -732,28 +849,43 @@
 
         <!-- Bibliografia Complementar -->
         <div>
-          <h3 class="text-sm font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-3 flex items-center space-x-2">
+          <h3
+            class="text-sm font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-3 flex items-center space-x-2">
             <i class="fa-solid fa-book"></i>
             <span>Bibliografia Complementar</span>
           </h3>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            
-            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-700/60">
-              <span class="inline-block px-2 py-0.5 text-[10px] font-medium rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 mb-2">Projeto de BD</span>
+
+            <div
+              class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-700/60">
+              <span
+                class="inline-block px-2 py-0.5 text-[10px] font-medium rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 mb-2">Projeto
+                de BD</span>
               <h4 class="font-bold text-xs text-slate-900 dark:text-white leading-snug">Projeto de Banco de Dados</h4>
-              <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-1">HEUSER, Carlos Alberto. 6. ed. Porto Alegre: Bookman, 2009.</p>
+              <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-1">HEUSER, Carlos Alberto. 6. ed. Porto
+                Alegre: Bookman, 2009.</p>
             </div>
 
-            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-700/60">
-              <span class="inline-block px-2 py-0.5 text-[10px] font-medium rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 mb-2">Implementação SQL</span>
-              <h4 class="font-bold text-xs text-slate-900 dark:text-white leading-snug">Banco de Dados: Implementação em SQL, PL/SQL e Oracle</h4>
-              <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-1">PUGA, Sandra; FRANÇA, Edson; GOYA, Milton. Pearson, 2013.</p>
+            <div
+              class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-700/60">
+              <span
+                class="inline-block px-2 py-0.5 text-[10px] font-medium rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 mb-2">Implementação
+                SQL</span>
+              <h4 class="font-bold text-xs text-slate-900 dark:text-white leading-snug">Banco de Dados: Implementação em
+                SQL, PL/SQL e Oracle</h4>
+              <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-1">PUGA, Sandra; FRANÇA, Edson; GOYA, Milton.
+                Pearson, 2013.</p>
             </div>
 
-            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-700/60">
-              <span class="inline-block px-2 py-0.5 text-[10px] font-medium rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 mb-2">Teoria & Prática</span>
-              <h4 class="font-bold text-xs text-slate-900 dark:text-white leading-snug">Bancos de Dados: Teoria e Desenvolvimento</h4>
-              <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-1">ALVES, William Pereira. São Paulo: Érica, 2009. ISBN 9788536502557.</p>
+            <div
+              class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-700/60">
+              <span
+                class="inline-block px-2 py-0.5 text-[10px] font-medium rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 mb-2">Teoria
+                & Prática</span>
+              <h4 class="font-bold text-xs text-slate-900 dark:text-white leading-snug">Bancos de Dados: Teoria e
+                Desenvolvimento</h4>
+              <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-1">ALVES, William Pereira. São Paulo: Érica,
+                2009. ISBN 9788536502557.</p>
             </div>
 
           </div>
@@ -765,7 +897,8 @@
   </main>
 
   <!-- Footer -->
-  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+  <footer
+    class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
     <div class="max-w-6xl mx-auto px-4">
       <p>© 2026 Instituto Federal do Ceará -- Campus Tauá. Todos os direitos reservados.</p>
       <p class="mt-1">Prof. Reginaldo Pereira Fernandes | Tecnologia em Telemática</p>
@@ -799,4 +932,5 @@
     });
   </script>
 </body>
+
 </html>
