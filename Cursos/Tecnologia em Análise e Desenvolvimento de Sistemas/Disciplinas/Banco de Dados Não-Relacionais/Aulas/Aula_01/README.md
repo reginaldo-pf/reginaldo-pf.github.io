@@ -1,6 +1,6 @@
-# Plano de Aula: 01 -- Introdução aos Bancos de Dados Não-Relacionais & O Paradigma Pós-Relacional
+# Aula 01 -- Banco de Dados Não-Relacionais
 
-**Disciplina:** Bancos de Dados Não-Relacionais (ADS16)  
+**Disciplina:** Banco de Dados Não-Relacionais (ADS16)  
 **Curso:** Tecnologia em Análise e Desenvolvimento de Sistemas (ADS) -- IFCE Campus Tauá  
 **Carga Horária do Encontro:** 2 horas (120 minutos)  
 **Data Prevista:** 29/09/2026 (Terça-feira)  

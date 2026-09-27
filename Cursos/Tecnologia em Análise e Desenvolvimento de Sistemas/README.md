@@ -11,7 +11,7 @@
 - **Professor:** Reginaldo Pereira Fernandes
 - **Foco:** Estatística descritiva e inferencial, amostragem, Teorema Central do Limite (TCL), intervalos de confiança paramétricos e não-paramétricos (Bootstrap), testes de hipóteses, simulações Monte Carlo, EDA com Pandas/Seaborn e introdução ao aprendizado de máquina.
 
-### 2. [Banco de Dados Não-Relacionais (NoSQL)](Disciplinas/Banco%20de%20Dados%20Não-Relacionais)
+### 2. [Banco de Dados Não-Relacionais](Disciplinas/Banco%20de%20Dados%20Não-Relacionais)
 - **Código:** ADS16
 - **Carga Horária:** 40h (2 créditos)
 - **Professor:** Reginaldo Pereira Fernandes

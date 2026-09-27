@@ -1,4 +1,4 @@
-# Bancos de Dados Não-Relacionais (NoSQL)
+# Banco de Dados Não-Relacionais
 **Curso:** Tecnologia em Análise e Desenvolvimento de Sistemas (ADS)  
 **Instituição:** Instituto Federal do Ceará (IFCE) - Campus Tauá  
 **Professor:** Reginaldo Pereira Fernandes  
