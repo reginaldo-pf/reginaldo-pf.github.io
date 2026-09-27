@@ -1,0 +1,78 @@
+\changecolours{ScoutNavy}
+\section{O Modelo Relacional}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={A Revolução de Edgar F. Codd (1970)},leftcol=7cm,rightcol=7cm]{%
+  \alert{O Marco Histórico}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Artigo Seminal da ACM (1970):} Edgar F. Codd publicou \textit{``A Relational Model of Data for Large Shared Data Banks''}, revolucionando a computação.
+    \item \textbf{Ruptura com Modelos Anteriores:} Substituiu modelos hierárquicos e em rede (CODASYL), que exigiam navegar por ponteiros físicos no disco.
+    \item \textbf{Simplicidade Tabular:} Os dados passaram a ser percebidos exclusivamente como tabelas bidimensionais de linhas e colunas.
+  \end{itemize}
+}{%
+  \alert{Fundamentação Matemática}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Teoria dos Conjuntos:} Uma tabela é uma relação matemática formal (conjunto de tuplas) sem ordem intrínseca de linhas.
+    \item \textbf{Lógica de Predicados:} Consultas são formuladas como asserções lógicas que especificam as propriedades dos dados desejados.
+    \item \textbf{Padronização Mundial:} Forneceu a base sólida que originou a linguagem padrão SQL e a indústria de SGBDs.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Terminologia Formal vs Terminologia Prática}
+  \vspace{-0.1cm}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{>{\raggedright\arraybackslash}p{4.0cm} >{\raggedright\arraybackslash}p{4.0cm} >{\raggedright\arraybackslash}p{7.5cm}}
+    \toprule
+    \textbf{Termo Formal (Codd)} & \textbf{Termo Comum (Prático)} & \textbf{Definição e Significado Conceitual} \\
+    \midrule
+    \textbf{Relação (\textit{Relation})} & Tabela & Estrutura bidimensional composta por um cabeçalho (esquema) e um corpo (conjunto de tuplas). \\
+    \textbf{Tupla (\textit{Tuple})} & Linha ou Registro & Uma instância específica de dados que representa uma entidade ou relacionamento do mundo real. \\
+    \textbf{Atributo (\textit{Attribute})} & Coluna ou Campo & Propriedade nomeada que descreve uma característica da relação (ex: \texttt{mac\_address}). \\
+    \textbf{Domínio (\textit{Domain})} & Tipo de Dado / Faixa & Conjunto de valores atômicos e válidos que um atributo pode assumir (ex: inteiros de 1 a 65535). \\
+    \textbf{Grau (\textit{Degree})} & Número de Colunas & Quantidade total de atributos que compõem o esquema da relação. \\
+    \textbf{Cardinalidade} & Número de Linhas & Quantidade total de tuplas atualmente presentes na relação em determinado instante. \\
+    \bottomrule
+  \end{tabular}%
+  }
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Teoria das Chaves no Modelo Relacional},leftcol=7cm,rightcol=7cm]{%
+  \alert{Superchave e Chave Candidata}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Superchave:} Qualquer conjunto de um ou mais atributos cujos valores combinados identificam unicamente cada tupla da relação.
+    \item \textbf{Chave Candidata:} Uma superchave minimal, ou seja, sem atributos supérfluos; qualquer atributo retirado destrói a unicidade.
+    \item \textbf{Unicidade Absoluta:} Duas tuplas distintas em uma relação nunca podem possuir valores idênticos para uma chave candidata.
+  \end{itemize}
+}{%
+  \alert{Chave Primária e Estrangeira}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Chave Primária (PK):} A chave candidata formalmente eleita pelo arquiteto de dados como identificador oficial da tabela.
+    \item \textbf{Chave Estrangeira (FK):} Atributo em uma relação filha que faz referência direta à chave primária de uma relação pai.
+    \item \textbf{Mecanismo de Ligação:} Permite estabelecer associações entre entidades sem duplicar informações nas tabelas dependentes.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={As Três Regras de Integridade Relacional},leftcol=7cm,rightcol=7cm]{%
+  \alert{1. Domínio \& 2. Entidade}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Integridade de Domínio:} O valor de cada atributo deve pertencer estritamente ao tipo e faixa de valores válidos previstos no catálogo.
+    \item \textbf{Integridade de Entidade:} Nenhum atributo que pertença à Chave Primária de uma relação pode conter valor nulo (\texttt{NULL}).
+    \item \textbf{Justificativa da Regra:} Como a PK identifica univocamente cada tupla, admitir nulo impediria seu endereçamento inequívoco.
+  \end{itemize}
+}{%
+  \alert{3. Integridade Referencial}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Regra Formal:} Se uma chave estrangeira (\texttt{FK}) existir em uma tabela, seu valor deve coincidir com uma \texttt{PK} existente na tabela pai, ou ser nula.
+    \item \textbf{Prevenção de Órfãos:} Impede que interfaces de rede existam sem um equipamento pai devidamente associado.
+    \item \textbf{Ações em Cascata:} O SGBD pode ser configurado para propagar alterações (\texttt{CASCADE}) ou impedir deleções (\texttt{RESTRICT}).
+  \end{itemize}
+}

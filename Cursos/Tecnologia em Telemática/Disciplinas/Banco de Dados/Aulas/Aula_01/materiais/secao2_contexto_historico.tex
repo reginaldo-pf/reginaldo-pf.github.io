@@ -1,0 +1,94 @@
+\changecolours{ScoutTeal}
+\section{Contexto Histórico \& Fundamentos}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={A Era dos Sistemas de Arquivos Tradicionais},leftcol=7cm,rightcol=7cm]{%
+  \alert{O Cenário das Décadas de 1950 e 1960}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Processamento Baseado em Arquivos:} Antes da criação dos SGBDs, os dados corporativos eram organizados diretamente pelo sistema operacional em arquivos sequenciais ou indexados.
+    \item \textbf{Aplicações Monolíticas:} Softwares escritos em linguagens como COBOL, FORTRAN e Assembly precisavam gerenciar o posicionamento físico de ponteiros de leitura e gravação no disco.
+    \item \textbf{Fragmentação Setorial:} Cada setor ou departamento da empresa desenvolvia seus próprios programas e formatos de arquivos privativos.
+  \end{itemize}
+}{%
+  \alert{Impacto Operacional}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Alto Custo de Manutenção:} Qualquer alteração na estrutura física de um arquivo exigia recompilar e testar todos os programas que o liam.
+    \item \textbf{Dependência Programa-Dado:} A estrutura dos registros (tamanho de campos, tipos) estava intrinsecamente amarrada ao código-fonte.
+    \item \textbf{Inviabilidade de Consultas Ad-Hoc:} Responder a uma pergunta gerencial não prevista demandava dias de desenvolvimento de um novo programa.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Limitações dos Arquivos (Parte 1: Estrutura)},leftcol=7cm,rightcol=7cm]{%
+  \alert{1. Redundância e Inconsistência}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item As mesmas informações cadastrais eram replicadas em múltiplos arquivos criados por diferentes departamentos.
+    \item Atualizações aplicadas em um arquivo não se propagavam automaticamente aos demais, gerando divergência crônica de dados.
+    \item Desperdício acentuado de espaço de armazenamento em fita e disco rígido.
+  \end{itemize}
+}{%
+  \alert{2. Acesso Rígido \& 3. Isolamento}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Dificuldade no Acesso:} Ausência de linguagens declarativas padronizadas. Toda nova consulta exigia codificar um novo programa.
+    \item \textbf{Isolamento dos Dados:} Arquivos gravados em formatos heterogêneos e dispersos impediam o cruzamento automatizado de relatórios.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Limitações dos Arquivos (Parte 2: Operação)},leftcol=7cm,rightcol=7cm]{%
+  \alert{4. Problemas de Integridade}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item Restrições de negócio (ex: número de porta IP válida) ficavam espalhadas pelo código de aplicações individuais.
+    \item Caso um novo aplicativo esquecesse de implementar a checagem, corrompia a base inteira compartilhada.
+  \end{itemize}
+}{%
+  \alert{5. Falhas \& 6. Concorrência}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Atomicidade Comprometida:} Quedas de energia durante a gravação deixavam arquivos em estado corrompido pela metade.
+    \item \textbf{Acesso Concorrente Descontrolado:} Leituras e gravações simultâneas sem travas causavam perda sistemática de atualizações (\textit{lost updates}).
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Definição Formal: Dado, Informação e SGBD},leftcol=7cm,rightcol=7cm]{%
+  \alert{Conceitos Canônicos (Date / Elmasri)}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Dado:} Fato bruto conhecido que possui significado implícito e pode ser registrado (ex: uma string ``192.168.1.1'').
+    \item \textbf{Informação:} Dado processado, contextualizado e interpretado para tomada de decisão (ex: ``IP do gateway principal'').
+    \item \textbf{Metadado:} Descrição formal da estrutura, tipos, tamanhos e restrições dos dados armazenados no banco.
+  \end{itemize}
+}{%
+  \alert{O Que Constitui um SGBD?}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Definição:} Coleção de programas que permite aos usuários criar, manter, consultar e proteger uma base de dados.
+    \item \textbf{Catálogo do Sistema:} Repositório central autodescritivo contendo os metadados do esquema.
+    \item \textbf{Abstração Operacional:} Isola completamente a lógica da aplicação dos detalhes mecânicos dos discos magnéticos ou SSDs.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Objetivos e Vantagens de um SGBD Moderno},leftcol=7cm,rightcol=7cm]{%
+  \alert{Controle \& Centralização}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Redução de Redundância:} Cada fato elementar é registrado em um único local lógico, garantindo consistência.
+    \item \textbf{Compartilhamento Seguro:} Múltiplos usuários e processos acessam dados simultâneos com isolamento.
+    \item \textbf{Controle de Acesso:} Políticas estritas de autenticação e permissões granulares por usuário.
+  \end{itemize}
+}{%
+  \alert{Confiabilidade \& Flexibilidade}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Garantia Transacional ACID:} Atomicidade, consistência, isolamento e durabilidade em todas as gravações.
+    \item \textbf{Consultas Declarativas (SQL):} Otimizador interno deduz o caminho mais veloz para responder cada query.
+    \item \textbf{Recuperação Automática:} Mecanismos de diário de bordo (\textit{Write-Ahead Log}) restauram o banco pós-falha.
+  \end{itemize}
+}

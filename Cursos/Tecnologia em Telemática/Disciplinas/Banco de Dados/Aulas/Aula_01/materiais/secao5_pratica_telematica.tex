@@ -1,0 +1,145 @@
+\changecolours{ScoutGreen}
+\section{Prática em Telemática}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Cenário Prático: Gerenciamento de Ativos de Rede},leftcol=7cm,rightcol=7cm]{%
+  \alert{O Problema de Engenharia de Redes}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Gestão Centralizada de Infraestrutura:} Provedores e redes corporativas operam dezenas de roteadores e switches distribuídos em múltiplos racks.
+    \item \textbf{A Entidade Dispositivo:} Cada equipamento possui atributos como \texttt{hostname}, modelo/tipo e localização física no datacenter.
+    \item \textbf{A Entidade Interface:} Cada porta de rede possui parâmetros operacionais como nome lógico (\texttt{eth0}, \texttt{Gi0/1}), endereço IP e endereço MAC único.
+  \end{itemize}
+}{%
+  \alert{O Relacionamento 1:N}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Cardinalidade 1 para N:} Um mesmo dispositivo de rede agrega uma ou mais interfaces físicas ou virtuais.
+    \item \textbf{Integridade Mandatória:} Uma interface de rede não pode existir sem estar acoplada a um dispositivo ativo.
+    \item \textbf{Modelagem Relacional:} A tabela \texttt{interfaces} recebe a chave estrangeira \texttt{dispositivo\_id} referenciando a tabela \texttt{dispositivos}.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Definição do Esquema DDL em SQLite/Python}
+  \vspace{-0.2cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{1. Tabela Pai: Dispositivos de Rede}\par
+      \begin{lstlisting}[language=Python,basicstyle=\ttfamily\tiny]
+import sqlite3
+
+conn = sqlite3.connect(":memory:")
+cursor = conn.cursor()
+
+# DDL: Dispositivos com Chave Primaria
+cursor.execute("""
+CREATE TABLE dispositivos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    hostname TEXT NOT NULL UNIQUE,
+    tipo TEXT NOT NULL,
+    localizacao TEXT NOT NULL
+);
+""")
+      \end{lstlisting}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \alert{2. Tabela Filha com FOREIGN KEY}\par
+      \begin{lstlisting}[language=Python,basicstyle=\ttfamily\tiny]
+# DDL: Interfaces com Chave Estrangeira
+cursor.execute("""
+CREATE TABLE interfaces (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    dispositivo_id INTEGER NOT NULL,
+    nome_interface TEXT NOT NULL,
+    ip_address TEXT NOT NULL,
+    mac_address TEXT NOT NULL UNIQUE,
+    FOREIGN KEY (dispositivo_id) 
+        REFERENCES dispositivos(id)
+);
+""")
+conn.commit()
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Carga de Dados: Inserção Relacional via Python}
+  \vspace{-0.2cm}
+  \alert{Inserindo Dispositivo Pai e suas Respectivas Portas Dependentes}\par
+  \begin{lstlisting}[language=Python,basicstyle=\ttfamily\tiny]
+# 1. Inserindo o Switch L3 (Pai)
+cursor.execute(
+    "INSERT INTO dispositivos (hostname, tipo, localizacao) VALUES (?, ?, ?)",
+    ("SW-CORE-01", "Switch L3", "Rack 01 - Datacenter Taua")
+)
+sw_id = cursor.lastrowid
+
+# 2. Inserindo as Interfaces com a chave estrangeira (sw_id)
+portas = [
+    (sw_id, "GigabitEthernet0/1", "192.168.1.1", "00:1A:2B:3C:4D:5E"),
+    (sw_id, "GigabitEthernet0/2", "10.0.0.1", "00:1A:2B:3C:4D:5F")
+]
+cursor.executemany(
+    "INSERT INTO interfaces (dispositivo_id, nome_interface, ip_address, mac_address) "
+    "VALUES (?, ?, ?, ?)", portas
+)
+conn.commit()
+  \end{lstlisting}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Consulta SQL com JOIN e Projeção Cruzada}
+  \vspace{-0.2cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{Comando SQL com INNER JOIN}\par
+      \begin{lstlisting}[language=SQL,basicstyle=\ttfamily\scriptsize]
+SELECT d.hostname, 
+       d.tipo, 
+       i.nome_interface, 
+       i.ip_address, 
+       i.mac_address
+FROM dispositivos d
+JOIN interfaces i 
+  ON i.dispositivo_id = d.id;
+      \end{lstlisting}
+      \vspace{0.15cm}
+      \footnotesize A junção relacional unifica dados associados sem que a aplicação precise iterar ponteiros em disco.
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \alert{Resultado Retornado da Consulta}\par
+      \begin{lstlisting}[basicstyle=\ttfamily\tiny]
+('SW-CORE-01', 'Switch L3', 
+ 'GigabitEthernet0/1', '192.168.1.1', 
+ '00:1A:2B:3C:4D:5E')
+
+('SW-CORE-01', 'Switch L3', 
+ 'GigabitEthernet0/2', '10.0.0.1', 
+ '00:1A:2B:3C:4D:5F')
+      \end{lstlisting}
+      \vspace{0.15cm}
+      \footnotesize Cada interface foi associada com exatidão ao switch correspondente através da regra de integridade referencial.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Matriz Comparativa: Arquivo CSV vs SGBD Relacional}
+  \vspace{-0.1cm}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{>{\raggedright\arraybackslash}p{3.2cm} >{\raggedright\arraybackslash}p{6.0cm} >{\raggedright\arraybackslash}p{6.0cm}}
+    \toprule
+    \textbf{Critério Técnico} & \textbf{Armazenamento em Arquivo (CSV/Texto)} & \textbf{SGBD Relacional (SQLite / PostgreSQL)} \\
+    \midrule
+    \textbf{Redundância} & O hostname e localização precisariam ser repetidos em cada linha de interface de rede. & Hostname e localização são salvos uma única vez na tabela \texttt{dispositivos} (3FN). \\
+    \textbf{Integridade Referencial} & Se um dispositivo for excluído do arquivo, suas portas podem ficar órfãs sem aviso. & A \texttt{FOREIGN KEY} impede exclusões acidentais ou propaga limpeza automática com \texttt{CASCADE}. \\
+    \textbf{Validação de Unicidade} & Verificar se um endereço MAC já existe exige varrer o arquivo inteiro linha por linha ($O(N)$). & A constraint \texttt{UNIQUE} indexa o valor via árvore B-Tree, validando em tempo logarítmico ($O(\log N)$). \\
+    \textbf{Acesso Concorrente} & Múltiplos processos de monitoramento de rede gravando ao mesmo tempo corrompem o arquivo. & Controle de concorrência com bloqueios em nível de linha (\textit{row-level locking}) e isolamento ACID. \\
+    \bottomrule
+  \end{tabular}%
+  }
+\end{frame}

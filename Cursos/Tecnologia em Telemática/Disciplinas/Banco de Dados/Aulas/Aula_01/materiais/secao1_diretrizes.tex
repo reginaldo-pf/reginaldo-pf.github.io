@@ -1,0 +1,82 @@
+\changecolours{ScoutGreen}
+\section{Diretrizes \& Metodologia}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Visão Geral da Disciplina: Banco de Dados},leftcol=7cm,rightcol=7cm]{%
+  \alert{Estrutura e Dinâmica do Curso}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Carga Horária Total:} 80 horas curriculares distribuídas em 40 encontros regulares (2h/aula de 50 min cada).
+    \item \textbf{Regime Especial de Ensino:} Tutoria e mentoria individualizada para discente de Tecnologia em Telemática.
+    \item \textbf{Ambiente de Execução:} Laboratório de Informática com computadores equipados para modelagem e desenvolvimento.
+    \item \textbf{Abordagem Metodológica:} Integração contínua entre fundamentação matemática/teórica e prática laboratorial aplicada.
+  \end{itemize}
+}{%
+  \alert{Competências Desenvolvidas}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Modelagem Conceitual e Lógica:} Domínio pleno do Modelo Entidade-Relacionamento (MER) e mapeamento relacional.
+    \item \textbf{Projeto e Normalização:} Eliminação de redundâncias e anomalias cadastrais através de 1FN, 2FN, 3FN e Boyce-Codd.
+    \item \textbf{Linguagem SQL Completa:} Construção proficiente de comandos DDL, DML e consultas analíticas avançadas (DQL).
+    \item \textbf{Integração com Telemática:} Persistência e telemetria de redes utilizando Python e SGBD relacional corporativo.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Sistema de Avaliação (ROD IFCE)},leftcol=7cm,rightcol=7cm]{%
+  \alert{Primeiro Período (N1)}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \textbf{N1 = (AVT1 $\times$ 0,40) + (AVP1 $\times$ 0,40) + (Listas $\times$ 0,20)}
+  \begin{itemize}
+    \item \textbf{AVT1 (40\%):} Prova escrita individual (ANSI/SPARC, MER, Álgebra Relacional e Normalização).
+    \item \textbf{AVP1 (40\%):} Fase 1 do Projeto de BD: concepção do DER, esquema relacional e 3FN.
+    \item \textbf{Listas N1 (20\%):} Média das Listas 01, 02 e 03.
+  \end{itemize}
+}{%
+  \alert{Segundo Período (N2)}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \textbf{N2 = (AVT2 $\times$ 0,40) + (AVP2 $\times$ 0,40) + (Listas $\times$ 0,20)}
+  \begin{itemize}
+    \item \textbf{AVT2 (40\%):} Prova escrita individual (SQL avançado, transações ACID, Views e Triggers).
+    \item \textbf{AVP2 (40\%):} Fase 2 do Projeto: banco em PostgreSQL, queries complexas e scripts Python.
+    \item \textbf{Listas N2 (20\%):} Média das Listas 04, 05 e 06.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Dinâmica das Listas e Sábados Letivos},leftcol=7cm,rightcol=7cm]{%
+  \alert{Papel dos Sábados Letivos}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Estudo Assíncrono Guiado:} Os sábados letivos previstos no calendário acadêmico são momentos de imersão individual sem aula expositiva presencial.
+    \item \textbf{Foco na Resolução de Listas:} Preferência para dedicação à elaboração dos relatórios e listas de exercícios avaliativos.
+    \item \textbf{Avanço no Projeto Prático:} Período dedicado à pesquisa de requisitos e implementação das etapas do projeto de banco de dados.
+  \end{itemize}
+}{%
+  \alert{Prazos e Devolutivas}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{3 Listas por Período:} Três blocos temáticos de exercícios em N1 e outros três em N2.
+    \item \textbf{Feedback Personalizado:} Como a tutoria é individualizada, cada resolução de lista recebe correção comentada e alinhamento direto.
+    \item \textbf{Consolidação Contínua:} Evita o acúmulo de dúvidas teóricas antes das provas formais e das entregas de projeto.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Ecossistema Tecnológico do Curso},leftcol=7cm,rightcol=7cm]{%
+  \alert{Ambiente de Banco de Dados}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{PostgreSQL (v15+):} SGBD corporativo para implementação do projeto prático, triggers, views e índices.
+    \item \textbf{SQLite 3:} Motor embutido leve para experimentação inicial, testes de sintaxe e scripts rápidos em Python.
+    \item \textbf{DBeaver Community:} Interface gráfica universal para administração, diagramação e consultas SQL.
+  \end{itemize}
+}{%
+  \alert{Linguagem \& Ambientes de Apoio}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Python 3:} Automação de tarefas, carga de dados, telemetria de redes e integração de scripts clientes.
+    \item \textbf{psycopg2 / sqlite3:} Conectores nativos de acesso ao SGBD.
+    \item \textbf{brModelo \& Draw.io:} Ferramentas para modelagem conceitual (DER) e mapeamento lógico.
+  \end{itemize}
+}

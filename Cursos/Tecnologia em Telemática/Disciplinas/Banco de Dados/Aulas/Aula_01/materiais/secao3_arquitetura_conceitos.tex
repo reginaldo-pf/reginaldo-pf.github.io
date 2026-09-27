@@ -1,0 +1,78 @@
+\changecolours{ScoutBlue}
+\section{Arquitetura \& Níveis de Abstração}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={A Arquitetura ANSI/SPARC de 3 Níveis},leftcol=7cm,rightcol=7cm]{%
+  \alert{Origem e Propósito do Padrão}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Proposta Oficial (1975):} Concebida pelo comitê ANSI/SPARC para padronizar a separação estrutural entre a visão do usuário e o armazenamento físico.
+    \item \textbf{Objetivo Central:} Permitir que diferentes aplicações visualizem os mesmos dados sob perspectivas personalizadas sem interferir no armazenamento mecânico.
+    \item \textbf{Esquemas e Mapeamentos:} Cada nível é formalizado por um esquema, e conversores internos traduzem requisições entre níveis adjacentes.
+  \end{itemize}
+}{%
+  \alert{Os Três Níveis de Abstração}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{1. Nível Externo (Visões):} Conjunto de esquemas externos ou \textit{Views} personalizadas para grupos específicos de usuários.
+    \item \textbf{2. Nível Conceitual (Lógico):} Visão comunitária da organização inteira; descreve quais dados existem, suas relações e restrições.
+    \item \textbf{3. Nível Interno (Físico):} Descreve a representação física de baixo nível em disco, alocação de blocos e métodos de indexação.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Princípio da Independência de Dados},leftcol=7cm,rightcol=7cm]{%
+  \alert{Independência Lógica de Dados}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Conceito:} Capacidade de modificar o esquema conceitual sem precisar alterar os esquemas externos ou as aplicações existentes.
+    \item \textbf{Cenário Prático:} Adicionar uma nova tabela de telemetria ou novos atributos ao banco não quebra os softwares legados de faturamento ou autenticação.
+    \item \textbf{Benefício:} Evolução arquitetural ágil sem quebra de compatibilidade.
+  \end{itemize}
+}{%
+  \alert{Independência Física de Dados}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Conceito:} Capacidade de alterar o esquema interno (organização de arquivos no disco) sem alterar o esquema conceitual nem os programas.
+    \item \textbf{Cenário Prático:} Criar um índice B-Tree para acelerar buscas por endereço MAC ou migrar arquivos para armazenamento SSD mais veloz.
+    \item \textbf{Benefício:} Otimizações de desempenho e hardware ocorrem com transparência total aos usuários.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Componentes Funcionais de um SGBD},leftcol=7cm,rightcol=7cm]{%
+  \alert{Processador de Consultas}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Compilador DDL:} Valida instruções de criação/alteração e registra metadados no catálogo.
+    \item \textbf{Otimizador DML:} Avalia múltiplos caminhos de execução e escolhe o de menor custo computacional.
+    \item \textbf{Motor de Execução:} Executa as operações relacionais de baixo nível retornando o resultado.
+  \end{itemize}
+}{%
+  \alert{Gerenciador de Armazenamento}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Buffer Manager:} Controla o fluxo de blocos de dados entre a memória RAM e a memória secundária.
+    \item \textbf{File Manager:} Administra a alocação de blocos e espaço no sistema de arquivos do disco.
+    \item \textbf{Transaction Manager:} Coordena concorrência e assegura que falhas possam ser desfeitas via log WAL.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Atores e Perfis no Cenário de Banco de Dados},leftcol=7cm,rightcol=7cm]{%
+  \alert{Especialistas Técnicos}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{DBA (Administrador de Banco):} Controle de acesso, segurança, integridade, monitoramento de performance e backup.
+    \item \textbf{Projetista de Banco de Dados:} Analisa requisitos de negócio, elabora o DER e conduz a normalização das tabelas.
+    \item \textbf{Engenheiros \& Desenvolvedores:} Implementam softwares clientes que interagem com o banco através de SQL e APIs.
+  \end{itemize}
+}{%
+  \alert{Usuários Finais}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Usuários Casuais:} Acessam o banco esporadicamente utilizando linguagens de consulta ad-hoc ou ferramentas de BI.
+    \item \textbf{Usuários Paramétricos:} Operam transações rotineiras pré-programadas em telas (ex: cadastro de roteadores).
+    \item \textbf{Usuários Sofisticados:} Analistas que executam simulações complexas e mineração analítica de dados de tráfego.
+  \end{itemize}
+}

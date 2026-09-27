@@ -1,79 +1,76 @@
-\documentclass[10pt]{beamer}
+\documentclass[aspectratio=169,utf8,t]{beamer}
 
-% Tema Institucional Limpo e Profissional
-\usetheme{Madrid}
-\usecolortheme{whale}
-
-% Pacotes Essenciais
-\usepackage[utf8]{inputenc}
-\usepackage[portuguese]{babel}
-\usepackage{graphicx}
+% Idioma e Codificacao
+\usepackage[brazilian]{babel}
 \usepackage{booktabs}
-\usepackage{amsmath}
-\usepackage{amssymb}
+\usepackage{array}
 \usepackage{listings}
-\usepackage{xcolor}
 
-% Configuracoes de Codigo (Python)
+% Carrega o Tema Modelo dos Scouts (Widescreen 16:9, Nunito Sans)
+\usetheme{scouts}
+
+% Configuracao para Codigo-Fonte (SQL / Python)
 \lstset{
-    language=Python,
-    basicstyle=\ttfamily\tiny,
-    keywordstyle=\color{blue},
-    stringstyle=\color{red},
-    commentstyle=\color{green!60!black},
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\bfseries\color{ScoutNavy},
+    stringstyle=\color{ScoutGreen},
+    commentstyle=\itshape\color{gray},
+    backgroundcolor=\color{black!3},
+    frame=single,
+    rulecolor=\color{black!15},
     breaklines=true,
-    showstringspaces=false
+    showstringspaces=false,
+    tabsize=2
 }
 
-% Metadados da Apresentacao
-\title[Aula 01 - Banco de Dados]{Introdução aos Sistemas de Banco de Dados e Modelagem Conceitual}
-\subtitle{Banco de Dados}
-\author[Prof. Reginaldo Fernandes]{Prof. Reginaldo Pereira Fernandes}
-\institute[IFCE]{Instituto Federal do Cear\'a -- Campus Tau\'a \\ Tecnologia em Telemática}
-\date{\today}
+% Metadados Institucionais
+\author{Prof. Me. Reginaldo Fernandes}
+\institute{Instituto Federal do Ceará -- Campus Tauá \\ Tecnologia em Telemática}
+\title{Banco de Dados}
+\subtitle{Aula 01: Introdução aos Sistemas de Banco de Dados \& Modelagem Conceitual}
+\date{29 de Setembro de 2026}
 
 \begin{document}
 
-\begin{frame}
-    \titlepage
+% ------------------------------------------------------------------------------
+% Capa da Apresentacao
+% ------------------------------------------------------------------------------
+\changecolours[inverse]{ScoutGreen}
+\frame[plain]{\titlepage}
+
+% ------------------------------------------------------------------------------
+% Sumario Executivo da Aula
+% ------------------------------------------------------------------------------
+\changecolours{ScoutGreen}
+\begin{frame}{Agenda do Encontro}
+  \vspace{0.4cm}
+  \tableofcontents
 \end{frame}
 
-\begin{frame}{Sum\'ario da Aula}
-    \tableofcontents
-\end{frame}
+% ------------------------------------------------------------------------------
+% Modulos Tematicos da Aula
+% ------------------------------------------------------------------------------
+\input{secao1_diretrizes}
+\input{secao2_contexto_historico}
+\input{secao3_arquitetura_conceitos}
+\input{secao4_modelo_relacional}
+\input{secao5_pratica_telematica}
+\input{secao6_conclusao_atividades}
+\input{secao7_referencias}
 
-\section{Contextualiza\c{c}\~ao}
-\begin{frame}{1. Problema Pr\'atico}
-    \begin{block}{Cen\'ario do Mundo Real}
-        Apresenta\c{c}\~ao do problema motivador e objetivos pr\'aticos da aula.
-    \end{block}
-\end{frame}
-
-\section{M\'etodo Te\'orico}
-\begin{frame}{2. Fundamenta\c{c}\~ao Te\'orica}
-    \begin{itemize}
-        \item Conceitos centrais e defini\c{c}\~oes anal\'iticas.
-        \item Exemplo matem\'atico com n\'umeros simplificados.
-    \end{itemize}
-\end{frame}
-
-\section{Abordagem Computacional}
-\begin{frame}[fragile]{3. Implementa\c{c}\~ao em Python}
-\begin{lstlisting}
-# Demonstracao computacional equivalente
-import numpy as np
-
-def resolver_problema():
-    pass
-\end{lstlisting}
-\end{frame}
-
-\section{Conclus\~ao}
-\begin{frame}{4. Tomada de Decis\~ao e Conclus\~ao}
-    \begin{itemize}
-        \item Interpreta\c{c}\~ao dos resultados visuais.
-        \item Pr\'oximos passos e exerc\'icios.
-    \end{itemize}
+% ------------------------------------------------------------------------------
+% Encerramento e Contato
+% ------------------------------------------------------------------------------
+\changecolours[inverse]{ScoutGreen}
+\begin{frame}[plain]
+  \vspace{2cm}
+  \centering
+  {\Huge \textbf{Dúvidas \& Discussão}}\par
+  \vspace{0.8cm}
+  {\large IFCE Campus Tauá -- Tecnologia em Telemática}\par
+  \vspace{0.3cm}
+  {\small Prof. Me. Reginaldo Pereira Fernandes}\par
+  {\scriptsize \texttt{reginaldo.fernandes@ifce.edu.br}}
 \end{frame}
 
 \end{document}
