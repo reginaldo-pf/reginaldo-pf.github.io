@@ -28,6 +28,9 @@ A disciplina capacita os discentes no ecossistema moderno de persistência polig
 - Repositório de AVP1, AVT1, AVP2, AVT2 e listas de acompanhamento contínuo.
 
 ### 📚 [Referencias](Referencias/)
+- `NoSQL Essencial: Um Guia Conciso para o Mundo Emergente da Persistência Poliglota` (Sadalage & Fowler, 2014)
+- `Projeto de Bancos de Dados NoSQL` (Capítulo 2 - Frozza, Schreiner & Mello)
+- `Kafka: The Definitive Guide - Real-Time Data and Stream Processing at Scale` (Shapira et al., 2021)
 - `cronograma_aulas_bdnr.md`: Cronograma semestral detalhado de 20 encontros com diretrizes para sábados letivos e sistema de avaliação.
 - `Ementa`: Conteúdo programático oficial do componente curricular.
 - `Lista de aulas.txt`: Mapeamento tópico a tópico de cada aula.

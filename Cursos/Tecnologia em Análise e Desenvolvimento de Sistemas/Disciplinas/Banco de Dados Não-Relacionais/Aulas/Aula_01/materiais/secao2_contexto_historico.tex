@@ -7,19 +7,19 @@
   \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
   \begin{itemize}
     \item Proposto por Edgar F. Codd em 1970 (IBM).
-    \item Base matemática na álgebra relacional e conjuntos.
-    \item Tabelas rígidas com chaves primárias e integridade.
-    \item \textbf{Premissa Central:} Modelo desenhado para operar em \textbf{um único servidor centralizado}.
+    \item Base matemática rigorosa na álgebra relacional e cálculo de tuplas.
+    \item Tabelas rígidas com chaves primárias, estrangeiras e integridade referencial.
+    \item \textbf{Premissa Arquitetural:} Projetado para operar em \textbf{um único servidor centralizado}.
   \end{itemize}
 }{%
   \alert{Garantias Transacionais ACID}\par
   \itemseps[topsepi=2mm,itemsepi=2.5mm,labelsep=2mm,leftmargini=4mm]
   \begin{itemize}
-    \item \textbf{A}tomicidade: Tudo ou nada na transação.
-    \item \textbf{C}onsistência: Regras e restrições sempre válidas.
-    \item \textbf{I}solamento: Concorrência sem interferência.
-    \item \textbf{D}urabilidade: Persistência garantida em disco.
-    \item \textbf{Sucesso:} Eliminou inconsistências por 30 anos.
+    \item \textbf{A}tomicidade: Execução de tudo ou nada na transação.
+    \item \textbf{C}onsistência: Regras de integridade sempre preservadas.
+    \item \textbf{I}solamento: Transações simultâneas sem interferência.
+    \item \textbf{D}urabilidade: Persistência garantida após commit.
+    \item \textbf{Hegemonia:} Padrão dominante da indústria por mais de 30 anos (Elmasri \& Navathe, 2018).
   \end{itemize}
 }
 
@@ -28,16 +28,66 @@
   \alert{Volume \& Velocidade}\par
   \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
   \begin{itemize}
-    \item \textbf{Volume:} Salto de gigabytes para terabytes e petabytes diários gerados por bilhões de usuários.
-    \item Volume total excede o hardware de uma única máquina.
-    \item \textbf{Velocidade:} Milhões de requisições por segundo.
-    \item Exigência de tempo de resposta em milissegundos.
+    \item \textbf{Volume:} Salto de gigabytes para terabytes e petabytes diários gerados por bilhões de usuários simultâneos.
+    \item O volume total excede a capacidade de armazenamento de uma única máquina.
+    \item \textbf{Velocidade:} Milhões de escritas/leituras por segundo.
+    \item Exigência de tempo de resposta em escala de milissegundos.
   \end{itemize}
 }{%
-  \alert{Variedade}\par
+  \alert{Variedade \& Flexibilidade}\par
   \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
   \begin{itemize}
-    \item Dados heterogêneos: JSON, logs, redes e sensores IoT.
-    \item Esquemas que mudam diariamente sem possibilidade de paradas programadas para migração (\texttt{ALTER TABLE}).
+    \item Dados heterogêneos: documentos JSON, dados polimórficos, logs, grafos e telemetria IoT.
+    \item Esquemas que evoluem rapidamente (\textit{schemaless}).
+    \item Impossibilidade de paradas programadas para alterações de esquema (\texttt{ALTER TABLE}) sob tráfego global ininterrupto.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Streaming \& Ingestão em Tempo Real (Kafka)},leftcol=7cm,rightcol=7cm]{%
+  \alert{O Desafio dos Fluxos Contínuos}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Shapira et al. (2021) -- Kafka The Definitive Guide:} A alta velocidade de dados na Web moderna inviabiliza conexões diretas síncronas com o banco de dados.
+    \item Dispositivos IoT, cliques de usuários e sensores geram tráfego contínuo em rajadas.
+    \item Gravações síncronas bloqueantes sobrecarregam pools de conexões e travam o banco principal.
+  \end{itemize}
+}{%
+  \alert{O Papel do Broker Distribuído}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Apache Kafka:} Plataforma de mensageria distribuída e processamento de streams.
+    \item \textbf{Buffer Elástico:} Atua como intermediário tolerante a falhas que absorve milhões de mensagens/segundo.
+    \item \textbf{Desacoplamento:} Consumidores assíncronos leem os tópicos e gravam no banco de destino no seu próprio ritmo.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Arquitetura: Do Streaming à Persistência Poliglota}
+  \vspace{-0.3cm}
+  \makebox[\linewidth][c]{%
+    \includegraphics[width=13.2cm,height=4.8cm,keepaspectratio]{figuras/fig_streaming_pipeline.pdf}%
+  }\par
+  \vspace{0.15cm}
+  \centering
+  {\footnotesize \textbf{Takeaway:} \textcolor{ScoutNavy}{O streaming desacopla a ingestão massiva e distribui os dados para o banco NoSQL ideal para cada propósito.}}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={As Raízes Históricas do NoSQL},leftcol=7cm,rightcol=7cm]{%
+  \alert{De Carlos Strozzi a Bigtable \& Dynamo}\par
+  \itemseps[topsepi=2mm,itemsepi=2.5mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{1998 -- Carlos Strozzi:} Usou o termo \textit{NoSQL} para designar um banco de dados relacional leve sem interface SQL (Frozza et al.).
+    \item \textbf{2006 -- Google Bigtable:} Artigo seminal de Chang et al. sobre armazenamento distribuído esparso e estruturado.
+    \item \textbf{2007 -- Amazon Dynamo:} Artigo seminal de DeCandia et al. propondo particionamento consistente e alta disponibilidade.
+  \end{itemize}
+}{%
+  \alert{O Encontro de 2009 e a Nova Era}\par
+  \itemseps[topsepi=2mm,itemsepi=2.5mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{2009 -- Johan Oskarsson:} Organizou em São Francisco um encontro sobre sistemas de armazenamento distribuído open-source.
+    \item \textbf{Eric Evans:} Sugeriu o termo \textit{NoSQL} para batizar a conferência, redefinido como \textbf{\textit{Not Only SQL}} (Sadalage \& Fowler, 2014).
+    \item \textbf{Marco:} Nascimento da comunidade moderna de bancos não-relacionais.
   \end{itemize}
 }

@@ -1,7 +1,127 @@
 \changecolours{ScoutTeal}
-\section{Prática \& Conclusão}
+\section{MongoDB na Prática \& Conclusão}
 
-% ------------------------------------------------------------------------------
+% -------------------------------------------------------------
+\begin{frame}[fragile]{Instalação do Serviço MongoDB no Ubuntu (v8.0 / v9.0)}
+  \vspace{-0.2cm}
+  \begin{columns}[t]
+    \begin{column}{0.50\textwidth}
+      \alert{1. Repositório e Instalação}\par
+      \begin{lstlisting}[basicstyle=\ttfamily\tiny]
+# Chave GPG oficial
+curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | \
+  sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg --dearmor
+
+# Repositorio APT oficial
+echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu $(lsb_release -cs)/mongodb-org/8.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
+
+# Atualizar e instalar
+sudo apt update
+sudo apt install -y mongodb-org
+      \end{lstlisting}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \alert{2. Gerenciamento do Serviço (systemd)}\par
+      \begin{lstlisting}[basicstyle=\ttfamily\tiny]
+# Iniciar o servico mongod
+sudo systemctl start mongod
+
+# Verificar status ativo
+sudo systemctl status mongod
+
+# Habilitar inicio automatico no boot
+sudo systemctl enable mongod
+
+# Conectar via terminal interativo
+mongosh
+      \end{lstlisting}
+      \vspace{0.1cm}
+      \scriptsize \textbf{Porta padrão:} \texttt{27017}\\
+      \textbf{Configuração:} \texttt{/etc/mongod.conf}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% -------------------------------------------------------------
+\twocolframe[title={Instalação do Serviço MongoDB no Windows},leftcol=7cm,rightcol=7cm]{%
+  \alert{Instalação via Pacote MSI Oficial}\par
+  \itemseps[topsepi=2mm,itemsepi=2.5mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item Baixar o instalador oficial (\textit{Community Server}) no portal MongoDB.
+    \item Selecionar o tipo de instalação: \textbf{Complete}.
+    \item Marcar a opção \textbf{"Install MongoDB as a Service"}.
+    \item O assistente configura o serviço nativo com nome \texttt{MongoDB} sob a conta \textit{Network Service}.
+    \item Opcional recomendado: manter marcada a opção do \textbf{MongoDB Compass} (GUI oficial).
+  \end{itemize}
+}{%
+  \alert{Comandos de Gestão e Acesso}\par
+  \itemseps[topsepi=2mm,itemsepi=2.5mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{PowerShell (Admin):}
+      \texttt{Get-Service MongoDB}
+    \item \textbf{Iniciar / Parar o Serviço:}
+      \texttt{net start MongoDB} ou \texttt{net stop MongoDB}
+    \item \textbf{Painel Gráfico de Serviços:}
+      Executar \texttt{services.msc} $\rightarrow$ \texttt{MongoDB Server}.
+    \item \textbf{Adicionar ao PATH do Sistema:}
+      \texttt{C:\textbackslash Program Files\textbackslash MongoDB\textbackslash Server\textbackslash ...\textbackslash bin}
+    \item \textbf{Conexão:} Abrir o PowerShell e digitar \texttt{mongosh}.
+  \end{itemize}
+}
+
+% -------------------------------------------------------------
+\begin{frame}[fragile]{Executando um Banco no MongoDB: Prática Hands-On}
+  \vspace{-0.3cm}
+  \begin{columns}[t]
+    \begin{column}{0.49\textwidth}
+      \alert{Criação \& Inserção (mongosh)}\par
+      \begin{lstlisting}[basicstyle=\ttfamily\tiny]
+// Conecta ou cria o banco da aula
+use lojadb;
+
+// Insere documento agregado
+db.clientes.insertOne({
+  _id: 1,
+  nome: "Maria Clara Silva",
+  endereco: { cidade: "Taua", uf: "CE" },
+  pedidos: [
+    {
+      id_ped: "PED-001",
+      data: "2026-09-29",
+      itens: [{ prod: "Notebook", qtd: 1, preco: 4500 }]
+    }
+  ]
+});
+      \end{lstlisting}
+    \end{column}
+
+    \begin{column}{0.49\textwidth}
+      \alert{Consulta \& Escrita Sem JOIN}\par
+      \begin{lstlisting}[basicstyle=\ttfamily\tiny]
+// 1. Busca por campo embutido (dot notation)
+db.clientes.find({
+  "endereco.cidade": "Taua"
+});
+
+// 2. Adicionar item ao pedido atomicamente
+db.clientes.updateOne(
+  { _id: 1 },
+  {
+    $push: {
+      "pedidos.0.itens": {
+        prod: "Mouse Sem Fio", qtd: 2, preco: 85.5
+      }
+    }
+  }
+);
+      \end{lstlisting}
+      \scriptsize $\rightarrow$ Operação atômica em 1 único I/O de disco!
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% -------------------------------------------------------------
 \begin{frame}[fragile]{Demonstração Prática: JSON vs 4 Tabelas Relacionais}
   \vspace{-0.2cm}
   \begin{columns}[t]
@@ -42,7 +162,7 @@ WHERE c.id = 1;
   \end{columns}
 \end{frame}
 
-% ------------------------------------------------------------------------------
+% -------------------------------------------------------------
 \begin{frame}{Matriz Comparativa: Relacional vs NoSQL}
   \vspace{-0.1cm}
   \resizebox{\textwidth}{!}{%
@@ -50,7 +170,7 @@ WHERE c.id = 1;
     \toprule
     \textbf{Dimensão} & \textbf{Relacional (RDBMS)} & \textbf{Não-Relacional (NoSQL)} \\
     \midrule
-    \textbf{Estrutura} & Esquema rígido e normalizado & Esquema dinâmico e flexível (\textit{schemaless}) \\
+    \textbf{Estrutura} & Esquema rígido e normalizado (3NF) & Esquema dinâmico e flexível (\textit{schemaless}) \\
     \textbf{Escalabilidade} & Predominantemente Vertical (\textit{Scale-Up}) & Horizontal nativa em cluster (\textit{Scale-Out}) \\
     \textbf{Consistência} & Imediata e estrita (ACID) & Eventual ajustável (BASE / CAP) \\
     \textbf{Relacionamentos} & Otimizado para \texttt{JOIN}s locais & Desnormalização ou Grafos dedicados \\
@@ -60,7 +180,7 @@ WHERE c.id = 1;
   }
 \end{frame}
 
-% ------------------------------------------------------------------------------
+% -------------------------------------------------------------
 \twocolframe[title={Próximos Passos \& Atividades},leftcol=7cm,rightcol=7cm]{%
   \alert{Próximo Encontro: 06/10/2026}\par
   \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
@@ -74,9 +194,10 @@ WHERE c.id = 1;
   \alert{Tarefas do Estudante}\par
   \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
   \begin{itemize}
-    \item Executar o script didático de apoio:
+    \item Instalar o serviço do MongoDB no Ubuntu ou Windows conforme o roteiro.
+    \item Executar o script didático atualizado:
       \texttt{codigo/demonstracao\_aula01.py}.
     \item Iniciar os exercícios do Bloco 1 da \textbf{Lista de Exercícios 1 (AV3)}.
-    \item Instalar o Docker para a oficina do primeiro sábado letivo (10/10).
+    \item Preparar o ambiente Docker para a oficina do primeiro sábado letivo (10/10).
   \end{itemize}
 }

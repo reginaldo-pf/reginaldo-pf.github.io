@@ -25,12 +25,14 @@
   </script>
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <!-- Prism.js para Realce de Sintaxe (Tema Okaidia / Dark compatível) -->
+  <!-- Prism.js para Realce de Sintaxe -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
   <!-- Google Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -95,10 +97,10 @@
       </div>
 
       <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-        Banco de Dados Não-Relacionais
+        O Paradigma NoSQL, Descasamento de Impedância & Primeiro Banco MongoDB
       </h1>
-      <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-        <strong>Disciplina:</strong> Banco de Dados Não-Relacionais | <strong>Docente:</strong> Prof. Reginaldo Pereira Fernandes (IFCE Campus Tauá)
+      <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2">
+        <strong>Disciplina:</strong> Banco de Dados Não-Relacionais | <strong>Docente:</strong> Prof. Me. Reginaldo Pereira Fernandes (IFCE Campus Tauá)
       </p>
 
       <!-- Botões de Ação Rápida no Topo -->
@@ -112,7 +114,7 @@
         <!-- Botão Ver Slides -->
         <button onclick="switchTab('tab-slides')" class="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all">
           <i class="fa-solid fa-file-pdf"></i>
-          <span>Visualizar Slides (PDF)</span>
+          <span>Visualizar Slides Beamer (30 págs)</span>
         </button>
 
         <!-- Botão Baixar Script Python -->
@@ -133,7 +135,7 @@
     <div class="flex items-center space-x-2 border-b border-slate-200 dark:border-slate-700 mb-8 overflow-x-auto pb-1">
       <button onclick="switchTab('tab-notebook')" id="btn-tab-notebook" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent transition-all flex items-center space-x-2 tab-active">
         <i class="fa-solid fa-code"></i>
-        <span>Caderno Didático (Notebook)</span>
+        <span>Caderno Didático (Teoria & Prática)</span>
       </button>
 
       <button onclick="switchTab('tab-slides')" id="btn-tab-slides" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all flex items-center space-x-2">
@@ -143,162 +145,246 @@
 
       <button onclick="switchTab('tab-plano')" id="btn-tab-plano" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all flex items-center space-x-2">
         <i class="fa-solid fa-list-check"></i>
-        <span>Plano Pedagógico & Atividades</span>
+        <span>Plano Pedagógico & Referências</span>
       </button>
 
       <button onclick="switchTab('tab-recursos')" id="btn-tab-recursos" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all flex items-center space-x-2">
         <i class="fa-solid fa-download"></i>
-        <span>Central de Arquivos</span>
+        <span>Central de Arquivos & Figuras</span>
       </button>
     </div>
 
     <!-- ========================================== -->
-    <!-- ABA 1: CADERNO DIDÁTICO (NOTEBOOK PYTHON) -->
+    <!-- ABA 1: CADERNO DIDÁTICO (TEORIA & PRÁTICA) -->
     <!-- ========================================== -->
-    <div id="tab-notebook" class="tab-content space-y-6">
+    <div id="tab-notebook" class="tab-content space-y-8">
 
-      <!-- Célula Markdown 1: Introdução Teórica -->
+      <!-- Bloco 1: Contexto Histórico & Big Data -->
       <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
         <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
           <i class="fa-solid fa-lightbulb text-amber-500"></i>
-          <span>1. O Desafio dos Dados e as Limitações do Modelo Relacional</span>
+          <span>1. O Ponto de Inflexão dos Dados: Da Hegemonia Relacional à Web 2.0</span>
         </h2>
         <p class="text-slate-700 dark:text-slate-300 mb-3">
-          Por mais de três décadas (desde Edgar F. Codd em 1970), o modelo relacional e a linguagem SQL reinaram absolutos no desenvolvimento de software corporativo. No entanto, o advento da <strong>Web 2.0</strong> e do <strong>Big Data</strong> impôs novas demandas aos sistemas de armazenamento:
+          Por mais de três décadas (desde Edgar F. Codd em 1970 na IBM), o modelo relacional e a linguagem SQL reinaram absolutos no desenvolvimento corporativo. O modelo oferecia garantias transacionais rigorosas conhecidas pelo acrônimo <strong>ACID</strong> (Atomicidade, Consistência, Isolamento e Durabilidade). No entanto, o advento da <strong>Web 2.0</strong> (Google, Amazon, redes sociais) impôs uma carga sem precedentes:
         </p>
-        <ul class="list-disc list-inside space-y-1 text-slate-600 dark:text-slate-400 text-xs sm:text-sm">
-          <li><strong>Volume Massivo & Concorrência:</strong> Milhões de acessos simultâneos ao redor do planeta.</li>
-          <li><strong>Escalabilidade Horizontal (Scale-Out):</strong> Em vez de adquirir servidores cada vez maiores e mais caros (Scale-Up), a computação moderna distribui os dados por dezenas ou centenas de nós em cluster.</li>
-          <li><strong>Custo Computacional dos JOINs:</strong> Executar junções complexas entre tabelas gigantescas distribuídas em rede é uma operação de altíssimo custo e latência.</li>
-          <li><strong>Descasamento de Impedância Objeto-Relacional:</strong> O atrito permanente entre o paradigma de objetos na aplicação e as tabelas rígidas do banco.</li>
+        <ul class="list-disc list-inside space-y-1.5 text-slate-600 dark:text-slate-400 text-xs sm:text-sm mb-4">
+          <li><strong>Volume Massivo:</strong> De gigabytes locais para petabytes gerados diariamente por bilhões de usuários.</li>
+          <li><strong>Velocidade Contínua:</strong> Milhões de escritas/leituras simultâneas por segundo ao redor do planeta com SLA sub-segundo.</li>
+          <li><strong>Variedade e Evolução Dinâmica:</strong> Dados polimórficos, logs não-estruturados, grafos sociais e JSON em constante mutação, onde comandos bloqueantes como <code>ALTER TABLE</code> inviabilizam operações ininterruptas.</li>
         </ul>
+
+        <!-- Citação das Novas Referências -->
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-400 space-y-1">
+          <p><strong>Raízes Históricas (Frozza et al. / Sadalage & Fowler, 2014):</strong></p>
+          <p>• <strong>1998:</strong> Carlos Strozzi utilizou a denominação <em>NoSQL</em> para um banco relacional open-source leve sem interface SQL.</p>
+          <p>• <strong>2006--2007:</strong> Os artigos seminais <em>Google Bigtable</em> (Chang et al., 2006) e <em>Amazon Dynamo</em> (DeCandia et al., 2007) definiram os fundamentos da persistência distribuída sob alta disponibilidade.</p>
+          <p>• <strong>2009:</strong> Johan Oskarsson organizou em San Francisco a conferência que consolidou a comunidade, onde Eric Evans propôs resgatar a sigla com o significado <strong><em>Not Only SQL</em></strong> (Não Apenas SQL).</p>
+        </div>
+
+        <!-- Figura: Streaming Pipeline com Kafka -->
+        <div class="mt-6 text-center">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Streaming & Ingestão Distribuída (Shapira et al., 2021)</h4>
+          <img src="materiais/figuras/fig_streaming_pipeline.png" alt="Streaming Pipeline com Kafka e Persistência Poliglota" class="mx-auto max-w-full rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm max-h-72">
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">Figura 1: O papel do Apache Kafka desacoplando fluxos em tempo real antes de persistir em bancos NoSQL especializados.</p>
+        </div>
       </div>
 
-      <!-- Célula de Código 1: Domínio de Negócio -->
+      <!-- Bloco 2: Escala Vertical vs Escala Horizontal -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-server text-blue-500"></i>
+          <span>2. Limitações Arquiteturais: Scale-Up vs Scale-Out e Network Shuffle</span>
+        </h2>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+          <div>
+            <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm mb-3">
+              A resposta clássica dos RDBMS para crescer era a <strong>Escala Vertical (Scale-Up)</strong>: comprar servidores maiores, com mais CPUs e mais memória RAM. Essa abordagem possui três graves problemas:
+            </p>
+            <ul class="list-disc list-inside space-y-1 text-slate-600 dark:text-slate-400 text-xs sm:text-sm mb-3">
+              <li><strong>Custo Exponencial:</strong> Máquinas topo de linha custam centenas de vezes mais do que máquinas comuns.</li>
+              <li><strong>Teto Físico:</strong> Limites físicos de velocidade de barramento e processamento.</li>
+              <li><strong>Ponto Único de Falha (SPOF):</strong> Se a máquina central falhar, toda a operação da empresa cai.</li>
+            </ul>
+            <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
+              O NoSQL adota a <strong>Escala Horizontal (Scale-Out)</strong>: clusters elásticos de hardware comum (<em>commodity</em>), onde novos nós distribuem dados e toleram a queda de nós sem perda de disponibilidade.
+            </p>
+          </div>
+          <div class="text-center">
+            <img src="materiais/figuras/fig_escala.png" alt="Escala Vertical vs Escala Horizontal" class="mx-auto max-w-full rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm max-h-64">
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">Figura 2: Contraste de custo e arquitetura entre Scale-Up e Scale-Out.</p>
+          </div>
+        </div>
+
+        <!-- Network Shuffle -->
+        <div class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-700">
+          <h3 class="font-bold text-base text-slate-900 dark:text-white mb-2">O Custo dos JOINs Distribuídos e o Network Shuffle</h3>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+            <div>
+              <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm mb-2">
+                Em uma única máquina, cruzar 4 tabelas com <code>JOIN</code> ocorre através de ponteiros em memória RAM ou disco SSD local (latência ~1 ms).
+              </p>
+              <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
+                Porém, em um cluster particionado (sharded), dados de tabelas distintas residem em servidores físicos separados. Realizar uma junção exige o <strong>Network Shuffle</strong>: trafegar terabytes de tuplas através dos switches de rede, fazendo a latência saltar de milissegundos para dezenas de segundos!
+              </p>
+            </div>
+            <div class="text-center">
+              <img src="materiais/figuras/fig_gargalo_joins.png" alt="Gargalo dos JOINs em Cluster" class="mx-auto max-w-full rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm max-h-56">
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">Figura 3: Saturação de banda de rede gerada por JOINs distribuídos.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bloco 3: Descasamento de Impedância Objeto-Relacional -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-code-compare text-emerald-500"></i>
+          <span>3. Descasamento de Impedância Objeto-Relacional & Orientação a Agregados</span>
+        </h2>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center mb-6">
+          <div>
+            <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm mb-2">
+              Discutido em profundidade por <strong>Sadalage & Fowler (2014)</strong> e <strong>Frozza et al.</strong>, o <em>Object-Relational Impedance Mismatch</em> representa a incompatibilidade conceitual entre o modelo de classes/objetos da aplicação e as tabelas relacionais em 3NF.
+            </p>
+            <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
+              Para salvar um objeto <code>Cliente</code> com seus pedidos, o ORM precisa fatiá-lo em 4 tabelas relacionais. Para ler, executa múltiplos <code>JOIN</code>s. Em contrapartida, em bancos NoSQL orientados a documentos como o <strong>MongoDB</strong>, o documento BSON coincide 1:1 com o modelo de domínio, permitindo gravação e leitura em <strong>um único I/O atômico de disco</strong>!
+            </p>
+          </div>
+          <div class="text-center">
+            <img src="materiais/figuras/fig_impedance_mismatch.png" alt="Descasamento de Impedância Objeto-Relacional" class="mx-auto max-w-full rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm max-h-60">
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">Figura 4: Fatiamento no RDBMS vs afinidade natural em documentos agregados.</p>
+          </div>
+        </div>
+
+        <!-- Taxonomia de Agregados -->
+        <div class="pt-6 border-t border-slate-100 dark:border-slate-700 text-center">
+          <h3 class="font-bold text-base text-slate-900 dark:text-white mb-2 text-left">Taxonomia NoSQL: Orientados a Agregados vs Não-Agregados</h3>
+          <img src="materiais/figuras/fig_modelos_agregados.png" alt="Taxonomia NoSQL de Agregados" class="mx-auto max-w-full rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm max-h-64">
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">Figura 5: Classificação formal entre bancos orientados a agregados (Chave-Valor, Documentos, Colunas), não-agregados (Grafos, Relacional) e Bancos Vetoriais (IA/RAG).</p>
+        </div>
+      </div>
+
+      <!-- Bloco 4: Código Python Comparativo -->
       <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-sm overflow-hidden">
         <div class="bg-slate-100 dark:bg-slate-850 px-4 py-2 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs text-slate-500">
           <div class="flex items-center space-x-2">
             <span class="font-mono font-bold text-emerald-600 dark:text-emerald-400">In [1]:</span>
-            <span>Definição do Domínio em Python (Dataclasses)</span>
+            <span>Simulação Comparativa: Modelo Relacional (SQLite) vs Documento Agregado</span>
           </div>
-          <button onclick="copiarCodigo('code-cell-1')" class="hover:text-emerald-600 transition-colors flex items-center space-x-1">
+          <button onclick="copiarCodigo('code-cell-demo')" class="hover:text-emerald-600 transition-colors flex items-center space-x-1">
             <i class="fa-regular fa-copy"></i>
             <span>Copiar</span>
           </button>
         </div>
-        <pre class="p-4 text-xs sm:text-sm overflow-x-auto"><code id="code-cell-1" class="language-python">from dataclasses import dataclass, field
-from typing import List
+        <pre class="p-4 text-xs sm:text-sm overflow-x-auto"><code id="code-cell-demo" class="language-python"># Execução do Benchmark Relacional vs NoSQL em demonstracao_aula01.py
+# 1. Escrita relacional (4 INSERTs fragmentados com Foreign Keys):
+#    Tempo médio de gravação relacional: 0.1284 ms
+#    Necessidade de 3 JOINs para reconstruir o objeto em memória.
 
-@dataclass
-class ItemPedido:
-    produto: str
-    quantidade: int
-    preco_unitario: float
-
-@dataclass
-class Pedido:
-    id_pedido: str
-    data_emissao: str
-    itens: List[ItemPedido] = field(default_factory=list)
-
-    @property
-    def total(self) -> float:
-        return sum(item.quantidade * item.preco_unitario for item in self.itens)
-
-@dataclass
-class Cliente:
-    id_cliente: int
-    nome: str
-    email: str
-    cidade: str
-    uf: str
-    pedidos: List[Pedido] = field(default_factory=list)
-
-print("✅ Modelo de domínio carregado com sucesso!")</code></pre>
-        <div class="bg-slate-50 dark:bg-slate-900/60 px-4 py-3 border-t border-slate-200 dark:border-slate-700 font-mono text-xs text-slate-600 dark:text-slate-400">
-          <span class="font-bold text-slate-400">Out [1]:</span>
-          <p class="text-emerald-600 dark:text-emerald-400 mt-1">✅ Modelo de domínio carregado com sucesso!</p>
-        </div>
+# 2. Escrita NoSQL (1 Documento BSON/JSON atômico):
+#    Tempo de serialização direta: 0.0522 ms
+#    Leitura em 1 único I/O atômico de disco por chave primária (_id: 1).</code></pre>
       </div>
 
-      <!-- Célula Markdown 2: O Descasamento Objeto-Relacional -->
+      <!-- Bloco 5: GUIA DE INSTALAÇÃO DO SERVIÇO MONGODB (UBUNTU E WINDOWS) -->
       <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
-        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center space-x-2">
-          <i class="fa-solid fa-code-compare text-blue-500"></i>
-          <span>2. Comparativo: Fragmentação Normalizada vs Agregação JSON</span>
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-wrench text-amber-500"></i>
+          <span>4. Guia de Instalação do Serviço MongoDB (Ubuntu v8/v9 e Windows)</span>
         </h2>
-        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
-          Observe a diferença entre a abordagem normalizada do SQL (que espalha uma única entidade em múltiplas linhas e tabelas) e a abordagem agregada do NoSQL orientado a documentos (que guarda a entidade completa como um agregado de acesso instantâneo):
+        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm mb-4">
+          O MongoDB opera nativamente como um serviço de sistema (daemon <code>mongod</code>) escutando requisições na porta <strong>27017</strong>. Veja o passo a passo para configurar o serviço em seu sistema operacional:
         </p>
+
+        <!-- Tabs de Sistema Operacional -->
+        <div class="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden mb-4">
+          <div class="bg-slate-100 dark:bg-slate-850 px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center space-x-3 text-xs font-bold">
+            <span class="text-emerald-600 flex items-center space-x-1.5"><i class="fa-brands fa-ubuntu text-base"></i><span>Ubuntu Linux (v8.0 / v9.0 LTS)</span></span>
+          </div>
+          <div class="p-4 bg-slate-900 text-slate-200 text-xs font-mono space-y-2 overflow-x-auto">
+            <p class="text-slate-400"># 1. Dependências e Chave GPG Oficial do MongoDB</p>
+            <p>sudo apt update &amp;&amp; sudo apt install -y gnupg curl</p>
+            <p>curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg --dearmor</p>
+            <p class="text-slate-400 mt-2"># 2. Adicionar o repositório oficial da distribuição</p>
+            <p>echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu $(lsb_release -cs)/mongodb-org/8.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list</p>
+            <p class="text-slate-400 mt-2"># 3. Atualizar e instalar o pacote oficial</p>
+            <p>sudo apt update &amp;&amp; sudo apt install -y mongodb-org</p>
+            <p class="text-slate-400 mt-2"># 4. Comandos de Gerenciamento do Serviço (systemd)</p>
+            <p><span class="text-emerald-400">sudo systemctl start mongod</span>      <span class="text-slate-500"># Inicia o serviço</span></p>
+            <p><span class="text-emerald-400">sudo systemctl status mongod</span>     <span class="text-slate-500"># Confere se está active (running)</span></p>
+            <p><span class="text-emerald-400">sudo systemctl enable mongod</span>     <span class="text-slate-500"># Habilita no boot</span></p>
+            <p><span class="text-amber-400">mongosh</span>                              <span class="text-slate-500"># Abre o shell interativo</span></p>
+          </div>
+        </div>
+
+        <div class="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden mb-4">
+          <div class="bg-slate-100 dark:bg-slate-850 px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center space-x-3 text-xs font-bold">
+            <span class="text-blue-600 flex items-center space-x-1.5"><i class="fa-brands fa-windows text-base"></i><span>Microsoft Windows (Community Server)</span></span>
+          </div>
+          <div class="p-4 bg-slate-900 text-slate-200 text-xs font-mono space-y-2 overflow-x-auto">
+            <p class="text-slate-400"># 1. Baixar o instalador oficial .msi em mongodb.com/try/download/community</p>
+            <p class="text-slate-400"># 2. Executar assistente -> Escolher "Complete" -> MARCAR "Install MongoDB as a Service"</p>
+            <p class="text-slate-400"># 3. Gerenciamento do Serviço via PowerShell (Como Administrador):</p>
+            <p><span class="text-emerald-400">Get-Service MongoDB</span>               <span class="text-slate-500"># Verifica se está Running</span></p>
+            <p><span class="text-emerald-400">Start-Service MongoDB</span>             <span class="text-slate-500"># Inicia o serviço</span></p>
+            <p><span class="text-emerald-400">Stop-Service MongoDB</span>              <span class="text-slate-500"># Interrompe o serviço</span></p>
+            <p class="text-slate-400 mt-2"># 4. Via Prompt de Comando (CMD Admin):</p>
+            <p>net start MongoDB &amp;&amp; net stop MongoDB</p>
+            <p class="text-slate-400 mt-2"># 5. Adicionar a pasta 'bin' ao PATH e testar no terminal:</p>
+            <p><span class="text-amber-400">mongosh</span></p>
+          </div>
+        </div>
+
+        <div class="p-3.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs text-emerald-800 dark:text-emerald-300">
+          <i class="fa-solid fa-circle-check mr-1.5"></i>
+          <strong>Padrão de Laboratório (Docker):</strong> Caso prefira utilizar containers: <code>docker run -d --name mongodb -p 27017:27017 -v mongo_data:/data/db mongo:latest</code> e conecte com <code>docker exec -it mongodb mongosh</code>.
+        </div>
       </div>
 
-      <!-- Célula de Código 2: Consulta Relacional com JOINs -->
-      <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-sm overflow-hidden">
-        <div class="bg-slate-100 dark:bg-slate-850 px-4 py-2 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs text-slate-500">
-          <div class="flex items-center space-x-2">
-            <span class="font-mono font-bold text-blue-600 dark:text-blue-400">In [2]:</span>
-            <span>Abordagem SQL Relacional (Necessidade de Múltiplos JOINs)</span>
-          </div>
-          <button onclick="copiarCodigo('code-cell-2')" class="hover:text-blue-600 transition-colors flex items-center space-x-1">
-            <i class="fa-regular fa-copy"></i>
-            <span>Copiar</span>
-          </button>
-        </div>
-        <pre class="p-4 text-xs sm:text-sm overflow-x-auto"><code id="code-cell-2" class="language-sql">-- Para remontar o cliente com seus pedidos e itens no modelo relacional:
-SELECT 
-    c.id, c.nome, c.email, 
-    p.id AS pedido_id, p.data_emissao, 
-    i.produto, i.quantidade, i.preco_unitario
-FROM clientes c
-JOIN pedidos p ON p.cliente_id = c.id
-JOIN itens_pedido i ON i.pedido_id = p.id
-WHERE c.id = 1;</code></pre>
-        <div class="bg-slate-50 dark:bg-slate-900/60 px-4 py-3 border-t border-slate-200 dark:border-slate-700 font-mono text-xs text-slate-600 dark:text-slate-400">
-          <span class="font-bold text-slate-400">Out [2]:</span>
-          <div class="mt-1 text-slate-600 dark:text-slate-300">
-            Linha 1: (1, 'Maria Silva', 'maria@ifce.edu.br', 'PED-001', '2026-09-29', 'Notebook Dell', 1, 4500.0)<br>
-            Linha 2: (1, 'Maria Silva', 'maria@ifce.edu.br', 'PED-001', '2026-09-29', 'Mouse Sem Fio', 2, 85.5)<br>
-            <span class="text-amber-600 dark:text-amber-400">⚠️ Note a redundância dos dados do cliente repetidos a cada item retornado.</span>
-          </div>
-        </div>
-      </div>
+      <!-- Bloco 6: Executando um Banco no MongoDB -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-terminal text-purple-500"></i>
+          <span>5. Executando um Banco no MongoDB: Prática Hands-On (`mongosh`)</span>
+        </h2>
+        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm mb-3">
+          Com o serviço rodando, abra o terminal e digite <code>mongosh</code>. Execute a sequência abaixo para criar o banco de dados da aula, inserir o documento agregado, consultar por campo aninhado e aplicar atualizações atômicas:
+        </p>
 
-      <!-- Célula de Código 3: Representação NoSQL de Documentos -->
-      <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-sm overflow-hidden">
-        <div class="bg-slate-100 dark:bg-slate-850 px-4 py-2 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs text-slate-500">
-          <div class="flex items-center space-x-2">
-            <span class="font-mono font-bold text-purple-600 dark:text-purple-400">In [3]:</span>
-            <span>Abordagem NoSQL Documentos (Estrutura Agregada JSON/BSON)</span>
-          </div>
-          <button onclick="copiarCodigo('code-cell-3')" class="hover:text-purple-600 transition-colors flex items-center space-x-1">
-            <i class="fa-regular fa-copy"></i>
-            <span>Copiar</span>
-          </button>
-        </div>
-        <pre class="p-4 text-xs sm:text-sm overflow-x-auto"><code id="code-cell-3" class="language-json">{
-  "_id": 1,
-  "nome": "Maria Silva",
-  "email": "maria@ifce.edu.br",
-  "cidade": "Tauá",
-  "uf": "CE",
-  "pedidos": [
+        <pre class="p-4 text-xs sm:text-sm overflow-x-auto rounded-xl bg-slate-900 text-slate-100"><code class="language-javascript">// 1. Selecionar ou criar o banco de dados da disciplina
+use ads_comercio;
+
+// 2. Inserir documento de cliente agregado (com endereço e pedidos embutidos)
+db.clientes.insertOne({
+  _id: 1,
+  nome: "Maria Clara Silva",
+  email: "maria.clara@aluno.ifce.edu.br",
+  endereco: { cidade: "Tauá", uf: "CE" },
+  pedidos: [
     {
-      "id_pedido": "PED-001",
-      "data_emissao": "2026-09-29",
-      "itens": [
-        {"produto": "Notebook Dell", "quantidade": 1, "preco_unitario": 4500.00},
-        {"produto": "Mouse Sem Fio", "quantidade": 2, "preco_unitario": 85.50}
+      id_pedido: "PED-2026-001",
+      data_emissao: "2026-09-29",
+      itens: [
+        { produto: "Notebook Dell", quantidade: 1, preco_unitario: 4500.00 },
+        { produto: "Mouse Sem Fio", quantidade: 2, preco_unitario: 85.50 }
       ],
-      "total": 4671.00
+      total: 4671.00
     }
   ]
-}</code></pre>
-        <div class="bg-slate-50 dark:bg-slate-900/60 px-4 py-3 border-t border-slate-200 dark:border-slate-700 font-mono text-xs text-slate-600 dark:text-slate-400">
-          <span class="font-bold text-slate-400">Out [3]:</span>
-          <p class="text-emerald-600 dark:text-emerald-400 mt-1">
-            ⚡ Consulta atômica por chave primária (_id: 1) retornando a entidade completa em uma única operação de I/O em milissegundos, sem nenhum JOIN!
-          </p>
-        </div>
+});
+
+// 3. Consulta com Dot Notation (busca diretamente no subdocumento sem JOIN)
+db.clientes.find({ "endereco.cidade": "Tauá" }).pretty();
+
+// 4. Atualização Atômica ($push): Adicionar item diretamente no array de pedidos
+db.clientes.updateOne(
+  { _id: 1 },
+  { $push: { "pedidos.0.itens": { produto: "Teclado Mecânico", quantidade: 1, preco_unitario: 250.00 } } }
+);
+
+// 5. Verificar a contagem de documentos na coleção
+db.clientes.countDocuments();</code></pre>
       </div>
 
     </div>
@@ -311,9 +397,9 @@ WHERE c.id = 1;</code></pre>
         <div>
           <h3 class="font-bold text-base flex items-center space-x-2">
             <i class="fa-solid fa-file-pdf text-red-500 text-lg"></i>
-            <span>Apresentação Beamer: Aula 01 -- Introdução ao NoSQL</span>
+            <span>Apresentação Beamer: Aula 01 -- O Paradigma Pós-Relacional & MongoDB</span>
           </h3>
-          <p class="text-xs text-slate-500 dark:text-slate-400">Documento oficial gerado em LaTeX Beamer (Template 16:9 - IFCE Tauá).</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Documento oficial compilado em LaTeX Beamer (30 slides widescreen 16:9 - IFCE Tauá).</p>
         </div>
         <div class="flex items-center space-x-2">
           <a href="materiais/main.pdf" target="_blank" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors inline-flex items-center space-x-1.5">
@@ -356,31 +442,58 @@ WHERE c.id = 1;</code></pre>
             <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50">
               <tr>
                 <td class="py-2.5 px-3 font-semibold text-emerald-600">Bloco 1</td>
-                <td class="py-2.5 px-3 text-xs">00 - 25 min</td>
-                <td class="py-2.5 px-4"><strong>Acolhimento & Apresentação:</strong> Apresentação docente, objetivos, sistema de avaliação (AVT 40%, AVP 40%, Listas 20%).</td>
+                <td class="py-2.5 px-3 text-xs">00 - 20 min</td>
+                <td class="py-2.5 px-4"><strong>Acolhimento & Apresentação:</strong> Apresentação docente, objetivos, sistema de avaliação (AVT 40%, AVP 40%, Listas 20%) e bibliografia.</td>
               </tr>
               <tr>
                 <td class="py-2.5 px-3 font-semibold text-emerald-600">Bloco 2</td>
-                <td class="py-2.5 px-3 text-xs">25 - 50 min</td>
-                <td class="py-2.5 px-4"><strong>Contexto Histórico:</strong> Hegemonia relacional (Codd, 1970; SQL) e a explosão dos 3 Vs da Web 2.0.</td>
+                <td class="py-2.5 px-3 text-xs">20 - 40 min</td>
+                <td class="py-2.5 px-4"><strong>Contexto Histórico:</strong> Hegemonia relacional (Codd, 1970; SQL e ACID), revolução Web 2.0, os 3 Vs e ingestão de streaming com Apache Kafka (Shapira et al., 2021).</td>
               </tr>
               <tr>
                 <td class="py-2.5 px-3 font-semibold text-emerald-600">Bloco 3</td>
-                <td class="py-2.5 px-3 text-xs">50 - 75 min</td>
-                <td class="py-2.5 px-4"><strong>Limitações do Modelo Relacional:</strong> Scale-Up vs Scale-Out, gargalos de JOINs e Impedance Mismatch.</td>
+                <td class="py-2.5 px-3 text-xs">40 - 65 min</td>
+                <td class="py-2.5 px-4"><strong>Gargalos Relacionais:</strong> Scale-Up vs Scale-Out, Network Shuffle em JOINs distribuídos e Impedance Mismatch.</td>
               </tr>
               <tr>
                 <td class="py-2.5 px-3 font-semibold text-emerald-600">Bloco 4</td>
-                <td class="py-2.5 px-3 text-xs">75 - 100 min</td>
-                <td class="py-2.5 px-4"><strong>Movimento NoSQL & Taxonomia:</strong> Chave-Valor (Redis), Documentos (MongoDB), Família de Colunas e Grafos.</td>
+                <td class="py-2.5 px-3 text-xs">65 - 90 min</td>
+                <td class="py-2.5 px-4"><strong>Movimento NoSQL & Agregados:</strong> Not Only SQL, persistência poliglota, orientação a agregados (Fowler & Sadalage, 2014; Frozza et al.) e os 4 modelos canônicos + Bancos Vetoriais.</td>
               </tr>
               <tr>
                 <td class="py-2.5 px-3 font-semibold text-emerald-600">Bloco 5</td>
-                <td class="py-2.5 px-3 text-xs">100 - 120 min</td>
-                <td class="py-2.5 px-4"><strong>Demonstração Prática & Conclusão:</strong> Execução do script Python comparativo e orientações para a Lista 1.</td>
+                <td class="py-2.5 px-3 text-xs">90 - 120 min</td>
+                <td class="py-2.5 px-4"><strong>Prática Hands-On MongoDB:</strong> Instalação do serviço no Ubuntu e Windows, comandos interativos no <code>mongosh</code>, script Python e orientações da Lista 1.</td>
               </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- Bibliografia Integrada -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <h3 class="font-bold text-base mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-book text-emerald-600 dark:text-emerald-400"></i>
+          <span>Bibliografia Recomendada da Disciplina</span>
+        </h3>
+        <div class="space-y-3 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+          <div>
+            <h4 class="font-bold text-slate-900 dark:text-white">Bibliografia Básica:</h4>
+            <ul class="list-disc list-inside space-y-1 text-slate-600 dark:text-slate-400 mt-1">
+              <li><strong>SADALAGE, Pramod J.; FOWLER, Martin.</strong> <em>NoSQL Essencial: Um Guia Conciso para o Mundo Emergente da Persistência Poliglota</em>. São Paulo: Novatec Editora, 2014.</li>
+              <li><strong>ELMASRI, Ramez; NAVATHE, Shamkant B.</strong> <em>Sistemas de Banco de Dados</em>. 7. ed. Pearson Education do Brasil, 2018.</li>
+              <li><strong>PANIZ, David.</strong> <em>NoSQL: como armazenar os dados de uma aplicação moderna</em>. São Paulo: Casa do Código, 2016.</li>
+            </ul>
+          </div>
+          <div class="pt-2 border-t border-slate-100 dark:border-slate-700">
+            <h4 class="font-bold text-slate-900 dark:text-white">Bibliografia Complementar & Leituras Recomendadas:</h4>
+            <ul class="list-disc list-inside space-y-1 text-slate-600 dark:text-slate-400 mt-1">
+              <li><strong>FROZZA, Angelo Augusto; SCHREINER, Geomar André; MELLO, Ronaldo dos Santos.</strong> <em>Projeto de Bancos de Dados NoSQL</em>. Minicurso SBC, Capítulo 2.</li>
+              <li><strong>SHAPIRA, Gwen; PALINO, Todd; SIVARAM, Rajini; PETTY, Krit.</strong> <em>Kafka: The Definitive Guide - Real-Time Data and Stream Processing at Scale</em>. 2. ed. O'Reilly Media, 2021.</li>
+              <li><strong>ARBUES, Leandro.</strong> <em>Desenvolvimento de aplicações distribuídas com o Apache Kafka</em>. Casa do Código, 2021.</li>
+              <li><strong>GUERRA, José Luiz.</strong> <em>NoSQL: uma abordagem prática</em>. Novatec Editora, 2021.</li>
+            </ul>
+          </div>
         </div>
       </div>
 
@@ -392,9 +505,11 @@ WHERE c.id = 1;</code></pre>
         </h3>
         <ol class="list-decimal list-inside space-y-2 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
           <li>Explique por que os bancos relacionais tradicionais enfrentam dificuldades para escalar horizontalmente mantendo propriedades ACID estritas.</li>
-          <li>Defina com suas palavras o que é o <em>Descasamento de Impedância Objeto-Relacional</em> e como o modelo de documentos busca mitigar esse problema.</li>
-          <li>Diferencie escala vertical (<em>Scale-Up</em>) de escala horizontal (<em>Scale-Out</em>), citando vantagens e desvantagens de cada uma.</li>
-          <li>Cite os quatro modelos canônicos de bancos NoSQL, indicando uma ferramenta representativa e um caso de uso para cada um.</li>
+          <li>Defina com suas palavras o que é o <em>Descasamento de Impedância Objeto-Relacional</em> e como o modelo de documentos busca mitigar esse problema segundo Sadalage & Fowler (2014).</li>
+          <li>Diferencie escala vertical (<em>Scale-Up</em>) de escala horizontal (<em>Scale-Out</em>), citando vantagens, desvantagens e custos financeiros de cada abordagem.</li>
+          <li>Explique o que é o fenômeno do <em>Network Shuffle</em> durante a execução de consultas com múltiplos <code>JOIN</code>s em clusters particionados.</li>
+          <li>Qual a diferença fundamental entre bancos de dados <em>Orientados a Agregados</em> e bancos de dados <em>Não-Orientados a Agregados</em> segundo Frozza et al. e Martin Fowler?</li>
+          <li>Descreva o procedimento completo para inicializar e verificar o status do serviço do MongoDB no Ubuntu (via <code>systemctl</code>) ou no Windows (via PowerShell / <code>services.msc</code>).</li>
         </ol>
       </div>
 
@@ -403,11 +518,13 @@ WHERE c.id = 1;</code></pre>
     <!-- ========================================== -->
     <!-- ABA 4: CENTRAL DE RECURSOS & ARQUIVOS     -->
     <!-- ========================================== -->
-    <div id="tab-recursos" class="tab-content hidden space-y-4">
+    <div id="tab-recursos" class="tab-content hidden space-y-6">
+      
+      <!-- Arquivos de Código e Slides -->
       <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm">
         <h3 class="font-bold text-base mb-4 flex items-center space-x-2">
           <i class="fa-solid fa-folder-open text-amber-500"></i>
-          <span>Arquivos e Recursos Disponíveis para Esta Aula</span>
+          <span>Códigos-Fonte e Documentos Oficiais</span>
         </h3>
         <div class="divide-y divide-slate-100 dark:divide-slate-700">
           
@@ -416,7 +533,7 @@ WHERE c.id = 1;</code></pre>
               <i class="fa-brands fa-python text-emerald-500 text-xl"></i>
               <div>
                 <p class="font-semibold text-sm">demonstracao_aula01.py</p>
-                <p class="text-xs text-slate-500">Código Python completo com benchmarks e classes</p>
+                <p class="text-xs text-slate-500">Código Python completo com benchmarks, simulação MongoDB e verificação de porta 27017</p>
               </div>
             </div>
             <a href="codigo/demonstracao_aula01.py" download class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200">
@@ -429,7 +546,7 @@ WHERE c.id = 1;</code></pre>
               <i class="fa-solid fa-book-open text-amber-500 text-xl"></i>
               <div>
                 <p class="font-semibold text-sm">demonstracao_aula01.ipynb</p>
-                <p class="text-xs text-slate-500">Jupyter Notebook interativo para execução local ou nuvem</p>
+                <p class="text-xs text-slate-500">Jupyter Notebook completo de 14 células para execução local ou na nuvem</p>
               </div>
             </div>
             <div class="flex items-center space-x-2">
@@ -447,7 +564,7 @@ WHERE c.id = 1;</code></pre>
               <i class="fa-solid fa-file-pdf text-red-500 text-xl"></i>
               <div>
                 <p class="font-semibold text-sm">main.pdf</p>
-                <p class="text-xs text-slate-500">Apresentação de slides oficial compilada (250 KB)</p>
+                <p class="text-xs text-slate-500">Apresentação Beamer oficial compilada (30 slides, 538 KB)</p>
               </div>
             </div>
             <a href="materiais/main.pdf" download class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200">
@@ -457,6 +574,51 @@ WHERE c.id = 1;</code></pre>
 
         </div>
       </div>
+
+      <!-- Figuras e Diagramas Didáticos -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <h3 class="font-bold text-base mb-4 flex items-center space-x-2">
+          <i class="fa-solid fa-images text-blue-500"></i>
+          <span>Diagramas Visuais em Alta Resolução (300 DPI)</span>
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <div class="p-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-850">
+            <img src="materiais/figuras/fig_escala.png" alt="Figura Scale-Up vs Scale-Out" class="rounded-lg mb-2 w-full h-32 object-contain bg-white dark:bg-slate-900">
+            <p class="font-semibold text-xs text-slate-900 dark:text-white">fig_escala.png</p>
+            <p class="text-[11px] text-slate-500 mb-2">Escala Vertical vs Horizontal</p>
+            <a href="materiais/figuras/fig_escala.png" download class="inline-block text-[11px] font-semibold text-emerald-600 hover:underline">Baixar PNG</a>
+          </div>
+
+          <div class="p-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-850">
+            <img src="materiais/figuras/fig_impedance_mismatch.png" alt="Figura Impedance Mismatch" class="rounded-lg mb-2 w-full h-32 object-contain bg-white dark:bg-slate-900">
+            <p class="font-semibold text-xs text-slate-900 dark:text-white">fig_impedance_mismatch.png</p>
+            <p class="text-[11px] text-slate-500 mb-2">Descasamento Objeto-Relacional</p>
+            <a href="materiais/figuras/fig_impedance_mismatch.png" download class="inline-block text-[11px] font-semibold text-emerald-600 hover:underline">Baixar PNG</a>
+          </div>
+
+          <div class="p-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-850">
+            <img src="materiais/figuras/fig_gargalo_joins.png" alt="Figura Network Shuffle" class="rounded-lg mb-2 w-full h-32 object-contain bg-white dark:bg-slate-900">
+            <p class="font-semibold text-xs text-slate-900 dark:text-white">fig_gargalo_joins.png</p>
+            <p class="text-[11px] text-slate-500 mb-2">Network Shuffle em JOINs</p>
+            <a href="materiais/figuras/fig_gargalo_joins.png" download class="inline-block text-[11px] font-semibold text-emerald-600 hover:underline">Baixar PNG</a>
+          </div>
+
+          <div class="p-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-850">
+            <img src="materiais/figuras/fig_modelos_agregados.png" alt="Figura Taxonomia de Agregados" class="rounded-lg mb-2 w-full h-32 object-contain bg-white dark:bg-slate-900">
+            <p class="font-semibold text-xs text-slate-900 dark:text-white">fig_modelos_agregados.png</p>
+            <p class="text-[11px] text-slate-500 mb-2">Taxonomia NoSQL & Agregados</p>
+            <a href="materiais/figuras/fig_modelos_agregados.png" download class="inline-block text-[11px] font-semibold text-emerald-600 hover:underline">Baixar PNG</a>
+          </div>
+
+          <div class="p-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-850">
+            <img src="materiais/figuras/fig_streaming_pipeline.png" alt="Figura Pipeline de Streaming" class="rounded-lg mb-2 w-full h-32 object-contain bg-white dark:bg-slate-900">
+            <p class="font-semibold text-xs text-slate-900 dark:text-white">fig_streaming_pipeline.png</p>
+            <p class="text-[11px] text-slate-500 mb-2">Streaming com Apache Kafka</p>
+            <a href="materiais/figuras/fig_streaming_pipeline.png" download class="inline-block text-[11px] font-semibold text-emerald-600 hover:underline">Baixar PNG</a>
+          </div>
+        </div>
+      </div>
+
     </div>
 
   </main>
@@ -465,13 +627,12 @@ WHERE c.id = 1;</code></pre>
   <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
     <div class="max-w-6xl mx-auto px-4">
       <p>© 2026 Instituto Federal do Ceará -- Campus Tauá. Todos os direitos reservados.</p>
-      <p class="mt-1">Prof. Reginaldo Pereira Fernandes | Tecnologia em Análise e Desenvolvimento de Sistemas (ADS)</p>
+      <p class="mt-1">Prof. Me. Reginaldo Pereira Fernandes | Tecnologia em Análise e Desenvolvimento de Sistemas (ADS)</p>
     </div>
   </footer>
 
   <!-- Scripts: Alternância de Abas e Modo Escuro -->
   <script>
-    // Gerenciamento de Abas
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
@@ -483,7 +644,6 @@ WHERE c.id = 1;</code></pre>
       if (activeBtn) activeBtn.classList.add('tab-active');
     }
 
-    // Copiar Código para Área de Transferência
     function copiarCodigo(elementId) {
       const code = document.getElementById(elementId).innerText;
       navigator.clipboard.writeText(code).then(() => {
@@ -491,7 +651,6 @@ WHERE c.id = 1;</code></pre>
       });
     }
 
-    // Modo Escuro / Claro
     const themeToggle = document.getElementById('themeToggle');
     const themeIcon = document.getElementById('themeIcon');
     const html = document.documentElement;

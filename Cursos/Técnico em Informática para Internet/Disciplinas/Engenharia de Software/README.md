@@ -24,6 +24,12 @@ Capacitar os alunos nos processos modernos de engenharia de software com foco em
   - `slides_aula.tex` / `slides_aula.pdf`: Apresentação completa em LaTeX Beamer.
   - `simulador_sprint.py`: Script computacional com simulação Monte Carlo (10.000 iterações) e curva ECDF.
   - `backlog_requisitos.md`, `sprint_1_planejamento.md` e `clickup_import_tasks.csv`.
+- [Aula 20 - Introdução à UML, Revisão de OO e Diagrama de Casos de Uso](Aulas/Aula_20/):
+  - `plano_de_aula.md`: Planejamento da aula de 100 minutos abrangendo os Capítulos 1, 2 e 3 do livro de Guedes.
+  - `slides_aula.tex` / `slides_aula.pdf`: Apresentação em Beamer (22 slides) com figuras oficiais de introdução, OO e Casos de Uso.
+  - `exemplo_poo.py`: Código em Python mapeando os modelos de classes conceituais do livro para orientação a objetos.
+  - `atividade_pratica.md`: Atividade prática com lista formal de requisitos (RF01 a RF13) para modelagem e especificação de Casos de Uso.
+  - `imagens/`: Galeria completa das figuras oficiais extraídas do EPUB.
 
 ### 📝 [Avaliacoes](Avaliacoes/)
 - Entregas de Sprints, relatórios de retrospectiva e avaliações práticas de projeto.

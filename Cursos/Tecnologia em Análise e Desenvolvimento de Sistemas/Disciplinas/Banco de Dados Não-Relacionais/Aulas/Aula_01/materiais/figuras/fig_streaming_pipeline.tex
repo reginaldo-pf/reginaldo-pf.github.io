@@ -1,0 +1,87 @@
+\documentclass[tikz,border=10pt]{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows.meta,positioning,calc,fit}
+
+\definecolor{ScoutGreen}{HTML}{005432}
+\definecolor{ScoutNavy}{HTML}{002855}
+\definecolor{ScoutBlue}{HTML}{006EB6}
+\definecolor{ScoutAmber}{HTML}{D97706}
+\definecolor{ScoutRed}{HTML}{A31920}
+\definecolor{BorderGray}{HTML}{CBD5E1}
+\definecolor{LightBg}{HTML}{F8FAFC}
+
+\begin{document}
+\begin{tikzpicture}[
+    font=\sffamily,
+    groupbox/.style={draw=#1, rounded corners=8pt, fill=#1!4, line width=1.3pt, inner sep=8pt},
+    itembox/.style={draw=BorderGray, rounded corners=5pt, fill=white, line width=1pt, align=center, inner sep=4pt, font=\scriptsize},
+    targetbox/.style={draw=#1, rounded corners=5pt, fill=white, line width=1.1pt, align=left, inner sep=4.5pt, font=\scriptsize, text width=3.8cm},
+    arrow/.style={-{Stealth[length=6pt]}, line width=1.5pt}
+]
+
+  % -------------------------------------------------------------
+  % COLUNA 1: PRODUTORES DE DADOS (VOLUME & VELOCIDADE)
+  % -------------------------------------------------------------
+  \node[groupbox=ScoutNavy, minimum width=3.4cm, minimum height=5.2cm] (g_sources) at (0, 0) {};
+  \node[font=\bfseries\small, text=ScoutNavy, anchor=north] at (g_sources.north) [yshift=-8pt] {1. Produtores};
+  \node[font=\scriptsize, text=gray!80!black, anchor=north] at (g_sources.north) [yshift=-22pt] {Dispositivos \& Web};
+
+  \node[itembox, minimum width=2.8cm] at (0, 1.0) {\textbf{Sensores IoT}\\[-1pt]\tiny Telemetria contínua};
+  \node[itembox, minimum width=2.8cm] at (0, 0.3) {\textbf{Logs de Cliques}\\[-1pt]\tiny Eventos de navegação};
+  \node[itembox, minimum width=2.8cm] at (0, -0.4) {\textbf{APIs \& Mobile}\\[-1pt]\tiny Requisições de usuários};
+  \node[itembox, minimum width=2.8cm] at (0, -1.1) {\textbf{Transações Web}\\[-1pt]\tiny Checkout e pagamentos};
+
+  % -------------------------------------------------------------
+  % COLUNA 2: BROKER DISTRIBUÍDO DE STREAMING (APACHE KAFKA)
+  % -------------------------------------------------------------
+  \node[groupbox=ScoutAmber, minimum width=4.4cm, minimum height=5.2cm] (g_kafka) at (6.4, 0) {};
+  \node[font=\bfseries\small, text=ScoutAmber!90!black, anchor=north] at (g_kafka.north) [yshift=-8pt] {2. Apache Kafka};
+  \node[font=\scriptsize, text=gray!80!black, anchor=north] at (g_kafka.north) [yshift=-22pt] {Shapira et al. (2021) -- Buffer};
+
+  \node[itembox, draw=ScoutAmber, fill=white, minimum width=3.8cm, text=ScoutNavy] at (6.4, 0.95) {
+    \textbf{Tópicos Particionados}\\[1pt]
+    \tiny Buffer distribuído em disco com alta vazão
+  };
+  \node[itembox, draw=ScoutAmber, fill=white, minimum width=3.8cm, text=ScoutNavy] at (6.4, -0.05) {
+    \textbf{Desacoplamento Temporal}\\[1pt]
+    \tiny Milhões de eventos/s sem sobrecarregar o BD
+  };
+  \node[itembox, draw=ScoutAmber, fill=white, minimum width=3.8cm, text=ScoutNavy] at (6.4, -1.1) {
+    \textbf{Replicação e Ordem}\\[1pt]
+    \tiny Tolerância a falhas e sem perda de dados
+  };
+
+  % -------------------------------------------------------------
+  % COLUNA 3: PERSISTÊNCIA POLIGLOTA (NOSQL & RELACIONAL)
+  % -------------------------------------------------------------
+  \node[groupbox=ScoutGreen, minimum width=4.8cm, minimum height=5.2cm] (g_storage) at (13.6, 0) {};
+  \node[font=\bfseries\small, text=ScoutGreen, anchor=north] at (g_storage.north) [yshift=-8pt] {3. Persistência Poliglota};
+  \node[font=\scriptsize, text=gray!80!black, anchor=north] at (g_storage.north) [yshift=-22pt] {Sadalage \& Fowler (2014)};
+
+  \node[targetbox=ScoutNavy] at (13.6, 1.25) {
+    \textbf{\textcolor{ScoutNavy}{Redis:}} Cache \& Métricas
+  };
+  \node[targetbox=ScoutGreen] at (13.6, 0.45) {
+    \textbf{\textcolor{ScoutGreen}{MongoDB:}} Catálogo BSON
+  };
+  \node[targetbox=ScoutBlue] at (13.6, -0.45) {
+    \textbf{\textcolor{ScoutBlue}{Cassandra:}} Séries Temporais / IoT
+  };
+  \node[targetbox=ScoutRed] at (13.6, -1.25) {
+    \textbf{\textcolor{ScoutRed}{PostgreSQL:}} Finanças \& ACID
+  };
+
+  % -------------------------------------------------------------
+  % SETAS DE CONEXÃO COM ÂNCORAS NATIVAS
+  % -------------------------------------------------------------
+  \draw[arrow, color=ScoutNavy] (g_sources.east) -- (g_kafka.west)
+    node[midway, above, font=\scriptsize\bfseries, text=ScoutNavy, yshift=2pt] {Ingestão}
+    node[midway, below, font=\tiny, text=gray!80!black] {(Streaming)};
+
+  \draw[arrow, color=ScoutAmber!90!black] (g_kafka.east) -- (g_storage.west)
+    node[midway, above, font=\scriptsize\bfseries, text=ScoutAmber!90!black, yshift=2pt] {Consumo}
+    node[midway, below, font=\tiny, text=gray!80!black] {(Assíncrono)};
+
+\end{tikzpicture}
+\end{document}

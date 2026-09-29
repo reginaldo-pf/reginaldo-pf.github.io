@@ -1,54 +1,88 @@
 \changecolours{ScoutPurple}
 \section{O Movimento NoSQL \& Modelos}
 
-% ------------------------------------------------------------------------------
+% -------------------------------------------------------------
 \twocolframe[title={O Conceito: \textit{Not Only SQL}},leftcol=7cm,rightcol=7cm]{%
   \alert{Origem e Filosofia}\par
   \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
   \begin{itemize}
     \item Movimento consolidado em 2009 em São Francisco.
     \item Não significa rejeitar o SQL, mas sim \textbf{\textit{Not Only SQL}} (Não Apenas SQL).
-    \item \textbf{Premissa Fundamental:} Nem todos os dados do mundo se comportam como tabelas relacionais estritas.
+    \item \textbf{Premissa Fundamental:} Nem todas as estruturas de dados se comportam como tabelas relacionais normalizadas.
     \item Foco em escalabilidade horizontal nativa, esquemas flexíveis (\textit{schemaless}) e alta disponibilidade.
   \end{itemize}
 }{%
-  \alert{Persistência Poliglota}\par
+  \alert{Persistência Poliglota (Fowler \& Sadalage)}\par
   \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
   \begin{itemize}
-    \item Sistemas modernos utilizam bancos relacionais e NoSQL juntos.
-    \item Escolhe-se a tecnologia mais adequada para cada domínio.
-    \item \textbf{Exemplo:} PostgreSQL (pagamentos) + Redis (cache de sessões) + MongoDB (catálogo flexível).
+    \item Sistemas corporativos modernos utilizam múltiplos modelos de armazenamento em conjunto.
+    \item Escolhe-se a tecnologia mais adequada para cada domínio de negócio.
+    \item \textbf{Exemplo Prático:} PostgreSQL (financeiro) + Redis (cache de sessões) + MongoDB (catálogo) + Neo4j (detecção de fraudes).
   \end{itemize}
 }
 
-% ------------------------------------------------------------------------------
+% -------------------------------------------------------------
+% ORIENTAÇÃO A AGREGADOS - SLIDE A: CONCEITO FORMAL
+% -------------------------------------------------------------
+\twocolframe[title={Orientação a Agregados: A Teoria},leftcol=7cm,rightcol=7cm]{%
+  \alert{O Conceito Formal de Agregado}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Sadalage \& Fowler (2014) / Frozza et al.:} O conceito vem do \textit{Domain-Driven Design} (Eric Evans).
+    \item Um agregado é uma coleção de objetos relacionados tratados como uma \textbf{unidade indivisível de dados}.
+    \item As atualizações dentro do agregado são atômicas e consistentes por padrão, simplificando a concorrência.
+  \end{itemize}
+}{%
+  \alert{Impacto na Distribuição em Cluster}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item O agregado define a fronteira natural de particionamento (\textit{sharding key}).
+    \item Todos os dados necessários para atender a uma requisição residem no mesmo servidor físico!
+    \item \textbf{Não-Agregados:} Bancos de Grafos e Relacionais conectam entidades arbitrariamente, priorizando relacionamentos complexos.
+  \end{itemize}
+}
+
+% -------------------------------------------------------------
+% ORIENTAÇÃO A AGREGADOS - SLIDE B: DIAGRAMA EM TELA CHEIA
+% -------------------------------------------------------------
+\begin{frame}{Taxonomia NoSQL: Agregados, Grafos e Vetores}
+  \vspace{-0.3cm}
+  \makebox[\linewidth][c]{%
+    \includegraphics[width=13.5cm,height=5.0cm,keepaspectratio]{figuras/fig_modelos_agregados.pdf}%
+  }\par
+  \vspace{0.15cm}
+  \centering
+  {\footnotesize \textbf{Takeaway:} \textcolor{ScoutPurple}{A taxonomia divide os bancos entre os que agrupam dados para escala e os que mapeiam conexões em rede.}}
+\end{frame}
+
+% -------------------------------------------------------------
 \twocolframe[title={Modelos NoSQL: Chave-Valor \& Documentos},leftcol=7cm,rightcol=7cm]{%
   \alert{1. Chave-Valor (Key-Value)}\par
   \itemseps[topsepi=2mm,itemsepi=2.5mm,labelsep=2mm,leftmargini=4mm]
-  \textbf{Exemplos:} Redis, DynamoDB, Memcached.
+  \textbf{Exemplos:} Redis, AWS DynamoDB, Memcached.
   \begin{itemize}
-    \item Mapeamento direto \texttt{chave} $\rightarrow$ \texttt{valor} em memória.
+    \item Mapeamento direto \texttt{chave} $\rightarrow$ \texttt{valor} em memória RAM.
     \item Altíssima taxa de IOPS e latência sub-milissegundo.
     \item \textbf{Casos de Uso:} Cache acelerador, controle de sessão de login e contadores em tempo real.
   \end{itemize}
 }{%
   \alert{2. Documentos (Document Store)}\par
   \itemseps[topsepi=2mm,itemsepi=2.5mm,labelsep=2mm,leftmargini=4mm]
-  \textbf{Exemplos:} MongoDB, Couchbase, Firestore.
+  \textbf{Exemplos:} MongoDB, Couchbase, Google Firestore.
   \begin{itemize}
     \item Dados armazenados em documentos JSON/BSON aninhados.
-    \item Suporte nativo a arrays, objetos embutidos e índices.
+    \item Suporte nativo a arrays, objetos embutidos e índices secundários.
     \item \textbf{Casos de Uso:} Catálogos de e-commerce, perfis de usuários e cadastros com esquema evolutivo.
   \end{itemize}
 }
 
-% ------------------------------------------------------------------------------
+% -------------------------------------------------------------
 \twocolframe[title={Modelos NoSQL: Colunas \& Grafos},leftcol=7cm,rightcol=7cm]{%
   \alert{3. Família de Colunas (Wide-Column)}\par
   \itemseps[topsepi=2mm,itemsepi=2.5mm,labelsep=2mm,leftmargini=4mm]
-  \textbf{Exemplos:} Apache Cassandra, ScyllaDB, HBase.
+  \textbf{Exemplos:} Apache Cassandra, ScyllaDB, Google Bigtable.
   \begin{itemize}
-    \item Linhas com colunas dinâmicas em anel distribuído.
+    \item Linhas com colunas dinâmicas em anel distribuído peer-to-peer.
     \item Otimizado para altíssimo volume de gravação contínua.
     \item \textbf{Casos de Uso:} Telemetria IoT, séries temporais, métricas de monitoramento e logs analíticos.
   \end{itemize}
@@ -57,13 +91,13 @@
   \itemseps[topsepi=2mm,itemsepi=2.5mm,labelsep=2mm,leftmargini=4mm]
   \textbf{Exemplos:} Neo4j, Amazon Neptune, ArangoDB.
   \begin{itemize}
-    \item Vértices (nós), arestas (relacionamentos) e propriedades.
+    \item Vértices (nós), arestas (relacionamentos tipados) e propriedades.
     \item Travessia direta de ponteiros sem múltiplos JOINs.
     \item \textbf{Casos de Uso:} Redes sociais, motores de recomendação e detecção de fraudes financeiras.
   \end{itemize}
 }
 
-% ------------------------------------------------------------------------------
+% -------------------------------------------------------------
 \twocolframe[title={Bancos Vetoriais \& IA (Modernização)},leftcol=7cm,rightcol=7cm]{%
   \alert{Vector Databases na Era da IA}\par
   \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
@@ -76,7 +110,7 @@
   \alert{Aplicações Críticas: RAG}\par
   \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
   \begin{itemize}
-    \item \textbf{RAG (Retrieval-Augmented Generation):} Recuperação semântica para abastecer Modelos de Linguagem (LLMs).
+    \item \textbf{RAG (Retrieval-Augmented Generation):} Recuperação semântica contextual para abastecer Modelos de Linguagem (LLMs).
     \item \textbf{Tópico Modernizado:} Nossa disciplina contará com uma aula prática dedicada (Aula 16) sobre este modelo!
   \end{itemize}
 }
