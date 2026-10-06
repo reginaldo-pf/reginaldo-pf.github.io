@@ -1,0 +1,103 @@
+\documentclass[tikz,border=6pt]{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage[brazilian]{babel}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows.meta,positioning,calc,shadows}
+
+\definecolor{ScoutGreen}{HTML}{059669}
+\definecolor{ScoutNavy}{HTML}{1E293B}
+\definecolor{ScoutBlue}{HTML}{2563EB}
+\definecolor{ScoutRed}{HTML}{DC2626}
+\definecolor{ScoutAmber}{HTML}{D97706}
+
+\begin{document}
+\shorthandoff{"}
+\begin{tikzpicture}[
+    font=\sffamily,
+    >=Stealth,
+    actor/.style={
+        draw=black!25,
+        rounded corners=6pt,
+        line width=1.1pt,
+        align=center,
+        drop shadow={opacity=0.10, shadow xshift=2pt, shadow yshift=-2pt}
+    },
+    stagebadge/.style={
+        draw=black!20,
+        rounded corners=6pt,
+        line width=1.0pt,
+        align=center,
+        inner sep=4pt
+    }
+]
+
+    % Raias dos Atores (Topo)
+    \node[actor, fill=ScoutNavy, text=white, minimum width=3.0cm, minimum height=1.1cm] (c_app) at (4.0, 0) {
+        {\normalsize\bfseries Aplicação}\\[2pt]{\footnotesize Backend API (Python)}
+    };
+    \node[actor, fill=ScoutRed, text=white, minimum width=3.4cm, minimum height=1.1cm] (c_redis) at (11.0, 0) {
+        {\normalsize\bfseries Redis Cache}\\[2pt]{\footnotesize Memória RAM ($<$ 1 ms)}
+    };
+    \node[actor, fill=ScoutGreen, text=white, minimum width=3.4cm, minimum height=1.1cm] (c_mongo) at (17.2, 0) {
+        {\normalsize\bfseries MongoDB}\\[2pt]{\footnotesize System of Record (Disco)}
+    };
+
+    % Linhas de Vida Verticais
+    \draw[dashed, line width=1.1pt, draw=black!25] (c_app.south) -- (4.0, -6.6);
+    \draw[dashed, line width=1.1pt, draw=black!25] (c_redis.south) -- (11.0, -6.6);
+    \draw[dashed, line width=1.1pt, draw=black!25] (c_mongo.south) -- (17.2, -6.6);
+
+    % ==========================================================================
+    % CENÁRIO 1: CACHE HIT
+    % ==========================================================================
+    \node[stagebadge, fill=ScoutGreen!12, draw=ScoutGreen, minimum width=2.6cm] at (1.5, -1.5) {
+        {\normalsize\bfseries\textcolor{ScoutGreen}{1. Cache Hit}}\\[2pt]
+        {\scriptsize Dado em Memória RAM}
+    };
+
+    \draw[->, line width=1.4pt, draw=ScoutNavy] (4.0, -1.2) -- (11.0, -1.2)
+        node[pos=0.52, above=1pt, font=\footnotesize\bfseries] {1. GET cache:produto:NOT-DEL-01};
+
+    \draw[->, line width=1.4pt, draw=ScoutGreen] (11.0, -1.8) -- (4.0, -1.8)
+        node[pos=0.48, above=1pt, font=\footnotesize\bfseries, text=ScoutGreen] {2. Retorna JSON do Cache ($<$ 1 ms)};
+
+    \draw[dotted, line width=1pt, draw=black!25] (0.0, -2.25) -- (18.6, -2.25);
+
+    % ==========================================================================
+    % CENÁRIO 2: CACHE MISS
+    % ==========================================================================
+    \node[stagebadge, fill=ScoutAmber!15, draw=ScoutAmber, minimum width=2.6cm] at (1.5, -3.6) {
+        {\normalsize\bfseries\textcolor{ScoutAmber}{2. Cache Miss}}\\[2pt]
+        {\scriptsize Consulta ao Disco SSD}
+    };
+
+    \draw[->, line width=1.4pt, draw=ScoutNavy] (4.0, -2.65) -- (11.0, -2.65)
+        node[pos=0.52, above=1pt, font=\footnotesize\bfseries] {1. GET $\rightarrow$ Retorna NULL (Miss)};
+
+    \draw[->, line width=1.4pt, draw=ScoutGreen] (4.0, -3.25) -- (17.2, -3.25)
+        node[midway, above=1pt, font=\footnotesize\bfseries, text=ScoutGreen] {2. db.produtos.findOne(\{ sku: "NOT-DEL-01" \})};
+
+    \draw[->, line width=1.4pt, draw=ScoutGreen] (17.2, -3.85) -- (4.0, -3.85)
+        node[midway, above=1pt, font=\footnotesize\bfseries, text=ScoutGreen] {3. Retorna Documento BSON do Disco (5 a 15 ms)};
+
+    \draw[->, line width=1.4pt, draw=ScoutRed] (4.0, -4.45) -- (11.0, -4.45)
+        node[pos=0.56, above=1pt, font=\footnotesize\bfseries, text=ScoutRed] {4. SET cache:produto:NOT-DEL-01 \textless json\textgreater\ EX 120};
+
+    \draw[dotted, line width=1pt, draw=black!25] (0.0, -4.95) -- (18.6, -4.95);
+
+    % ==========================================================================
+    % CENÁRIO 3: ESCRITA E INVALIDAÇÃO
+    % ==========================================================================
+    \node[stagebadge, fill=ScoutRed!12, draw=ScoutRed, minimum width=2.6cm] at (1.5, -5.8) {
+        {\normalsize\bfseries\textcolor{ScoutRed}{3. Invalidação}}\\[2pt]
+        {\scriptsize Atualização Segura}
+    };
+
+    \draw[->, line width=1.4pt, draw=ScoutGreen] (4.0, -5.45) -- (17.2, -5.45)
+        node[midway, above=1pt, font=\footnotesize\bfseries, text=ScoutGreen] {1. updateOne(\{ \$set: \{ preco: 3999.00 \} \}) no MongoDB};
+
+    \draw[->, line width=1.4pt, draw=ScoutRed] (4.0, -6.1) -- (11.0, -6.1)
+        node[pos=0.56, above=1pt, font=\footnotesize\bfseries, text=ScoutRed] {2. DEL cache:produto:NOT-DEL-01 (Invalidação)};
+
+\end{tikzpicture}
+\end{document}

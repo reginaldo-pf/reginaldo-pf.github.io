@@ -1,0 +1,107 @@
+\documentclass[tikz,border=6pt]{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage[brazilian]{babel}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows.meta,positioning,calc,shadows,backgrounds}
+
+\definecolor{ScoutGreen}{HTML}{059669}
+\definecolor{ScoutNavy}{HTML}{1E293B}
+\definecolor{ScoutBlue}{HTML}{2563EB}
+\definecolor{ScoutRed}{HTML}{DC2626}
+\definecolor{ScoutAmber}{HTML}{D97706}
+\definecolor{ScoutPurple}{HTML}{7C3AED}
+
+\begin{document}
+\shorthandoff{"}
+\begin{tikzpicture}[
+    font=\sffamily,
+    >=Stealth,
+    card/.style={
+        draw=black!25,
+        rounded corners=8pt,
+        line width=1.1pt,
+        align=center,
+        drop shadow={opacity=0.10, shadow xshift=2pt, shadow yshift=-2pt}
+    }
+]
+
+    % =========================================================================
+    % COLUNA 1: Hierarquia Estrutural
+    % =========================================================================
+    \node[card, fill=ScoutNavy!4, draw=ScoutNavy!40, minimum width=4.6cm, minimum height=7.2cm, anchor=north west] at (0, 0) {};
+    \node[font=\large\bfseries, text=ScoutNavy] at (2.3, -0.6) {Hierarquia de Dados};
+
+    \node[card, fill=ScoutNavy, text=white, minimum width=3.8cm, minimum height=1.2cm] (db) at (2.3, -2.0) {
+        {\normalsize\bfseries Database}\\[2pt]
+        {\small\texttt{ecommerce\_taua}}
+    };
+
+    \node[card, fill=ScoutGreen, text=white, minimum width=3.8cm, minimum height=1.2cm] (col) at (2.3, -3.8) {
+        {\normalsize\bfseries Collection}\\[2pt]
+        {\small\texttt{produtos} / \texttt{pedidos}}
+    };
+
+    \node[card, fill=ScoutBlue, text=white, minimum width=3.8cm, minimum height=1.3cm] (doc) at (2.3, -5.7) {
+        {\normalsize\bfseries Documentos BSON}\\[2pt]
+        {\footnotesize JSON binário com tipagem}\\[1pt]
+        {\scriptsize Cada registro tem chave \texttt{\_id}}
+    };
+
+    \draw[->, line width=1.8pt, draw=ScoutNavy] (db) -- (col);
+    \draw[->, line width=1.8pt, draw=ScoutGreen] (col) -- (doc);
+
+    % =========================================================================
+    % COLUNA 2: Anatomia de um Documento BSON Rico
+    % =========================================================================
+    \node[card, fill=white, draw=ScoutGreen!60, minimum width=6.3cm, minimum height=7.2cm, anchor=north west] at (5.2, 0) {};
+    \node[font=\large\bfseries, text=ScoutGreen] at (8.35, -0.6) {Anatomia BSON no Compass};
+
+    \node[anchor=north west, font=\ttfamily\small, align=left, inner sep=6pt] at (5.4, -0.7) {
+        \{\\
+        \ \ \textbf{\textcolor{ScoutRed}{\_id}}: \textcolor{black!60}{ObjectId("6709a1...")},\\
+        \ \ \textbf{\textcolor{ScoutNavy}{sku}}: \textcolor{ScoutGreen}{"NOT-DEL-01"},\\
+        \ \ \textbf{\textcolor{ScoutNavy}{nome}}: \textcolor{ScoutGreen}{"Notebook Dell 15"},\\
+        \ \ \textbf{\textcolor{ScoutNavy}{preco}}: \textcolor{ScoutBlue}{4299.90},\\
+        \ \ \textbf{\textcolor{ScoutNavy}{estoque}}: \textcolor{ScoutBlue}{14},\\
+        \ \ \textbf{\textcolor{ScoutPurple}{especificacoes}}: \{\\
+        \ \ \ \ \textbf{cpu}: \textcolor{ScoutGreen}{"Core i7"},\\
+        \ \ \ \ \textbf{ram\_gb}: \textcolor{ScoutBlue}{16},\\
+        \ \ \ \ \textbf{ssd\_gb}: \textcolor{ScoutBlue}{512}\\
+        \ \ \},\\
+        \ \ \textbf{\textcolor{ScoutAmber}{tags}}: [\textcolor{ScoutGreen}{"trabalho"}, \textcolor{ScoutGreen}{"dev"}],\\
+        \ \ \textbf{\textcolor{ScoutNavy}{ativo}}: \textcolor{ScoutBlue}{true}\\
+        \}
+    };
+
+    % =========================================================================
+    % COLUNA 3: Ciclo CRUD no Compass / mongosh
+    % =========================================================================
+    \node[card, fill=ScoutNavy!4, draw=black!25, minimum width=6.3cm, minimum height=7.2cm, anchor=north west] at (12.1, 0) {};
+    \node[font=\large\bfseries, text=ScoutNavy] at (15.25, -0.6) {Operações CRUD no Banco};
+
+    % Caixa C
+    \node[card, fill=ScoutGreen!12, draw=ScoutGreen, minimum width=5.5cm, minimum height=1.15cm] at (15.25, -1.8) {
+        {\normalsize\bfseries\textcolor{ScoutGreen}{[C] Create}}\\[2pt]
+        {\footnotesize\texttt{insertOne()} ou botão \textbf{"Add Data"}}
+    };
+
+    % Caixa R
+    \node[card, fill=ScoutBlue!12, draw=ScoutBlue, minimum width=5.5cm, minimum height=1.15cm] at (15.25, -3.2) {
+        {\normalsize\bfseries\textcolor{ScoutBlue}{[R] Read}}\\[2pt]
+        {\footnotesize\texttt{find(\{ preco: \{ \$lt: 5000 \} \})} na \textbf{Filter}}
+    };
+
+    % Caixa U
+    \node[card, fill=ScoutAmber!15, draw=ScoutAmber, minimum width=5.5cm, minimum height=1.15cm] at (15.25, -4.6) {
+        {\normalsize\bfseries\textcolor{ScoutAmber}{[U] Update}}\\[2pt]
+        {\footnotesize\texttt{updateOne()} ou ícone de lápis \textbf{"Edit"}}
+    };
+
+    % Caixa D
+    \node[card, fill=ScoutRed!12, draw=ScoutRed, minimum width=5.5cm, minimum height=1.15cm] at (15.25, -6.0) {
+        {\normalsize\bfseries\textcolor{ScoutRed}{[D] Delete}}\\[2pt]
+        {\footnotesize\texttt{deleteOne()} ou ícone de lixeira \textbf{"Remove"}}
+    };
+
+\end{tikzpicture}
+\end{document}

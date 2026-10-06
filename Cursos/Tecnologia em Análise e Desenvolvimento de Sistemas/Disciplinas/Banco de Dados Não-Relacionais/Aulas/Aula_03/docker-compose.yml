@@ -1,0 +1,81 @@
+services:
+  # ----------------------------------------------------------------------------
+  # MongoDB 8.0: Banco de Dados Orientado a Documentos (Armazenamento Principal)
+  # ----------------------------------------------------------------------------
+  mongo:
+    image: mongo:8.0
+    container_name: ifce_mongo_aula03
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: ifce_taua_secret
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - ifce_net
+
+  # ----------------------------------------------------------------------------
+  # Mongo Express: Interface Web Alternativa para MongoDB (Porta 8081)
+  # ----------------------------------------------------------------------------
+  mongo-express:
+    image: mongo-express:1.0.2-20
+    container_name: ifce_mongo_express_aula03
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ifce_taua_secret
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_BASICAUTH_USERNAME: ads
+      ME_CONFIG_BASICAUTH_PASSWORD: ads
+    depends_on:
+      - mongo
+    networks:
+      - ifce_net
+
+  # ----------------------------------------------------------------------------
+  # Redis 7.4: Banco Chave-Valor em Memória (Cache, Filas e Sessões)
+  # ----------------------------------------------------------------------------
+  redis:
+    image: redis:7.4-alpine
+    container_name: ifce_redis_aula03
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    networks:
+      - ifce_net
+
+  # ----------------------------------------------------------------------------
+  # Redis Insight: Interface Gráfica Oficial da Redis (Acesse http://localhost:5540)
+  # ----------------------------------------------------------------------------
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: ifce_redisinsight_aula03
+    restart: unless-stopped
+    ports:
+      - "5540:5540"
+    volumes:
+      - redisinsight_data:/data
+    depends_on:
+      - redis
+    networks:
+      - ifce_net
+
+volumes:
+  mongo_data:
+    name: ifce_aula03_mongo_data
+  redis_data:
+    name: ifce_aula03_redis_data
+  redisinsight_data:
+    name: ifce_aula03_redisinsight_data
+
+networks:
+  ifce_net:
+    name: ifce_aula03_network
+    driver: bridge

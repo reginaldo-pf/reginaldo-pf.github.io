@@ -1,0 +1,61 @@
+% ==============================================================================
+% SEÇÃO 5: ROTEIRO DA LISTA DE EXERCÍCIOS DE FIXAÇÃO
+% ==============================================================================
+\changecolours{ScoutPurple}
+\section{Roteiro da Lista de Exercícios Práticos}
+
+\begin{frame}{Estrutura da Lista de Exercícios (Entrega Sábado Letivo)}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{Bloco 1: MongoDB (Sem Python)}
+      {\footnotesize
+      \begin{itemize}
+        \item \textbf{Ex 1 (Modelagem):} Coleção com 5 documentos ricos no \texttt{mongosh}.
+        \item \textbf{Ex 2 (Consultas):} 3 buscas com operadores \texttt{\$gt}, \texttt{\$in} e dot-notation.
+        \item \textbf{Ex 3 (GUI Compass):} Criar índice e analisar na aba \textit{Explain Plan}.
+      \end{itemize}
+      }
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \textbf{Bloco 2: Redis (Sem Python)}
+      {\footnotesize
+      \begin{itemize}
+        \item \textbf{Ex 4 (Sessão \& TTL):} 3 tokens com TTL de 90s no \texttt{redis-cli}.
+        \item \textbf{Ex 5 (Hashes - Carrinho):} Carrinho com \texttt{HSET} e \texttt{HINCRBY}.
+        \item \textbf{Ex 6 (Redis Insight):} Print da árvore de chaves (\textit{Key Tree}) e análise de RAM.
+      \end{itemize}
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Bloco 3: Integração e Diretrizes de Submissão}
+  \begin{columns}[T]
+    \begin{column}{0.50\textwidth}
+      \textbf{Bloco 3: Integração com Python}
+      {\footnotesize
+      \begin{itemize}
+        \item \textbf{Ex 7 (Cache-Aside):} Consulta no MongoDB com cache no Redis (TTL de 45s).
+        \item \textbf{Ex 8 (Invalidação):} Atualização com remoção imediata (\texttt{DEL}) do Redis.
+      \end{itemize}
+      }
+
+      \begin{block}{Critério de Avaliação}
+        {\footnotesize Autonomia, prints das GUIs e código documentado.}
+      \end{block}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \begin{exampleblock}{Instruções de Entrega}
+        {\footnotesize
+        \begin{itemize}
+          \item \textbf{Prazo:} Até a sexta-feira anterior à Aula 04.
+          \item \textbf{Formato:} PDF com comandos e prints ou repositório GitHub.
+          \item \textbf{Envio:} SIGAA / Classroom.
+        \end{itemize}
+        }
+      \end{exampleblock}
+    \end{column}
+  \end{columns}
+\end{frame}

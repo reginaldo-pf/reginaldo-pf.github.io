@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 02: Teoremas CAP, PACELC e Paradigma BASE vs ACID | IFCE Campus Tauá</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            ifce: {
+              green: '#2F855A',
+              red: '#C53030',
+              dark: '#1C4532',
+              emerald: '#059669'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Prism.js para Realce de Sintaxe -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    code, pre { font-family: 'JetBrains Mono', monospace !important; }
+    .tab-active {
+      border-color: #059669;
+      color: #059669;
+      background-color: rgba(5, 150, 105, 0.08);
+    }
+    .dark .tab-active {
+      border-color: #34d399;
+      color: #34d399;
+      background-color: rgba(52, 211, 153, 0.12);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- Navbar -->
+  <header class="border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="../../index.html" class="flex items-center space-x-2 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium text-sm transition-colors">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Voltar para Disciplina</span>
+        </a>
+      </div>
+      <div class="flex items-center space-x-4">
+        <a href="https://github.com/reginaldo-pf" target="_blank" rel="noopener noreferrer" class="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white text-lg" title="GitHub @reginaldo-pf">
+          <i class="fa-brands fa-github"></i>
+        </a>
+        <button id="themeToggle" class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Alternar tema">
+          <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 py-8 w-full">
+
+    <!-- Breadcrumb -->
+    <nav class="text-xs text-slate-500 dark:text-slate-400 mb-4 flex items-center space-x-2 flex-wrap">
+      <a href="../../../../../../index.html" class="hover:underline">Início</a>
+      <span>/</span>
+      <span>Tecnologia em ADS</span>
+      <span>/</span>
+      <a href="../../index.html" class="hover:underline">Banco de Dados Não-Relacionais</a>
+      <span>/</span>
+      <span class="text-emerald-600 dark:text-emerald-400 font-medium">Aula 02</span>
+    </nav>
+
+    <!-- Header do Bloco da Aula -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/60 shadow-sm mb-8">
+      <div class="flex flex-wrap items-center gap-2 mb-3">
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">Aula 02</span>
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200">ADS16 • 2h (120 min)</span>
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300">Teoremas CAP & PACELC</span>
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300">Semestre 2026.2</span>
+      </div>
+
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+        Fundamentos Arquiteturais: Teorema CAP, PACELC e Propriedades BASE vs ACID
+      </h1>
+      <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2">
+        <strong>Disciplina:</strong> Banco de Dados Não-Relacionais | <strong>Docente:</strong> Prof. Me. Reginaldo Pereira Fernandes (IFCE Campus Tauá)
+      </p>
+
+      <!-- Botões de Ação Rápida no Topo -->
+      <div class="flex flex-wrap items-center gap-3 mt-6 pt-5 border-t border-slate-100 dark:border-slate-700/60">
+        <!-- Botão Google Colab -->
+        <a href="https://colab.research.google.com/github/reginaldo-pf/reginaldo-pf.github.io/blob/main/Cursos/Tecnologia%20em%20An%C3%A1lise%20e%20Desenvolvimento%20de%20Sistemas/Disciplinas/Banco%20de%20Dados%20N%C3%A3o-Relacionais/Aulas/Aula_02/codigo/demonstracao_aula02.ipynb" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-sm transition-all transform hover:-translate-y-0.5">
+          <i class="fa-solid fa-bolt"></i>
+          <span>Abrir no Google Colab</span>
+        </a>
+
+        <!-- Botão Ver Slides Embutidos -->
+        <button onclick="switchTab('tab-slides')" class="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all">
+          <i class="fa-solid fa-file-pdf"></i>
+          <span>Visualizar Slides (35 págs)</span>
+        </button>
+
+        <!-- Botão Abrir PDF em Nova Aba -->
+        <a href="materiais/main.pdf" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-emerald-100 dark:bg-emerald-950/60 hover:bg-emerald-200 dark:hover:bg-emerald-900 text-emerald-800 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700 transition-colors">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          <span>Abrir PDF em Nova Janela</span>
+        </a>
+
+        <!-- Botão Ir para Downloads -->
+        <button onclick="switchTab('tab-downloads')" class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors">
+          <i class="fa-solid fa-download text-emerald-500"></i>
+          <span>Baixar Arquivos</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Navegação por Abas -->
+    <div class="flex items-center space-x-2 border-b border-slate-200 dark:border-slate-700 mb-8 overflow-x-auto pb-1">
+      <button onclick="switchTab('tab-notebook')" id="btn-tab-notebook" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent transition-all flex items-center space-x-2 tab-active">
+        <i class="fa-solid fa-laptop-code"></i>
+        <span>Laboratório Interativo (Simulador CAP/PACELC)</span>
+      </button>
+
+      <button onclick="switchTab('tab-slides')" id="btn-tab-slides" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent transition-all flex items-center space-x-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+        <i class="fa-solid fa-file-pdf"></i>
+        <span>Slides da Apresentação</span>
+      </button>
+
+      <button onclick="switchTab('tab-plano')" id="btn-tab-plano" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent transition-all flex items-center space-x-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+        <i class="fa-solid fa-clipboard-list"></i>
+        <span>Plano de Aula & Exercícios</span>
+      </button>
+
+      <button onclick="switchTab('tab-downloads')" id="btn-tab-downloads" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent transition-all flex items-center space-x-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+        <i class="fa-solid fa-download"></i>
+        <span>Downloads dos Arquivos</span>
+      </button>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ABA 1: LABORATÓRIO INTERATIVO & SIMULADOR                                   -->
+    <!-- ========================================================================= -->
+    <div id="tab-notebook" class="tab-content space-y-8">
+
+      <!-- SIMULADOR INTERATIVO CAP DIRETO NO NAVEGADOR -->
+      <div class="bg-gradient-to-br from-slate-900 to-slate-950 text-white rounded-2xl p-6 sm:p-8 border border-slate-700 shadow-xl">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div class="flex items-center space-x-3">
+            <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
+            <h2 class="text-lg sm:text-xl font-bold">Simulador Interativo de Cluster Distribuído (3 Nós)</h2>
+          </div>
+          <span class="text-xs px-2.5 py-1 bg-emerald-950/80 text-emerald-400 border border-emerald-800 rounded-full font-mono">Live Demo</span>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-300 mb-6">
+          Experimente em tempo real como o cluster de bancos de dados reage a um <strong>rompimento de fibra óptica</strong> isolando o <strong>Nó C (Tauá)</strong> dos <strong>Nós A e B (São Paulo / Fortaleza)</strong>.
+        </p>
+
+        <!-- Controles Interativos -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+            <label class="block text-xs font-semibold text-slate-400 mb-2">1. Estado da Conexão de Rede</label>
+            <button id="btnTogglePartition" onclick="toggleSimPartition()" class="w-full py-2.5 px-3 rounded-lg text-xs font-bold transition-all bg-red-600 hover:bg-red-700 text-white flex items-center justify-center space-x-2">
+              <i class="fa-solid fa-scissors"></i>
+              <span id="partitionBtnText">Romper Cabo (Injetar Partição)</span>
+            </button>
+          </div>
+
+          <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+            <label class="block text-xs font-semibold text-slate-400 mb-2">2. Paradigma do Cluster</label>
+            <div class="grid grid-cols-2 gap-2">
+              <button id="btnModeCP" onclick="setSimMode('CP')" class="py-2 px-2 text-xs font-bold rounded-lg border border-blue-500 bg-blue-600 text-white">
+                Modo CP
+              </button>
+              <button id="btnModeAP" onclick="setSimMode('AP')" class="py-2 px-2 text-xs font-bold rounded-lg border border-slate-600 bg-slate-700 text-slate-300">
+                Modo AP
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+            <label class="block text-xs font-semibold text-slate-400 mb-2">3. Executar Operação</label>
+            <button onclick="execSimOperation()" class="w-full py-2.5 px-3 rounded-lg text-xs font-bold transition-all bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center space-x-2">
+              <i class="fa-solid fa-paper-plane"></i>
+              <span>Enviar Escrita no Nó C (Tauá)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Visualização dos 3 Nós -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <!-- Nó A -->
+          <div class="bg-slate-800/90 rounded-xl p-4 border border-blue-500/40 relative">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-blue-400">Nó A (São Paulo)</span>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">Líder / Primário</span>
+            </div>
+            <div class="text-xs space-y-1 font-mono text-slate-300">
+              <div>Saldo: <span id="valNodeA" class="text-emerald-400 font-bold">R$ 1.000,00</span></div>
+              <div class="text-[11px] text-slate-400">Status Quórum: <span class="text-emerald-400">Ativo (2/3)</span></div>
+            </div>
+          </div>
+
+          <!-- Nó B -->
+          <div class="bg-slate-800/90 rounded-xl p-4 border border-blue-500/40 relative">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-blue-400">Nó B (Fortaleza)</span>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-slate-700 text-slate-300">Réplica</span>
+            </div>
+            <div class="text-xs space-y-1 font-mono text-slate-300">
+              <div>Saldo: <span id="valNodeB" class="text-emerald-400 font-bold">R$ 1.000,00</span></div>
+              <div class="text-[11px] text-slate-400">Status Quórum: <span class="text-emerald-400">Ativo (2/3)</span></div>
+            </div>
+          </div>
+
+          <!-- Nó C -->
+          <div id="boxNodeC" class="bg-slate-800/90 rounded-xl p-4 border border-slate-600 transition-colors">
+            <div class="flex items-center justify-between mb-2">
+              <span id="titleNodeC" class="text-xs font-bold text-slate-300">Nó C (Tauá)</span>
+              <span id="statusNodeC" class="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">Online</span>
+            </div>
+            <div class="text-xs space-y-1 font-mono text-slate-300">
+              <div>Saldo: <span id="valNodeC" class="text-emerald-400 font-bold">R$ 1.000,00</span></div>
+              <div class="text-[11px] text-slate-400">Visibilidade: <span id="visibNodeC" class="text-emerald-400">Cluster Completo</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Console de Resposta da Simulação -->
+        <div class="bg-black/60 rounded-xl p-4 border border-slate-800 font-mono text-xs">
+          <div class="text-slate-500 text-[11px] mb-2 flex items-center justify-between border-b border-slate-800 pb-1">
+            <span>Terminal de Eventos Distribuídos</span>
+            <span id="simTimestamp">Ready</span>
+          </div>
+          <div id="simLog" class="text-emerald-400 space-y-1">
+            <div>[INIT] Cluster inicializado com 3 nós. Topologia saudável sem partições ativas.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CALCULADORA DE LATÊNCIA PACELC -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <div class="flex items-center space-x-3 mb-4">
+          <div class="p-2.5 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400">
+            <i class="fa-solid fa-gauge-high text-lg"></i>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white">Calculadora Prática PACELC (Trade-off Latency vs Consistency)</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Meça o impacto de tempo de resposta em operações sem falha (Else - E) comparando replicação síncrona com assíncrona.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+          <div class="space-y-4">
+            <div>
+              <label class="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">
+                <span>RTT Réplica Regional (Fortaleza):</span>
+                <span id="lblRttFort" class="font-bold text-emerald-600 dark:text-emerald-400">45 ms</span>
+              </label>
+              <input type="range" id="inputRttFort" min="10" max="150" value="45" oninput="calcPacelc()" class="w-full accent-emerald-600">
+            </div>
+
+            <div>
+              <label class="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">
+                <span>RTT Réplica Interior (Tauá):</span>
+                <span id="lblRttTaua" class="font-bold text-emerald-600 dark:text-emerald-400">58 ms</span>
+              </label>
+              <input type="range" id="inputRttTaua" min="15" max="200" value="58" oninput="calcPacelc()" class="w-full accent-emerald-600">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-blue-50 dark:bg-blue-950/40 p-4 rounded-xl border border-blue-200 dark:border-blue-900/60 text-center">
+              <div class="text-[11px] font-bold text-blue-700 dark:text-blue-300 uppercase tracking-wide">Modo PC/EC (Síncrono)</div>
+              <div id="resLatencyEc" class="text-2xl font-extrabold text-blue-600 dark:text-blue-400 mt-1">60.0 ms</div>
+              <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Consistência estrita em todas as réplicas</div>
+            </div>
+
+            <div class="bg-emerald-50 dark:bg-emerald-950/40 p-4 rounded-xl border border-emerald-200 dark:border-emerald-900/60 text-center">
+              <div class="text-[11px] font-bold text-emerald-700 dark:text-emerald-300 uppercase tracking-wide">Modo PA/EL (W=1)</div>
+              <div id="resLatencyEl" class="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1">1.8 ms</div>
+              <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Confirmação local ultrarrápida</div>
+            </div>
+
+            <div class="col-span-2 bg-slate-100 dark:bg-slate-700/50 p-3 rounded-lg text-center text-xs font-semibold text-slate-700 dark:text-slate-300">
+              ⚡ Ganho de Desempenho com PA/EL: <span id="resGain" class="text-emerald-600 dark:text-emerald-400 font-bold">33.3x mais rápido!</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GUIA PRÁTICO MONGODB -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center space-x-2">
+          <i class="fa-solid fa-leaf text-emerald-500"></i>
+          <span>Como Configurar Write Concern e Read Concern no MongoDB</span>
+        </h2>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div>
+            <h3 class="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 tracking-wider mb-2">Níveis de Escrita (Write Concern)</h3>
+            <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs overflow-x-auto"><code class="language-javascript">// 1. Baixa Latência (PA/EL)
+db.sensores.insertOne(
+  { sensor: "TAU-01", temp: 31.2 },
+  { writeConcern: { w: 1, wtimeout: 1000 } }
+);
+
+// 2. Alta Consistência e Durabilidade Bancária (PC/EC)
+db.transferencias.insertOne(
+  { de: "CTA-100", para: "CTA-200", valor: 1500.00 },
+  { writeConcern: { w: "majority", j: true, wtimeout: 5000 } }
+);</code></pre>
+          </div>
+
+          <div>
+            <h3 class="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 tracking-wider mb-2">Níveis de Leitura (Read Concern)</h3>
+            <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs overflow-x-auto"><code class="language-javascript">// 1. Leitura Local (Rápida, mas risco de Stale Read)
+db.pedidos.find({ status: "pendente" })
+  .readConcern("local");
+
+// 2. Leitura de Quórum (Apenas dados confirmados pela maioria)
+db.pedidos.find({ id_pedido: "PED-2026-09" })
+  .readConcern("majority");
+
+// 3. Leitura Linearizável (Ordem estrita com líder)
+db.contas.find({ id_cliente: 42 })
+  .readConcern("linearizable");</code></pre>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ABA 2: VISUALIZADOR DE SLIDES BEAMER                                       -->
+    <!-- ========================================================================= -->
+    <div id="tab-slides" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white">Apresentação Oficial da Aula 02</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Slides desenvolvidos em LaTeX Beamer com tema Scouts (Widescreen 16:9, 35 páginas).</p>
+          </div>
+          <div class="flex items-center space-x-2 flex-wrap gap-2">
+            <a href="materiais/main.pdf" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-emerald-100 dark:bg-emerald-950/60 hover:bg-emerald-200 dark:hover:bg-emerald-900 text-emerald-800 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700 shadow-sm transition-all">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              <span>Abrir em Nova Aba</span>
+            </a>
+            <a href="materiais/main.pdf" download class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all">
+              <i class="fa-solid fa-download"></i>
+              <span>Baixar PDF Oficial</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="w-full aspect-[16/9] bg-slate-100 dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700">
+          <iframe src="materiais/main.pdf" class="w-full h-full" title="Slides da Aula 02"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ABA 3: PLANO DE AULA & EXERCÍCIOS                                          -->
+    <!-- ========================================================================= -->
+    <div id="tab-plano" class="tab-content hidden space-y-8">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <h2 class="text-xl font-extrabold text-slate-900 dark:text-white mb-6">Plano de Ensino & Exercícios de Fixação (Lista 1 - Bloco 2)</h2>
+
+        <div class="space-y-6 text-sm">
+          <div>
+            <h3 class="font-bold text-emerald-600 dark:text-emerald-400 text-base mb-2">Objetivos Gerais e Específicos</h3>
+            <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
+              Capacitar o estudante a entender as restrições físicas de redes distribuídas, dominar a formulação de Brewer e Abadi, discernir quando uma aplicação corporativa exige garantias ACID ou tolera consistência eventual BASE, e aplicar esses princípios no MongoDB.
+            </p>
+          </div>
+
+          <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
+            <h3 class="font-bold text-slate-900 dark:text-white mb-3">Exercícios de Fixação para Entrega:</h3>
+            <ol class="list-decimal list-inside space-y-3 text-slate-700 dark:text-slate-300">
+              <li>Por que a afirmação popular <em>"Basta escolher 2 dentre C, A e P no Teorema CAP"</em> é considerada conceitualmente incorreta na engenharia moderna segundo Eric Brewer (2012)?</li>
+              <li>Explique detalhadamente por que um cluster distribuído com $N = 4$ nós votantes é mais vulnerável a paradas operacionais (<em>downtime</em>) do que um cluster com $N = 3$ nós sob a ocorrência de uma partição de rede binária estrita.</li>
+              <li>Defina a equação mnemônica do Teorema PACELC de Daniel Abadi (2012). Qual é a limitação central do Teorema CAP que o PACELC visa solucionar?</li>
+              <li>Contrastando os paradigmas ACID e BASE, diferencie o conceito de <em>Isolamento Pessimista baseado em Travas</em> do conceito de <em>Consistência Eventual Otimista</em>.</li>
+              <li>Considere o algoritmo <em>Last-Write-Wins</em> (LWW) utilizado para resolução de conflitos em sistemas AP. Qual é a fragilidade física desse método quando há desvio de relógio (<em>Clock Drift</em>) entre os servidores de um cluster?</li>
+              <li>No MongoDB, qual é a diferença operacional entre executar uma gravação com <code>{ writeConcern: { w: 1 } }</code> e executar a mesma gravação com <code>{ writeConcern: { w: "majority", j: true } }</code>? Em qual quadrante do Teorema PACELC cada uma se posiciona?</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ABA 4: DOWNLOADS DOS ARQUIVOS DA AULA                                     -->
+    <!-- ========================================================================= -->
+    <div id="tab-downloads" class="tab-content hidden space-y-8">
+      <!-- Arquivos Principais -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center space-x-2">
+          <i class="fa-solid fa-box-archive text-emerald-500"></i>
+          <span>Documentos, Apresentações e Códigos Fonte</span>
+        </h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Baixe todos os materiais didáticos e arquivos executáveis da Aula 02.</p>
+
+        <div class="divide-y divide-slate-100 dark:divide-slate-700/60">
+          <!-- Slide PDF -->
+          <div class="py-4 flex items-center justify-between flex-wrap gap-4">
+            <div class="flex items-center space-x-3">
+              <div class="p-3 rounded-xl bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400">
+                <i class="fa-solid fa-file-pdf text-xl"></i>
+              </div>
+              <div>
+                <p class="font-bold text-sm text-slate-900 dark:text-white">Slides Oficiais (main.pdf)</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Apresentação Beamer tema Scouts (35 slides widescreen 16:9)</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <a href="materiais/main.pdf" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200">
+                <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Abrir
+              </a>
+              <a href="materiais/main.pdf" download class="px-3.5 py-1.5 text-xs font-bold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white">
+                <i class="fa-solid fa-download mr-1"></i> Download
+              </a>
+            </div>
+          </div>
+
+          <!-- Script Python -->
+          <div class="py-4 flex items-center justify-between flex-wrap gap-4">
+            <div class="flex items-center space-x-3">
+              <div class="p-3 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400">
+                <i class="fa-brands fa-python text-xl"></i>
+              </div>
+              <div>
+                <p class="font-bold text-sm text-slate-900 dark:text-white">Script de Demonstração (demonstracao_aula02.py)</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Simulador de Cluster, Partição de Rede, PACELC e MongoDB Write Concerns</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <a href="codigo/demonstracao_aula02.py" download class="px-3.5 py-1.5 text-xs font-bold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white">
+                <i class="fa-solid fa-download mr-1"></i> Download (.py)
+              </a>
+            </div>
+          </div>
+
+          <!-- Jupyter Notebook -->
+          <div class="py-4 flex items-center justify-between flex-wrap gap-4">
+            <div class="flex items-center space-x-3">
+              <div class="p-3 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400">
+                <i class="fa-solid fa-book-open text-xl"></i>
+              </div>
+              <div>
+                <p class="font-bold text-sm text-slate-900 dark:text-white">Notebook Interativo (demonstracao_aula02.ipynb)</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Caderno didático estruturado para Google Colab e VS Code</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <a href="https://colab.research.google.com/github/reginaldo-pf/reginaldo-pf.github.io/blob/main/Cursos/Tecnologia%20em%20An%C3%A1lise%20e%20Desenvolvimento%20de%20Sistemas/Disciplinas/Banco%20de%20Dados%20N%C3%A3o-Relacionais/Aulas/Aula_02/codigo/demonstracao_aula02.ipynb" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950">
+                Colab
+              </a>
+              <a href="codigo/demonstracao_aula02.ipynb" download class="px-3.5 py-1.5 text-xs font-bold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white">
+                <i class="fa-solid fa-download mr-1"></i> Download (.ipynb)
+              </a>
+            </div>
+          </div>
+
+          <!-- Código Fonte LaTeX -->
+          <div class="py-4 flex items-center justify-between flex-wrap gap-4">
+            <div class="flex items-center space-x-3">
+              <div class="p-3 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400">
+                <i class="fa-solid fa-code text-xl"></i>
+              </div>
+              <div>
+                <p class="font-bold text-sm text-slate-900 dark:text-white">Código Fonte LaTeX Beamer (main.tex)</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Pacote TeX completo com estrutura modular em seções</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <a href="materiais/main.tex" download class="px-3.5 py-1.5 text-xs font-bold rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200">
+                <i class="fa-solid fa-download mr-1"></i> Download (.tex)
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Figuras e Diagramas Didáticos TikZ -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center space-x-2">
+          <i class="fa-solid fa-images text-indigo-500"></i>
+          <span>Diagramas Visuais em Alta Resolução (TikZ Standalone)</span>
+        </h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Diagramas originais vetoriais compilados especificamente para a disciplina.</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <!-- Figura 1 -->
+          <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-850 flex flex-col justify-between">
+            <div>
+              <img src="materiais/figuras/fig_cap_realidade.png" alt="Teorema CAP na Realidade" class="rounded-lg mb-3 w-full h-36 object-contain bg-white dark:bg-slate-900 p-2 border border-slate-200 dark:border-slate-800">
+              <p class="font-bold text-xs text-slate-900 dark:text-white">fig_cap_realidade</p>
+              <p class="text-[11px] text-slate-500 mb-3">Teorema CAP na Realidade (Eric Brewer): P é inevitável</p>
+            </div>
+            <div class="flex items-center space-x-2 pt-2 border-t border-slate-200 dark:border-slate-700 text-[11px]">
+              <a href="materiais/figuras/fig_cap_realidade.png" download class="font-semibold text-emerald-600 hover:underline">PNG</a>
+              <span class="text-slate-400">•</span>
+              <a href="materiais/figuras/fig_cap_realidade.pdf" download class="font-semibold text-blue-600 hover:underline">PDF Vetorial</a>
+            </div>
+          </div>
+
+          <!-- Figura 2 -->
+          <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-850 flex flex-col justify-between">
+            <div>
+              <img src="materiais/figuras/fig_pacelc_arvore.png" alt="Árvore de Decisão PACELC" class="rounded-lg mb-3 w-full h-36 object-contain bg-white dark:bg-slate-900 p-2 border border-slate-200 dark:border-slate-800">
+              <p class="font-bold text-xs text-slate-900 dark:text-white">fig_pacelc_arvore</p>
+              <p class="text-[11px] text-slate-500 mb-3">Árvore Decisória do Teorema PACELC (Daniel Abadi)</p>
+            </div>
+            <div class="flex items-center space-x-2 pt-2 border-t border-slate-200 dark:border-slate-700 text-[11px]">
+              <a href="materiais/figuras/fig_pacelc_arvore.png" download class="font-semibold text-emerald-600 hover:underline">PNG</a>
+              <span class="text-slate-400">•</span>
+              <a href="materiais/figuras/fig_pacelc_arvore.pdf" download class="font-semibold text-blue-600 hover:underline">PDF Vetorial</a>
+            </div>
+          </div>
+
+          <!-- Figura 3 -->
+          <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-850 flex flex-col justify-between">
+            <div>
+              <img src="materiais/figuras/fig_cluster_split_brain.png" alt="Partição e Quórum" class="rounded-lg mb-3 w-full h-36 object-contain bg-white dark:bg-slate-900 p-2 border border-slate-200 dark:border-slate-800">
+              <p class="font-bold text-xs text-slate-900 dark:text-white">fig_cluster_split_brain</p>
+              <p class="text-[11px] text-slate-500 mb-3">Partição de Rede, Quórum da Maioria e Split-Brain</p>
+            </div>
+            <div class="flex items-center space-x-2 pt-2 border-t border-slate-200 dark:border-slate-700 text-[11px]">
+              <a href="materiais/figuras/fig_cluster_split_brain.png" download class="font-semibold text-emerald-600 hover:underline">PNG</a>
+              <span class="text-slate-400">•</span>
+              <a href="materiais/figuras/fig_cluster_split_brain.pdf" download class="font-semibold text-blue-600 hover:underline">PDF Vetorial</a>
+            </div>
+          </div>
+
+          <!-- Figura 4 -->
+          <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-850 flex flex-col justify-between">
+            <div>
+              <img src="materiais/figuras/fig_acid_vs_base.png" alt="Comparativo ACID vs BASE" class="rounded-lg mb-3 w-full h-36 object-contain bg-white dark:bg-slate-900 p-2 border border-slate-200 dark:border-slate-800">
+              <p class="font-bold text-xs text-slate-900 dark:text-white">fig_acid_vs_base</p>
+              <p class="text-[11px] text-slate-500 mb-3">Comparativo Arquitetural: Garantias ACID vs BASE</p>
+            </div>
+            <div class="flex items-center space-x-2 pt-2 border-t border-slate-200 dark:border-slate-700 text-[11px]">
+              <a href="materiais/figuras/fig_acid_vs_base.png" download class="font-semibold text-emerald-600 hover:underline">PNG</a>
+              <span class="text-slate-400">•</span>
+              <a href="materiais/figuras/fig_acid_vs_base.pdf" download class="font-semibold text-blue-600 hover:underline">PDF Vetorial</a>
+            </div>
+          </div>
+
+          <!-- Figura 5 -->
+          <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-850 flex flex-col justify-between">
+            <div>
+              <img src="materiais/figuras/fig_taxonomia_4_modelos.png" alt="Classificação NoSQL no PACELC" class="rounded-lg mb-3 w-full h-36 object-contain bg-white dark:bg-slate-900 p-2 border border-slate-200 dark:border-slate-800">
+              <p class="font-bold text-xs text-slate-900 dark:text-white">fig_taxonomia_4_modelos</p>
+              <p class="text-[11px] text-slate-500 mb-3">Mapeamento dos Bancos NoSQL no Teorema PACELC</p>
+            </div>
+            <div class="flex items-center space-x-2 pt-2 border-t border-slate-200 dark:border-slate-700 text-[11px]">
+              <a href="materiais/figuras/fig_taxonomia_4_modelos.png" download class="font-semibold text-emerald-600 hover:underline">PNG</a>
+              <span class="text-slate-400">•</span>
+              <a href="materiais/figuras/fig_taxonomia_4_modelos.pdf" download class="font-semibold text-blue-600 hover:underline">PDF Vetorial</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Rodapé -->
+  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-6xl mx-auto px-4">
+      <p>IFCE Campus Tauá • Tecnologia em Análise e Desenvolvimento de Sistemas (ADS16)</p>
+      <p class="mt-1">Prof. Me. Reginaldo Pereira Fernandes • Semestre 2026.2</p>
+    </div>
+  </footer>
+
+  <!-- Scripts Interativos da Página -->
+  <script>
+    // Gerenciamento de Tema Escuro
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const html = document.documentElement;
+
+    function initTheme() {
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        html.classList.add('dark');
+        themeIcon.classList.replace('fa-moon', 'fa-sun');
+      } else {
+        html.classList.remove('dark');
+        themeIcon.classList.replace('fa-sun', 'fa-moon');
+      }
+    }
+    initTheme();
+
+    themeToggle.addEventListener('click', () => {
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        localStorage.theme = 'light';
+        themeIcon.classList.replace('fa-sun', 'fa-moon');
+      } else {
+        html.classList.add('dark');
+        localStorage.theme = 'dark';
+        themeIcon.classList.replace('fa-moon', 'fa-sun');
+      }
+    });
+
+    // Troca de Abas
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
+
+      const activeContent = document.getElementById(tabId);
+      const activeBtn = document.getElementById('btn-' + tabId);
+
+      if (activeContent) activeContent.classList.remove('hidden');
+      if (activeBtn) activeBtn.classList.add('tab-active');
+    }
+
+    // LÓGICA DO SIMULADOR CAP INTERATIVO
+    let isPartitioned = false;
+    let simMode = 'CP';
+    let saldoA = 1000.00;
+    let saldoB = 1000.00;
+    let saldoC = 1000.00;
+
+    function toggleSimPartition() {
+      isPartitioned = !isPartitioned;
+      const btn = document.getElementById('btnTogglePartition');
+      const btnText = document.getElementById('partitionBtnText');
+      const boxC = document.getElementById('boxNodeC');
+      const statusC = document.getElementById('statusNodeC');
+      const visibC = document.getElementById('visibNodeC');
+      const titleC = document.getElementById('titleNodeC');
+
+      if (isPartitioned) {
+        btn.classList.replace('bg-red-600', 'bg-emerald-600');
+        btn.classList.replace('hover:bg-red-700', 'hover:bg-emerald-700');
+        btnText.innerText = "Restaurar Rede (Cura da Partição)";
+        boxC.classList.replace('border-slate-600', 'border-red-500');
+        statusC.className = "text-[10px] px-2 py-0.5 rounded bg-red-950 text-red-300 border border-red-800";
+        statusC.innerText = "Isolado (1/3)";
+        visibC.className = "text-red-400";
+        visibC.innerText = "Apenas Ele Mesmo";
+        addLog("[ALERTA] Partição de rede injetada! Fibra rompida entre São Paulo/Fortaleza e Tauá.");
+      } else {
+        btn.classList.replace('bg-emerald-600', 'bg-red-600');
+        btn.classList.replace('hover:bg-emerald-700', 'hover:bg-red-700');
+        btnText.innerText = "Romper Cabo (Injetar Partição)";
+        boxC.classList.replace('border-red-500', 'border-slate-600');
+        statusC.className = "text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800";
+        statusC.innerText = "Online";
+        visibC.className = "text-emerald-400";
+        visibC.innerText = "Cluster Completo";
+        addLog("[INFO] Rede restaurada! Executando reconciliação por Consistência Eventual (Last-Write-Wins)...");
+        // Reconciliação
+        if (saldoC !== saldoA) {
+          saldoA = saldoC;
+          saldoB = saldoC;
+          document.getElementById('valNodeA').innerText = `R$ ${saldoA.toFixed(2)}`;
+          document.getElementById('valNodeB').innerText = `R$ ${saldoB.toFixed(2)}`;
+          addLog(`[RECONCILIAÇÃO] Estados convergiram para: R$ ${saldoA.toFixed(2)} em todos os nós.`);
+        }
+      }
+    }
+
+    function setSimMode(mode) {
+      simMode = mode;
+      const btnCP = document.getElementById('btnModeCP');
+      const btnAP = document.getElementById('btnModeAP');
+
+      if (mode === 'CP') {
+        btnCP.className = "py-2 px-2 text-xs font-bold rounded-lg border border-blue-500 bg-blue-600 text-white";
+        btnAP.className = "py-2 px-2 text-xs font-bold rounded-lg border border-slate-600 bg-slate-700 text-slate-300";
+        addLog("[CONFIG] Modo CP ativado: Quórum estrito obrigatório para qualquer escrita.");
+      } else {
+        btnAP.className = "py-2 px-2 text-xs font-bold rounded-lg border border-green-500 bg-green-600 text-white";
+        btnCP.className = "py-2 px-2 text-xs font-bold rounded-lg border border-slate-600 bg-slate-700 text-slate-300";
+        addLog("[CONFIG] Modo AP ativado: Resposta local garantida mesmo em nós isolados.");
+      }
+    }
+
+    function execSimOperation() {
+      const valorOperacao = 250.00;
+      if (!isPartitioned) {
+        saldoA += valorOperacao;
+        saldoB += valorOperacao;
+        saldoC += valorOperacao;
+        updateNodesUI();
+        addLog(`[SUCESSO] Depósito de R$ ${valorOperacao.toFixed(2)} replicado em todos os 3 nós sincronamente.`);
+      } else {
+        if (simMode === 'CP') {
+          addLog(`[ERRO CP] Nó C rejeitou a escrita: Quórum insuficiente (1 de 2 nós necessários). Retorno: 503 ConsensusLost.`);
+        } else {
+          saldoC += valorOperacao;
+          document.getElementById('valNodeC').innerText = `R$ ${saldoC.toFixed(2)}`;
+          addLog(`[SUCESSO AP] Nó C aceitou localmente R$ ${valorOperacao.toFixed(2)}! ATENÇÃO: Nó A e B estão defasados (Stale Read)!`);
+        }
+      }
+    }
+
+    function updateNodesUI() {
+      document.getElementById('valNodeA').innerText = `R$ ${saldoA.toFixed(2)}`;
+      document.getElementById('valNodeB').innerText = `R$ ${saldoB.toFixed(2)}`;
+      document.getElementById('valNodeC').innerText = `R$ ${saldoC.toFixed(2)}`;
+    }
+
+    function addLog(msg) {
+      const log = document.getElementById('simLog');
+      const timestamp = new Date().toLocaleTimeString();
+      document.getElementById('simTimestamp').innerText = timestamp;
+      const div = document.createElement('div');
+      div.innerText = `[${timestamp}] ${msg}`;
+      log.prepend(div);
+    }
+
+    // CALCULADORA PACELC
+    function calcPacelc() {
+      const fort = parseFloat(document.getElementById('inputRttFort').value);
+      const taua = parseFloat(document.getElementById('inputRttTaua').value);
+      document.getElementById('lblRttFort').innerText = `${fort} ms`;
+      document.getElementById('lblRttTaua').innerText = `${taua} ms`;
+
+      const ec = Math.max(1.5, fort, taua) + 2.0;
+      const el = 1.5 + 0.3;
+      const gain = ec / el;
+
+      document.getElementById('resLatencyEc').innerText = `${ec.toFixed(1)} ms`;
+      document.getElementById('resLatencyEl').innerText = `${el.toFixed(1)} ms`;
+      document.getElementById('resGain').innerText = `${gain.toFixed(1)}x mais rápido!`;
+    }
+  </script>
+</body>
+</html>

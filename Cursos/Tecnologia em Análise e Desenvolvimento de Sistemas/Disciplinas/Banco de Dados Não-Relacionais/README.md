@@ -23,6 +23,8 @@ A disciplina capacita os discentes no ecossistema moderno de persistência polig
 
 ### 📖 [Aulas](Aulas/)
 - [Aula 01 - Apresentação e Paradigma NoSQL](Aulas/Aula_01/): Motivações do Big Data e limites da escalabilidade relacional.
+- [Aula 02 - Fundamentos Arquiteturais (CAP & PACELC)](Aulas/Aula_02/): Teorema CAP, Teorema PACELC, Propriedades ACID vs BASE e simulações de cluster distribuído.
+- [Aula 03 - Prática de Banco de Dados: MongoDB e Redis (Sábado Letivo)](Aulas/Aula_03/): Laboratório prático autônomo em casa, terminais CLI (mongosh, redis-cli), interfaces gráficas (MongoDB Atlas/Compass e Redis Insight), integração Python e padrão Cache-Aside.
 
 ### 📝 [Avaliacoes](Avaliacoes/)
 - Repositório de AVP1, AVT1, AVP2, AVT2 e listas de acompanhamento contínuo.

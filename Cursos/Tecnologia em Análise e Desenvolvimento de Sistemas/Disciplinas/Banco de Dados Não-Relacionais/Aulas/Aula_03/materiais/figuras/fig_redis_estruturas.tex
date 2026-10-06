@@ -1,0 +1,168 @@
+\documentclass[tikz,border=6pt]{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage[brazilian]{babel}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows.meta,positioning,calc,shadows}
+
+\definecolor{ScoutGreen}{HTML}{059669}
+\definecolor{ScoutNavy}{HTML}{1E293B}
+\definecolor{ScoutBlue}{HTML}{2563EB}
+\definecolor{ScoutRed}{HTML}{DC2626}
+\definecolor{ScoutAmber}{HTML}{D97706}
+\definecolor{ScoutPurple}{HTML}{7C3AED}
+
+\begin{document}
+\shorthandoff{"}
+\begin{tikzpicture}[
+    font=\sffamily,
+    >=Stealth,
+    card/.style={
+        draw=black!25,
+        rounded corners=8pt,
+        line width=1.1pt,
+        align=center,
+        drop shadow={opacity=0.08, shadow xshift=2pt, shadow yshift=-2pt}
+    },
+    innerbox/.style={
+        draw=black!20,
+        fill=white,
+        rounded corners=5pt,
+        line width=0.8pt,
+        align=left,
+        font=\ttfamily\footnotesize,
+        inner sep=5pt
+    }
+]
+
+    % =========================================================================
+    % 1. STRINGS (Azul)
+    % =========================================================================
+    \node[card, fill=ScoutBlue!6, draw=ScoutBlue, minimum width=3.5cm, minimum height=6.4cm, anchor=north west] at (0, 0) {};
+    \node[font=\large\bfseries, text=ScoutBlue] at (1.75, -0.55) {1. Strings};
+    \node[font=\footnotesize\bfseries, text=ScoutNavy] at (1.75, -1.0) {Texto, Número, JSON};
+
+    \node[innerbox, draw=ScoutBlue!40, minimum width=3.0cm] at (1.75, -2.15) {
+        "session:token"\\
+        $\rightarrow$ "jwt\_987xyz"\\[4pt]
+        "views:prod"\\
+        $\rightarrow$ 126
+    };
+
+    \node[font=\footnotesize\bfseries, text=ScoutNavy] at (1.75, -3.45) {Comandos Chave:};
+    \node[font=\ttfamily\footnotesize, text=ScoutNavy, align=center] at (1.75, -4.0) {
+        \textbf{SET}, \textbf{GET}, \textbf{INCR}\\
+        \textbf{EXPIRE}, \textbf{SETNX}
+    };
+
+    \node[font=\footnotesize\bfseries, text=ScoutNavy] at (1.75, -4.95) {Uso Prático:};
+    \node[font=\footnotesize, text=black!75, align=center] at (1.75, -5.6) {
+        Sessões de Usuário,\\
+        Contadores e Cache
+    };
+
+    % =========================================================================
+    % 2. HASHES (Verde)
+    % =========================================================================
+    \node[card, fill=ScoutGreen!6, draw=ScoutGreen, minimum width=3.5cm, minimum height=6.4cm, anchor=north west] at (3.75, 0) {};
+    \node[font=\large\bfseries, text=ScoutGreen] at (5.5, -0.55) {2. Hashes};
+    \node[font=\footnotesize\bfseries, text=ScoutNavy] at (5.5, -1.0) {Objeto Campo-Valor};
+
+    \node[innerbox, draw=ScoutGreen!40, minimum width=3.0cm] at (5.5, -2.15) {
+        "cart:user\_42"\\
+        $\rightarrow$ NOT-DEL: 1\\
+        $\rightarrow$ MOU-LOG: 2\\[4pt]
+        "user:101" $\rightarrow$ nome
+    };
+
+    \node[font=\footnotesize\bfseries, text=ScoutNavy] at (5.5, -3.45) {Comandos Chave:};
+    \node[font=\ttfamily\footnotesize, text=ScoutNavy, align=center] at (5.5, -4.0) {
+        \textbf{HSET}, \textbf{HGETALL}\\
+        \textbf{HINCRBY}, \textbf{HDEL}
+    };
+
+    \node[font=\footnotesize\bfseries, text=ScoutNavy] at (5.5, -4.95) {Uso Prático:};
+    \node[font=\footnotesize, text=black!75, align=center] at (5.5, -5.6) {
+        Carrinho de Compras,\\
+        Perfil de Usuário
+    };
+
+    % =========================================================================
+    % 3. LISTS (Vermelho)
+    % =========================================================================
+    \node[card, fill=ScoutRed!6, draw=ScoutRed, minimum width=3.5cm, minimum height=6.4cm, anchor=north west] at (7.5, 0) {};
+    \node[font=\large\bfseries, text=ScoutRed] at (9.25, -0.55) {3. Lists};
+    \node[font=\footnotesize\bfseries, text=ScoutNavy] at (9.25, -1.0) {Fila Encadeada};
+
+    \node[innerbox, draw=ScoutRed!40, minimum width=3.0cm] at (9.25, -2.15) {
+        "fila:pedidos"\\
+        $\rightarrow$ [PED-1, PED-2]\\[4pt]
+        Entra pela cauda,\\
+        sai pela cabeça
+    };
+
+    \node[font=\footnotesize\bfseries, text=ScoutNavy] at (9.25, -3.45) {Comandos Chave:};
+    \node[font=\ttfamily\footnotesize, text=ScoutNavy, align=center] at (9.25, -4.0) {
+        \textbf{LPUSH}, \textbf{RPUSH}\\
+        \textbf{LPOP}, \textbf{LRANGE}
+    };
+
+    \node[font=\footnotesize\bfseries, text=ScoutNavy] at (9.25, -4.95) {Uso Prático:};
+    \node[font=\footnotesize, text=black!75, align=center] at (9.25, -5.6) {
+        Filas de Tarefas,\\
+        Histórico Recente
+    };
+
+    % =========================================================================
+    % 4. SETS (Roxo)
+    % =========================================================================
+    \node[card, fill=ScoutPurple!6, draw=ScoutPurple, minimum width=3.5cm, minimum height=6.4cm, anchor=north west] at (11.25, 0) {};
+    \node[font=\large\bfseries, text=ScoutPurple] at (13.0, -0.55) {4. Sets};
+    \node[font=\footnotesize\bfseries, text=ScoutNavy] at (13.0, -1.0) {Conjuntos Únicos};
+
+    \node[innerbox, draw=ScoutPurple!40, minimum width=3.0cm] at (13.0, -2.15) {
+        "tags:hardware"\\
+        $\rightarrow$ \{"ram", "ssd",\\
+        \quad "cooler"\}\\[4pt]
+        Sem duplicatas!
+    };
+
+    \node[font=\footnotesize\bfseries, text=ScoutNavy] at (13.0, -3.45) {Comandos Chave:};
+    \node[font=\ttfamily\footnotesize, text=ScoutNavy, align=center] at (13.0, -4.0) {
+        \textbf{SADD}, \textbf{SMEMBERS}\\
+        \textbf{SISMEMBER}, \textbf{SREM}
+    };
+
+    \node[font=\footnotesize\bfseries, text=ScoutNavy] at (13.0, -4.95) {Uso Prático:};
+    \node[font=\footnotesize, text=black!75, align=center] at (13.0, -5.6) {
+        Tags de Produtos,\\
+        Usuários Conectados
+    };
+
+    % =========================================================================
+    % 5. SORTED SETS (Âmbar)
+    % =========================================================================
+    \node[card, fill=ScoutAmber!8, draw=ScoutAmber, minimum width=3.5cm, minimum height=6.4cm, anchor=north west] at (15.0, 0) {};
+    \node[font=\large\bfseries, text=ScoutAmber] at (16.75, -0.55) {5. Sorted Sets};
+    \node[font=\footnotesize\bfseries, text=ScoutNavy] at (16.75, -1.0) {Conjunto com Score};
+
+    \node[innerbox, draw=ScoutAmber!40, minimum width=3.0cm] at (16.75, -2.15) {
+        "ranking:vendas"\\
+        $\rightarrow$ 70: Cabo USB\\
+        $\rightarrow$ 50: Mouse MX\\
+        $\rightarrow$ 12: Dell 15
+    };
+
+    \node[font=\footnotesize\bfseries, text=ScoutNavy] at (16.75, -3.45) {Comandos Chave:};
+    \node[font=\ttfamily\footnotesize, text=ScoutNavy, align=center] at (16.75, -4.0) {
+        \textbf{ZADD}, \textbf{ZRANGE}\\
+        \textbf{ZREVRANGE}, \textbf{ZINCRBY}
+    };
+
+    \node[font=\footnotesize\bfseries, text=ScoutNavy] at (16.75, -4.95) {Uso Prático:};
+    \node[font=\footnotesize, text=black!75, align=center] at (16.75, -5.6) {
+        Leaderboards,\\
+        Mais Vendidos
+    };
+
+\end{tikzpicture}
+\end{document}

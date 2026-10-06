@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 03 (Sábado Letivo): Prática de MongoDB e Redis | IFCE Campus Tauá</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            ifce: {
+              green: '#2F855A',
+              red: '#C53030',
+              dark: '#1C4532',
+              emerald: '#059669'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Prism.js para Realce de Sintaxe -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    code, pre { font-family: 'JetBrains Mono', monospace !important; }
+    .tab-active {
+      border-color: #059669;
+      color: #059669;
+      background-color: rgba(5, 150, 105, 0.08);
+    }
+    .dark .tab-active {
+      border-color: #34d399;
+      color: #34d399;
+      background-color: rgba(52, 211, 153, 0.12);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- Navbar -->
+  <header class="border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="../../index.html" class="flex items-center space-x-2 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium text-sm transition-colors">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Voltar para Disciplina</span>
+        </a>
+      </div>
+      <div class="flex items-center space-x-4">
+        <a href="https://github.com/reginaldo-pf" target="_blank" rel="noopener noreferrer" class="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white text-lg" title="GitHub @reginaldo-pf">
+          <i class="fa-brands fa-github"></i>
+        </a>
+        <button id="themeToggle" class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Alternar tema">
+          <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 py-8 w-full">
+
+    <!-- Breadcrumb -->
+    <nav class="text-xs text-slate-500 dark:text-slate-400 mb-4 flex items-center space-x-2 flex-wrap">
+      <a href="../../../../../../index.html" class="hover:underline">Início</a>
+      <span>/</span>
+      <span>Tecnologia em ADS</span>
+      <span>/</span>
+      <a href="../../index.html" class="hover:underline">Banco de Dados Não-Relacionais</a>
+      <span>/</span>
+      <span class="text-emerald-600 dark:text-emerald-400 font-medium">Aula 03 (Sábado Letivo)</span>
+    </nav>
+
+    <!-- Header do Bloco da Aula -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/60 shadow-sm mb-8">
+      <div class="flex flex-wrap items-center gap-2 mb-3">
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">Aula 03</span>
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-purple-100 dark:bg-purple-950/70 text-purple-800 dark:text-purple-300 border border-purple-300 dark:border-purple-800">Sábado Letivo (10/10/2026)</span>
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300">Estudo Remoto em Casa</span>
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300">MongoDB + Redis</span>
+      </div>
+
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+        Prática Autônoma de Banco de Dados: MongoDB, Redis e Padrão Cache-Aside
+      </h1>
+      <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2">
+        <strong>Disciplina:</strong> Banco de Dados Não-Relacionais (ADS16) | <strong>Docente:</strong> Prof. Me. Reginaldo Pereira Fernandes (IFCE Campus Tauá)
+      </p>
+
+      <!-- Botões de Ação Rápida no Topo -->
+      <div class="flex flex-wrap items-center gap-3 mt-6 pt-5 border-t border-slate-100 dark:border-slate-700/60">
+        <!-- Botão Google Colab -->
+        <a href="https://colab.research.google.com/github/reginaldo-pf/reginaldo-pf.github.io/blob/main/Cursos/Tecnologia%20em%20An%C3%A1lise%20e%20Desenvolvimento%20de%20Sistemas/Disciplinas/Banco%20de%20Dados%20N%C3%A3o-Relacionais/Aulas/Aula_03/codigo/demonstracao_aula03.ipynb" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-sm transition-all transform hover:-translate-y-0.5">
+          <i class="fa-solid fa-bolt"></i>
+          <span>Abrir no Google Colab</span>
+        </a>
+
+        <!-- Botão Ver Slides Embutidos -->
+        <button onclick="switchTab('tab-slides')" class="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all">
+          <i class="fa-solid fa-file-pdf"></i>
+          <span>Visualizar Slides (28 págs)</span>
+        </button>
+
+        <!-- Botão Abrir PDF em Nova Aba -->
+        <a href="materiais/main.pdf" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-emerald-100 dark:bg-emerald-950/60 hover:bg-emerald-200 dark:hover:bg-emerald-900 text-emerald-800 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700 transition-colors">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          <span>Abrir PDF em Nova Janela</span>
+        </a>
+
+        <!-- Botão Ir para Downloads -->
+        <button onclick="switchTab('tab-downloads')" class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors">
+          <i class="fa-solid fa-download text-emerald-500"></i>
+          <span>Baixar Arquivos</span>
+        </button>
+
+        <!-- Botão Lista de Exercícios -->
+        <button onclick="switchTab('tab-exercicios')" class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-medium bg-purple-100 dark:bg-purple-950/60 hover:bg-purple-200 dark:hover:bg-purple-900 text-purple-800 dark:text-purple-200 border border-purple-300 dark:border-purple-700 transition-colors">
+          <i class="fa-solid fa-list-check text-purple-600 dark:text-purple-400"></i>
+          <span>Lista de Exercícios</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Navegação por Abas -->
+    <div class="flex items-center space-x-2 border-b border-slate-200 dark:border-slate-700 mb-8 overflow-x-auto pb-1">
+      <button onclick="switchTab('tab-simulador')" id="btn-tab-simulador" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent transition-all flex items-center space-x-2 tab-active">
+        <i class="fa-solid fa-gauge-high"></i>
+        <span>Simulador Cache-Aside</span>
+      </button>
+
+      <button onclick="switchTab('tab-mongo')" id="btn-tab-mongo" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent transition-all flex items-center space-x-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+        <i class="fa-solid fa-leaf text-emerald-500"></i>
+        <span>Prática MongoDB (CLI & GUI)</span>
+      </button>
+
+      <button onclick="switchTab('tab-redis')" id="btn-tab-redis" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent transition-all flex items-center space-x-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+        <i class="fa-solid fa-cubes-stacked text-red-500"></i>
+        <span>Prática Redis (CLI & GUI)</span>
+      </button>
+
+      <button onclick="switchTab('tab-python')" id="btn-tab-python" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent transition-all flex items-center space-x-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+        <i class="fa-brands fa-python text-emerald-500"></i>
+        <span>Integração Python</span>
+      </button>
+
+      <button onclick="switchTab('tab-slides')" id="btn-tab-slides" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent transition-all flex items-center space-x-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+        <i class="fa-solid fa-file-pdf"></i>
+        <span>Slides da Apresentação</span>
+      </button>
+
+      <button onclick="switchTab('tab-exercicios')" id="btn-tab-exercicios" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent transition-all flex items-center space-x-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Lista de Exercícios</span>
+      </button>
+
+      <button onclick="switchTab('tab-downloads')" id="btn-tab-downloads" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent transition-all flex items-center space-x-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+        <i class="fa-solid fa-download"></i>
+        <span>Downloads dos Arquivos</span>
+      </button>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ABA 1: SIMULADOR INTERATIVO CACHE-ASIDE                                    -->
+    <!-- ========================================================================= -->
+    <div id="tab-simulador" class="tab-content space-y-8">
+      <div class="bg-gradient-to-br from-slate-900 to-slate-950 text-white rounded-2xl p-6 sm:p-8 border border-slate-700 shadow-xl">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Laboratório Interativo no Navegador</span>
+            <h2 class="text-xl sm:text-2xl font-black mt-1">Simulador do Padrão Cache-Aside (MongoDB + Redis)</h2>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700 font-mono">
+              TTL Cache: <span id="simTtlDisplay" class="text-emerald-400 font-bold">60s</span>
+            </span>
+          </div>
+        </div>
+
+        <p class="text-xs sm:text-sm text-slate-300 mb-6 leading-relaxed">
+          Experimente na prática como o Redis em memória RAM acelera consultas a dados persistidos no MongoDB. Observe a transição de um <strong>Cache MISS</strong> inicial (~10 ms) para um <strong>Cache HIT</strong> instantâneo (~0.1 ms), e teste a <strong>Invalidação Imediata</strong> ao atualizar o preço.
+        </p>
+
+        <!-- Painel dos Dois Bancos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <!-- Bloco Redis (RAM) -->
+          <div class="p-5 rounded-xl border border-red-500/40 bg-red-950/20">
+            <div class="flex items-center justify-between mb-3">
+              <span class="font-bold text-sm text-red-400 flex items-center space-x-2">
+                <i class="fa-solid fa-bolt"></i>
+                <span>Redis (In-Memory Cache)</span>
+              </span>
+              <span id="badgeRedisStatus" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono border border-slate-700">Cache Vazio</span>
+            </div>
+            <div class="space-y-2 text-xs">
+              <div class="flex justify-between text-slate-400">
+                <span>Chave:</span>
+                <span class="font-mono text-slate-200">cache:produto:NOT-DEL-01</span>
+              </div>
+              <div class="flex justify-between text-slate-400">
+                <span>Valor em RAM:</span>
+                <span id="simRedisVal" class="font-mono text-red-300 font-bold">NULL (Miss)</span>
+              </div>
+              <div class="flex justify-between text-slate-400">
+                <span>Tempo de Resposta Típico:</span>
+                <span class="text-emerald-400 font-bold">&lt; 0.5 ms</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bloco MongoDB (Disco SSD) -->
+          <div class="p-5 rounded-xl border border-emerald-500/40 bg-emerald-950/20">
+            <div class="flex items-center justify-between mb-3">
+              <span class="font-bold text-sm text-emerald-400 flex items-center space-x-2">
+                <i class="fa-solid fa-leaf"></i>
+                <span>MongoDB (System of Record)</span>
+              </span>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 font-mono border border-emerald-800">Persistente</span>
+            </div>
+            <div class="space-y-2 text-xs">
+              <div class="flex justify-between text-slate-400">
+                <span>Coleção:</span>
+                <span class="font-mono text-slate-200">ecommerce_taua.produtos</span>
+              </div>
+              <div class="flex justify-between text-slate-400">
+                <span>Preço Atual no Banco:</span>
+                <span id="simMongoPreco" class="font-mono text-emerald-300 font-bold">R$ 4.299,90</span>
+              </div>
+              <div class="flex justify-between text-slate-400">
+                <span>Tempo de Resposta Típico:</span>
+                <span class="text-amber-400 font-bold">8.0 a 15.0 ms</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controles Interativos -->
+        <div class="flex flex-wrap items-center gap-3 mb-6">
+          <button onclick="execSimConsultar()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center space-x-2 shadow-lg transition-transform transform active:scale-95">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>1. Consultar Produto (obter_produto)</span>
+          </button>
+
+          <button onclick="execSimAtualizarPreco()" class="px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold flex items-center space-x-2 shadow-lg transition-transform transform active:scale-95">
+            <i class="fa-solid fa-pen-to-square"></i>
+            <span>2. Atualizar Preço no MongoDB (e Invalidar Cache)</span>
+          </button>
+
+          <button onclick="execSimLimparCache()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold flex items-center space-x-2 border border-slate-700 transition-colors">
+            <i class="fa-solid fa-trash-can"></i>
+            <span>Limpar Chave do Redis (DEL)</span>
+          </button>
+        </div>
+
+        <!-- Log de Operações em Tempo Real -->
+        <div class="bg-black/60 rounded-xl p-4 border border-slate-800">
+          <div class="flex items-center justify-between text-[11px] text-slate-400 border-b border-slate-800 pb-2 mb-2">
+            <span class="font-mono font-bold text-slate-300">Terminal de Eventos e Latência</span>
+            <span id="simTimestamp" class="font-mono">--:--:--</span>
+          </div>
+          <div id="simLog" class="font-mono text-xs text-slate-300 space-y-1 h-36 overflow-y-auto pr-2">
+            <div class="text-slate-500">[INFO] Simulador inicializado. Clique em 'Consultar Produto' para disparar a primeira requisição.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Diagrama de Arquitetura Vetorial da Aula -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center space-x-2">
+          <i class="fa-solid fa-diagram-project text-blue-500"></i>
+          <span>Visão Geral da Arquitetura Híbrida</span>
+        </h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+          Diagrama original compilado em TikZ representando a separação de responsabilidades entre MongoDB e Redis.
+        </p>
+        <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex justify-center">
+          <img src="materiais/figuras/fig_arquitetura_hibrida.png" alt="Arquitetura Híbrida MongoDB + Redis" class="max-w-full h-auto rounded-lg shadow-sm">
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ABA 2: PRÁTICA MONGODB (CLI & GUI)                                        -->
+    <!-- ========================================================================= -->
+    <div id="tab-mongo" class="tab-content hidden space-y-8">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <h2 class="text-xl font-extrabold text-slate-900 dark:text-white mb-4 flex items-center space-x-2">
+          <i class="fa-solid fa-leaf text-emerald-500"></i>
+          <span>Prática 1: MongoDB no Terminal (mongosh) e no Compass</span>
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+          Aprenda a operar o MongoDB de forma nativa sem nenhuma linha de Python. Pratique a criação de bancos, coleções, documentos com campos complexos (arrays e objetos aninhados) e filtros de busca.
+        </p>
+
+        <!-- Diagrama Compass -->
+        <div class="mb-8 p-4 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 flex justify-center">
+          <img src="materiais/figuras/fig_mongo_crud_compass.png" alt="Modelo Documental no MongoDB Compass" class="max-w-full h-auto rounded-lg shadow-sm">
+        </div>
+
+        <!-- Roteiro de Comandos CLI -->
+        <div class="space-y-6">
+          <div>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-2 flex items-center space-x-2">
+              <span class="px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-xs font-mono">1. Create</span>
+              <span>Inserção de Documentos Ricos (insertOne / insertMany)</span>
+            </h3>
+            <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs overflow-x-auto"><code class="language-javascript">// Seleciona a base de dados
+use ecommerce_taua;
+
+// Insere um notebook com especificacoes aninhadas e array de tags
+db.produtos.insertOne({
+  sku: "NOT-DEL-01",
+  nome: "Notebook Dell Inspiron 15",
+  categoria: "Informatica",
+  preco: 4299.90,
+  estoque: 14,
+  especificacoes: {
+    processador: "Intel Core i7 13ª Ger",
+    memoria_gb: 16,
+    ssd_gb: 512
+  },
+  tags: ["trabalho", "desenvolvimento", "bivolt"],
+  ativo: true
+});</code></pre>
+          </div>
+
+          <div>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-2 flex items-center space-x-2">
+              <span class="px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 text-xs font-mono">2. Read</span>
+              <span>Consultas Avançadas, Operadores de Comparação e Projeção</span>
+            </h3>
+            <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs overflow-x-auto"><code class="language-javascript">// Consulta com projecao (apenas nome e preco, sem _id)
+db.produtos.find(
+  { categoria: "Informatica", preco: { $lt: 5000.00 } },
+  { _id: 0, sku: 1, nome: 1, preco: 1 }
+);
+
+// Consulta em elementos de Array (busca se contem 'desenvolvimento')
+db.produtos.find({ tags: "desenvolvimento" });
+
+// Consulta em objeto aninhado (Dot Notation)
+db.produtos.find({ "especificacoes.memoria_gb": { $gte: 16 } });</code></pre>
+          </div>
+
+          <div>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-2 flex items-center space-x-2">
+              <span class="px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 text-xs font-mono">3. Update & Delete</span>
+              <span>Operadores Atômicos ($set, $inc, $push) e Deleção</span>
+            </h3>
+            <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs overflow-x-auto"><code class="language-javascript">// Atualizacao atomica: preco novo e adiciona nova tag na lista
+db.produtos.updateOne(
+  { sku: "NOT-DEL-01" },
+  {
+    $set: { preco: 3899.00 },
+    $inc: { estoque: 5 },
+    $push: { tags: "promocao_outubro" }
+  }
+);
+
+// Remocao de produtos descontinuados
+db.produtos.deleteMany({ ativo: false });</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ABA 3: PRÁTICA REDIS (CLI & GUI)                                          -->
+    <!-- ========================================================================= -->
+    <div id="tab-redis" class="tab-content hidden space-y-8">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <h2 class="text-xl font-extrabold text-slate-900 dark:text-white mb-4 flex items-center space-x-2">
+          <i class="fa-solid fa-cubes-stacked text-red-500"></i>
+          <span>Prática 2: Redis no Terminal (redis-cli) e no Redis Insight</span>
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+          O Redis é um banco de dados em memória ultrarrápido com 5 estruturas centrais de dados. Pratique cada estrutura no terminal CLI e inspecione o uso de memória no Redis Insight.
+        </p>
+
+        <!-- Diagrama Estruturas Redis -->
+        <div class="mb-8 p-4 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 flex justify-center">
+          <img src="materiais/figuras/fig_redis_estruturas.png" alt="As 5 Estruturas Fundamentais do Redis" class="max-w-full h-auto rounded-lg shadow-sm">
+        </div>
+
+        <!-- Roteiro de Comandos CLI Redis -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="space-y-4">
+            <h3 class="font-bold text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">1. Strings, TTL e Contadores</h3>
+            <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs overflow-x-auto"><code class="language-bash"># Token de sessao com TTL de 90 segundos
+SET session:user_42 "jwt_token_taua_2026" EX 90
+GET session:user_42
+TTL session:user_42
+
+# Contador atomico de visualizacoes
+SET views:NOT-DEL-01 100
+INCR views:NOT-DEL-01
+INCRBY views:NOT-DEL-01 15</code></pre>
+          </div>
+
+          <div class="space-y-4">
+            <h3 class="font-bold text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">2. Hashes: Carrinho de Compras</h3>
+            <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs overflow-x-auto"><code class="language-bash"># Adiciona itens ao carrinho (SKU -> Qtd)
+HSET cart:session_77 "NOT-DEL-01" 1 "MOU-LOG-02" 2
+
+# Incrementa quantidade de um item
+HINCRBY cart:session_77 "MOU-LOG-02" 1
+
+# Recupera todos os itens e quantidades
+HGETALL cart:session_77</code></pre>
+          </div>
+
+          <div class="space-y-4">
+            <h3 class="font-bold text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">3. Lists: Fila FIFO de Pedidos</h3>
+            <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs overflow-x-auto"><code class="language-bash"># Produtor insere na cauda (RPUSH)
+RPUSH fila:pedidos "PED-1001" "PED-1002"
+
+# Consumidor retira da cabeca (LPOP)
+LPOP fila:pedidos
+
+# Consulta fila sem remover
+LRANGE fila:pedidos 0 -1</code></pre>
+          </div>
+
+          <div class="space-y-4">
+            <h3 class="font-bold text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">4. Sorted Sets: Leaderboards</h3>
+            <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs overflow-x-auto"><code class="language-bash"># Ranking de produtos mais vendidos
+ZADD ranking 45 "MOU-LOG-02" 12 "NOT-DEL-01" 70 "CAB-USBC-05"
+
+# Top 3 produtos mais vendidos decrescente
+ZREVRANGE ranking 0 2 WITHSCORES</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ABA 4: INTEGRAÇÃO PYTHON                                                   -->
+    <!-- ========================================================================= -->
+    <div id="tab-python" class="tab-content hidden space-y-8">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <h2 class="text-xl font-extrabold text-slate-900 dark:text-white mb-4 flex items-center space-x-2">
+          <i class="fa-brands fa-python text-emerald-500"></i>
+          <span>Prática 3: Integração com Python (pymongo + redis-py)</span>
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+          Veja como conectar os dois bancos em uma aplicação real utilizando o padrão <strong>Cache-Aside (Lazy Loading)</strong>. A aplicação consulta o Redis primeiro e, em caso de falta (Cache Miss), busca no MongoDB e alimenta o cache com TTL.
+        </p>
+
+        <!-- Diagrama Cache-Aside Sequence -->
+        <div class="mb-8 p-4 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 flex justify-center">
+          <img src="materiais/figuras/fig_cache_aside_pattern.png" alt="Fluxo do Padrão Cache-Aside" class="max-w-full h-auto rounded-lg shadow-sm">
+        </div>
+
+        <!-- Código Python -->
+        <div class="space-y-4">
+          <h3 class="font-bold text-sm text-slate-900 dark:text-white">Implementação do Serviço com Cache e Invalidação</h3>
+          <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs overflow-x-auto"><code class="language-python">import json, time
+
+class CacheAsideService:
+    def __init__(self, mongo_col, redis_cli, ttl_segundos=120):
+        self.mongo_col = mongo_col
+        self.redis = redis_cli
+        self.ttl = ttl_segundos
+
+    def obter_produto(self, sku: str):
+        cache_key = f"cache:produto:{sku}"
+        
+        # 1. Tenta recuperar da memoria RAM (Redis)
+        dado_cache = self.redis.get(cache_key)
+        if dado_cache:
+            # CACHE HIT: Latencia sub-milissegundo (< 0.5 ms)
+            return json.loads(dado_cache), "CACHE_HIT"
+            
+        # 2. CACHE MISS: Busca no banco de documentos em disco (MongoDB)
+        produto_db = self.mongo_col.find_one({"sku": sku}, {"_id": 0})
+        if not produto_db:
+            return None, "NOT_FOUND"
+            
+        # 3. Popula o cache no Redis com TTL de expiracao
+        self.redis.set(cache_key, json.dumps(produto_db), ex=self.ttl)
+        return produto_db, "CACHE_MISS"
+
+    def atualizar_preco(self, sku: str, novo_preco: float):
+        # Atualiza a fonte da verdade (MongoDB)
+        self.mongo_col.update_one({"sku": sku}, {"$set": {"preco": novo_preco}})
+        
+        # Invalida o cache no Redis imediatamente para evitar dado obsoleto
+        cache_key = f"cache:produto:{sku}"
+        self.redis.delete(cache_key)
+        print(f"Preco gravado e cache invalidado para {sku}")</code></pre>
+        </div>
+
+        <!-- Gráfico Didático de Benchmarking -->
+        <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
+          <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-2">Comprovação Empírica de Desempenho (Benchmarking)</h3>
+          <p class="text-xs text-slate-500 mb-4">Gráfico gerado pela rotina oficial comparando o tempo de resposta do MongoDB vs memória RAM do Redis:</p>
+          <div class="flex justify-center p-3 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700">
+            <img src="materiais/figuras/grafico_latencia_cache.png" alt="Gráfico Comparativo de Latência Cache Miss vs Cache Hit" class="max-w-full h-auto rounded-lg shadow-sm">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ABA 5: VISUALIZADOR DE SLIDES BEAMER                                       -->
+    <!-- ========================================================================= -->
+    <div id="tab-slides" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white">Apresentação Oficial da Aula 03 (Sábado Letivo)</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Slides em LaTeX Beamer com tema Scouts (Widescreen 16:9, 31 páginas).</p>
+          </div>
+          <div class="flex items-center space-x-2 flex-wrap gap-2">
+            <a href="materiais/main.pdf" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-emerald-100 dark:bg-emerald-950/60 hover:bg-emerald-200 dark:hover:bg-emerald-900 text-emerald-800 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700 shadow-sm transition-all">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              <span>Abrir em Nova Aba</span>
+            </a>
+            <a href="materiais/main.pdf" download class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all">
+              <i class="fa-solid fa-download"></i>
+              <span>Baixar PDF Oficial</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="w-full aspect-[16/9] bg-slate-100 dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700">
+          <iframe src="materiais/main.pdf" class="w-full h-full" title="Slides da Aula 03"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ABA 6: LISTA DE EXERCÍCIOS DE FIXAÇÃO                                      -->
+    <!-- ========================================================================= -->
+    <div id="tab-exercicios" class="tab-content hidden space-y-8">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div>
+            <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">Lista de Exercícios Práticos Avaliativa (Sábado Letivo)</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Para entrega remota via SIGAA ou Google Classroom até a sexta-feira anterior à Aula 04.</p>
+          </div>
+          <span class="px-3 py-1 text-xs font-bold rounded-full bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-800">
+            Valor: 10,0 pontos
+          </span>
+        </div>
+
+        <div class="space-y-6 text-sm divide-y divide-slate-100 dark:divide-slate-700/60">
+          <!-- Bloco A -->
+          <div class="pt-4">
+            <h3 class="font-bold text-emerald-600 dark:text-emerald-400 text-base mb-2">Bloco A: Terminal CLI e GUI no MongoDB (4,0 pontos)</h3>
+            <ol class="list-decimal list-inside space-y-3 text-slate-700 dark:text-slate-300">
+              <li><strong>Exercício 1 (Modelagem e Inserção no mongosh):</strong> Crie uma coleção chamada <code class="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded font-mono text-xs">livros</code> na base <code class="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded font-mono text-xs">biblioteca_taua</code>. Insira pelo menos 4 livros contendo: <code class="font-mono text-xs">isbn</code>, <code class="font-mono text-xs">titulo</code>, <code class="font-mono text-xs">autor</code>, <code class="font-mono text-xs">ano</code>, <code class="font-mono text-xs">preco</code>, <code class="font-mono text-xs">tags</code> (array) e <code class="font-mono text-xs">dimensoes</code> (objeto aninhado com <code class="font-mono text-xs">paginas</code> e <code class="font-mono text-xs">altura_cm</code>).</li>
+              <li><strong>Exercício 2 (Consultas Estruturadas):</strong> Escreva comandos <code class="font-mono text-xs">find()</code> para: (a) buscar livros com mais de 250 páginas; (b) buscar livros com a tag "tecnologia"; (c) projetar apenas título e preço sem exibir o <code class="font-mono text-xs">_id</code>.</li>
+              <li><strong>Exercício 3 (Índices no MongoDB Compass):</strong> No MongoDB Compass, crie um índice para o campo <code class="font-mono text-xs">isbn</code>. Na aba <em>Explain Plan</em>, execute a busca pelo ISBN e tire uma captura de tela (print) comprovando o estágio de execução <code class="font-mono text-xs">IXSCAN</code>.</li>
+            </ol>
+          </div>
+
+          <!-- Bloco B -->
+          <div class="pt-6">
+            <h3 class="font-bold text-red-600 dark:text-red-400 text-base mb-2">Bloco B: Terminal CLI e GUI no Redis (3,0 pontos)</h3>
+            <ol start="4" class="list-decimal list-inside space-y-3 text-slate-700 dark:text-slate-300">
+              <li><strong>Exercício 4 (Sessões com TTL no redis-cli):</strong> Crie 3 tokens de sessão (<code class="font-mono text-xs">session:user_1</code>, etc.) com TTL de 60 segundos. Demonstre a consulta com <code class="font-mono text-xs">GET</code> e o tempo regressivo com <code class="font-mono text-xs">TTL</code>.</li>
+              <li><strong>Exercício 5 (Carrinho de Compras em Hashes):</strong> Crie a chave <code class="font-mono text-xs">cart:aluno_10</code>. Adicione 2 itens. Incremente a quantidade de um dos itens em +2 usando <code class="font-mono text-xs">HINCRBY</code>. Exiba com <code class="font-mono text-xs">HGETALL</code>.</li>
+              <li><strong>Exercício 6 (Inspeção Visual no Redis Insight):</strong> Abra o Redis Insight, localize seu carrinho na <em>Key Tree</em> e tire um print destacando o tipo de dado (<code class="font-mono text-xs">hash</code>), os campos e o consumo de memória em bytes.</li>
+            </ol>
+          </div>
+
+          <!-- Bloco C -->
+          <div class="pt-6">
+            <h3 class="font-bold text-blue-600 dark:text-blue-400 text-base mb-2">Bloco C: Script de Integração em Python (2,0 pontos)</h3>
+            <ol start="7" class="list-decimal list-inside space-y-3 text-slate-700 dark:text-slate-300">
+              <li><strong>Exercício 7 (Cache-Aside Pattern):</strong> Implemente uma função Python <code class="font-mono text-xs">consultar_livro(isbn)</code> que consulta primeiro o Redis e, caso ausente, busca no MongoDB e armazena em cache com TTL de 30 segundos. Demonstre as saídas <code class="font-mono text-xs">CACHE MISS</code> e <code class="font-mono text-xs">CACHE HIT</code>.</li>
+              <li><strong>Exercício 8 (Invalidação Imediata):</strong> Implemente <code class="font-mono text-xs">atualizar_preco_livro(isbn, novo_preco)</code> que altera no MongoDB e deleta do Redis. Comprove que a consulta seguinte resulta em um novo <code class="font-mono text-xs">CACHE MISS</code>.</li>
+            </ol>
+          </div>
+
+          <!-- Bloco D -->
+          <div class="pt-6">
+            <h3 class="font-bold text-slate-900 dark:text-white text-base mb-2">Bloco D: Questões Conceituais de Arquitetura (1,0 ponto)</h3>
+            <ol start="9" class="list-decimal list-inside space-y-3 text-slate-700 dark:text-slate-300">
+              <li><strong>Exercício 9:</strong> Por que não é recomendado usar o Redis como o banco de dados principal permanente (<em>System of Record</em>) para todo o catálogo de produtos de um grande e-commerce? Quais são as limitações de custo e persistência?</li>
+              <li><strong>Exercício 10:</strong> Qual é a função do TTL nas chaves de cache e o que ocorreria com a memória do Redis se todas as consultas fossem cacheadas sem nenhum TTL e sem política de expulsão (*Eviction Policy*)?</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ABA 7: DOWNLOADS DOS ARQUIVOS DA AULA                                     -->
+    <!-- ========================================================================= -->
+    <div id="tab-downloads" class="tab-content hidden space-y-8">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center space-x-2">
+          <i class="fa-solid fa-box-archive text-emerald-500"></i>
+          <span>Documentos, Apresentações e Códigos Fonte da Aula 03</span>
+        </h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Baixe todos os materiais didáticos e arquivos executáveis para estudo autônomo em casa.</p>
+
+        <div class="divide-y divide-slate-100 dark:divide-slate-700/60">
+          <!-- Slide PDF -->
+          <div class="py-4 flex items-center justify-between flex-wrap gap-4">
+            <div class="flex items-center space-x-3">
+              <div class="p-3 rounded-xl bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400">
+                <i class="fa-solid fa-file-pdf text-xl"></i>
+              </div>
+              <div>
+                <p class="font-bold text-sm text-slate-900 dark:text-white">Slides Oficiais (main.pdf)</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Apresentação Beamer tema Scouts (31 slides widescreen 16:9)</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <a href="materiais/main.pdf" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200">
+                <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Abrir
+              </a>
+              <a href="materiais/main.pdf" download class="px-3.5 py-1.5 text-xs font-bold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white">
+                <i class="fa-solid fa-download mr-1"></i> Download
+              </a>
+            </div>
+          </div>
+
+          <!-- Docker Compose -->
+          <div class="py-4 flex items-center justify-between flex-wrap gap-4">
+            <div class="flex items-center space-x-3">
+              <div class="p-3 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400">
+                <i class="fa-brands fa-docker text-xl"></i>
+              </div>
+              <div>
+                <p class="font-bold text-sm text-slate-900 dark:text-white">Orquestração de Containers (docker-compose.yml)</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Sobe MongoDB 8.0, Redis 7.4, Redis Insight e Mongo Express com 1 comando</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <a href="docker-compose.yml" download class="px-3.5 py-1.5 text-xs font-bold rounded-lg bg-blue-600 hover:bg-blue-700 text-white">
+                <i class="fa-solid fa-download mr-1"></i> Download (.yml)
+              </a>
+            </div>
+          </div>
+
+          <!-- Script Python -->
+          <div class="py-4 flex items-center justify-between flex-wrap gap-4">
+            <div class="flex items-center space-x-3">
+              <div class="p-3 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400">
+                <i class="fa-brands fa-python text-xl"></i>
+              </div>
+              <div>
+                <p class="font-bold text-sm text-slate-900 dark:text-white">Script de Demonstração (demonstracao_aula03.py)</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Integração MongoDB + Redis com Cache-Aside e Benchmarking estatístico</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <a href="codigo/demonstracao_aula03.py" download class="px-3.5 py-1.5 text-xs font-bold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white">
+                <i class="fa-solid fa-download mr-1"></i> Download (.py)
+              </a>
+            </div>
+          </div>
+
+          <!-- Jupyter Notebook -->
+          <div class="py-4 flex items-center justify-between flex-wrap gap-4">
+            <div class="flex items-center space-x-3">
+              <div class="p-3 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400">
+                <i class="fa-solid fa-book-open text-xl"></i>
+              </div>
+              <div>
+                <p class="font-bold text-sm text-slate-900 dark:text-white">Notebook Interativo (demonstracao_aula03.ipynb)</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Caderno didático estruturado para Google Colab e VS Code</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <a href="https://colab.research.google.com/github/reginaldo-pf/reginaldo-pf.github.io/blob/main/Cursos/Tecnologia%20em%20An%C3%A1lise%20e%20Desenvolvimento%20de%20Sistemas/Disciplinas/Banco%20de%20Dados%20N%C3%A3o-Relacionais/Aulas/Aula_03/codigo/demonstracao_aula03.ipynb" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950">
+                Colab
+              </a>
+              <a href="codigo/demonstracao_aula03.ipynb" download class="px-3.5 py-1.5 text-xs font-bold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white">
+                <i class="fa-solid fa-download mr-1"></i> Download (.ipynb)
+              </a>
+            </div>
+          </div>
+
+          <!-- Shell Scripts CLI -->
+          <div class="py-4 flex items-center justify-between flex-wrap gap-4">
+            <div class="flex items-center space-x-3">
+              <div class="p-3 rounded-xl bg-purple-100 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400">
+                <i class="fa-solid fa-terminal text-xl"></i>
+              </div>
+              <div>
+                <p class="font-bold text-sm text-slate-900 dark:text-white">Scripts de Comandos CLI (mongosh e redis-cli)</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Roteiros prontos para execução direta no terminal</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <a href="codigo/mongodb_crud_cli.sh" download class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200">
+                mongodb_crud_cli.sh
+              </a>
+              <a href="codigo/redis_crud_cli.sh" download class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200">
+                redis_crud_cli.sh
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Figuras TikZ -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center space-x-2">
+          <i class="fa-solid fa-images text-indigo-500"></i>
+          <span>Diagramas Visuais em Alta Resolução (TikZ Standalone)</span>
+        </h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Diagramas vetoriais originais desenvolvidos especialmente para a Aula 03.</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <!-- Figura 1 -->
+          <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-850 flex flex-col justify-between">
+            <div>
+              <img src="materiais/figuras/fig_arquitetura_hibrida.png" alt="Arquitetura Híbrida" class="rounded-lg mb-3 w-full h-36 object-contain bg-white dark:bg-slate-900 p-2 border border-slate-200 dark:border-slate-800">
+              <p class="font-bold text-xs text-slate-900 dark:text-white">fig_arquitetura_hibrida</p>
+              <p class="text-[11px] text-slate-500 mb-3">Arquitetura Híbrida: MongoDB + Redis In-Memory Cache</p>
+            </div>
+            <div class="flex items-center space-x-2 pt-2 border-t border-slate-200 dark:border-slate-700 text-[11px]">
+              <a href="materiais/figuras/fig_arquitetura_hibrida.png" download class="font-semibold text-emerald-600 hover:underline">PNG</a>
+              <span class="text-slate-400">•</span>
+              <a href="materiais/figuras/fig_arquitetura_hibrida.pdf" download class="font-semibold text-blue-600 hover:underline">PDF Vetorial</a>
+            </div>
+          </div>
+
+          <!-- Figura 2 -->
+          <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-850 flex flex-col justify-between">
+            <div>
+              <img src="materiais/figuras/fig_mongo_crud_compass.png" alt="MongoDB Compass" class="rounded-lg mb-3 w-full h-36 object-contain bg-white dark:bg-slate-900 p-2 border border-slate-200 dark:border-slate-800">
+              <p class="font-bold text-xs text-slate-900 dark:text-white">fig_mongo_crud_compass</p>
+              <p class="text-[11px] text-slate-500 mb-3">Modelo Documental BSON e Ciclo CRUD no Compass</p>
+            </div>
+            <div class="flex items-center space-x-2 pt-2 border-t border-slate-200 dark:border-slate-700 text-[11px]">
+              <a href="materiais/figuras/fig_mongo_crud_compass.png" download class="font-semibold text-emerald-600 hover:underline">PNG</a>
+              <span class="text-slate-400">•</span>
+              <a href="materiais/figuras/fig_mongo_crud_compass.pdf" download class="font-semibold text-blue-600 hover:underline">PDF Vetorial</a>
+            </div>
+          </div>
+
+          <!-- Figura 3 -->
+          <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-850 flex flex-col justify-between">
+            <div>
+              <img src="materiais/figuras/fig_redis_estruturas.png" alt="5 Estruturas Redis" class="rounded-lg mb-3 w-full h-36 object-contain bg-white dark:bg-slate-900 p-2 border border-slate-200 dark:border-slate-800">
+              <p class="font-bold text-xs text-slate-900 dark:text-white">fig_redis_estruturas</p>
+              <p class="text-[11px] text-slate-500 mb-3">As 5 Estruturas Fundamentais de Dados do Redis</p>
+            </div>
+            <div class="flex items-center space-x-2 pt-2 border-t border-slate-200 dark:border-slate-700 text-[11px]">
+              <a href="materiais/figuras/fig_redis_estruturas.png" download class="font-semibold text-emerald-600 hover:underline">PNG</a>
+              <span class="text-slate-400">•</span>
+              <a href="materiais/figuras/fig_redis_estruturas.pdf" download class="font-semibold text-blue-600 hover:underline">PDF Vetorial</a>
+            </div>
+          </div>
+
+          <!-- Figura 4 -->
+          <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-850 flex flex-col justify-between">
+            <div>
+              <img src="materiais/figuras/fig_cache_aside_pattern.png" alt="Padrão Cache-Aside" class="rounded-lg mb-3 w-full h-36 object-contain bg-white dark:bg-slate-900 p-2 border border-slate-200 dark:border-slate-800">
+              <p class="font-bold text-xs text-slate-900 dark:text-white">fig_cache_aside_pattern</p>
+              <p class="text-[11px] text-slate-500 mb-3">Padrão Arquitetural Cache-Aside: Hit, Miss e Invalidação</p>
+            </div>
+            <div class="flex items-center space-x-2 pt-2 border-t border-slate-200 dark:border-slate-700 text-[11px]">
+              <a href="materiais/figuras/fig_cache_aside_pattern.png" download class="font-semibold text-emerald-600 hover:underline">PNG</a>
+              <span class="text-slate-400">•</span>
+              <a href="materiais/figuras/fig_cache_aside_pattern.pdf" download class="font-semibold text-blue-600 hover:underline">PDF Vetorial</a>
+            </div>
+          </div>
+
+          <!-- Figura 5 -->
+          <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-850 flex flex-col justify-between">
+            <div>
+              <img src="materiais/figuras/grafico_latencia_cache.png" alt="Benchmarking de Latência" class="rounded-lg mb-3 w-full h-36 object-contain bg-white dark:bg-slate-900 p-2 border border-slate-200 dark:border-slate-800">
+              <p class="font-bold text-xs text-slate-900 dark:text-white">grafico_latencia_cache</p>
+              <p class="text-[11px] text-slate-500 mb-3">Resultado Empírico: Latência MongoDB vs Memória RAM Redis</p>
+            </div>
+            <div class="flex items-center space-x-2 pt-2 border-t border-slate-200 dark:border-slate-700 text-[11px]">
+              <a href="materiais/figuras/grafico_latencia_cache.png" download class="font-semibold text-emerald-600 hover:underline">PNG</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Rodapé -->
+  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-6xl mx-auto px-4">
+      <p>IFCE Campus Tauá • Tecnologia em Análise e Desenvolvimento de Sistemas (ADS16)</p>
+      <p class="mt-1">Prof. Me. Reginaldo Pereira Fernandes • Semestre 2026.2</p>
+    </div>
+  </footer>
+
+  <!-- Scripts Interativos da Página -->
+  <script>
+    // Gerenciamento de Tema Escuro
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const html = document.documentElement;
+
+    function initTheme() {
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        html.classList.add('dark');
+        themeIcon.classList.replace('fa-moon', 'fa-sun');
+      } else {
+        html.classList.remove('dark');
+        themeIcon.classList.replace('fa-sun', 'fa-moon');
+      }
+    }
+    initTheme();
+
+    themeToggle.addEventListener('click', () => {
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        localStorage.theme = 'light';
+        themeIcon.classList.replace('fa-sun', 'fa-moon');
+      } else {
+        html.classList.add('dark');
+        localStorage.theme = 'dark';
+        themeIcon.classList.replace('fa-moon', 'fa-sun');
+      }
+    });
+
+    // Troca de Abas
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
+
+      const activeContent = document.getElementById(tabId);
+      const activeBtn = document.getElementById('btn-' + tabId);
+
+      if (activeContent) activeContent.classList.remove('hidden');
+      if (activeBtn) activeBtn.classList.add('tab-active');
+    }
+
+    // LÓGICA DO SIMULADOR CACHE-ASIDE NO NAVEGADOR
+    let cacheVal = null;
+    let precoMongo = 4299.90;
+
+    function execSimConsultar() {
+      const timestamp = new Date().toLocaleTimeString();
+      document.getElementById('simTimestamp').innerText = timestamp;
+      
+      if (cacheVal !== null) {
+        // CACHE HIT (Latencia ultrabaixa)
+        const latenciaHit = (Math.random() * 0.15 + 0.05).toFixed(3);
+        addSimLog(`[${timestamp}] [CACHE HIT] Chave encontrada na RAM do Redis! Latência: ${latenciaHit} ms. Produto: Notebook Dell 15 (R$ ${cacheVal.toFixed(2)})`);
+      } else {
+        // CACHE MISS (Busca em disco no MongoDB)
+        const latenciaMiss = (Math.random() * 4.0 + 8.5).toFixed(3);
+        cacheVal = precoMongo;
+        
+        document.getElementById('simRedisVal').innerText = `R$ ${cacheVal.toFixed(2)}`;
+        document.getElementById('simRedisVal').className = "font-mono text-emerald-400 font-bold";
+        document.getElementById('badgeRedisStatus').innerText = "Chave em RAM (Hit)";
+        document.getElementById('badgeRedisStatus').className = "text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 font-mono border border-emerald-800";
+
+        addSimLog(`[${timestamp}] [CACHE MISS] Chave ausente no Redis. Consultando MongoDB... Latência: ${latenciaMiss} ms.`);
+        addSimLog(`[${timestamp}] [CACHE POPULATE] Documento recuperado do MongoDB e gravado no Redis (SET EX 60s).`);
+      }
+    }
+
+    function execSimAtualizarPreco() {
+      const timestamp = new Date().toLocaleTimeString();
+      document.getElementById('simTimestamp').innerText = timestamp;
+
+      // Gera novo preco com desconto
+      precoMongo = Math.round((precoMongo * 0.95) * 100) / 100;
+      document.getElementById('simMongoPreco').innerText = `R$ ${precoMongo.toFixed(2)}`;
+
+      // Invalida cache no Redis
+      cacheVal = null;
+      document.getElementById('simRedisVal').innerText = "NULL (Miss)";
+      document.getElementById('simRedisVal').className = "font-mono text-red-300 font-bold";
+      document.getElementById('badgeRedisStatus').innerText = "Cache Vazio";
+      document.getElementById('badgeRedisStatus').className = "text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono border border-slate-700";
+
+      addSimLog(`[${timestamp}] [UPDATE] Preço atualizado no MongoDB para R$ ${precoMongo.toFixed(2)}.`);
+      addSimLog(`[${timestamp}] [INVALIDAÇÃO] DEL cache:produto:NOT-DEL-01 executado no Redis! Próxima consulta gerará um Cache Miss.`);
+    }
+
+    function execSimLimparCache() {
+      const timestamp = new Date().toLocaleTimeString();
+      document.getElementById('simTimestamp').innerText = timestamp;
+
+      cacheVal = null;
+      document.getElementById('simRedisVal').innerText = "NULL (Miss)";
+      document.getElementById('simRedisVal').className = "font-mono text-red-300 font-bold";
+      document.getElementById('badgeRedisStatus').innerText = "Cache Vazio";
+      document.getElementById('badgeRedisStatus').className = "text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono border border-slate-700";
+
+      addSimLog(`[${timestamp}] [CACHE CLEAR] Chave removida manualmente do Redis.`);
+    }
+
+    function addSimLog(msg) {
+      const log = document.getElementById('simLog');
+      const div = document.createElement('div');
+      div.innerText = msg;
+      log.prepend(div);
+    }
+  </script>
+</body>
+</html>

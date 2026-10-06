@@ -1,7 +1,11 @@
 # Ambientes Virtuais Python
+.venv
 .venv/
+venv
 venv/
+ENV
 ENV/
+env
 env/
 
 # Compilação e Caches Python

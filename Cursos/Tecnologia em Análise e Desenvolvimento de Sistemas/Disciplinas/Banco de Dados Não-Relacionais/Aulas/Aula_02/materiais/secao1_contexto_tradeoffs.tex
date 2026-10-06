@@ -1,0 +1,83 @@
+\changecolours{ScoutNavy}
+\section{O Dilema dos Sistemas Distribuídos}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={De um Único Servidor para Clusters Distribuídos},leftcol=7cm,rightcol=7cm]{%
+  \alert{O Mundo Relacional Clássico (Aula 01)}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item Na Aula 01, vimos que bancos relacionais operam tradicionalmente sob \textbf{Escala Vertical (Scale-Up)}.
+    \item Todas as leituras e escritas ocorrem na \textbf{mesma CPU e na mesma memória RAM}.
+    \item A consistência é trivial: uma única máquina centralizada é dona da verdade absoluta.
+    \item \textbf{Problema:} Teto físico de hardware e custo exponencial para sustentar Big Data.
+  \end{itemize}
+}{%
+  \alert{A Realidade NoSQL: O Cluster Distribuído}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item Para escalar horizontalmente (\textbf{Scale-Out}), particionamos dados entre dezenas ou centenas de servidores.
+    \item \textbf{Novo Desafio Arquitetural:} Os nós precisam se comunicar continuamente através de placas de rede e roteadores.
+    \item \textbf{Falhas Parciais:} Diferente de um único servidor que cai por inteiro, no cluster um nó pode falhar enquanto outros continuam ativos.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={As 8 Falácias da Computação Distribuída},leftcol=7cm,rightcol=7cm]{%
+  \alert{Deutsch \& Gosling (Sun Microsystems, 1994)}\par
+  \itemseps[topsepi=2mm,itemsepi=2.5mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item Todo desenvolvedor júnior comete suposições ingênuas que quebram em produção:
+    \item 1. \textit{``A rede é confiável.''} (Falso: fibras rompem, switches travam).
+    \item 2. \textit{``A latência é zero.''} (Falso: viajar entre SP e Fortaleza consome tempo físico).
+    \item 3. \textit{``A largura de banda é infinita.''}
+    \item 4. \textit{``A rede é segura.''}
+  \end{itemize}
+}{%
+  \alert{As Falácias Estruturais}\par
+  \itemseps[topsepi=2mm,itemsepi=2.5mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item 5. \textit{``A topologia da rede nunca muda.''} (Nós entram e saem).
+    \item 6. \textit{``Existe apenas um administrador.''}
+    \item 7. \textit{``O custo de transporte é zero.''}
+    \item 8. \textit{``A rede é homogênea.''}
+    \item \textbf{Impacto nos Bancos:} Como garantir que um cliente no Ceará e outro em São Paulo vejam o mesmo saldo ao mesmo tempo?
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Cenário Prático: A Black Friday e o Saldo Bancário},leftcol=7cm,rightcol=7cm]{%
+  \alert{O Drama do Arquiteto de Software}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item Imagine as 00:00 da Black Friday: 100.000 requisições por segundo.
+    \item Um cliente em Tauá possui R\$ 500,00 na conta e tenta fazer um PIX de R\$ 500,00 simultaneamente a uma compra no cartão.
+    \item Ao mesmo tempo, um rompimento de fibra óptica isola o data center de Fortaleza do data center de São Paulo.
+  \end{itemize}
+}{%
+  \alert{A Encruzilhada Operacional}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Opção 1 (Prezar pela Verdade):} Bloquear as operações na região isolada até a rede voltar. O usuário recebe erro 503, mas o banco não perde dinheiro.
+    \item \textbf{Opção 2 (Prezar pela Resposta):} Aceitar ambas as operações localmente. O usuário fica feliz na hora, mas gerou R\$ 500,00 de \textbf{gasto duplo} (\textit{double-spending}).
+    \item \textbf{Esta escolha é o coração do Teorema CAP!}
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Conceito Formal de Consistência (Linearizabilidade)},leftcol=7cm,rightcol=7cm]{%
+  \alert{Consistência Forte / Linearizabilidade}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item No contexto de sistemas distribuídos, \textbf{Consistência (C)} significa \textbf{Linearizabilidade} (\textit{Herlihy \& Wing, 1990}).
+    \item Uma vez que uma escrita de dado $x=v$ for confirmada com sucesso ao cliente:
+    \item \textbf{Qualquer leitura subsequente} realizada em qualquer nó do cluster deve obrigatoriamente retornar o valor $v$ ou mais recente.
+  \end{itemize}
+}{%
+  \alert{O Custo da Garantia}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item Para assegurar Linearizabilidade, os nós precisam coordenar seus relógios e travar registros via \textbf{protocolos de consenso síncronos}.
+    \item Se a rede romper ou atrasar, a coordenação fica impossível.
+    \item \textbf{Conclusão:} A física impõe limites intransponíveis entre velocidade e coerência.
+  \end{itemize}
+}

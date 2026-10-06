@@ -1,0 +1,89 @@
+\documentclass[tikz,border=6pt]{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage[brazilian]{babel}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows.meta,positioning,calc,shadows}
+
+\definecolor{ScoutGreen}{HTML}{059669}
+\definecolor{ScoutNavy}{HTML}{1E293B}
+\definecolor{ScoutBlue}{HTML}{2563EB}
+\definecolor{ScoutRed}{HTML}{DC2626}
+\definecolor{ScoutAmber}{HTML}{D97706}
+
+\begin{document}
+\begin{tikzpicture}[
+    font=\sffamily,
+    >=Stealth,
+    card/.style={
+        draw=black!25,
+        rounded corners=8pt,
+        line width=1.1pt,
+        align=center,
+        drop shadow={opacity=0.10, shadow xshift=2pt, shadow yshift=-2pt}
+    }
+]
+
+    % 1. Camada de Clientes (Esquerda)
+    \node[card, fill=ScoutBlue!8, draw=ScoutBlue, text=ScoutNavy, minimum width=2.7cm, minimum height=4.4cm] (client) at (-0.6, 0) {
+        {\large\bfseries Clientes}\\[10pt]
+        {\small $\bullet$ Navegador Web}\\[5pt]
+        {\small $\bullet$ App Mobile}\\[14pt]
+        {\footnotesize\bfseries\textcolor{ScoutBlue}{[ Requisições ]}}
+    };
+
+    % 2. Camada de Aplicação / Backend (Centro-Esquerda)
+    \node[card, fill=ScoutNavy, text=white, minimum width=3.3cm, minimum height=4.6cm] (api) at (3.9, 0) {
+        {\large\bfseries Backend API}\\[3pt]
+        {\footnotesize\textbf{\textcolor{ScoutBlue!40}{Python (FastAPI / Flask)}}}\\[8pt]
+        {\footnotesize $\bullet$ Lógica de Negócio}\\[3pt]
+        {\footnotesize $\bullet$ Driver \texttt{redis-py}}\\[3pt]
+        {\footnotesize $\bullet$ Driver \texttt{pymongo}}\\[3pt]
+        {\footnotesize $\bullet$ Gestão de Cache}
+    };
+
+    % 3. Redis: Cache em Memória (Topo-Direita)
+    \node[card, fill=ScoutRed!8, draw=ScoutRed, text=ScoutNavy, minimum width=6.3cm, minimum height=2.4cm] (redis) at (12.2, 1.6) {
+        {\large\bfseries\textcolor{ScoutRed}{Redis}}\;{\normalsize\bfseries (In-Memory Cache)}\\[3pt]
+        {\small\textbf{Latência: $<$ 1 ms (Sub-ms)} $\;\bullet\;$ \textbf{Mídia: RAM}}\\[5pt]
+        {\footnotesize $\bullet$ Cache com expiração automática (TTL)}\\[2pt]
+        {\footnotesize $\bullet$ Sessões de usuário, tokens e carrinhos}
+    };
+
+    % 4. MongoDB: Banco Primário Persistente (Base-Direita)
+    \node[card, fill=ScoutGreen!8, draw=ScoutGreen, text=ScoutNavy, minimum width=6.3cm, minimum height=2.4cm] (mongo) at (12.2, -1.6) {
+        {\large\bfseries\textcolor{ScoutGreen}{MongoDB}}\;{\normalsize\bfseries (System of Record)}\\[3pt]
+        {\small\textbf{Latência: 5 a 20 ms} $\;\bullet\;$ \textbf{Mídia: Disco SSD}}\\[5pt]
+        {\footnotesize $\bullet$ Persistência durável de documentos BSON}\\[2pt]
+        {\footnotesize $\bullet$ Catálogo completo, pedidos e agregações}
+    };
+
+    % 5. Painel Resumo à Direita
+    \node[card, fill=black!3, draw=black!25, text=ScoutNavy, minimum width=3.0cm, minimum height=4.6cm] (resumo) at (17.4, 0) {
+        {\normalsize\bfseries Benefício Híbrido}\\[8pt]
+        {\footnotesize\textbf{Throughput:}}\\[2pt]
+        {\footnotesize Redis: $>$100k op/s}\\[2pt]
+        {\footnotesize Mongo: $\sim$10k op/s}\\[8pt]
+        {\footnotesize\textbf{Resultado:}}\\[2pt]
+        {\footnotesize Resposta instantânea}\\[2pt]
+        {\footnotesize com durabilidade}\\[2pt]
+        {\footnotesize documental total}
+    };
+
+    % Conexão Cliente -> API
+    \draw[->, line width=1.8pt, draw=ScoutBlue] (client.east) -- (api.west)
+        node[midway, above=4pt, font=\footnotesize\bfseries, text=ScoutBlue] {HTTP};
+
+    % API -> Redis
+    \draw[->, line width=1.6pt, draw=ScoutRed] ($(api.east)+(0, 0.4)$) to[out=22, in=180]
+        node[pos=0.55, above=3pt, font=\footnotesize\bfseries, text=ScoutRed, align=center] {1. Consulta Cache\\($<$ 1ms)} (redis.west);
+
+    % API -> MongoDB
+    \draw[->, line width=1.6pt, draw=ScoutGreen] ($(api.east)+(0, -0.4)$) to[out=-22, in=180]
+        node[pos=0.55, below=3pt, font=\footnotesize\bfseries, text=ScoutGreen, align=center] {2. Fallback /\\Gravação} (mongo.west);
+
+    % Invalidação entre Mongo e Redis
+    \draw[->, line width=1.5pt, dashed, draw=ScoutAmber] (mongo.north) -- (redis.south)
+        node[midway, right=5pt, font=\footnotesize\bfseries, text=ScoutAmber, align=left] {3. Invalidação\\ao gravar (DEL)};
+
+\end{tikzpicture}
+\end{document}
