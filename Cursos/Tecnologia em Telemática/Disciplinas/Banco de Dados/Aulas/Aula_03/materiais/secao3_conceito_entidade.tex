@@ -1,0 +1,64 @@
+\changecolours{ScoutGreen}
+\section[O Conceito de Entidade]{O Modelo Entidade-Relacionamento e o Conceito de Entidade}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Origem Histórica: Peter Chen e o Artigo Seminal (1976)},leftcol=7cm,rightcol=7cm]{%
+  \alert{O Marco da Ciência da Computação}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Publicação de 1976:} Peter Pin-Shan Chen publica \textit{“The Entity-Relationship Model: Toward a Unified View of Data”} na ACM TODS.
+    \item \textbf{Cenário dos Anos 70:} Unificou visões rivais e complexas (modelo em rede CODASYL, hierárquico IMS e relacional Codd).
+    \item \textbf{A Grande Ideia de Chen:} Adotar a cognição humana: modelar o mundo como coisas (\textbf{entidades}) e vínculos (\textbf{relacionamentos}).
+  \end{itemize}
+}{%
+  \alert{Por Que o MER Permanece Essencial?}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Poder Semântico:} Expressa a intenção e regras de negócio com clareza imediata antes do SQL.
+    \item \textbf{Independência Ontológica:} Valida requisitos diretamente com gestores e técnicos operacionais.
+    \item \textbf{Padrão na Indústria:} Base conceitual de ferramentas CASE (brModelo, ERwin, Draw.io).
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Definição Formal de Entidade},leftcol=7cm,rightcol=7cm]{%
+  \alert{O Que é uma Entidade?}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Definição Canônica:} Objeto do mundo real com existência autônoma e distinguível dos demais.
+    \item \textbf{Critério de Distinguibilidade:} Se dois objetos não puderem ser diferenciados, não são entidades distintas.
+    \item \textbf{Relevância no Minimundo:} Possui significado e dados necessários para o sistema.
+  \end{itemize}
+}{%
+  \alert{Tipos de Existência Ontológica}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Existência Física (Concreta):} Ativos tangíveis.\\
+      \textit{Exemplos:} Roteador \texttt{TAU-CORE-01}, Servidor DNS, Switch, Cabo de fibra, Técnico do NOC.
+    \item \textbf{Existência Conceitual (Abstrata):} Eventos ou regras.\\
+      \textit{Exemplos:} Sistema Autônomo (\texttt{ASN 65001}), Rota BGP, Circuito MPLS, Chamado de suporte.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Conjunto de Entidades vs. Instância de Entidade},leftcol=7cm,rightcol=7cm]{%
+  \alert{Conjunto de Entidades (\textit{Entity Set})}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Definição Coletiva:} Coleção de entidades que compartilham a mesma estrutura de atributos e semântica.
+    \item \textbf{Analogia OO:} Corresponde ao conceito de \textbf{Classe}.
+    \item \textbf{Formalização Matemática:}
+      $$E = \{e_1, e_2, e_3, \dots, e_N\}$$
+  \end{itemize}
+}{%
+  \alert{Instância de Entidade (\textit{Entity Instance})}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Definição Individual:} Membro particular do conjunto, correspondendo a um objeto concreto.
+    \item \textbf{Analogia OO:} Corresponde a um \textbf{Objeto} em memória.
+    \item \textbf{Exemplo em Telemática:}\\
+      $\bullet$ Conjunto: \texttt{DISPOSITIVO\_REDE}\\
+      $\bullet$ Instância 1: Cisco ASR-9006 (\texttt{IFCE-001})\\
+      $\bullet$ Instância 2: Huawei CloudEngine (\texttt{IFCE-002})
+  \end{itemize}
+}

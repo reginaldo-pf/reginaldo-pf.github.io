@@ -1,0 +1,119 @@
+\changecolours{ScoutGreen}
+\section[Classificação de Atributos]{Classificação e Taxonomia de Atributos}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Conceito de Atributo e Domínio},leftcol=7cm,rightcol=7cm]{%
+  \alert{O Que é um Atributo?}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Definição Formal:} Propriedade descritiva que qualifica as entidades de um conjunto.
+    \item \textbf{Papel Informativo:} Cada entidade é caracterizada pelos valores atribuídos a seus atributos.
+    \item \textbf{Mapeamento Matemático:}
+      $$A: E \longrightarrow \text{Dom}(A)$$
+  \end{itemize}
+}{%
+  \alert{O Conceito de Domínio (\textit{Value Set})}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Definição de Domínio:} Conjunto de todos os valores atômicos válidos permitidos para um atributo.
+    \item \textbf{Consistência:} Garante tipo, tamanho e restrições desde a concepção.
+    \item \textbf{Exemplos em Telemática:}\\
+      $\bullet$ $\text{Dom}(\texttt{porta\_snmp}) = \{1, 2, \dots, 65535\}$\\
+      $\bullet$ $\text{Dom}(\texttt{status\_link}) = \{\text{UP}, \text{DOWN}, \text{TEST}\}$
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Atributos Simples (Atômicos) vs. Compostos},leftcol=7cm,rightcol=7cm]{%
+  \alert{Atributos Simples / Atômicos}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Definição:} Indivisíveis em subpartes menores sem perda de significado.
+    \item \textbf{Unidade Básica:} Menor unidade atômica manipulada no modelo relacional.
+    \item \textbf{Exemplos em Redes:}\\
+      $\bullet$ \texttt{hostname} (ex: \texttt{"TAU-RTR-CORE-01"})\\
+      $\bullet$ \texttt{mtu} (ex: \texttt{1500} octetos)\\
+      $\bullet$ \texttt{asn} (ex: \texttt{65001})
+  \end{itemize}
+}{%
+  \alert{Atributos Compostos}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Definição:} Decomponíveis hierarquicamente em subatributos menores independentes.
+    \item \textbf{Vantagem Semântica:} Permite referenciar o todo ou acessar cada parte isolada.
+    \item \textbf{Exemplo em Telemática:}\\
+      $\bullet$ \texttt{localizacao\_rack} decomposto em:\\
+      \quad (\texttt{bloco}, \texttt{sala\_noc}, \texttt{rack\_id}, \texttt{posicao\_u})
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Atributos Monovalorados vs. Multivalorados},leftcol=7cm,rightcol=7cm]{%
+  \alert{Atributos Monovalorados}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Definição:} Assumem exatamente um único valor atômico por entidade em cada instante.
+    \item \textbf{Regra Geral:} Categoria padrão da grande maioria dos atributos.
+    \item \textbf{Exemplos em Redes:}\\
+      $\bullet$ \texttt{mac\_address} de interface física;\\
+      $\bullet$ \texttt{data\_fabricacao} do chassi;\\
+      $\bullet$ \texttt{tensao\_fonte} (ex: \texttt{48V DC}).
+  \end{itemize}
+}{%
+  \alert{Atributos Multivalorados}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Definição:} Assumem um \textbf{conjunto} de múltiplos valores para uma mesma entidade individual.
+    \item \textbf{Cardinalidade Variável:} De zero até $k$ valores associados.
+    \item \textbf{Exemplos em Redes:}\\
+      $\bullet$ \texttt{vlan\_tags}: conjunto $\{10, 20, 30, 100\}$;\\
+      $\bullet$ \texttt{telefones\_noc}: contatos de plantão;\\
+      $\bullet$ \texttt{servidores\_dns}: múltiplos IPs resolvendo.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Atributos Armazenados vs. Derivados},leftcol=7cm,rightcol=7cm]{%
+  \alert{Atributos Armazenados (\textit{Stored})}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Definição:} Valor fisicamente persistido nos arquivos e blocos de disco.
+    \item \textbf{Imutabilidade:} Não pode ser recalculado a partir de outros dados do sistema.
+    \item \textbf{Exemplos em Telemática:}\\
+      $\bullet$ \texttt{data\_instalacao} do roteador;\\
+      $\bullet$ \texttt{potencia\_rx\_dbm} da fibra óptica;\\
+      $\bullet$ \texttt{capacidade\_nominal\_gbps}.
+  \end{itemize}
+}{%
+  \alert{Atributos Derivados (\textit{Derived})}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Definição:} Valor calculado dinamicamente em tempo de consulta a partir de outros atributos.
+    \item \textbf{Vantagem Crucial:} Evita inconsistências de dados decorrentes da passagem do tempo.
+    \item \textbf{Exemplos em Telemática:}\\
+      $\bullet$ \texttt{dias\_operacao} $= (\texttt{hoje} - \texttt{data\_instalacao})$;\\
+      $\bullet$ \texttt{tempo\_uptime} ou \texttt{idade\_equipamento};\\
+      $\bullet$ \texttt{taxa\_ocupacao\_rack} (\% de unidades U).
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Valores Nulos (NULL) \& Atributos Identificadores},leftcol=7cm,rightcol=7cm]{%
+  \alert{A Semântica dos Valores Nulos (NULL)}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Significado:} Ausência de valor (não é zero numérico nem texto em branco).
+    \item \textbf{Valor Desconhecido:} O dado existe no mundo real, mas ainda não foi coletado.
+    \item \textbf{Não Aplicável:} O atributo não faz sentido para aquela entidade (ex: roteador sem Wi-Fi tendo campo \texttt{frequencia\_ghz}).
+  \end{itemize}
+}{%
+  \alert{Atributos Identificadores (Chaves)}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Definição:} Atributo cujos valores são distintos e únicos para cada entidade do conjunto.
+    \item \textbf{Garantia de Identidade:} Seleciona qualquer instância de forma inequívoca.
+    \item \textbf{Classificação:}\\
+      $\bullet$ \textbf{Chave Simples:} Único atributo atômico (\underline{\texttt{patrimonio\_id}}, \underline{\texttt{mac\_address}}).\\
+      $\bullet$ \textbf{Chave Composta:} Combinação de 2 ou mais atributos para garantir unicidade.
+  \end{itemize}
+}

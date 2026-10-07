@@ -1,0 +1,95 @@
+\changecolours{ScoutGreen}
+\section[Laboratório Computacional]{Laboratório Computacional: Validação e Pré-Mapeamento}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Estudo de Caso: NOC Datacenter IFCE Tauá},leftcol=7cm,rightcol=7cm]{%
+  \alert{O Minimundo Operacional}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Cenário Real:} O campus opera infraestrutura com roteadores core, switches de distribuição e firewalls.
+    \item \textbf{Demanda do Sistema:} Registrar cada ativo com identificação patrimonial, IP de gerência, localização precisa no rack e lista de VLANs autorizadas.
+    \item \textbf{Atributo Derivado:} Obter o tempo de atividade em dias sem precisar atualizar o banco diariamente.
+  \end{itemize}
+}{%
+  \alert{Mapeamento para o MER}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Entidade:} \texttt{DISPOSITIVO\_REDE}
+    \item \textbf{Identificador:} \underline{\texttt{patrimonio\_id}} (Chave simples)
+    \item \textbf{Simples:} \texttt{hostname}, \texttt{ip\_loopback}, \texttt{fabricante}, \texttt{data\_instalacao}
+    \item \textbf{Composto:} \texttt{localizacao\_rack} (\texttt{bloco}, \texttt{sala}, \texttt{rack}, \texttt{posicao\_u})
+    \item \textbf{Multivalorado:} \texttt{vlan\_tags} ($\{10, 20, 30, \dots\}$)
+    \item \textbf{Derivado:} \texttt{dias\_operacao} ($\texttt{hoje} - \texttt{data\_instalacao}$)
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Metamodelo em Python: Validação Conceitual}
+  \vspace{0.2cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \footnotesize
+      \alert{Definição do Esquema Conceitual}\par
+      \vspace{0.15cm}
+      \begin{itemize}\setlength{\itemsep}{1.5mm}\setlength{\parskip}{0pt}
+        \item Metamodelo orientado a objetos em Python.
+        \item Validação de unicidade para a chave identificadora.
+        \item Cálculo dinâmico do atributo derivado em tempo de execução.
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \alert{Código do Metamodelo}\par
+      \vspace{0.15cm}
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\fontsize{5.5}{6.5}\selectfont]
+esquema = EsquemaEntidade("DISPOSITIVO_REDE")
+esquema.adicionar(DefAtributo("patrimonio_id", Tipo.IDENTIFICADOR))
+esquema.adicionar(DefAtributo("hostname", Tipo.SIMPLES))
+esquema.adicionar(DefAtributo("localizacao_rack", Tipo.COMPOSTO))
+esquema.adicionar(DefAtributo("vlan_tags", Tipo.MULTIVALORADO))
+esquema.adicionar(DefAtributo("dias_operacao", Tipo.DERIVADO,
+                             funcao=lambda d: (date.today() - d["data_inst"]).days))
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Ponte para o Modelo Relacional: O Impacto da 1FN}
+  \vspace{0.2cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \footnotesize
+      \alert{A Regra da 1ª Forma Normal (1FN)}\par
+      \vspace{0.15cm}
+      \begin{itemize}\setlength{\itemsep}{1.5mm}\setlength{\parskip}{0pt}
+        \item Proíbe atributos compostos e multivalorados em colunas únicas!
+        \item \textbf{Composto:} Planificado em colunas atômicas (\texttt{rack\_bloco}, \texttt{posicao\_u}).
+        \item \textbf{Multivalorado:} Exige \textbf{tabela auxiliar}.
+        \item \textbf{Derivado:} Calculado dinamicamente via \textbf{VIEW}.
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \alert{Esquema Relacional em SQLite}\par
+      \vspace{0.15cm}
+\begin{lstlisting}[language=SQL,basicstyle=\ttfamily\fontsize{5.5}{6.5}\selectfont]
+CREATE TABLE dispositivos_rede (
+    patrimonio_id TEXT PRIMARY KEY,
+    hostname TEXT NOT NULL UNIQUE,
+    data_instalacao DATE NOT NULL,
+    rack_bloco TEXT NOT NULL,
+    rack_posicao_u TEXT NOT NULL
+);
+
+CREATE TABLE dispositivo_vlans (
+    id INTEGER PRIMARY KEY,
+    dispositivo_id TEXT NOT NULL,
+    vlan_id INTEGER NOT NULL,
+    FOREIGN KEY(dispositivo_id)
+      REFERENCES dispositivos_rede(patrimonio_id)
+);
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}

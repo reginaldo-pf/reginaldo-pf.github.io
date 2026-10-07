@@ -43,6 +43,7 @@ A avaliação da disciplina é estruturada em dois períodos (N1 e N2), combinan
 - Diretório de aulas sequenciais com roteiros pedagógicos e códigos práticos.
   - [Aula 01: Introdução & Modelagem Conceitual](Aulas/Aula_01/) (Disponível na plataforma web).
   - [Aula 02: Arquitetura ANSI/SPARC, Independência de Dados & Sublinguagens SQL](Aulas/Aula_02/) (Disponível na plataforma web).
+  - [Aula 03: Fases do Projeto de BD & Modelo Entidade-Relacionamento](Aulas/Aula_03/) (Disponível na plataforma web).
 
 ### 📚 [Referências e Cronograma](Referencias/)
 - [Ementa Banco de dados.pdf](Referencias/Ementa%20Banco%20de%20dados.pdf) -- Programa de Unidade Didática (PUD oficial IFCE).

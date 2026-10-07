@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 03: Fases do Projeto de BD & Modelo Entidade-Relacionamento | IFCE Campus Tauá</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            ifce: {
+              green: '#2F855A',
+              red: '#C53030',
+              dark: '#1C4532',
+              emerald: '#059669'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Prism.js para Realce de Sintaxe -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    code, pre { font-family: 'JetBrains Mono', monospace !important; }
+    .tab-active {
+      border-color: #059669;
+      color: #059669;
+      background-color: rgba(5, 150, 105, 0.08);
+    }
+    .dark .tab-active {
+      border-color: #34d399;
+      color: #34d399;
+      background-color: rgba(52, 211, 153, 0.12);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- Navbar -->
+  <header class="border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="../../index.html" class="flex items-center space-x-2 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium text-sm transition-colors">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Voltar para Disciplina</span>
+        </a>
+      </div>
+      <div class="flex items-center space-x-4">
+        <a href="https://github.com/reginaldo-pf" target="_blank" rel="noopener noreferrer" class="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white text-lg" title="GitHub @reginaldo-pf">
+          <i class="fa-brands fa-github"></i>
+        </a>
+        <button id="themeToggle" class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Alternar tema">
+          <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 py-8 w-full">
+
+    <!-- Breadcrumb -->
+    <nav class="text-xs text-slate-500 dark:text-slate-400 mb-4 flex items-center space-x-2 flex-wrap">
+      <a href="../../../../../../index.html" class="hover:underline">Início</a>
+      <span>/</span>
+      <span>Tecnologia em Telemática</span>
+      <span>/</span>
+      <a href="../../index.html" class="hover:underline">Banco de Dados</a>
+      <span>/</span>
+      <span class="text-emerald-600 dark:text-emerald-400 font-medium">Aula 03</span>
+    </nav>
+
+    <!-- Header do Bloco da Aula -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/60 shadow-sm mb-8">
+      <div class="flex flex-wrap items-center gap-2 mb-3">
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">Aula 03</span>
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200">Telemática • 100 min (2 aulas)</span>
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300">Semestre 2026.2 / 2027.1</span>
+      </div>
+
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+        Fases do Projeto de Banco de Dados & Introdução ao Modelo Entidade-Relacionamento (MER)
+      </h1>
+      <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+        <strong>Disciplina:</strong> Banco de Dados | <strong>Docente:</strong> Prof. Reginaldo Pereira Fernandes (IFCE Campus Tauá)
+      </p>
+
+      <!-- Botões de Ação Rápida no Topo -->
+      <div class="flex flex-wrap items-center gap-3 mt-6 pt-5 border-t border-slate-100 dark:border-slate-700/60">
+        <!-- Botão Google Colab -->
+        <a href="https://colab.research.google.com/github/reginaldo-pf/reginaldo-pf.github.io/blob/main/Cursos/Tecnologia%20em%20Telem%C3%A1tica/Disciplinas/Banco%20de%20Dados/Aulas/Aula_03/codigo/script_apoio.ipynb" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-sm transition-all transform hover:-translate-y-0.5">
+          <i class="fa-solid fa-bolt"></i>
+          <span>Abrir no Google Colab</span>
+        </a>
+
+        <!-- Botão Ver Slides -->
+        <button onclick="switchTab('tab-slides')" class="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all">
+          <i class="fa-solid fa-file-pdf"></i>
+          <span>Visualizar Slides (PDF)</span>
+        </button>
+
+        <!-- Botão Baixar Script Python -->
+        <a href="codigo/script_apoio.py" download class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors">
+          <i class="fa-brands fa-python text-emerald-500"></i>
+          <span>Baixar Script (.py)</span>
+        </a>
+
+        <!-- Botão Baixar Notebook -->
+        <a href="codigo/script_apoio.ipynb" download class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors">
+          <i class="fa-solid fa-book-open text-amber-500"></i>
+          <span>Baixar Notebook (.ipynb)</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Navegação por Abas -->
+    <div class="flex items-center space-x-2 border-b border-slate-200 dark:border-slate-700 mb-8 overflow-x-auto pb-1">
+      <button onclick="switchTab('tab-notebook')" id="btn-tab-notebook" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent transition-all flex items-center space-x-2 tab-active">
+        <i class="fa-solid fa-code"></i>
+        <span>Caderno Didático (Notebook)</span>
+      </button>
+
+      <button onclick="switchTab('tab-slides')" id="btn-tab-slides" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all flex items-center space-x-2">
+        <i class="fa-solid fa-file-pdf"></i>
+        <span>Slides da Apresentação</span>
+      </button>
+
+      <button onclick="switchTab('tab-plano')" id="btn-tab-plano" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all flex items-center space-x-2">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Plano Pedagógico & Atividades</span>
+      </button>
+
+      <button onclick="switchTab('tab-recursos')" id="btn-tab-recursos" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all flex items-center space-x-2">
+        <i class="fa-solid fa-download"></i>
+        <span>Central de Arquivos</span>
+      </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 1: CADERNO DIDÁTICO (NOTEBOOK PYTHON) -->
+    <!-- ========================================== -->
+    <div id="tab-notebook" class="tab-content space-y-6">
+
+      <!-- Célula Teórica 1: Fases do Projeto e MER -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-layer-group text-emerald-600 dark:text-emerald-400"></i>
+          <span>1. O Ciclo de Vida do Projeto de Banco de Dados</span>
+        </h2>
+        <p class="text-slate-700 dark:text-slate-300 mb-3">
+          O desenvolvimento profissional de bancos de dados é governado por um processo de engenharia dividido em quatro fases sequenciais e iterativas. Essa segregação garante que a modelagem semântica das regras de negócio permaneça protegida de detalhes e limitações de implementação em disco:
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 my-4">
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+            <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block mb-1">1. Requisitos</span>
+            <p class="text-xs text-slate-600 dark:text-slate-300">Entrevistas e análise do <em>Minimundo</em>. Gera especificação textual de necessidades de dados e operações.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+            <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block mb-1">2. Conceitual</span>
+            <p class="text-xs text-slate-600 dark:text-slate-300">Esquema semântico de alto nível via MER (Peter Chen, 1976). Totalmente independente de qualquer SGBD.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+            <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block mb-1">3. Lógico</span>
+            <p class="text-xs text-slate-600 dark:text-slate-300">Mapeamento para o paradigma relacional. Tabelas, chaves primárias/estrangeiras e Normalização (1FN a 3FN).</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+            <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block mb-1">4. Físico</span>
+            <p class="text-xs text-slate-600 dark:text-slate-300">Implementação no SGBD alvo (PostgreSQL). Estruturas em disco, índices B-Tree e partições.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Célula de Código 1: Metamodelo do MER em Python -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-sm overflow-hidden">
+        <div class="bg-slate-100 dark:bg-slate-850 px-4 py-2 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center space-x-2">
+            <span class="font-mono font-bold text-emerald-600 dark:text-emerald-400">In [1]:</span>
+            <span>Metamodelo Conceitual do Modelo Entidade-Relacionamento em Python</span>
+          </div>
+          <button onclick="copiarCodigo('code-cell-1')" class="hover:text-emerald-600 transition-colors flex items-center space-x-1">
+            <i class="fa-regular fa-copy"></i>
+            <span>Copiar</span>
+          </button>
+        </div>
+        <pre class="p-4 text-xs sm:text-sm overflow-x-auto"><code id="code-cell-1" class="language-python">from enum import Enum
+from datetime import datetime, date
+from typing import Any, Dict, List, Optional, Callable
+
+class TipoAtributo(Enum):
+    IDENTIFICADOR = "Chave Identificadora (Sublinhado no DER)"
+    SIMPLES = "Simples / Atômico (Elipse simples no DER)"
+    COMPOSTO = "Composto (Elipse ramificada no DER)"
+    MULTIVALORADO = "Multivalorado (Elipse dupla no DER)"
+    DERIVADO = "Derivado (Elipse tracejada no DER)"
+
+class DefinicaoAtributo:
+    def __init__(self, nome: str, tipo: TipoAtributo, descricao: str,
+                 sub_atributos: Optional[List['DefinicaoAtributo']] = None,
+                 funcao_derivacao: Optional[Callable[[Dict[str, Any]], Any]] = None,
+                 obrigatorio: bool = True):
+        self.nome = nome
+        self.tipo = tipo
+        self.descricao = descricao
+        self.sub_atributos = sub_atributos or []
+        self.funcao_derivacao = funcao_derivacao
+        self.obrigatorio = obrigatorio
+
+class EsquemaEntidade:
+    def __init__(self, nome: str, descricao: str):
+        self.nome = nome
+        self.descricao = descricao
+        self.atributos: Dict[str, DefinicaoAtributo] = {}
+        self.instancias: List[Dict[str, Any]] = []
+
+    def adicionar_atributo(self, atributo: DefinicaoAtributo):
+        self.atributos[atributo.nome] = atributo
+
+    def validar_e_inserir(self, dados_instancia: Dict[str, Any]):
+        # 1. Validação de Unicidade do Identificador Conceitual
+        id_attr = next((a for a in self.atributos.values() if a.tipo == TipoAtributo.IDENTIFICADOR), None)
+        if id_attr:
+            val_id = dados_instancia.get(id_attr.nome)
+            if val_id is None:
+                raise ValueError(f"Chave identificadora '{id_attr.nome}' não pode ser nula.")
+            for inst in self.instancias:
+                if inst.get(id_attr.nome) == val_id:
+                    raise ValueError(f"Violação de unicidade: A chave '{val_id}' já está em uso.")
+
+        # 2. Computação Dinâmica de Atributos Derivados
+        for nome_attr, attr in self.atributos.items():
+            if attr.tipo == TipoAtributo.DERIVADO and attr.funcao_derivacao:
+                dados_instancia[nome_attr] = attr.funcao_derivacao(dados_instancia)
+
+        self.instancias.append(dados_instancia)
+
+print("✅ Metamodelo do MER carregado com sucesso.")</code></pre>
+        <div class="bg-slate-50 dark:bg-slate-900/60 px-4 py-3 border-t border-slate-200 dark:border-slate-700 font-mono text-xs text-slate-600 dark:text-slate-400">
+          <span class="font-bold text-slate-400">Out [1]:</span>
+          <p class="text-emerald-600 dark:text-emerald-400 mt-1">✅ Metamodelo do MER carregado com sucesso.</p>
+        </div>
+      </div>
+
+      <!-- Célula Teórica 2: Tipos de Atributos no MER -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-tags text-emerald-600 dark:text-emerald-400"></i>
+          <span>2. Taxonomia de Atributos de Peter Chen (1976)</span>
+        </h2>
+        <p class="text-slate-700 dark:text-slate-300 mb-3">
+          No Modelo Entidade-Relacionamento, os atributos qualificam as entidades e são formalmente classificados de acordo com três dimensões estruturais independentes:
+        </p>
+        <ul class="list-disc list-inside space-y-1.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+          <li><strong>Simples (Atômico) vs. Composto:</strong> Atributos simples são indivisíveis (ex: <code>hostname</code>, <code>mtu</code>); compostos formam hierarquias menores com significado próprio (ex: <code>localizacao_rack</code> $\to$ bloco, sala, rack, unidade U).</li>
+          <li><strong>Monovalorado vs. Multivalorado:</strong> Monovalorados contêm um único valor fixo (ex: <code>mac_address</code>); multivalorados formam coleções de valores para a mesma entidade (ex: conjunto de <code>vlan_tags</code>).</li>
+          <li><strong>Armazenado vs. Derivado:</strong> Armazenados são fisicamente gravados no banco (ex: <code>data_instalacao</code>); derivados são calculados dinamicamente via expressão (ex: <code>dias_operacao</code> $= \text{hoje} - \text{data\_instalacao}$).</li>
+          <li><strong>Identificador (Chave Primária):</strong> Atributo cujos valores identificam de forma única e inequívoca cada entidade individual no conjunto.</li>
+        </ul>
+      </div>
+
+      <!-- Célula de Código 2: Especificação do Minimundo DISPOSITIVO_REDE -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-sm overflow-hidden">
+        <div class="bg-slate-100 dark:bg-slate-850 px-4 py-2 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center space-x-2">
+            <span class="font-mono font-bold text-emerald-600 dark:text-emerald-400">In [2]:</span>
+            <span>Especificação Conceitual da Entidade DISPOSITIVO_REDE</span>
+          </div>
+          <button onclick="copiarCodigo('code-cell-2')" class="hover:text-emerald-600 transition-colors flex items-center space-x-1">
+            <i class="fa-regular fa-copy"></i>
+            <span>Copiar</span>
+          </button>
+        </div>
+        <pre class="p-4 text-xs sm:text-sm overflow-x-auto"><code id="code-cell-2" class="language-python"># Instanciação do Conjunto de Entidades (Entity Set)
+esquema = EsquemaEntidade(
+    nome="DISPOSITIVO_REDE",
+    descricao="Ativos de rede da infraestrutura de telecomunicações do campus."
+)
+
+# 1. Atributo Identificador (Chave Primária no DER)
+esquema.adicionar_atributo(DefinicaoAtributo("patrimonio_id", TipoAtributo.IDENTIFICADOR, "ID patrimonial único gravado no chassi"))
+
+# 2. Atributos Simples / Atômicos
+esquema.adicionar_atributo(DefinicaoAtributo("hostname", TipoAtributo.SIMPLES, "Nome FQDN na topologia"))
+esquema.adicionar_atributo(DefinicaoAtributo("ip_loopback", TipoAtributo.SIMPLES, "IPv4 de gerência loopback0"))
+esquema.adicionar_atributo(DefinicaoAtributo("fabricante", TipoAtributo.SIMPLES, "Fabricante do equipamento"))
+esquema.adicionar_atributo(DefinicaoAtributo("data_instalacao", TipoAtributo.SIMPLES, "Data de ativação física (armazenado)"))
+
+# 3. Atributo Composto (Hierárquico com subcomponentes atômicos)
+sub_rack = [
+    DefinicaoAtributo("bloco", TipoAtributo.SIMPLES, "Bloco predial"),
+    DefinicaoAtributo("sala_noc", TipoAtributo.SIMPLES, "Sala técnica"),
+    DefinicaoAtributo("rack_id", TipoAtributo.SIMPLES, "Identificador do rack"),
+    DefinicaoAtributo("posicao_u", TipoAtributo.SIMPLES, "Unidade de altura no rack")
+]
+esquema.adicionar_atributo(DefinicaoAtributo("localizacao_rack", TipoAtributo.COMPOSTO, "Posicionamento no datacenter", sub_atributos=sub_rack))
+
+# 4. Atributo Multivalorado (Conjunto de tags)
+esquema.adicionar_atributo(DefinicaoAtributo("vlan_tags", TipoAtributo.MULTIVALORADO, "Conjunto de VLANs IEEE 802.1Q suportadas"))
+
+# 5. Atributo Derivado (Calculado dinamicamente)
+def calcular_dias_operacao(dados: Dict[str, Any]) -> int:
+    dt_inst = datetime.strptime(dados["data_instalacao"], "%Y-%m-%d").date()
+    return (date(2026, 10, 6) - dt_inst).days
+
+esquema.adicionar_atributo(DefinicaoAtributo(
+    nome="dias_operacao",
+    tipo=TipoAtributo.DERIVADO,
+    descricao="Tempo em dias decorrido desde a instalação",
+    funcao_derivacao=calcular_dias_operacao,
+    obrigatorio=False
+))
+
+print(f"✅ Esquema conceitual '{esquema.nome}' concebido com {len(esquema.atributos)} atributos.")</code></pre>
+        <div class="bg-slate-50 dark:bg-slate-900/60 px-4 py-3 border-t border-slate-200 dark:border-slate-700 font-mono text-xs text-slate-600 dark:text-slate-400">
+          <span class="font-bold text-slate-400">Out [2]:</span>
+          <p class="text-emerald-600 dark:text-emerald-400 mt-1">✅ Esquema conceitual 'DISPOSITIVO_REDE' concebido com 7 atributos.</p>
+        </div>
+      </div>
+
+      <!-- Célula de Código 3: Instanciação e Teste de Unicidade -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-sm overflow-hidden">
+        <div class="bg-slate-100 dark:bg-slate-850 px-4 py-2 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center space-x-2">
+            <span class="font-mono font-bold text-emerald-600 dark:text-emerald-400">In [3]:</span>
+            <span>Instanciação de Entidades e Cálculo Dinâmico de Atributo Derivado</span>
+          </div>
+          <button onclick="copiarCodigo('code-cell-3')" class="hover:text-emerald-600 transition-colors flex items-center space-x-1">
+            <i class="fa-regular fa-copy"></i>
+            <span>Copiar</span>
+          </button>
+        </div>
+        <pre class="p-4 text-xs sm:text-sm overflow-x-auto"><code id="code-cell-3" class="language-python"># Inserção de entidades concretas do campus
+esquema.validar_e_inserir({
+    "patrimonio_id": "IFCE-TAU-00101",
+    "hostname": "TAU-RTR-CORE-01",
+    "ip_loopback": "10.200.0.1",
+    "fabricante": "Cisco Systems",
+    "data_instalacao": "2024-02-15",
+    "localizacao_rack": {"bloco": "Principal", "sala_noc": "NOC 102", "rack_id": "RACK-01", "posicao_u": "U40-U42"},
+    "vlan_tags": [10, 20, 30, 99, 100, 200]
+})
+
+esquema.validar_e_inserir({
+    "patrimonio_id": "IFCE-TAU-00102",
+    "hostname": "TAU-SW-DIST-01",
+    "ip_loopback": "10.200.0.2",
+    "fabricante": "Huawei",
+    "data_instalacao": "2025-05-10",
+    "localizacao_rack": {"bloco": "Didático", "sala_noc": "Telecom 02", "rack_id": "RACK-03", "posicao_u": "U22-U23"},
+    "vlan_tags": [10, 20, 100]
+})
+
+for inst in esquema.instancias:
+    print(f"-> Host: {inst['hostname']:<16} | Chave: {inst['patrimonio_id']} | Uptime: {inst['dias_operacao']} dias | VLANs: {inst['vlan_tags']}")</code></pre>
+        <div class="bg-slate-50 dark:bg-slate-900/60 px-4 py-3 border-t border-slate-200 dark:border-slate-700 font-mono text-xs text-slate-600 dark:text-slate-400">
+          <span class="font-bold text-slate-400">Out [3]:</span>
+          <div class="mt-1 text-slate-600 dark:text-slate-300">
+            -> Host: TAU-RTR-CORE-01  | Chave: IFCE-TAU-00101 | Uptime: 964 dias | VLANs: [10, 20, 30, 99, 100, 200]<br>
+            -> Host: TAU-SW-DIST-01   | Chave: IFCE-TAU-00102 | Uptime: 514 dias | VLANs: [10, 20, 100]
+          </div>
+        </div>
+      </div>
+
+      <!-- Célula de Código 4: Transição Conceitual para Relacional (1FN no SQLite) -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-sm overflow-hidden">
+        <div class="bg-slate-100 dark:bg-slate-850 px-4 py-2 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center space-x-2">
+            <span class="font-mono font-bold text-emerald-600 dark:text-emerald-400">In [4]:</span>
+            <span>Mapeamento Pré-Relacional no SQLite: O Papel da 1ª Forma Normal (1FN)</span>
+          </div>
+          <button onclick="copiarCodigo('code-cell-4')" class="hover:text-emerald-600 transition-colors flex items-center space-x-1">
+            <i class="fa-regular fa-copy"></i>
+            <span>Copiar</span>
+          </button>
+        </div>
+        <pre class="p-4 text-xs sm:text-sm overflow-x-auto"><code id="code-cell-4" class="language-python">import sqlite3
+
+conn = sqlite3.connect(":memory:")
+cursor = conn.cursor()
+
+# 1. Tabela Principal (Atributo Composto achatado em colunas atômicas)
+cursor.execute("""
+CREATE TABLE dispositivos_rede (
+    patrimonio_id TEXT PRIMARY KEY,
+    hostname TEXT NOT NULL UNIQUE,
+    ip_loopback TEXT NOT NULL UNIQUE,
+    data_instalacao DATE NOT NULL,
+    rack_bloco TEXT NOT NULL,
+    rack_sala TEXT NOT NULL,
+    rack_id TEXT NOT NULL,
+    rack_posicao_u TEXT NOT NULL
+);
+""")
+
+# 2. Tabela Auxiliar para o Atributo Multivalorado (Preservando a 1FN de Codd)
+cursor.execute("""
+CREATE TABLE dispositivo_vlans (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    dispositivo_patrimonio TEXT NOT NULL,
+    vlan_id INTEGER NOT NULL CHECK (vlan_id BETWEEN 1 AND 4094),
+    FOREIGN KEY (dispositivo_patrimonio) REFERENCES dispositivos_rede(patrimonio_id) ON DELETE CASCADE
+);
+""")
+
+# 3. Visão (VIEW) para o Atributo Derivado
+cursor.execute("""
+CREATE VIEW vw_dispositivos_uptime AS
+SELECT 
+    patrimonio_id, hostname, ip_loopback, rack_id, data_instalacao,
+    CAST((julianday('2026-10-06') - julianday(data_instalacao)) AS INTEGER) AS dias_operacao
+FROM dispositivos_rede;
+""")
+
+# Inserção de dados
+cursor.execute("INSERT INTO dispositivos_rede VALUES ('IFCE-TAU-00101', 'TAU-RTR-CORE-01', '10.200.0.1', '2024-02-15', 'Principal', 'NOC 102', 'RACK-01', 'U40-U42');")
+cursor.executemany("INSERT INTO dispositivo_vlans (dispositivo_patrimonio, vlan_id) VALUES (?, ?);", [
+    ('IFCE-TAU-00101', 10), ('IFCE-TAU-00101', 20), ('IFCE-TAU-00101', 100)
+])
+conn.commit()
+
+# Consulta DQL com reconstituição do multivalorado via GROUP_CONCAT
+cursor.execute("""
+SELECT d.hostname, d.dias_operacao, GROUP_CONCAT(v.vlan_id, ', ') AS vlans
+FROM vw_dispositivos_uptime d
+JOIN dispositivo_vlans v ON d.patrimonio_id = v.dispositivo_patrimonio
+GROUP BY d.patrimonio_id;
+""")
+for row in cursor.fetchall():
+    print(f"-> Dispositivo: {row[0]:<16} | Uptime (Derivado): {row[1]} dias | VLANs (Multivalorado): [{row[2]}]")</code></pre>
+        <div class="bg-slate-50 dark:bg-slate-900/60 px-4 py-3 border-t border-slate-200 dark:border-slate-700 font-mono text-xs text-slate-600 dark:text-slate-400">
+          <span class="font-bold text-slate-400">Out [4]:</span>
+          <div class="mt-1 text-slate-600 dark:text-slate-300">
+            -> Dispositivo: TAU-RTR-CORE-01  | Uptime (Derivado): 964 dias | VLANs (Multivalorado): [10, 20, 100]
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 2: SLIDES DA APRESENTAÇÃO (PDF)       -->
+    <!-- ========================================== -->
+    <div id="tab-slides" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h3 class="font-bold text-base flex items-center space-x-2">
+            <i class="fa-solid fa-file-pdf text-red-500 text-lg"></i>
+            <span>Apresentação Beamer: Aula 03 -- Fases do Projeto de BD & Modelo Entidade-Relacionamento (MER)</span>
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Documento oficial gerado em LaTeX Beamer (Template Widescreen 16:9 - IFCE Tauá).</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <a href="materiais/main.pdf" target="_blank" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors inline-flex items-center space-x-1.5">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            <span>Abrir em Nova Aba</span>
+          </a>
+          <a href="materiais/main.pdf" download class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors inline-flex items-center space-x-1.5">
+            <i class="fa-solid fa-download"></i>
+            <span>Baixar PDF</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Iframe Incorporador de PDF -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700/60 overflow-hidden shadow-sm">
+        <iframe src="materiais/main.pdf" class="w-full h-[650px] border-0" title="Slides da Aula 03"></iframe>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 3: PLANO PEDAGÓGICO & ATIVIDADES      -->
+    <!-- ========================================== -->
+    <div id="tab-plano" class="tab-content hidden space-y-6">
+      
+      <!-- Cronograma da Aula -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <h3 class="font-bold text-base mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-clock text-emerald-600 dark:text-emerald-400"></i>
+          <span>Cronograma dos 100 Minutos do Encontro</span>
+        </h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs sm:text-sm">
+            <thead>
+              <tr class="bg-slate-50 dark:bg-slate-900/50 text-slate-500 border-b border-slate-200 dark:border-slate-700">
+                <th class="py-2.5 px-3">Bloco</th>
+                <th class="py-2.5 px-3">Duração</th>
+                <th class="py-2.5 px-4">Descrição das Atividades</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50">
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-emerald-600">Bloco 1</td>
+                <td class="py-2.5 px-3 text-xs">00 - 20 min</td>
+                <td class="py-2.5 px-4"><strong>Acolhimento & Ponte Conceitual:</strong> Retrospectiva da Aula 02 (da arquitetura ANSI/SPARC à necessidade do projeto conceitual) e introdução ao ciclo de vida do projeto de banco de dados.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-emerald-600">Bloco 2</td>
+                <td class="py-2.5 px-3 text-xs">20 - 45 min</td>
+                <td class="py-2.5 px-4"><strong>Ciclo de Vida do Projeto de BD:</strong> Detalhamento formal das 4 fases: Requisitos (Minimundo), Projeto Conceitual (MER/DER), Projeto Lógico (Esquema Relacional e Normalização) e Projeto Físico (Estruturas em disco e índices).</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-emerald-600">Bloco 3</td>
+                <td class="py-2.5 px-3 text-xs">45 - 65 min</td>
+                <td class="py-2.5 px-4"><strong>O Modelo Entidade-Relacionamento (Chen, 1976):</strong> Conceito de Entidade vs. Conjunto de Entidades (<em>Entity Set</em>). Taxonomia rigorosa de atributos (simples, composto, monovalorado, multivalorado, armazenado, derivado, nulos e identificadores). Notação canônica do DER.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-emerald-600">Bloco 4</td>
+                <td class="py-2.5 px-3 text-xs">65 - 85 min</td>
+                <td class="py-2.5 px-4"><strong>Laboratório Computacional & Estudo de Caso:</strong> Apresentação do minimundo de infraestrutura e NOC do IFCE Tauá. Execução do script Python com validação semântica de atributos e mapeamento pré-relacional no SQLite.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-emerald-600">Bloco 5</td>
+                <td class="py-2.5 px-3 text-xs">85 - 100 min</td>
+                <td class="py-2.5 px-4"><strong>Síntese, Resolução de Dúvidas & Orientações:</strong> Resolução de dúvidas da mentoria, apresentação do Bloco 3 da Lista de Exercícios 01 (entregável no sábado letivo - Aula 04) e introdução à Aula 05 (Relacionamentos, Cardinalidades e Participação).</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Exercícios de Fixação -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <h3 class="font-bold text-base mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-pencil text-emerald-600 dark:text-emerald-400"></i>
+          <span>Exercícios de Fixação (Lista 1 -- Bloco 3)</span>
+        </h3>
+        <ol class="list-decimal list-inside space-y-3 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+          <li>Descreva as quatro fases fundamentais do projeto de banco de dados, explicitando para cada uma: o objetivo principal, os artefatos de entrada e os artefatos gerados como saída. Por que o Projeto Conceitual deve ser estritamente independente de qualquer SGBD comercial?</li>
+          <li>Em um sistema de gerenciamento de infraestrutura de telecomunicações (NOC), identifique ao menos três conjuntos de entidades do mundo real e forneça a justificativa ontológica para a escolha de cada um.</li>
+          <li>Classifique formalmente cada um dos atributos a seguir relativos a um Roteador de Borda, justificando cada classificação:
+            <ul class="list-disc list-inside ml-6 mt-1.5 space-y-1 font-mono text-xs">
+              <li>a) numero_patrimonio (número único gravado no chassi metálico).</li>
+              <li>b) localizacao_datacenter (composto por: Bloco, Sala do NOC, Número do Rack e Posição em Unidades U).</li>
+              <li>c) enderecos_ipv6_alocados (conjunto de prefixos IPv6 configurados nas interfaces do equipamento).</li>
+              <li>d) tempo_atividade_horas (quantidade de horas ininterruptas de operação calculada subtraindo o timestamp atual do último boot).</li>
+              <li>e) observacoes_manutencao (campo textual que pode estar preenchido ou vazio caso nunca tenha ocorrido intervenção técnica).</li>
+            </ul>
+          </li>
+          <li>Desenhe (ou descreva textualmente segundo as regras de notação canônica de Peter Chen) o Diagrama Entidade-Relacionamento (DER) para o conjunto de entidades <code>SERVIDOR_TELEMATICA</code>, contemplando obrigatoriamente:
+            <ul class="list-disc list-inside ml-6 mt-1.5 space-y-1 text-xs">
+              <li>1 atributo identificador simples;</li>
+              <li>2 atributos simples atômicos;</li>
+              <li>1 atributo composto contendo no mínimo 3 subatributos;</li>
+              <li>1 atributo multivalorado;</li>
+              <li>1 atributo derivado com a respectiva regra de derivação explicitada.</li>
+            </ul>
+          </li>
+        </ol>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 4: CENTRAL DE RECURSOS & ARQUIVOS     -->
+    <!-- ========================================== -->
+    <div id="tab-recursos" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <h3 class="font-bold text-base mb-4 flex items-center space-x-2">
+          <i class="fa-solid fa-folder-open text-amber-500"></i>
+          <span>Arquivos e Recursos Disponíveis para Esta Aula</span>
+        </h3>
+        <div class="divide-y divide-slate-100 dark:divide-slate-700">
+          
+          <div class="py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <i class="fa-brands fa-python text-emerald-500 text-xl"></i>
+              <div>
+                <p class="font-semibold text-sm">script_apoio.py</p>
+                <p class="text-xs text-slate-500">Código Python de apoio para laboratório com metamodelo MER e validação de atributos</p>
+              </div>
+            </div>
+            <a href="codigo/script_apoio.py" download class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200">
+              Download
+            </a>
+          </div>
+
+          <div class="py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <i class="fa-solid fa-book-open text-amber-500 text-xl"></i>
+              <div>
+                <p class="font-semibold text-sm">script_apoio.ipynb</p>
+                <p class="text-xs text-slate-500">Jupyter Notebook interativo para execução local ou nuvem (Google Colab)</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <a href="https://colab.research.google.com/github/reginaldo-pf/reginaldo-pf.github.io/blob/main/Cursos/Tecnologia%20em%20Telem%C3%A1tica/Disciplinas/Banco%20de%20Dados/Aulas/Aula_03/codigo/script_apoio.ipynb" target="_blank" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-amber-500 text-slate-900">
+                Colab
+              </a>
+              <a href="codigo/script_apoio.ipynb" download class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200">
+                Download
+              </a>
+            </div>
+          </div>
+
+          <div class="py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <i class="fa-solid fa-file-pdf text-red-500 text-xl"></i>
+              <div>
+                <p class="font-semibold text-sm">main.pdf</p>
+                <p class="text-xs text-slate-500">Apresentação de slides oficial compilada (LaTeX Beamer Widescreen 16:9 - 35 slides)</p>
+              </div>
+            </div>
+            <a href="materiais/main.pdf" download class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200">
+              Download
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-6xl mx-auto px-4">
+      <p>© 2026 Instituto Federal do Ceará -- Campus Tauá. Todos os direitos reservados.</p>
+      <p class="mt-1">Prof. Reginaldo Pereira Fernandes | Tecnologia em Telemática</p>
+    </div>
+  </footer>
+
+  <!-- Scripts: Alternância de Abas e Modo Escuro -->
+  <script>
+    // Gerenciamento de Abas
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
+      
+      const activeContent = document.getElementById(tabId);
+      const activeBtn = document.getElementById('btn-' + tabId);
+      
+      if (activeContent) activeContent.classList.remove('hidden');
+      if (activeBtn) activeBtn.classList.add('tab-active');
+    }
+
+    // Copiar Código para Área de Transferência
+    function copiarCodigo(elementId) {
+      const code = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        alert('Código copiado para a área de transferência!');
+      });
+    }
+
+    // Modo Escuro / Claro (Tema padrão: Claro)
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const html = document.documentElement;
+
+    if (localStorage.theme === 'dark') {
+      html.classList.add('dark');
+      themeIcon.className = 'fa-solid fa-sun text-lg text-amber-400';
+    } else {
+      html.classList.remove('dark');
+      themeIcon.className = 'fa-solid fa-moon text-lg';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        localStorage.theme = 'light';
+        themeIcon.className = 'fa-solid fa-moon text-lg';
+      } else {
+        html.classList.add('dark');
+        localStorage.theme = 'dark';
+        themeIcon.className = 'fa-solid fa-sun text-lg text-amber-400';
+      }
+    });
+  </script>
+</body>
+</html>

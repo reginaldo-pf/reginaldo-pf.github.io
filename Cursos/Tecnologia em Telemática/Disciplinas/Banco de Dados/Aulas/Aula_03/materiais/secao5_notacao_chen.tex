@@ -1,0 +1,137 @@
+\changecolours{ScoutGreen}
+\section[Notação Canônica de Chen]{Notação Gráfica Canônica de Peter Chen (1976)}
+
+% Macros para Simbologia Grafica Canonica do DER (Peter Chen, 1976)
+\newcommand{\iconeEntidade}{%
+  \makebox[0.75cm][c]{%
+    \tikz[baseline=-0.5ex]{%
+      \draw[thick, ScoutGreen, fill=ScoutGreen!15] (0.04,-0.16) rectangle (0.68,0.18);
+      \node[font=\fontsize{5.5}{6}\selectfont\bfseries\sffamily, text=ScoutGreen] at (0.36,0.01) {ENT};
+    }%
+  }%
+}
+
+\newcommand{\iconeAtributo}{%
+  \makebox[0.75cm][c]{%
+    \tikz[baseline=-0.5ex]{%
+      \draw[thick, ScoutNavy, fill=ScoutNavy!15] (0.36,0) ellipse (0.32 and 0.17);
+      \node[font=\fontsize{5}{6}\selectfont\sffamily, text=ScoutNavy] at (0.36,0) {atr};
+    }%
+  }%
+}
+
+\newcommand{\iconeIdentificador}{%
+  \makebox[0.75cm][c]{%
+    \tikz[baseline=-0.5ex]{%
+      \draw[thick, ScoutNavy, fill=ScoutNavy!15] (0.36,0) ellipse (0.32 and 0.17);
+      \node[font=\fontsize{5}{6}\selectfont\bfseries\sffamily, text=ScoutNavy] at (0.36,0) {\underline{id}};
+    }%
+  }%
+}
+
+\newcommand{\iconeLinha}{%
+  \makebox[0.75cm][c]{%
+    \tikz[baseline=-0.5ex]{%
+      \draw[thick, ScoutGreen, fill=ScoutGreen!20] (0.04,-0.13) rectangle (0.24,0.13);
+      \draw[very thick, black!70] (0.24,0) -- (0.48,0);
+      \draw[thick, ScoutNavy, fill=ScoutNavy!20] (0.60,0) circle (0.12);
+    }%
+  }%
+}
+
+\newcommand{\iconeMultivalorado}{%
+  \makebox[0.75cm][c]{%
+    \tikz[baseline=-0.5ex]{%
+      \draw[thick, ScoutNavy, fill=ScoutNavy!15] (0.36,0) ellipse (0.35 and 0.19);
+      \draw[thick, ScoutNavy] (0.36,0) ellipse (0.28 and 0.14);
+      \node[font=\fontsize{4}{5}\selectfont\sffamily, text=ScoutNavy] at (0.36,0) {vlan};
+    }%
+  }%
+}
+
+\newcommand{\iconeDerivado}{%
+  \makebox[0.75cm][c]{%
+    \tikz[baseline=-0.5ex]{%
+      \draw[thick, dashed, dash pattern=on 2.5pt off 1.5pt, ScoutNavy, fill=ScoutNavy!15] (0.36,0) ellipse (0.32 and 0.17);
+      \node[font=\fontsize{5}{6}\selectfont\sffamily, text=ScoutNavy] at (0.36,0) {dias};
+    }%
+  }%
+}
+
+\newcommand{\iconeComposto}{%
+  \makebox[0.75cm][c]{%
+    \tikz[baseline=-0.5ex]{%
+      \draw[thick, ScoutNavy, fill=ScoutNavy!15] (0.18,0) ellipse (0.17 and 0.13);
+      \draw[thick, black!60] (0.33,0.04) -- (0.46,0.11);
+      \draw[thick, black!60] (0.33,-0.04) -- (0.46,-0.11);
+      \draw[thick, ScoutNavy, fill=ScoutNavy!20] (0.55,0.11) ellipse (0.09 and 0.06);
+      \draw[thick, ScoutNavy, fill=ScoutNavy!20] (0.55,-0.11) ellipse (0.09 and 0.06);
+    }%
+  }%
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={A Simbologia Gráfica Canônica do DER},leftcol=7cm,rightcol=7cm]{%
+  \alert{Gramática Visual de Peter Chen}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2.5mm,leftmargini=10mm]
+  \begin{itemize}
+    \item[\iconeEntidade] \textbf{Retângulo Sólido:} Representa o \textbf{Conjunto de Entidades} (\textit{Entity Set}). Nome no singular e maiúsculo (ex: \texttt{DISPOSITIVO\_REDE}).
+    \item[\iconeAtributo] \textbf{Elipse Simples:} Representa um \textbf{Atributo} atômico ligado por uma linha reta à entidade.
+    \item[\iconeIdentificador] \textbf{Texto Sublinhado:} Identifica o \textbf{Atributo Identificador} (Chave Primária Conceitual).
+    \item[\iconeLinha] \textbf{Linhas Sólidas:} Conectam os atributos ao retângulo da entidade correspondente.
+  \end{itemize}
+}{%
+  \alert{Variações de Elipse para Atributos Especiais}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2.5mm,leftmargini=10mm]
+  \begin{itemize}
+    \item[\iconeMultivalorado] \textbf{Elipse Dupla Concêntrica:} Representa graficamente um \textbf{Atributo Multivalorado} (que aceita múltiplos valores).
+    \item[\iconeDerivado] \textbf{Elipse Tracejada / Pontilhada:} Representa graficamente um \textbf{Atributo Derivado} (calculado por expressão).
+    \item[\iconeComposto] \textbf{Elipses Ramificadas:} Representam um \textbf{Atributo Composto}, onde uma elipse principal se subdivide em elipses filhas para cada componente.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Quadro de Elementos Gráficos do DER Canônico}
+  \vspace{0.1cm}
+  \begin{table}[h]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{l c l p{7.5cm}}
+      \toprule
+      \textbf{Elemento Conceitual} & \textbf{Símbolo} & \textbf{Notação de Chen} & \textbf{Significado Semântico \& Exemplo em Telemática} \\
+      \midrule
+      \textbf{Conjunto de Entidades} & \iconeEntidade & Retângulo sólido & Coleção de objetos do mundo real (\texttt{ROTEADOR}, \texttt{INTERFACE}). \\
+      \addlinespace[1.2mm]
+      \textbf{Atributo Simples} & \iconeAtributo & Elipse sólida & Propriedade atômica associada (\texttt{hostname}, \texttt{ip\_loopback}). \\
+      \addlinespace[1.2mm]
+      \textbf{Atributo Identificador} & \iconeIdentificador & Elipse sublinhada & Chave identificadora única no conjunto (\underline{\texttt{patrimonio\_id}}). \\
+      \addlinespace[1.2mm]
+      \textbf{Atributo Composto} & \iconeComposto & Elipse ramificada & Estrutura hierárquica decomponível (\texttt{localizacao} $\to$ \texttt{sala}, \texttt{rack}). \\
+      \addlinespace[1.2mm]
+      \textbf{Atributo Multivalorado} & \iconeMultivalorado & Elipse dupla & Coleção de múltiplos valores simultâneos (\texttt{vlan\_tags}). \\
+      \addlinespace[1.2mm]
+      \textbf{Atributo Derivado} & \iconeDerivado & Elipse tracejada & Valor calculado dinamicamente (\texttt{dias\_operacao}). \\
+      \bottomrule
+    \end{tabular}%
+    }
+  \end{table}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Comparativo: Notação de Chen vs. Pé-de-Galinha e UML},leftcol=7cm,rightcol=7cm]{%
+  \alert{Notação Canônica de Chen (1976)}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Foco Predominante:} Puramente \textbf{Conceitual}.
+    \item \textbf{Vantagem:} Expressa com extrema clareza a natureza semântica dos atributos (dupla elipse, tracejada, ramificada).
+    \item \textbf{Uso Ideal:} Fase 2 do projeto (concepção inicial com usuários e validação de requisitos de negócio).
+  \end{itemize}
+}{%
+  \alert{Pé-de-Galinha (Crow's Foot) \& UML}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Foco Predominante:} Projetos \textbf{Lógicos e Físicos}.
+    \item \textbf{Compactação Visual:} Atributos são listados em listas verticais dentro do retângulo da tabela.
+    \item \textbf{Limitação Conceitual:} Oculta a diferença entre atributos compostos/multivalorados, pois já assume tabelas achatadas em 1FN.
+  \end{itemize}
+}

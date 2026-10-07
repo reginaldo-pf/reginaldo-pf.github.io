@@ -1,0 +1,102 @@
+\changecolours{ScoutGreen}
+\section{Fases do Projeto de Banco de Dados}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Engenharia de Banco de Dados: O Ciclo de Vida},leftcol=7cm,rightcol=7cm]{%
+  \alert{Por Que um Processo Estruturado?}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Complexidade Organizacional:} Em redes e telecomunicações, sistemas de telecom operam com milhares de nós, rotas, VLANs e contratos.
+    \item \textbf{Custo do Erro:} Descobrir uma falha de modelagem em produção exige migração custosa de terabytes de dados e refatoração de dezenas de microsserviços.
+    \item \textbf{Desacoplamento Cognitivo:} Dividir o projeto em fases permite focar primeiro no \textbf{significado dos dados} e somente depois na \textbf{tecnologia do software}.
+  \end{itemize}
+}{%
+  \alert{O Fluxo Metodológico Canônico}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{1. Análise de Requisitos:} Entrevistas, observação operacional e descrição textual do \textit{Minimundo}.
+    \item \textbf{2. Projeto Conceitual:} Construção do esquema de alto nível via Modelo Entidade-Relacionamento (MER).
+    \item \textbf{3. Projeto Lógico:} Transformação do MER no modelo de dados do SGBD (ex: Esquema Relacional Normalizado).
+    \item \textbf{4. Projeto Físico:} Escolha de índices, dimensionamento de \textit{buffers} e arquivos em disco no SGBD específico.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Fase 1: Levantamento e Análise de Requisitos},leftcol=7cm,rightcol=7cm]{%
+  \alert{O Conceito de Minimundo}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Definição de Minimundo:} Porção limitada do mundo real cujos dados e processos são de interesse específico para o sistema em desenvolvimento.
+    \item \textbf{Coleta de Dados:} Diálogos com operadores do NOC, técnicos de campo, gestores de contratos e análise de documentação técnica de rede.
+    \item \textbf{Identificação de Restrições:} Regras operacionais explícitas (ex: \textit{“cada interface de rede possui um endereço MAC único globalmente”}).
+  \end{itemize}
+}{%
+  \alert{Artefatos Produzidos na Fase 1}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Documento de Requisitos de Dados:} Especificação em linguagem natural dos fatos, entidades e propriedades necessárias.
+    \item \textbf{Requisitos Funcionais:} Transações e consultas críticas que o sistema precisará suportar com alta performance.
+    \item \textbf{Independência Tecnológica:} Nesta etapa, não se define se o banco será PostgreSQL, Oracle ou SQLite; o foco é puramente informacional.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Fase 2: Projeto Conceitual (O Coração Semântico)},leftcol=7cm,rightcol=7cm]{%
+  \alert{Características Fundamentais}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Modelo Semântico de Alto Nível:} Expressa o significado dos dados com precisão matemática, sem concessões a limitações de hardware.
+    \item \textbf{Independência Total de SGBD:} O modelo conceitual é válido quer você decida implementar em PostgreSQL, MySQL, Oracle ou banco NoSQL.
+    \item \textbf{Linguagem Universal de Comunicação:} Serve de ponte de entendimento visual entre analistas de rede, engenheiros e a gestão do projeto.
+  \end{itemize}
+}{%
+  \alert{O Papel do MER de Peter Chen}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Ontologia Natural:} O mundo real é mapeado em \textbf{Entidades} (coisas do negócio), \textbf{Atributos} (propriedades) e \textbf{Relacionamentos} (vínculos).
+    \item \textbf{Diagrama DER:} Expressão gráfica rigorosa do esquema conceitual global.
+    \item \textbf{Foco da Disciplina:} As Aulas 03 a 08 são integralmente dedicadas ao domínio rigoroso desta fase conceitual (Fase 1 do Projeto AVP1).
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Fases 3 e 4: Projetos Lógico e Físico},leftcol=7cm,rightcol=7cm]{%
+  \alert{Fase 3: Projeto Lógico (Mapeamento)}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Dependente do Tipo de SGBD:} Traduz o MER para o paradigma escolhido (no nosso curso, o \textbf{Modelo Relacional}).
+    \item \textbf{Regras de Mapeamento:} Entidades tornam-se tabelas, atributos tornam-se colunas e relacionamentos tornam-se chaves estrangeiras (\texttt{FOREIGN KEY}).
+    \item \textbf{Normalização (1FN, 2FN, 3FN):} Eliminação sistemática de anomalias de redundância através de dependências funcionais.
+  \end{itemize}
+}{%
+  \alert{Fase 4: Projeto Físico (Implementação)}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Dependente do SGBD Específico:} Configurações detalhadas para PostgreSQL 16+ ou motor relacional em produção.
+    \item \textbf{Estruturas de Armazenamento:} Escolha de índices (B-Tree, Hash, GIN), fatores de preenchimento (\textit{fillfactor}) e particionamento de tabelas.
+    \item \textbf{Ajuste Fino (\textit{Tuning}):} Otimização de tempos de resposta e garantia dos requisitos de durabilidade e vazão de I/O em disco.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Quadro Comparativo das Quatro Fases do Projeto}
+  \vspace{0.1cm}
+  \begin{table}[h]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{l p{4.2cm} p{3.2cm} p{3.4cm} l}
+      \toprule
+      \textbf{Fase} & \textbf{Objetivo Principal} & \textbf{Entrada} & \textbf{Saída Gerada} & \textbf{Dependência} \\
+      \midrule
+      \textbf{1. Requisitos} & Capturar dados e regras operacionais do minimundo & Entrevistas e normas técnicas & Especificação textual & Nenhuma \\
+      \addlinespace[1.5mm]
+      \textbf{2. Conceitual} & Mapear semântica e regras de negócio puras & Especificação de requisitos & Diagrama ER (DER) & Independente \\
+      \addlinespace[1.5mm]
+      \textbf{3. Lógico} & Estruturar no paradigma relacional de Codd & Esquema Conceitual (DER) & Esquema Relacional (3FN) & Paradigma \\
+      \addlinespace[1.5mm]
+      \textbf{4. Físico} & Desempenho físico em disco, memória e I/O & Esquema Lógico Normalizado & DDL, Índices e Partições & Motor SGBD \\
+      \bottomrule
+    \end{tabular}%
+    }
+  \end{table}
+\end{frame}

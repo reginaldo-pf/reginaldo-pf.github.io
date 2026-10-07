@@ -1,0 +1,40 @@
+\changecolours{ScoutGreen}
+\section{Revisão \& Objetivos de Aprendizagem}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Retrospectiva: Da Aula 02 ao Desafio Conceitual},leftcol=7cm,rightcol=7cm]{%
+  \alert{O Que Consolidamos na Aula 02}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Arquitetura ANSI/SPARC (3 Níveis):} Nível Externo (visões), Nível Conceitual (esquema global) e Nível Interno (arquivos físicos e índices).
+    \item \textbf{Independência de Dados:} Isolamento lógico (alterar tabelas sem quebrar visões) e físico (criar índices sem alterar código SQL).
+    \item \textbf{Sublinguagens SQL:} Aplicação prática de DDL, DML, DQL e TCL (transações com \textit{Savepoints}).
+  \end{itemize}
+}{%
+  \alert{A Grande Questão da Engenharia de Dados}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Como Chegar ao Esquema Conceitual?} Antes de escrever comandos \texttt{CREATE TABLE}, como capturar as regras do mundo real com precisão?
+    \item \textbf{O Risco da Modelagem Precoce:} Projetar tabelas diretamente no SGBD quase sempre gera redundâncias graves e falhas de regras de negócio.
+    \item \textbf{A Solução Metodológica:} Um processo formal de fases com modelagem semântica independente de software.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Objetivos de Aprendizagem da Aula 03},leftcol=7cm,rightcol=7cm]{%
+  \alert{Competências Teóricas e Conceituais}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Ciclo de Vida do Projeto de BD:} Identificar com clareza as quatro grandes fases: Requisitos, Projeto Conceitual, Lógico e Físico.
+    \item \textbf{Fundamentos do MER (Chen, 1976):} Compreender a fundamentação ontológica de Entidades, Conjuntos de Entidades e Instâncias.
+    \item \textbf{Taxonomia Rigorosa de Atributos:} Dominar a distinção entre atributos simples, compostos, monovalorados, multivalorados, armazenados, derivados e identificadores.
+  \end{itemize}
+}{%
+  \alert{Habilidades Técnicas e Práticas}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item \textbf{Notação Canônica de Peter Chen:} Interpretar e construir diagramas DER utilizando a simbologia gráfica clássica formal.
+    \item \textbf{Modelagem de Ativos de Redes:} Mapear os requisitos de um datacenter/NOC em entidades e atributos bem tipados.
+    \item \textbf{Validação em Python \& Pré-mapeamento:} Implementar metamodelo de validação semântica e analisar a transição para a 1ª Forma Normal no SQLite.
+  \end{itemize}
+}
