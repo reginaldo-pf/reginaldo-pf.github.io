@@ -1,0 +1,44 @@
+\changecolours{ScoutGreen}
+\section{Parte II: Ciclo de Vida do Projeto \& Ontologia de Atributos}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Questão 4 (1,0 pt): Fases do Projeto de Banco de Dados},leftcol=7cm,rightcol=7cm]{%
+  \alert{As Quatro Fases Canônicas de Projeto}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{1. Análise de Requisitos:} Coleta das necessidades dos usuários, minimundo operacional, regras de negócio e restrições de rede.
+    \item \textbf{2. Projeto Conceitual:} Tradução dos requisitos em um modelo semântico de alto nível (MER / DER de Peter Chen).
+    \item \textbf{3. Projeto Lógico:} Mapeamento do DER para o modelo de dados do SGBD (ex: Modelo Relacional, tabelas, chaves e normalização 1FN--3FN).
+    \item \textbf{4. Projeto Físico:} Implementação no SGBD específico: tipos de dados, criação de índices, parâmetros de armazenamento em disco.
+  \end{itemize}
+}{%
+  \alert{Independência Tecnológica do MER}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Por que o MER não depende de SQL ou do SGBD?}\par
+      O modelo conceitual foca estritamente na \textbf{semântica dos dados} e nos processos organizacionais.
+    \item \textbf{Portabilidade Estratégica:} Um mesmo DER pode ser mapeado tanto para um banco relacional (PostgreSQL, MariaDB) quanto documental (MongoDB) ou grafo (Neo4j).
+    \item \textbf{Comunicação Efetiva:} Serve como linguagem franca entre engenheiros de rede, desenvolvedores e gestores não técnicos.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Questão 5 (1,5 pt): Ontologia e Taxonomia de Atributos},leftcol=7cm,rightcol=7cm]{%
+  \alert{Ontologia Fundamental do MER}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Entidade:} Objeto ou conceito do mundo real com existência física ou conceitual distinta (ex: o roteador específico da sala do NOC).
+    \item \textbf{Conjunto de Entidades (\textit{Entity Set}):} Coleção de entidades que compartilham as mesmas características (ex: \texttt{ROTEADOR\_BORDA\_BGP}).
+    \item \textbf{Instância de Entidade:} Ocorrência concreta com valores de atributos definidos no minimundo do IFCE Tauá.
+  \end{itemize}
+}{%
+  \alert{Taxonomia Canônica em ROTEADOR\_BORDA\_BGP}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Identificador Simples:} \texttt{tag\_patrimonial\_ifce} (distingue univocamente cada chassi físico).
+    \item \textbf{Composto:} \texttt{coordenadas\_rack} (bloco, sala, rack, unidade U).
+    \item \textbf{Multivalorado:} \texttt{prefixos\_ipv6\_bgp} (múltiplos blocos anunciados simultaneamente).
+    \item \textbf{Derivado:} \texttt{horas\_ininterruptas\_uptime} ($t_{\text{atual}} - t_{\text{boot}}$).
+    \item \textbf{Nulo (\textit{NULL}):} \texttt{motivo\_ultima\_falha} (inaplicável quando nunca falhou; ou desconhecido).
+  \end{itemize}
+}

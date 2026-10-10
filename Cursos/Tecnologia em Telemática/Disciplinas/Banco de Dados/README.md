@@ -44,6 +44,10 @@ A avaliação da disciplina é estruturada em dois períodos (N1 e N2), combinan
   - [Aula 01: Introdução & Modelagem Conceitual](Aulas/Aula_01/) (Disponível na plataforma web).
   - [Aula 02: Arquitetura ANSI/SPARC, Independência de Dados & Sublinguagens SQL](Aulas/Aula_02/) (Disponível na plataforma web).
   - [Aula 03: Fases do Projeto de BD & Modelo Entidade-Relacionamento](Aulas/Aula_03/) (Disponível na plataforma web).
+  - [Aula 04: Aplicação da Lista de Exercícios 01 (N1) - Sábado Letivo](Aulas/Aula_04/materiais/lista_01.pdf) (Disponível diretamente em PDF).
+
+### 📝 [Avaliações](Avaliacoes/)
+- [Lista 01 (N1): Fundamentos de SGBD, Arquitetura ANSI/SPARC e Modelagem de Entidades](Avaliacoes/Lista_01_N1.md) ([PDF Oficial](Avaliacoes/lista_01.pdf) | [LaTeX / TikZ](Avaliacoes/lista_01.tex)).
 
 ### 📚 [Referências e Cronograma](Referencias/)
 - [Ementa Banco de dados.pdf](Referencias/Ementa%20Banco%20de%20dados.pdf) -- Programa de Unidade Didática (PUD oficial IFCE).

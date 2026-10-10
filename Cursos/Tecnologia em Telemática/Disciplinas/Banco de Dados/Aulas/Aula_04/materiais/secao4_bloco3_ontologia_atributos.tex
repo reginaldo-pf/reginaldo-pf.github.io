@@ -1,0 +1,73 @@
+\changecolours{ScoutGreen}
+\section{Parte III: Produção de Diagramas Conceituais DER Chen em TikZ}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Convenções Canônicas (Peter Chen, 1976) \& TikZ},leftcol=7cm,rightcol=7cm]{%
+  \alert{Simbologia Geométrica Formal}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Retângulo Sólido:} Conjunto de Entidades (\textit{Entity Set}). No TikZ: \texttt{rectangle, draw=black, fill=green!15}.
+    \item \textbf{Elipse Sólida:} Atributo simples / atômico monovalorado. No TikZ: \texttt{ellipse, draw=black, fill=white}.
+    \item \textbf{Elipse com Nome Sublinhado:} Atributo identificador (chave). No TikZ: \texttt{ellipse, fill=blue!12, font=\textbackslash bfseries}.
+    \item \textbf{Elipse Ramificada:} Atributo composto conectado às suas folhas atômicas.
+  \end{itemize}
+}{%
+  \alert{Atributos Especiais no TikZ}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Elipse Dupla Concêntrica:} Atributo multivalorado (admite múltiplos valores). No TikZ: \texttt{double, double distance=1pt, fill=pink!15}.
+    \item \textbf{Elipse com Borda Tracejada:} Atributo derivado (calculado via fórmula/tempo). No TikZ: \texttt{dashed, fill=purple!10}.
+    \item \textbf{Arestas de Conexão:} Linhas sólidas conectando entidades e atributos.
+    \item \textbf{Vantagem do TikZ:} Renderização vetorial perfeita em alta resolução diretamente no PDF da avaliação.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Questão 6 (1,5 pt): [Diagrama DER] SERVIDOR\_VIRTUALIZADO},leftcol=7cm,rightcol=7cm]{%
+  \alert{Estrutura da Entidade e Atributos}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Entidade Central:} \texttt{SERVIDOR\_VIRTUALIZADO} (retângulo verde).
+    \item \textbf{Identificador Simples:} \texttt{uuid\_maquina} (elipse azul com texto sublinhado).
+    \item \textbf{Atributos Simples:} \texttt{nome\_virtual} e \texttt{memoria\_ram\_gb}.
+    \item \textbf{Atributo Composto:} \texttt{alocacao\_cluster} ramificado em:
+      \begin{itemize}
+        \item \texttt{nome\_datacenter}
+        \item \texttt{host\_fisico\_id}
+        \item \texttt{storage\_pool}
+      \end{itemize}
+  \end{itemize}
+}{%
+  \alert{Atributos Especiais \& Renderização TikZ}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Atributo Multivalorado:} \texttt{enderecos\_ip\_interfaces} (elipse dupla concêntrica rosa).
+    \item \textbf{Atributo Derivado:} \texttt{custo\_estimado\_mensal} (elipse tracejada roxa).
+    \item \textbf{Fórmula de Cálculo Formal:}
+      $$\text{custo} = (\text{ram\_gb} \times 15.00) + (\text{storage\_gb} \times 0.50)$$
+    \item \textbf{Código-Fonte:} O discente encontra o modelo TikZ correspondente compilado na página 3 do arquivo \texttt{lista\_01.pdf}.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Questão 7 (2,0 pts): [Diagrama DER] Backbone Óptico IFCE},leftcol=7cm,rightcol=7cm]{%
+  \alert{Entidade 1: PONTO\_DE\_PRESENCA (POP)}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Chave Primária:} \texttt{id\_pop} (sublinhado).
+    \item \textbf{Atributo Simples:} \texttt{cidade}.
+    \item \textbf{Atributo Composto:} \texttt{endereco\_completo} (desdobrado em logradouro, bairro, numero, cep).
+    \item \textbf{Multivalorado:} \texttt{telefones\_contato} (elipse dupla).
+    \item \textbf{Derivado:} \texttt{disponibilidade\_anual} (tracejado).
+  \end{itemize}
+}{%
+  \alert{Entidades 2 e 3: ENLACE e EQUIPAMENTO}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{ENLACE\_OPTICO:}
+      \underline{\texttt{codigo\_enlace}} (chave), \texttt{distancia\_km}, \texttt{atenuacao\_db\_km}, \texttt{tipo\_fibra} e atributo multivalorado \texttt{comprimentos\_onda\_nm} (elipse dupla).
+    \item \textbf{EQUIPAMENTO\_TRANSMISSAO:}
+      \underline{\texttt{patrimonio\_id}} (chave), \texttt{modelo}, \texttt{data\_instalacao} e composto \texttt{slot\_rack} (ramificado em sala, rack, posicao\_u).
+    \item \textbf{Dica de Modelagem TikZ:} Estruture cada conjunto com coordenadas polares ou \textit{positioning} para evitar sobreposição de arestas.
+  \end{itemize}
+}

@@ -1,0 +1,63 @@
+\changecolours{ScoutGreen}
+\section{Parte I: Fundamentos de SGBD \& Arquitetura ANSI/SPARC}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Questão 1 (1,0 pt): SGBD vs. Sistemas de Arquivos},leftcol=7cm,rightcol=7cm]{%
+  \alert{Limitações dos Arquivos Planos (Flat Files)}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Redundância e Inconsistência:} Duplicação arbitrária de registros em múltiplos arquivos legados (ex: CSVs ou planilhas desincronizadas).
+    \item \textbf{Anomalias de Atualização:} Modificar um registro de enlace óptico em uma aplicação e esquecer outra gera estado inconsistente no sistema.
+    \item \textbf{Acesso Concorrente Sem Controle:} Dois operadores de NOC sobrescrevendo o mesmo arquivo geram \textit{lost updates} e corrupção silenciosa.
+  \end{itemize}
+}{%
+  \alert{Garantias Arquiteturais do SGBD}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Propriedades ACID:} \textbf{A}tomicidade (\textit{all-or-nothing}), \textbf{C}onsistência (invariantes), \textbf{I}solamento (concorrência) e \textbf{D}urabilidade (persistência em disco).
+    \item \textbf{Recuperação de Falhas:} Mecanismo de \textit{Write-Ahead Logging} (WAL) e \textit{checkpoints} para restauração consistente pós-pane.
+    \item \textbf{Controle Centralizado:} Catálogo único gerenciando esquemas e restrições.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Questão 2 (1,0 pt): Níveis ANSI/SPARC \& Independência},leftcol=7cm,rightcol=7cm]{%
+  \alert{Os Três Níveis de Abstração}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{1. Nível Externo (Visões):} O que cada perfil de usuário enxerga (ex: operador do NOC vê telemetria operacional; gestor vê SLA e custos).
+    \item \textbf{2. Nível Conceitual (Global):} Estrutura lógica integral do banco, entidades e relacionamentos organizacionais, sem detalhes de disco.
+    \item \textbf{3. Nível Interno (Físico):} Como os dados residem no storage: índices B-Tree, alocação de blocos de disco, compactação e particionamento.
+  \end{itemize}
+}{%
+  \alert{Independência de Dados na Telemática}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Independência Física de Dados:}
+      Capacidade de alterar estruturas internas (ex: criar índice hash, migrar RAID ou trocar SSD) sem alterar o esquema conceitual ou aplicações.
+    \item \textbf{Independência Lógica de Dados:}
+      Capacidade de modificar o esquema conceitual (ex: adicionar nova entidade ou atributo opcional) sem impactar visões externas consolidadas.
+    \item \textbf{Importância Prática:} Evita reescrita de código de clientes de rede a cada refatoração da infraestrutura.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Questão 3 (1,0 pt): [Diagrama TikZ] ANSI/SPARC},leftcol=7cm,rightcol=7cm]{%
+  \alert{Especificações do Diagrama Arquitetural}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Camada Externa:} Ao menos duas visões de usuários no domínio de redes (ex: \textit{Visão 1: NOC -- Alarmes \& Topologia} e \textit{Visão 2: Gestor de TI -- Inventário \& SLA}).
+    \item \textbf{Camada Conceitual:} Caixa unificada representando o Esquema Conceitual Global da Telemática.
+    \item \textbf{Camada Interna:} Caixa representando o Esquema Interno com estruturas físicas em disco (armazenamento persistente).
+  \end{itemize}
+}{%
+  \alert{Mapeamentos e Catálogo do Sistema}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Mapeamentos:} Setas bidirecionais entre Externo $\leftrightarrow$ Conceitual (Indep. Lógica) e Conceitual $\leftrightarrow$ Interno (Indep. Física).
+    \item \textbf{Catálogo do Sistema (Dicionário de Dados):}
+      Repositório central de metadados conectado lateralmente aos 3 níveis.
+    \item \textbf{Subsistemas Fundamentais:} Destacar o \textbf{Otimizador de Consultas (CBO)} e o \textbf{Motor de Segurança/Autorização}.
+    \item \textbf{Código LaTeX/TikZ:} Disponível no gabarito oficial em \texttt{lista\_01.tex}.
+  \end{itemize}
+}

@@ -1,0 +1,87 @@
+\documentclass[aspectratio=169,utf8,t]{beamer}
+
+% Idioma e Codificacao
+\usepackage[brazilian]{babel}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit}
+
+% Carrega o Tema Modelo dos Scouts (Widescreen 16:9, Nunito Sans)
+\usetheme{scouts}
+
+\definecolor{amber}{RGB}{245, 158, 11}
+
+% Configuracao para Codigo-Fonte (SQL / Python / LaTeX)
+\lstset{
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\bfseries\color{ScoutNavy},
+    stringstyle=\color{ScoutGreen},
+    commentstyle=\itshape\color{gray},
+    backgroundcolor=\color{black!3},
+    frame=single,
+    rulecolor=\color{black!15},
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=2
+}
+
+% Metadados Institucionais
+\author{Prof. Me. Reginaldo Fernandes}
+\institute{Instituto Federal do Ceará -- Campus Tauá \\ Tecnologia em Telemática}
+\title{Banco de Dados}
+\subtitle{Aula 04: Aplicação da Lista de Exercícios 01 (N1) -- Sábado Letivo Assíncrono}
+\date{10 de Outubro de 2026}
+
+\begin{document}
+
+% ------------------------------------------------------------------------------
+% Capa da Apresentacao
+% ------------------------------------------------------------------------------
+\changecolours[inverse]{ScoutGreen}
+\frame[plain]{\titlepage}
+
+% ------------------------------------------------------------------------------
+% Sumario Executivo da Aula
+% ------------------------------------------------------------------------------
+\changecolours{ScoutGreen}
+\begin{frame}{Guia da Avaliação Assíncrona}
+  \vspace{0.2cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \tableofcontents[sections={1-3}]
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \tableofcontents[sections={4-7}]
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% Modulos Tematicos da Apresentacao
+% ------------------------------------------------------------------------------
+\input{secao1_orientacoes_gerais}
+\input{secao2_bloco1_fundamentos_sgbd}
+\input{secao3_bloco2_ansisparc_catalogo}
+\input{secao4_bloco3_ontologia_atributos}
+\input{secao5_bloco4_producao_diagramas}
+\input{secao6_criterios_avaliacao}
+\input{secao7_referencias}
+
+% ------------------------------------------------------------------------------
+% Encerramento e Contato
+% ------------------------------------------------------------------------------
+\changecolours[inverse]{ScoutGreen}
+\begin{frame}[plain]
+  \vspace{2cm}
+  \centering
+  {\Huge \textbf{Dúvidas \& Tutoria Assíncrona}}\par
+  \vspace{0.8cm}
+  {\large IFCE Campus Tauá -- Tecnologia em Telemática}\par
+  \vspace{0.3cm}
+  {\small Prof. Me. Reginaldo Pereira Fernandes}\par
+  {\scriptsize \texttt{reginaldo.fernandes@ifce.edu.br}}
+\end{frame}
+
+\end{document}

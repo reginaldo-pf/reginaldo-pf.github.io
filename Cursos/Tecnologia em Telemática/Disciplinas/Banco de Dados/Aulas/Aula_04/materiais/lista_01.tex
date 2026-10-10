@@ -1,0 +1,411 @@
+\documentclass[11pt,a4paper]{article}
+
+% Idioma e Codificacao
+\usepackage[brazilian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% Margens e Layout
+\usepackage[top=2cm,bottom=2.5cm,left=2cm,right=2cm]{geometry}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+
+% Tabelas e Matematica
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage{graphicx}
+
+% TikZ para Desenho de Diagramas
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit}
+
+% Definicao de Cores Institucionais
+\definecolor{ifcegreen}{RGB}{5, 150, 105}
+\definecolor{ifcedark}{RGB}{28, 69, 50}
+\definecolor{boxbg}{RGB}{248, 250, 252}
+\definecolor{amber}{RGB}{245, 158, 11}
+
+% Configuracao de Cabecalho e Rodape
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\footnotesize\textbf{IFCE Campus Tauá} -- Tecnologia em Telemática}
+\rhead{\footnotesize\textbf{Banco de Dados} -- Lista 01 (N1)}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+
+% Estilos TikZ para Notacao de Peter Chen (1976)
+\tikzset{
+    entidade/.style={
+        draw=black,
+        fill=green!15,
+        thick,
+        rectangle,
+        minimum width=3.0cm,
+        minimum height=0.9cm,
+        font=\bfseries\small,
+        align=center
+    },
+    atributo/.style={
+        draw=black,
+        fill=white,
+        semithick,
+        ellipse,
+        minimum width=2.0cm,
+        minimum height=0.7cm,
+        font=\scriptsize,
+        align=center
+    },
+    identificador/.style={
+        draw=black,
+        fill=blue!12,
+        thick,
+        ellipse,
+        minimum width=2.2cm,
+        minimum height=0.7cm,
+        font=\scriptsize\bfseries,
+        align=center
+    },
+    multivalorado/.style={
+        draw=black,
+        fill=pink!15,
+        thick,
+        double,
+        double distance=1.2pt,
+        ellipse,
+        minimum width=2.4cm,
+        minimum height=0.75cm,
+        font=\scriptsize,
+        align=center
+    },
+    derivado/.style={
+        draw=black,
+        fill=purple!10,
+        dashed,
+        semithick,
+        ellipse,
+        minimum width=2.4cm,
+        minimum height=0.7cm,
+        font=\scriptsize,
+        align=center
+    },
+    composto/.style={
+        draw=black,
+        fill=amber!15,
+        semithick,
+        ellipse,
+        minimum width=2.2cm,
+        minimum height=0.7cm,
+        font=\scriptsize,
+        align=center
+    },
+    subatributo/.style={
+        draw=black,
+        fill=gray!12,
+        semithick,
+        ellipse,
+        minimum width=1.8cm,
+        minimum height=0.6cm,
+        font=\tiny,
+        align=center
+    },
+    ligacao/.style={
+        draw=black,
+        semithick
+    },
+    ligacao_derivada/.style={
+        draw=black,
+        dashed,
+        semithick
+    }
+}
+
+% Estilos TikZ para Arquitetura ANSI/SPARC
+\tikzset{
+    nivel_bloco/.style={
+        draw=black,
+        fill=blue!8,
+        rounded corners=2pt,
+        semithick,
+        minimum width=7.2cm,
+        minimum height=1.0cm,
+        font=\scriptsize\bfseries,
+        align=center
+    },
+    catalogo_bloco/.style={
+        draw=amber!90!black,
+        fill=amber!15,
+        rounded corners=3pt,
+        thick,
+        minimum width=3.6cm,
+        minimum height=3.6cm,
+        font=\scriptsize\bfseries,
+        align=center
+    },
+    seta_dupla/.style={
+        {Stealth[length=2.5mm]}-{Stealth[length=2.5mm]},
+        thick,
+        color=ifcegreen
+    }
+}
+
+\begin{document}
+
+% ------------------------------------------------------------------------------
+% CABECALHO INSTITUCIONAL
+% ------------------------------------------------------------------------------
+\begin{center}
+  \includegraphics[height=1.4cm]{logo_ifce_taua.png}\\[0.2cm]
+  {\large \textbf{INSTITUTO FEDERAL DO CEARÁ -- CAMPUS TAUÁ}}\\[0.1cm]
+  {\small \textbf{CURSO SUPERIOR DE TECNOLOGIA EM TELEMÁTICA}}\\[0.1cm]
+  {\small \textbf{DISCIPLINA: BANCO DE DADOS -- SEMESTRE 2026.2}}\\[0.1cm]
+  {\footnotesize \textbf{DOCENTE: PROF. ME. REGINALDO PEREIRA FERNANDES}}
+\end{center}
+
+\vspace{0.2cm}
+\noindent\fbox{%
+\begin{minipage}{0.98\textwidth}
+  \vspace{0.1cm}
+  \textbf{Discente:} \hrulefill \quad \textbf{Matrícula:} \underline{\hspace{3cm}}\\
+  \textbf{Atividade:} Lista de Exercícios 01 (N1) -- Sábado Letivo Assíncrono \quad \textbf{Aplicação:} 10/10/2026\\
+  \textbf{Data de Entrega:} 12/10/2026 \quad \textbf{Forma de Entrega:} Por escrito (Manuscrita) \quad \textbf{Valor Total:} 10,0 Pontos \quad \textbf{Nota:} \underline{\hspace{2cm}}
+  \vspace{0.1cm}
+\end{minipage}%
+}
+
+\vspace{0.4cm}
+\noindent\textbf{INSTRUÇÕES GERAIS:}
+\begin{itemize}[leftmargin=*,itemsep=1pt]
+  \item A lista é composta por \textbf{8 questões analíticas e de modelagem}.
+  \item \textbf{Forma de Entrega:} Resolução entregue obrigatoriamente \textbf{por escrito (manuscrita)}, preenchida a caneta azul ou preta e enviadas por fotografia ao classroom.
+  \item \textbf{Data de Entrega:} \textbf{12 de Outubro de 2026} (Segunda-feira).
+  \item Os diagramas conceituais devem adotar a \textbf{notação canônica de Peter Chen (1976)}, desenhados com régua/gabarito para assegurar precisão geométrica (retângulos, elipses sólidas, chaves sublinhadas, ramificações, duplas concêntricas e tracejadas).
+\end{itemize}
+
+\vspace{0.3cm}
+\hrule
+\vspace{0.4cm}
+
+% ------------------------------------------------------------------------------
+% PARTE I: FUNDAMENTOS E ARQUITETURA
+% ------------------------------------------------------------------------------
+\subsection*{PARTE I: Fundamentos de SGBD \& Arquitetura ANSI/SPARC (3,0 Pontos)}
+
+\noindent\textbf{Questão 1 (Valor: 1,0 ponto) -- SGBD versus Sistemas de Arquivos Convencionais}\\[0.1cm]
+Em centros de operações de rede (NOC) e provedores de serviços de telecomunicações (ISPs), grandes volumes de logs de tráfego, eventos SNMP e cadastros de ativos são continuamente gerados e atualizados. Compare tecnicamente a persistência desses dados em arquivos convencionais do sistema operacional (como arquivos planos \texttt{.csv}, \texttt{.json} ou \texttt{.log} manipulados diretamente por rotinas do sistema) versus o gerenciamento centralizado por um Sistema Gerenciador de Banco de Dados (SGBD). Sua resposta deve discutir formalmente:
+\begin{enumerate}[label=\alph*),itemsep=1pt]
+  \item Controle de redundância e garantia de consistência mútua de dados;
+  \item Acesso concorrente simultâneo e prevenção de anomalias de atualização (\textit{race conditions});
+  \item Garantia das propriedades transacionais ACID (Atomicidade, Consistência, Isolamento e Durabilidade);
+  \item Tolerância a falhas e mecanismos automáticos de recuperação após panes elétricas ou travamento de hardware.
+\end{enumerate}
+
+\vspace{0.3cm}
+\noindent\textbf{Questão 2 (Valor: 1,0 ponto) -- Níveis de Abstração e Independência de Dados (ANSI/SPARC)}\\[0.1cm]
+A arquitetura em três níveis do padrão ANSI/SPARC constitui o alicerce fundamental para a independência de dados em sistemas modernos de informação:
+\begin{enumerate}[label=\alph*),itemsep=1pt]
+  \item Descreva a responsabilidade técnica e o escopo de cada um dos três níveis: \textbf{Nível Externo}, \textbf{Nível Conceitual} e \textbf{Nível Interno}.
+  \item Por que os idealizadores da arquitetura estabeleceram o nível conceitual como um mediador central unificado, em vez de permitirem que as aplicações mapeassem suas visões diretamente sobre os arquivos de disco?
+  \item Defina e contraste formalmente \textbf{Independência Lógica de Dados} e \textbf{Independência Física de Dados}, fornecendo um exemplo real em infraestrutura de telecomunicações para cada modalidade.
+\end{enumerate}
+
+\vspace{0.3cm}
+\noindent\textbf{Questão 3 (Valor: 1,0 ponto) -- [DIAGRAMA] Arquitetura ANSI/SPARC de Três Níveis}\\[0.1cm]
+\textbf{Elabore o diagrama esquemático formal da Arquitetura ANSI/SPARC de Três Níveis}, contextualizando seus componentes para um Sistema de Gestão de Redes (NOC) do IFCE Campus Tauá. Seu diagrama deve ilustrar obrigatoriamente:
+\begin{enumerate}[label=\alph*),itemsep=1pt]
+  \item O \textbf{Nível Externo}, com ao menos duas visões de usuários ou subsistemas distintos (ex: \textit{Portal de Monitoramento do NOC} e \textit{Dashboard do Gestor de TI});
+  \item O \textbf{Nível Conceitual}, contendo a representação do esquema lógico global unificado da organização;
+  \item O \textbf{Nível Interno}, contendo os arquivos físicos em disco, índices de aceleração e buffers;
+  \item As setas bidirecionais de \textbf{Mapeamento Externo-Conceitual} e \textbf{Mapeamento Conceitual-Interno};
+  \item O \textbf{Catálogo do Sistema (Dicionário de Metadados)}, posicionado em destaque central e conectado aos níveis de abstração.
+\end{enumerate}
+
+\vspace{0.2cm}
+\begin{center}
+\begin{tikzpicture}[node distance=1.2cm]
+  % Niveis
+  \node[nivel_bloco] (ext) {NÍVEL EXTERNO\\ \scriptsize Visão 1: Operador do NOC (Alarmes) \quad|\quad Visão 2: Gestor de TI (Uptime)};
+  \node[nivel_bloco, below=1.2cm of ext] (conc) {NÍVEL CONCEITUAL\\ \scriptsize Esquema Global Unificado: POP, ENLACE, DISPOSITIVO, CLIENTE};
+  \node[nivel_bloco, below=1.2cm of conc] (intern) {NÍVEL INTERNO\\ \scriptsize Estruturas Físicas: Arquivos em Disco, Índices B-Tree, Páginas de Buffer Pool};
+
+  % Catalogo Lateral
+  \node[catalogo_bloco, right=1.5cm of conc] (cat) {CATÁLOGO\\ DO SISTEMA\\[0.15cm] \tiny Repositório Central de\\ Metadados e Esquemas\\[0.1cm] \tiny Consultado por:\\ Otimizador CBO e\\ Motor de Segurança};
+
+  % Mapeamentos
+  \draw[seta_dupla] (ext) -- node[right, font=\tiny\bfseries, text=ifcegreen] {Mapeamento Externo-Conceitual (Indep. Lógica)} (conc);
+  \draw[seta_dupla] (conc) -- node[right, font=\tiny\bfseries, text=ifcegreen] {Mapeamento Conceitual-Interno (Indep. Física)} (intern);
+
+  % Conexoes do Catalogo
+  \draw[dashed, semithick, color=amber!80!black] (cat.west) -- (conc.east);
+  \draw[dashed, semithick, color=amber!80!black] (cat.north west) -- (ext.south east);
+  \draw[dashed, semithick, color=amber!80!black] (cat.south west) -- (intern.north east);
+\end{tikzpicture}
+\end{center}
+\centerline{\footnotesize\textbf{Figura 1:} Diagrama de referência da Arquitetura ANSI/SPARC de 3 Níveis em TikZ.}
+
+\vspace{0.4cm}
+\hrule
+\vspace{0.4cm}
+
+% ------------------------------------------------------------------------------
+% PARTE II: CICLO DE VIDA E ATRIBUTOS
+% ------------------------------------------------------------------------------
+\subsection*{PARTE II: Ciclo de Vida do Projeto \& Ontologia de Atributos (2,5 Pontos)}
+
+\noindent\textbf{Questão 4 (Valor: 1,0 ponto) -- Ciclo de Vida do Projeto de Banco de Dados}\\[0.1cm]
+O desenvolvimento de um banco de dados relacional é um processo de engenharia dividido em quatro fases canônicas: (1) Levantamento e Análise de Requisitos; (2) Projeto Conceitual; (3) Projeto Lógico; (4) Projeto Físico.
+\begin{enumerate}[label=\alph*),itemsep=1pt]
+  \item Preencha a matriz a seguir discriminando para cada fase o seu \textbf{Objetivo Principal}, o \textbf{Artefato de Entrada} e o \textbf{Artefato de Saída} produzido:
+\end{enumerate}
+
+\begin{center}
+\footnotesize
+\begin{tabularx}{\textwidth}{l p{4.2cm} p{4.5cm} X}
+\toprule
+\textbf{Fase do Projeto} & \textbf{Objetivo Principal} & \textbf{Artefato de Entrada} & \textbf{Artefato de Saída} \\
+\midrule
+\textbf{1. Requisitos} & & & \\
+\addlinespace
+\textbf{2. Conceitual} & & & \\
+\addlinespace
+\textbf{3. Lógico} & & & \\
+\addlinespace
+\textbf{4. Físico} & & & \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{enumerate}[label=\alph*),resume,itemsep=1pt]
+  \item Justifique tecnicamente por que o \textbf{Projeto Conceitual deve ser completamente neutro e independente de qualquer SGBD comercial específico} (como Oracle, PostgreSQL ou MySQL).
+\end{enumerate}
+
+\vspace{0.3cm}
+\noindent\textbf{Questão 5 (Valor: 1,5 ponto) -- Ontologia de Entidades e Taxonomia Canônica de Atributos}\\[0.1cm]
+No Modelo Entidade-Relacionamento (MER) estabelecido por Peter Chen (1976):
+\begin{enumerate}[label=\alph*),itemsep=1pt]
+  \item Estabeleça a distinção formal entre os conceitos de \textbf{Entidade}, \textbf{Conjunto de Entidades (\textit{Entity Set})} e \textbf{Instância de Entidade}, exemplificando no ambiente de redes do IFCE Tauá.
+  \item Considere a entidade \texttt{ROTEADOR\_BORDA\_BGP}. Classifique formalmente cada um dos 5 atributos a seguir na taxonomia canônica do MER (Simples/Composto, Monovalorado/Multivalorado, Armazenado/Derivado, Identificador/Chave e Nulos), fornecendo a devida justificativa ontológica:
+  \begin{itemize}[itemsep=1pt]
+    \item \texttt{tag\_patrimonial\_ifce}: Número alfanumérico exclusivo gravado em placa metálica no chassi;
+    \item \texttt{coordenadas\_rack}: Informação estruturada contendo Prédio, Sala, Número do Rack e Unidade U;
+    \item \texttt{prefixos\_ipv6\_bgp}: Relação de múltiplos prefixos de rede anunciados pelo roteador;
+    \item \texttt{horas\_uptime\_operacao}: Valor numérico calculado em tempo de execução via ($t_{\text{atual}} - t_{\text{ultimo\_boot}}$);
+    \item \texttt{motivo\_ultima\_falha}: Texto explicativo preenchido após manutenções corretivas, nulo para equipamentos novos.
+  \end{itemize}
+\end{enumerate}
+
+\vspace{0.4cm}
+\hrule
+\vspace{0.4cm}
+
+% ------------------------------------------------------------------------------
+% PARTE III: PRODUCAO DE DIAGRAMAS DER (PETER CHEN)
+% ------------------------------------------------------------------------------
+\subsection*{PARTE III: Produção de Diagramas Conceituais (DER Peter Chen) (4,5 Pontos)}
+
+\noindent\textbf{Questão 6 (Valor: 1,5 ponto) -- [DIAGRAMA DER] Entidade SERVIDOR\_VIRTUALIZADO}\\[0.1cm]
+\textbf{Construa o Diagrama Entidade-Relacionamento (DER)} para o conjunto de entidades \texttt{SERVIDOR\_VIRTUALIZADO} do Datacenter do IFCE Tauá, aplicando estritamente a \textbf{notação gráfica canônica de Peter Chen (1976)}. Seu diagrama deve conter:
+\begin{enumerate}[label=\alph*),itemsep=1pt]
+  \item O retângulo central identificador do conjunto de entidades \texttt{SERVIDOR\_VIRTUALIZADO};
+  \item \textbf{1 Atributo Identificador Simples:} \texttt{uuid\_maquina} (elipse com texto sublinhado);
+  \item \textbf{2 Atributos Simples Atômicos:} \texttt{nome\_virtual} e \texttt{memoria\_ram\_gb} (elipses sólidas simples);
+  \item \textbf{1 Atributo Composto:} \texttt{alocacao\_cluster}, ramificado em \texttt{nome\_datacenter}, \texttt{host\_fisico\_id} e \texttt{storage\_pool};
+  \item \textbf{1 Atributo Multivalorado:} \texttt{enderecos\_ip\_interfaces} (\textbf{elipse dupla concêntrica});
+  \item \textbf{1 Atributo Derivado:} \texttt{custo\_estimado\_mensal} (\textbf{elipse com borda tracejada}), acompanhado da fórmula matemática de derivação: $\text{custo} = (\text{ram\_gb} \times 15.00) + (\text{storage\_gb} \times 0.50)$.
+\end{enumerate}
+
+\vspace{0.2cm}
+\begin{center}
+\begin{tikzpicture}[scale=0.88, every node/.style={transform shape}]
+  % Entidade Central
+  \node[entidade] (serv) {SERVIDOR\_VIRTUALIZADO};
+
+  % Atributos
+  \node[identificador, above left=1.0cm and 0.5cm of serv] (uuid) {\underline{uuid\_maquina}};
+  \node[atributo, above=1.2cm of serv] (nome) {nome\_virtual};
+  \node[atributo, above right=1.0cm and 0.5cm of serv] (ram) {memoria\_ram\_gb};
+
+  % Atributo Composto
+  \node[composto, below left=1.2cm and 0.8cm of serv] (cluster) {alocacao\_cluster};
+  \node[subatributo, below left=0.6cm and 0.1cm of cluster] (sub_dc) {nome\_datacenter};
+  \node[subatributo, below=0.7cm of cluster] (sub_host) {host\_fisico\_id};
+  \node[subatributo, below right=0.6cm and 0.1cm of cluster] (sub_pool) {storage\_pool};
+
+  % Atributo Multivalorado
+  \node[multivalorado, below=1.3cm of serv] (ips) {enderecos\_ip\_interfaces};
+
+  % Atributo Derivado
+  \node[derivado, below right=1.2cm and 0.8cm of serv] (custo) {custo\_estimado\_mensal};
+
+  % Conexoes
+  \draw[ligacao] (serv) -- (uuid);
+  \draw[ligacao] (serv) -- (nome);
+  \draw[ligacao] (serv) -- (ram);
+  \draw[ligacao] (serv) -- (cluster);
+  \draw[ligacao] (cluster) -- (sub_dc);
+  \draw[ligacao] (cluster) -- (sub_host);
+  \draw[ligacao] (cluster) -- (sub_pool);
+  \draw[ligacao] (serv) -- (ips);
+  \draw[ligacao_derivada] (serv) -- (custo);
+\end{tikzpicture}
+\end{center}
+\centerline{\footnotesize\textbf{Figura 2:} Modelo canônico em TikZ do DER de \texttt{SERVIDOR\_VIRTUALIZADO} segundo Peter Chen (1976).}
+
+\newpage
+
+\noindent\textbf{Questão 7 (Valor: 2,0 pontos) -- [DIAGRAMA DER] Minimundo do Backbone Óptico Regional}\\[0.1cm]
+Leia atentamente a especificação de requisitos da infraestrutura óptica regional do IFCE Campus Tauá:
+\begin{quote}\small
+\textit{``O Núcleo de Redes do IFCE monitora a infraestrutura óptica de longa distância que interliga os campi da região dos Inhamuns através de três conjuntos de entidades principais:\\
+1. \textbf{PONTO\_DE\_PRESENCA (POP):} Identificado exclusivamente pelo seu \texttt{id\_pop}. Possui a \texttt{cidade} onde está instalado, o atributo composto \texttt{endereco\_completo} (desdobrado em \texttt{logradouro}, \texttt{bairro}, \texttt{numero} e \texttt{cep}), múltiplos telefones de suporte operacional (\texttt{telefones\_contato}) e o atributo derivado \texttt{disponibilidade\_anual\_percentual} (calculado pelo percentual de horas ativas no ano).\\
+2. \textbf{ENLACE\_OPTICO:} Identificado pelo código \texttt{codigo\_enlace}. Possui a extensão em quilômetros (\texttt{distancia\_km}), a taxa de atenuação (\texttt{atenuacao\_db\_km}), a tecnologia da fibra (\texttt{tipo\_fibra}) e a relação de comprimentos de onda ópticos operantes em nanômetros (\texttt{comprimentos\_onda\_nm} -- ex: 1310, 1490, 1550).\\
+3. \textbf{EQUIPAMENTO\_TRANSMISSAO:} Identificado pelo número patrimonial \texttt{patrimonio\_id}. Possui o \texttt{modelo}, a \texttt{data\_instalacao} e o atributo composto \texttt{slot\_rack} (subdividido em \texttt{sala\_noc}, \texttt{numero\_rack} e \texttt{posicao\_u}).''}
+\end{quote}
+
+\noindent A partir do minimundo:
+\begin{enumerate}[label=\alph*),itemsep=1pt]
+  \item Elabore uma relação textual estruturada contendo todos os atributos identificados e sua respectiva classificação taxonômica canônica para as 3 entidades;
+  \item \textbf{Construa o Diagrama Entidade-Relacionamento (DER) completo em Notação Canônica de Peter Chen}, desenhando as 3 entidades com todas as suas elipses correspondentes utilizando a simbologia formal de retângulos, elipses simples, duplas, tracejadas, ramificadas e chaves sublinhadas.
+\end{enumerate}
+
+\vspace{0.4cm}
+\noindent\textbf{Questão 8 (Valor: 1,0 ponto) -- [DIAGRAMA \& ANÁLISE] Decomposição de Planilha e Comparação Notacional}\\[0.1cm]
+Um estagiário de redes armazenava o inventário de roteadores de clientes em uma planilha eletrônica com o seguinte cabeçalho consolidado:\\
+\texttt{[Roteador\_ID | Fabricante | Modelo | Localizacao(Predio-Sala-Andar) | DNS(8.8.8.8, 1.1.1.1) | Data\_Compra | Anos\_Uso]}
+\begin{enumerate}[label=\alph*),itemsep=1pt]
+  \item Explique por que a presença de atributos não-atômicos na mesma coluna fere os princípios de qualidade de projeto de dados e dificulta a manutenção do banco de dados;
+  \item \textbf{Desenhe o Diagrama Entidade-Relacionamento (DER) de Peter Chen correspondente} para a entidade \texttt{ROTEADOR\_CLIENTE}, demonstrando como atributos compostos e multivalorados acomodam conceitualmente essas informações com rigor semântico;
+  \item Compare criticamente a \textbf{Notação de Peter Chen} com a \textbf{Notação Pé de Galinha (\textit{Crow's Foot} / Engenharia de Informação)}, justificando por que a notação de Peter Chen é considerada mais expressiva e adequada para o Projeto Conceitual inicial.
+\end{enumerate}
+
+\vspace{0.4cm}
+\hrule
+\vspace{0.3cm}
+
+\subsection*{Barema de Correção e Distribuição de Pontos (Total: 10,0 Pontos)}
+\begin{center}
+\footnotesize
+\begin{tabularx}{\textwidth}{l c X}
+\toprule
+\textbf{Item / Questão} & \textbf{Pontos} & \textbf{Critérios de Avaliação} \\
+\midrule
+\textbf{Q1 (SGBD vs. Arquivos)} & 1,0 & 0,25 pt por dimensão avaliada com rigor conceitual (redundância, concorrência, ACID, recuperação). \\
+\textbf{Q2 (Níveis ANSI/SPARC)} & 1,0 & 0,30 pt para os 3 níveis; 0,30 pt para o mediador conceitual; 0,40 pt para indep. lógica e física. \\
+\textbf{Q3 [DIAGRAMA ANSI/SPARC]} & 1,0 & 0,40 pt para os 3 níveis; 0,30 pt para os mapeamentos; 0,30 pt para o Catálogo central. \\
+\textbf{Q4 (Fases do Projeto BD)} & 1,0 & 0,60 pt para a matriz (0,15 pt por fase); 0,40 pt para a justificativa da independência de SGBD. \\
+\textbf{Q5 (Ontologia e Atributos)} & 1,5 & 0,50 pt para ontologia de entidades; 1,00 pt para a classificação dos 5 atributos do roteador BGP. \\
+\textbf{Q6 [DIAGRAMA DER SERVIDOR]} & 1,5 & 0,25 pt chave sublinhada; 0,30 pt simples; 0,35 pt composto; 0,30 pt multivalorado duplo; 0,30 pt derivado. \\
+\textbf{Q7 [DIAGRAMA DER MINIMUNDO]} & 2,0 & 0,50 pt para relação e taxonomia; 1,50 pt para a construção gráfica do DER (0,5 pt por entidade completa). \\
+\textbf{Q8 [DIAGRAMA \& COMPARAÇÃO]} & 1,0 & 0,30 pt atomicidade; 0,40 pt desenho DER Chen desdobrado; 0,30 pt contraste Chen vs. Crow's Foot. \\
+\midrule
+\textbf{TOTAL GERAL} & \textbf{10,0} & \textbf{Nota Oficial da Lista de Exercícios 01 (Peso: 20\% da Nota N1)} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\end{document}

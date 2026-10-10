@@ -1,0 +1,68 @@
+\changecolours{ScoutGreen}
+\section{Parte III (Cont.): Decomposição de Planilha \& Notações DER}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Questão 8 (1,0 pt): Engenharia Reversa de Planilha},leftcol=7cm,rightcol=7cm]{%
+  \alert{Planilha Operacional Legada (NOC)}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Colunas:} \texttt{[ID\_Equip, Fabricante, Modelo, Localizacao(Predio-Sala), Servidores\_DNS(8.8.8.8, 1.1.1.1), Data\_Compra, Anos\_Operacao]}
+    \item \textbf{Problemas da Planilha:}
+      \begin{itemize}
+        \item Células com múltiplos valores violam a atomicidade fundamental dos dados.
+        \item Dificuldade extrema para consultas precisas e filtros automáticos.
+      \end{itemize}
+  \end{itemize}
+}{%
+  \alert{Mapeamento para o DER Chen}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Entidade:} \texttt{ROTEADOR\_CLIENTE}.
+    \item \textbf{Identificador:} \texttt{id\_equipamento} (sublinhado).
+    \item \textbf{Composto:} \texttt{localizacao} $\implies$ \texttt{predio} e \texttt{sala}.
+    \item \textbf{Multivalorado:} \texttt{servidores\_dns} (elipse dupla).
+    \item \textbf{Derivado:} \texttt{anos\_operacao} (elipse tracejada).
+    \item \textbf{Simples:} \texttt{fabricante}, \texttt{modelo}, \texttt{data\_compra}.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Questão 8: Peter Chen vs. Pé de Galinha (Crow's Foot)},leftcol=7cm,rightcol=7cm]{%
+  \alert{Notação Canônica de Peter Chen (1976)}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Pureza Semântica:} Distingue explicitamente entidades, relacionamentos e múltiplos tipos ontológicos de atributos.
+    \item \textbf{Expressividade Conceitual:} Representa nativamente atributos compostos ramificados e multivalorados sem forçar tabelas prematuras.
+    \item \textbf{Foco do Projeto:} Compreensão conceitual e comunicação irrestrita com os especialistas de negócio.
+  \end{itemize}
+}{%
+  \alert{Notação Pé de Galinha (James Martin)}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Orientação Físico-Relacional:} Trata entidades como representações antecipadas de tabelas relacionais.
+    \item \textbf{Limitação Expressiva:} Não possui representação gráfica direta para atributos compostos nem multivalorados (força criar entidades filhas artificiais).
+    \item \textbf{Vantagem:} Altamente compacta para diagramação lógica e ferramentas CASE comerciais.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Guia de Desenvolvimento em LaTeX \& TikZ},leftcol=7cm,rightcol=7cm]{%
+  \alert{Vantagens do LaTeX com TikZ}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Controle Vetorial Preciso:} Gráficos matematicamente perfeitos que nunca perdem resolução no PDF.
+    \item \textbf{Versionamento com Git:} Código-fonte em texto puro rastreável linha a linha sem arquivos binários pesados.
+    \item \textbf{Autonomia Acadêmica:} Domínio de ferramenta padrão da IEEE, ACM e publicações científicas internacionais.
+  \end{itemize}
+}{%
+  \alert{Como Compilar a Lista Localmente}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Compilação no Terminal:}
+      \begin{itemize}
+        \item \texttt{pdflatex lista\_01.tex} (executar duas vezes para resolver referências cruzadas).
+      \end{itemize}
+    \item \textbf{Overleaf / TeXStudio:} Basta carregar o arquivo \texttt{lista\_01.tex} e a imagem institucional \texttt{logo\_ifce\_taua.png}.
+    \item \textbf{Artefato Disponível:} O PDF final já compilado está disponibilizado na pasta oficial \texttt{Avaliacoes/}.
+  \end{itemize}
+}
