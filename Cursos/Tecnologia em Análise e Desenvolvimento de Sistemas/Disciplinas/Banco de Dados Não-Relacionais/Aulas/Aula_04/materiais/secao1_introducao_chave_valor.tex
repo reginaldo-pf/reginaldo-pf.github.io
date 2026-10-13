@@ -1,0 +1,118 @@
+\changecolours{ScoutNavy}
+\section{O Modelo Chave-Valor e o Ecossistema Redis}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Paradigma Chave-Valor (Key-Value)},leftcol=7cm,rightcol=7cm]{%
+  \alert{Simplicidade e Desempenho Extremo}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item Entre os 4 modelos NoSQL, o \textbf{Chave-Valor} é o mais primitivo e veloz.
+    \item Cada dado é indexado por uma única chave opaca (\textit{Key}).
+    \item O valor associado (\textit{Value}) é tratado como uma carga útil (\textit{payload}).
+    \item \textbf{Complexidade de Busca:} Tempo constante $\mathcal{O}(1)$ via tabela hash interna.
+  \end{itemize}
+}{%
+  \alert{Por que o Redis se Destaca no Mercado?}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item Criado por \textbf{Salvatore Sanfilippo (antirez)} em 2009.
+    \item Sigla: \textbf{REmote DIctionary Server}.
+    \item \textbf{In-Memory Engine:} Opera 100\% na memória RAM com latência sub-milissegundo ($< 1$ ms).
+    \item Não armazena apenas strings brutas, mas \textbf{estruturas de dados ricas}.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Ambiente Windows: Por que Usar o WSL 2?},leftcol=7cm,rightcol=7cm]{%
+  \alert{Natureza POSIX do Redis}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item O Redis depende de primitivas POSIX (Linux/Unix), como \texttt{fork()} para persistência em segundo plano.
+    \item Não há binário oficial para Windows nativo desde a versão 3.2.
+    \item Versões não-oficiais para Windows apresentam instabilidade e faltam recursos modernos.
+  \end{itemize}
+}{%
+  \alert{A Solução Definitiva: WSL 2}\par
+  \itemseps[topsepi=2mm,itemsepi=3mm,labelsep=2mm,leftmargini=4mm]
+  \begin{itemize}
+    \item O \textbf{Windows Subsystem for Linux 2} roda um kernel Linux real sobre hipervisor leve.
+    \item \textbf{Desempenho Idêntico ao Linux:} Sem degradação em chamadas de sistema.
+    \item \textbf{Rede Transparente:} O Windows mapeia \texttt{localhost:6379} automaticamente para IDEs e Python.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Instalação e Execução do Redis no WSL 2}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \alert{1. Instalação do Ambiente Linux}\par
+      \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=4mm]
+      \begin{itemize}
+        \item No PowerShell (Administrador):
+      \end{itemize}
+      \begin{lstlisting}[language=bash]
+# Instala o Ubuntu no WSL 2:
+wsl --install -d Ubuntu
+      \end{lstlisting}
+      \vspace{0.1cm}
+      \alert{2. Pacote Oficial no Ubuntu}\par
+      \begin{lstlisting}[language=bash]
+# Atualiza repositorios e instala:
+sudo apt update
+sudo apt install redis-server -y
+      \end{lstlisting}
+    \end{column}
+    \begin{column}{0.50\textwidth}
+      \alert{3. Gerenciamento do Serviço}\par
+      \begin{lstlisting}[language=bash]
+# Iniciar o servidor Redis:
+sudo service redis-server start
+
+# Verificar se esta rodando:
+sudo service redis-server status
+      \end{lstlisting}
+      \vspace{0.1cm}
+      \alert{4. Teste de Conexão}\par
+      \begin{lstlisting}[language=bash]
+# Abrir console interativo:
+redis-cli
+127.0.0.1:6379> PING
+PONG
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Convenção de Chaves e Diagnóstico no redis-cli}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \alert{Convenção de Namespaces}\par
+      \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=4mm]
+      \small
+      \begin{itemize}
+        \item O Redis não possui schemas relacionais.
+        \item Chaves são organizadas com dois-pontos (\texttt{:}):
+        \item \textbf{Padrão:} \texttt{\scriptsize modulo:entidade:id:campo}
+        \item \textbf{Exemplo:} \texttt{\scriptsize loja:prod:42:preco}
+        \item Garante legibilidade e isolamento.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.50\textwidth}
+      \alert{Diagnóstico no redis-cli}\par
+      \begin{lstlisting}[language=bash]
+# Testar eco e latencia:
+127.0.0.1:6379> PING "IFCE Taua"
+"IFCE Taua"
+
+# Diagnostico do servidor:
+127.0.0.1:6379> INFO server
+# Retorna versao, PID e uptime
+
+# Contagem total de chaves:
+127.0.0.1:6379> DBSIZE
+(integer) 42
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}

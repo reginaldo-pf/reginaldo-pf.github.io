@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 04: Modelo Chave-Valor, Arquitetura em Memória e Redis | IFCE Campus Tauá</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            ifce: {
+              green: '#2F855A',
+              red: '#C53030',
+              dark: '#1C4532',
+              emerald: '#059669'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Prism.js para Realce de Sintaxe -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    code, pre { font-family: 'JetBrains Mono', monospace !important; }
+    .tab-active {
+      border-color: #059669;
+      color: #059669;
+      background-color: rgba(5, 150, 105, 0.08);
+    }
+    .dark .tab-active {
+      border-color: #34d399;
+      color: #34d399;
+      background-color: rgba(52, 211, 153, 0.12);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- Navbar -->
+  <header class="border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="../../index.html" class="flex items-center space-x-2 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium text-sm transition-colors">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Voltar para Disciplina</span>
+        </a>
+      </div>
+      <div class="flex items-center space-x-4">
+        <a href="https://github.com/reginaldo-pf" target="_blank" rel="noopener noreferrer" class="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:white text-lg" title="GitHub @reginaldo-pf">
+          <i class="fa-brands fa-github"></i>
+        </a>
+        <button id="themeToggle" class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Alternar tema">
+          <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 py-8 w-full">
+
+    <!-- Breadcrumb -->
+    <nav class="text-xs text-slate-500 dark:text-slate-400 mb-4 flex items-center space-x-2 flex-wrap">
+      <a href="../../../../../../index.html" class="hover:underline">Início</a>
+      <span>/</span>
+      <span>Tecnologia em ADS</span>
+      <span>/</span>
+      <a href="../../index.html" class="hover:underline">Banco de Dados Não-Relacionais</a>
+      <span>/</span>
+      <span class="text-emerald-600 dark:text-emerald-400 font-medium">Aula 04</span>
+    </nav>
+
+    <!-- Header do Bloco da Aula -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/60 shadow-sm mb-8">
+      <div class="flex flex-wrap items-center gap-2 mb-3">
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">Aula 04</span>
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200">ADS16 • 2h (120 min)</span>
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-red-100 dark:bg-red-950/60 text-red-800 dark:text-red-300">Modelo Chave-Valor (Redis)</span>
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300">Semestre 2026.2</span>
+      </div>
+
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+        Modelo Chave-Valor: Arquitetura em Memória e Estruturas Nativas do Redis
+      </h1>
+      <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2">
+        <strong>Disciplina:</strong> Banco de Dados Não-Relacionais | <strong>Docente:</strong> Prof. Me. Reginaldo Pereira Fernandes (IFCE Campus Tauá)
+      </p>
+
+      <!-- Botões de Ação Rápida no Topo -->
+      <div class="flex flex-wrap items-center gap-3 mt-6 pt-5 border-t border-slate-100 dark:border-slate-700/60">
+        <!-- Botão Google Colab -->
+        <a href="https://colab.research.google.com/github/reginaldo-pf/reginaldo-pf.github.io/blob/main/Cursos/Tecnologia%20em%20An%C3%A1lise%20e%20Desenvolvimento%20de%20Sistemas/Disciplinas/Banco%20de%20Dados%20N%C3%A3o-Relacionais/Aulas/Aula_04/codigo/demonstracao_aula04.ipynb" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-sm transition-all transform hover:-translate-y-0.5">
+          <i class="fa-solid fa-bolt"></i>
+          <span>Abrir no Google Colab</span>
+        </a>
+
+        <!-- Botão Ver Slides Embutidos -->
+        <button onclick="switchTab('tab-slides')" class="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all">
+          <i class="fa-solid fa-file-pdf"></i>
+          <span>Visualizar Slides (28 págs)</span>
+        </button>
+
+        <!-- Botão Abrir PDF em Nova Aba -->
+        <a href="materiais/main.pdf" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-emerald-100 dark:bg-emerald-950/60 hover:bg-emerald-200 dark:hover:bg-emerald-900 text-emerald-800 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700 transition-colors">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          <span>Abrir PDF em Nova Janela</span>
+        </a>
+
+        <!-- Botão Ir para Downloads -->
+        <button onclick="switchTab('tab-downloads')" class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors">
+          <i class="fa-solid fa-download text-emerald-500"></i>
+          <span>Baixar Arquivos</span>
+        </button>
+
+        <!-- Botão Lista de Exercícios -->
+        <button onclick="switchTab('tab-exercicios')" class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-medium bg-purple-100 dark:bg-purple-950/60 hover:bg-purple-200 dark:hover:bg-purple-900 text-purple-800 dark:text-purple-200 border border-purple-300 dark:border-purple-700 transition-colors">
+          <i class="fa-solid fa-list-check text-purple-600 dark:text-purple-400"></i>
+          <span>Lista de Exercícios</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Navegação por Abas -->
+    <div class="flex items-center space-x-2 border-b border-slate-200 dark:border-slate-700 mb-8 overflow-x-auto pb-1">
+      <button onclick="switchTab('tab-simulador')" id="btn-tab-simulador" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent transition-all flex items-center space-x-2 tab-active">
+        <i class="fa-solid fa-gauge-high text-emerald-500"></i>
+        <span>Simulador Cache de Busca</span>
+      </button>
+
+      <button onclick="switchTab('tab-cli')" id="btn-tab-cli" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent transition-all flex items-center space-x-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+        <i class="fa-solid fa-terminal text-red-500"></i>
+        <span>Terminal redis-cli (SET / GET)</span>
+      </button>
+
+      <button onclick="switchTab('tab-persistencia')" id="btn-tab-persistencia" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent transition-all flex items-center space-x-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+        <i class="fa-solid fa-hard-drive text-amber-500"></i>
+        <span>Persistência (RDB & AOF)</span>
+      </button>
+
+      <button onclick="switchTab('tab-wsl')" id="btn-tab-wsl" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent transition-all flex items-center space-x-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+        <i class="fa-brands fa-windows text-blue-500"></i>
+        <span>Setup WSL 2 no Windows</span>
+      </button>
+
+      <button onclick="switchTab('tab-ia')" id="btn-tab-ia" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent transition-all flex items-center space-x-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+        <i class="fa-solid fa-brain text-purple-500"></i>
+        <span>Redis para IA (LangCache)</span>
+      </button>
+
+      <button onclick="switchTab('tab-slides')" id="btn-tab-slides" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent transition-all flex items-center space-x-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+        <i class="fa-solid fa-file-pdf"></i>
+        <span>Slides da Apresentação</span>
+      </button>
+
+      <button onclick="switchTab('tab-exercicios')" id="btn-tab-exercicios" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent transition-all flex items-center space-x-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Lista de Exercícios</span>
+      </button>
+
+      <button onclick="switchTab('tab-downloads')" id="btn-tab-downloads" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent transition-all flex items-center space-x-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+        <i class="fa-solid fa-download"></i>
+        <span>Downloads dos Arquivos</span>
+      </button>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ABA 1: SIMULADOR INTERATIVO CACHE DE BUSCA                                 -->
+    <!-- ========================================================================= -->
+    <div id="tab-simulador" class="tab-content space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div class="flex items-center space-x-3 mb-4">
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white">Simulador em Tempo Real: Busca no Catálogo com Cache-Aside</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Experimente a diferença entre buscar no banco em disco (PostgreSQL/Mongo) e responder pela memória RAM do Redis com TTL.</p>
+          </div>
+        </div>
+
+        <!-- Painel Interativo de Busca -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div class="md:col-span-2 flex space-x-2">
+            <input type="text" id="inputTermo" value="notebook dell" placeholder="Digite um termo de pesquisa..." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <button onclick="simularBusca()" class="px-5 py-2.5 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm flex items-center space-x-2 transition-all">
+              <i class="fa-solid fa-bolt"></i>
+              <span>Consultar</span>
+            </button>
+          </div>
+          <div class="flex space-x-2">
+            <button onclick="invalidarCache()" class="w-full px-4 py-2.5 rounded-xl font-semibold text-xs bg-red-100 dark:bg-red-950/60 hover:bg-red-200 text-red-800 dark:text-red-200 border border-red-300 dark:border-red-800 transition-colors flex items-center justify-center space-x-2">
+              <i class="fa-solid fa-trash-can"></i>
+              <span>Invalidar Cache (DEL)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Sugestões Rápidas de Termos -->
+        <div class="flex items-center space-x-2 text-xs text-slate-500 mb-6 flex-wrap gap-y-2">
+          <span>Termos Rápidos:</span>
+          <button onclick="setTermo('notebook dell')" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">notebook dell</button>
+          <button onclick="setTermo('fone bluetooth')" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">fone bluetooth</button>
+          <button onclick="setTermo('monitor gamer')" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">monitor gamer</button>
+          <button onclick="setTermo('teclado mecanico')" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">teclado mecanico</button>
+        </div>
+
+        <!-- Cartões de Telemetria e Status -->
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+            <span class="text-xs text-slate-500 block mb-1">Status da Última Chamada</span>
+            <span id="simStatus" class="text-sm font-bold text-slate-400">Aguardando consulta...</span>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+            <span class="text-xs text-slate-500 block mb-1">Latência Mensurada</span>
+            <span id="simLatencia" class="text-lg font-extrabold text-slate-700 dark:text-slate-200">-- ms</span>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+            <span class="text-xs text-slate-500 block mb-1">Tempo de Vida no Redis (TTL)</span>
+            <span id="simTTL" class="text-lg font-extrabold text-emerald-600 dark:text-emerald-400">-- s</span>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+            <span class="text-xs text-slate-500 block mb-1">Speedup (Aceleração)</span>
+            <span id="simSpeedup" class="text-lg font-extrabold text-purple-600 dark:text-purple-400">--</span>
+          </div>
+        </div>
+
+        <!-- Terminal Log Interativo -->
+        <div class="bg-slate-950 text-slate-200 rounded-xl p-4 font-mono text-xs overflow-x-auto border border-slate-800 h-44 overflow-y-auto" id="simTerminalLog">
+          <div class="text-slate-500">// Terminal de Eventos do Simulador Cache-Aside (IFCE Campus Tauá)...</div>
+          <div class="text-slate-400">// Digite um termo acima e clique em 'Consultar' para ver o ciclo de vida.</div>
+        </div>
+      </div>
+
+      <!-- Gráfico Experimental Incorporado -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-2">Comprovação Empírica no Laboratório: Benchmarking Real</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Medições reais colhidas pelo script <code class="text-emerald-600 font-semibold">demonstracao_aula04.py</code> executado sob 40 consultas sequenciais:</p>
+        <div class="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 flex justify-center p-2">
+          <img src="codigo/grafico_latencia_busca.png" alt="Gráfico de Benchmarking de Latência" class="max-w-full h-auto rounded-lg shadow-sm">
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ABA 2: TERMINAL REDIS-CLI (SET / GET EM PROFUNDIDADE)                      -->
+    <!-- ========================================================================= -->
+    <div id="tab-cli" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div class="flex items-center space-x-3 mb-6">
+          <div class="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-950/70 text-red-600 dark:text-red-400 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-terminal"></i>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white">Operações Avançadas via redis-cli no Terminal</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Comandos fundamentais explicados parâmetro por parâmetro com casos de uso de mercado.</p>
+          </div>
+        </div>
+
+        <!-- Seção 1: Variações do SET -->
+        <h3 class="text-sm font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-3">1. Variações do Comando SET</h3>
+        <div class="space-y-4 mb-8">
+          <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-slate-50/50 dark:bg-slate-900/50">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-mono text-xs font-bold text-slate-800 dark:text-slate-200">SET &lt;chave&gt; &lt;valor&gt; [EX segundos] [PX ms]</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 font-semibold">Expiração TTL</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mb-2">Grava a chave e agenda sua autodestruição após o tempo determinado. Evita acúmulo desnecessário na memória RAM.</p>
+            <pre><code class="language-bash">127.0.0.1:6379> SET busca:termo:notebook_dell "[{id:101,nome:'Dell'}]" EX 300
+OK
+127.0.0.1:6379> TTL busca:termo:notebook_dell
+(integer) 298</code></pre>
+          </div>
+
+          <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-slate-50/50 dark:bg-slate-900/50">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-mono text-xs font-bold text-slate-800 dark:text-slate-200">SET &lt;chave&gt; &lt;valor&gt; NX EX &lt;segundos&gt;</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-950/80 dark:text-blue-300 font-semibold">Distributed Lock (Trava)</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mb-2"><strong>Not eXists:</strong> Só define se a chave ainda NÃO existir. Essencial para controle de concorrência e compras na Black Friday.</p>
+            <pre><code class="language-bash"># Worker 1 adquire o lock do estoque:
+127.0.0.1:6379> SET lock:estoque:prod_500 "worker_A" NX EX 15
+OK
+# Worker 2 tenta concorrer simultaneamente:
+127.0.0.1:6379> SET lock:estoque:prod_500 "worker_B" NX EX 15
+(nil)  # Bloqueado com seguranca!</code></pre>
+          </div>
+
+          <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-slate-50/50 dark:bg-slate-900/50">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-mono text-xs font-bold text-slate-800 dark:text-slate-200">SET &lt;chave&gt; &lt;valor&gt; KEEPTTL</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 font-semibold">Preservação de TTL</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mb-2">Atualiza o payload sem reiniciar a contagem regressiva de expiração original.</p>
+            <pre><code class="language-bash">127.0.0.1:6379> SET sessao:user_99 "jwt_token_v1" EX 60
+OK
+127.0.0.1:6379> SET sessao:user_99 "jwt_token_v2_renovado" KEEPTTL
+OK
+127.0.0.1:6379> TTL sessao:user_99
+(integer) 58  # O contador regressivo continua sem interrupcoes!</code></pre>
+          </div>
+        </div>
+
+        <!-- Seção 2: Variações do GET -->
+        <h3 class="text-sm font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-3">2. Variações do Comando GET</h3>
+        <div class="space-y-4">
+          <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-slate-50/50 dark:bg-slate-900/50">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-mono text-xs font-bold text-slate-800 dark:text-slate-200">GETDEL &lt;chave&gt;</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-purple-100 text-purple-800 dark:bg-purple-950/80 dark:text-purple-300 font-semibold">Consumo Atômico de Uso Único</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mb-2">Obtém o valor e deleta a chave na mesma instrução atômica. Ideal para códigos de verificação em 2 etapas (2FA), vouchers e tokens de PIX.</p>
+            <pre><code class="language-bash">127.0.0.1:6379> SET token:pix:transacao_101 "AUTORIZADO_R$500" EX 60
+OK
+127.0.0.1:6379> GETDEL token:pix:transacao_101
+"AUTORIZADO_R$500"
+127.0.0.1:6379> GET token:pix:transacao_101
+(nil)  # Chave consumida e destruida sem risco de reuso!</code></pre>
+          </div>
+
+          <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-slate-50/50 dark:bg-slate-900/50">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-mono text-xs font-bold text-slate-800 dark:text-slate-200">MGET &lt;chave1&gt; &lt;chave2&gt; ...</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 dark:bg-indigo-950/80 dark:text-indigo-300 font-semibold">Batch em 1 RTT</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mb-2">Recupera múltiplas chaves em uma única viagem de rede (*Round-Trip Time*), eliminando gargalos de I/O de sockets.</p>
+            <pre><code class="language-bash">127.0.0.1:6379> MGET moeda:usd_brl moeda:eur_brl moeda:btc_brl
+1) "5.45"
+2) "5.95"
+3) "345000.00"</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ABA 3: PERSISTÊNCIA EM DISCO (RDB E AOF)                                   -->
+    <!-- ========================================================================= -->
+    <div id="tab-persistencia" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div class="flex items-center space-x-3 mb-6">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/70 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-hard-drive"></i>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white">Arquitetura em Memória e Persistência em Disco</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Entenda por que a RAM é volátil e como o Redis grava cópias duráveis sem perder velocidade.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <!-- Card RDB -->
+          <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-5 bg-slate-50 dark:bg-slate-900">
+            <div class="flex items-center space-x-2 text-amber-600 dark:text-amber-400 font-bold text-sm mb-2">
+              <i class="fa-solid fa-camera"></i>
+              <span>1. RDB (Snapshotting Pontual)</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mb-3">Tira uma "foto" binária compactada da memória e grava no arquivo <code class="font-mono text-emerald-600">dump.rdb</code>.</p>
+            <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300 mb-4 list-disc list-inside">
+              <li><strong>SAVE:</strong> Bloqueia todo o servidor até salvar. <strong>Nunca use em produção!</strong></li>
+              <li><strong>BGSAVE:</strong> Assíncrono via <code class="font-mono">fork()</code> com Copy-on-Write do Linux. Não trava clientes.</li>
+              <li><strong>Trade-off:</strong> Risco de perder os dados gravados após o último snapshot.</li>
+            </ul>
+            <pre><code class="language-bash"># Configuracao no redis.conf:
+save 900 1      # 15 min se 1 chave mudou
+save 300 10     # 5 min se 10 mudaram
+save 60 10000   # 1 min se 10k mudaram
+
+# No terminal:
+127.0.0.1:6379> BGSAVE
+Background saving started
+127.0.0.1:6379> LASTSAVE
+(integer) 1791888929</code></pre>
+          </div>
+
+          <!-- Card AOF -->
+          <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-5 bg-slate-50 dark:bg-slate-900">
+            <div class="flex items-center space-x-2 text-blue-600 dark:text-blue-400 font-bold text-sm mb-2">
+              <i class="fa-solid fa-scroll"></i>
+              <span>2. AOF (Append-Only File Log)</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mb-3">Registra todas as operações de escrita em sequência contínua no arquivo <code class="font-mono text-emerald-600">appendonly.aof</code>.</p>
+            <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300 mb-4 list-disc list-inside">
+              <li><strong>appendfsync everysec:</strong> Padrão da indústria. Perda máxima de 1 segundo de dados.</li>
+              <li><strong>BGREWRITEAOF:</strong> Compacta o histórico eliminando instruções redundantes.</li>
+              <li><strong>Persistência Híbrida:</strong> Cabeçalho em RDB e cauda em AOF (<code class="font-mono">aof-use-rdb-preamble yes</code>).</li>
+            </ul>
+            <pre><code class="language-bash"># Configuracao no redis.conf:
+appendonly yes
+appendfilename "appendonly.aof"
+appendfsync everysec
+
+# No terminal:
+127.0.0.1:6379> BGREWRITEAOF
+Background append only file rewriting started
+127.0.0.1:6379> INFO persistence</code></pre>
+          </div>
+        </div>
+
+        <!-- Diagrama Visual -->
+        <div class="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 p-2 flex justify-center">
+          <img src="materiais/figuras/fig_arquitetura_memoria_persistencia.png" alt="Diagrama Arquitetura em Memória e Persistência" class="max-w-full h-auto rounded-lg shadow-sm">
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ABA 4: GUIA WINDOWS WSL 2                                                  -->
+    <!-- ========================================================================= -->
+    <div id="tab-wsl" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div class="flex items-center space-x-3 mb-6">
+          <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950/70 text-blue-600 dark:text-blue-400 flex items-center justify-center text-lg">
+            <i class="fa-brands fa-windows"></i>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white">Guia de Instalação no Windows via WSL 2</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Por que o Redis não possui executável Windows nativo e como rodá-lo perfeitamente com Linux no WSL 2.</p>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div class="p-4 rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50/50 dark:bg-blue-950/30 text-xs text-blue-900 dark:text-blue-300">
+            <strong>ℹ️ Por que usar o WSL 2?</strong> O Redis utiliza chamadas exclusivas do kernel Linux (<code class="font-mono">epoll</code> para I/O multiplexado e <code class="font-mono">fork()</code> com Copy-on-Write para snapshots sem travamento). O WSL 2 oferece o kernel Linux real dentro do Windows sem peso de máquina virtual tradicional.
+          </div>
+
+          <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-slate-50 dark:bg-slate-900">
+            <h4 class="font-bold text-xs text-slate-800 dark:text-slate-200 mb-2">Passo 1: Instalar o Ubuntu no PowerShell</h4>
+            <p class="text-xs text-slate-600 dark:text-slate-400 mb-2">Abra o PowerShell como Administrador e execute:</p>
+            <pre><code class="language-bash">wsl --install -d Ubuntu</code></pre>
+          </div>
+
+          <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-slate-50 dark:bg-slate-900">
+            <h4 class="font-bold text-xs text-slate-800 dark:text-slate-200 mb-2">Passo 2: Instalar o Redis no Ubuntu WSL</h4>
+            <p class="text-xs text-slate-600 dark:text-slate-400 mb-2">Abra o terminal Ubuntu que foi instalado e rode:</p>
+            <pre><code class="language-bash">sudo apt update && sudo apt install redis-server -y
+sudo service redis-server start
+redis-cli ping
+# Resposta: PONG</code></pre>
+          </div>
+
+          <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-slate-50 dark:bg-slate-900">
+            <h4 class="font-bold text-xs text-slate-800 dark:text-slate-200 mb-2">Passo 3: Conectar ferramentas do Windows</h4>
+            <p class="text-xs text-slate-600 dark:text-slate-400">O WSL 2 faz o roteamento automático de portas para o host Windows! Você pode baixar o <strong>Redis Insight</strong> para Windows e conectar diretamente em <code class="font-mono text-emerald-600">localhost:6379</code>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ABA 5: REDIS PARA INTELIGÊNCIA ARTIFICIAL (LANGCACHE & CONTEXT LAYER)      -->
+    <!-- ========================================================================= -->
+    <div id="tab-ia" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div class="flex items-center space-x-3 mb-6">
+          <div class="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-950/70 text-purple-600 dark:text-purple-400 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-brain"></i>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white">Modernização: Redis como Camada de Contexto para IA</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">"Context is all you need" — Entenda como o modelo Chave-Valor acelera Agentes e corta custos de LLMs.</p>
+          </div>
+        </div>
+
+        <div class="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 p-2 flex justify-center mb-6">
+          <img src="materiais/figuras/fig_redis_ai_langcache.png" alt="Redis para Inteligência Artificial" class="max-w-full h-auto rounded-lg shadow-sm">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-slate-700 dark:text-slate-300">
+          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+            <strong class="text-purple-600 dark:text-purple-400 block mb-1 text-sm"><i class="fa-solid fa-bolt mr-1"></i> LangCache: Cache de Prompts</strong>
+            <p>Modelos de linguagem como Gemini e GPT custam caro a cada token processado. Em produção, 40 a 80% das requisições corporativas são idênticas ou quase duplicadas. O LangCache intercepta esses prompts no Redis e responde em menos de 100 ms com custo zero de API!</p>
+          </div>
+          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+            <strong class="text-emerald-600 dark:text-emerald-400 block mb-1 text-sm"><i class="fa-solid fa-memory mr-1"></i> Agent Memory: Memória Cross-Session</strong>
+            <p>LLMs são <em>stateless</em> por definição. Toda chamada começa "fria". Utilizando Hashes e Lists no Redis com TTLs longos ou persistência AOF, os agentes autônomos retêm memórias e fatos do usuário ao longo de múltiplos turnos e sessões sem perder contexto.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ABA 6: SLIDES EMBUTIDOS                                                    -->
+    <!-- ========================================================================= -->
+    <div id="tab-slides" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white">Slides Oficiais da Aula 04 (Beamer LaTeX)</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Apresentação formatada no padrão 16:9 widescreen para o IFCE Campus Tauá.</p>
+          </div>
+          <a href="materiais/main.pdf" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors flex items-center space-x-2">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            <span>Tela Cheia</span>
+          </a>
+        </div>
+        <div class="aspect-video w-full rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-950">
+          <iframe src="materiais/main.pdf" class="w-full h-full" title="Slides Aula 04"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ABA 7: LISTA DE EXERCÍCIOS                                                 -->
+    <!-- ========================================================================= -->
+    <div id="tab-exercicios" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Lista de Exercícios Práticos Avaliativa (Aula 04)</h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Atividade formativa contínua a ser submetida no SIGAA/Classroom conforme cronograma.</p>
+
+        <div class="space-y-4 text-xs">
+          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+            <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">Questão 1: Cache de Catálogo com TTL (CLI)</span>
+            <p class="text-slate-600 dark:text-slate-300">Crie uma chave <code class="font-mono">busca:termo:smartphone_5g</code> no <code class="font-mono">redis-cli</code> armazenando um JSON com 2 produtos e validade de 120 segundos. Apresente os comandos executados e o print da contagem regressiva via <code class="font-mono">TTL</code>.</p>
+          </div>
+
+          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+            <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">Questão 2: Trava de Concorrência com SET NX</span>
+            <p class="text-slate-600 dark:text-slate-300">Simule no terminal a aquisição de trava distribuída de estoque de um produto concorrido. Mostre que o primeiro processo retorna <code class="font-mono">OK</code> e o segundo processo retorna <code class="font-mono">(nil)</code>.</p>
+          </div>
+
+          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+            <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">Questão 3: Persistência BGSAVE e Inspeção</span>
+            <p class="text-slate-600 dark:text-slate-300">Execute o comando <code class="font-mono">BGSAVE</code> no <code class="font-mono">redis-cli</code>. Em seguida, utilize <code class="font-mono">LASTSAVE</code> para obter o timestamp do dump. Explique por que o comando <code class="font-mono">SAVE</code> não deve ser executado em ambiente de produção.</p>
+          </div>
+
+          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+            <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">Questão 4: Padrão Cache-Aside e Invalidação</span>
+            <p class="text-slate-600 dark:text-slate-300">Por que a melhor prática da arquitetura Cache-Aside exige deletar a chave (<code class="font-mono">DEL</code>) no Redis ao atualizar um registro no PostgreSQL/MongoDB em vez de regravar o novo valor com <code class="font-mono">SET</code>?</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ABA 8: DOWNLOADS                                                           -->
+    <!-- ========================================================================= -->
+    <div id="tab-downloads" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Repositório de Arquivos para Download</h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Todos os códigos-fonte, notebooks, scripts de terminal e materiais didáticos da Aula 04.</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <a href="codigo/demonstracao_aula04.py" download class="flex items-center space-x-3 p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 bg-slate-50 dark:bg-slate-900 transition-colors">
+            <i class="fa-brands fa-python text-2xl text-emerald-500"></i>
+            <div>
+              <span class="font-bold text-xs text-slate-900 dark:text-white block">demonstracao_aula04.py</span>
+              <span class="text-xs text-slate-500">Script Python com Cache-Aside e Benchmark</span>
+            </div>
+          </a>
+
+          <a href="codigo/demonstracao_aula04.ipynb" download class="flex items-center space-x-3 p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-amber-500 bg-slate-50 dark:bg-slate-900 transition-colors">
+            <i class="fa-solid fa-book-open text-2xl text-amber-500"></i>
+            <div>
+              <span class="font-bold text-xs text-slate-900 dark:text-white block">demonstracao_aula04.ipynb</span>
+              <span class="text-xs text-slate-500">Jupyter Notebook Interativo da Aula</span>
+            </div>
+          </a>
+
+          <a href="codigo/redis_cli_guia_pratico.sh" download class="flex items-center space-x-3 p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-red-500 bg-slate-50 dark:bg-slate-900 transition-colors">
+            <i class="fa-solid fa-terminal text-2xl text-red-500"></i>
+            <div>
+              <span class="font-bold text-xs text-slate-900 dark:text-white block">redis_cli_guia_pratico.sh</span>
+              <span class="text-xs text-slate-500">Guia de comandos interativos do terminal</span>
+            </div>
+          </a>
+
+          <a href="materiais/main.pdf" download class="flex items-center space-x-3 p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-blue-500 bg-slate-50 dark:bg-slate-900 transition-colors">
+            <i class="fa-solid fa-file-pdf text-2xl text-blue-500"></i>
+            <div>
+              <span class="font-bold text-xs text-slate-900 dark:text-white block">Slides Beamer (main.pdf)</span>
+              <span class="text-xs text-slate-500">Apresentação completa de slides em PDF (28 páginas)</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Rodapé Institucional -->
+  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-6 mt-12 text-center text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-6xl mx-auto px-4">
+      <p>Instituto Federal do Ceará (IFCE) — Campus Tauá • Tecnologia em Análise e Desenvolvimento de Sistemas (ADS)</p>
+      <p class="mt-1">Disciplina: Banco de Dados Não-Relacionais (ADS16) • Prof. Me. Reginaldo Pereira Fernandes</p>
+    </div>
+  </footer>
+
+  <!-- Lógica JavaScript do Portal e Simulador -->
+  <script>
+    // Gerenciamento de Tema Dark / Light
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const html = document.documentElement;
+
+    function applyTheme(isDark) {
+      if (isDark) {
+        html.classList.add('dark');
+        themeIcon.classList.replace('fa-moon', 'fa-sun');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        html.classList.remove('dark');
+        themeIcon.classList.replace('fa-sun', 'fa-moon');
+        localStorage.setItem('theme', 'light');
+      }
+    }
+
+    const savedTheme = localStorage.getItem('theme');
+    applyTheme(savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches));
+
+    themeToggle.addEventListener('click', () => {
+      applyTheme(!html.classList.contains('dark'));
+    });
+
+    // Navegação por Abas
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('tab-active');
+        btn.classList.add('text-slate-500', 'dark:text-slate-400');
+      });
+
+      const selectedContent = document.getElementById(tabId);
+      if (selectedContent) selectedContent.classList.remove('hidden');
+
+      const selectedBtn = document.getElementById('btn-' + tabId);
+      if (selectedBtn) {
+        selectedBtn.classList.add('tab-active');
+        selectedBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
+      }
+    }
+
+    // Estado do Simulador Cache-Aside
+    const cacheEmMemoria = {};
+    let ttlTimers = {};
+
+    function setTermo(t) {
+      document.getElementById('inputTermo').value = t;
+    }
+
+    function logSim(msg, colorClass = 'text-slate-300') {
+      const logBox = document.getElementById('simTerminalLog');
+      const now = new Date().toLocaleTimeString();
+      const div = document.createElement('div');
+      div.className = colorClass;
+      div.innerHTML = `[${now}] ${msg}`;
+      logBox.appendChild(div);
+      logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    function simularBusca() {
+      const termo = document.getElementById('inputTermo').value.trim().toLowerCase();
+      if (!termo) return;
+
+      const chave = 'busca:termo:' + termo.replace(/\s+/g, '_');
+      const agora = Date.now();
+
+      if (cacheEmMemoria[chave] && cacheEmMemoria[chave].expiraEm > agora) {
+        // CACHE HIT
+        const latenciaMs = (Math.random() * 0.04 + 0.05).toFixed(3);
+        const ttlRestante = Math.ceil((cacheEmMemoria[chave].expiraEm - agora) / 1000);
+        const speedup = Math.round(190 / parseFloat(latenciaMs));
+
+        document.getElementById('simStatus').innerHTML = '<span class="text-emerald-600 dark:text-emerald-400 font-bold">⚡ CACHE HIT (Memória RAM)</span>';
+        document.getElementById('simLatencia').innerText = latenciaMs + ' ms';
+        document.getElementById('simTTL').innerText = ttlRestante + ' s';
+        document.getElementById('simSpeedup').innerText = speedup + 'x mais rápido';
+
+        logSim(`⚡ [CACHE HIT] Termo: '${termo}' retornado em ${latenciaMs} ms da RAM (TTL=${ttlRestante}s)`, 'text-emerald-400 font-bold');
+      } else {
+        // CACHE MISS
+        document.getElementById('simStatus').innerHTML = '<span class="text-amber-600 dark:text-amber-400 font-bold">🐢 CACHE MISS (Consultando Disco...)</span>';
+        logSim(`🐢 [CACHE MISS] Termo: '${termo}' inexistente no Redis. Consultando banco relacional em disco...`, 'text-amber-400');
+
+        setTimeout(() => {
+          const latenciaDisco = (Math.random() * 50 + 170).toFixed(1);
+          const ttlSegundos = 60;
+          cacheEmMemoria[chave] = {
+            dados: [{ id: 101, nome: 'Item para ' + termo, preco: 299.90 }],
+            expiraEm: Date.now() + ttlSegundos * 1000
+          };
+
+          document.getElementById('simStatus').innerHTML = '<span class="text-amber-600 dark:text-amber-400 font-bold">🐢 CACHE MISS (Salvo no Redis com TTL)</span>';
+          document.getElementById('simLatencia').innerText = latenciaDisco + ' ms';
+          document.getElementById('simTTL').innerText = ttlSegundos + ' s';
+          document.getElementById('simSpeedup').innerText = '1x (Linha de Base)';
+
+          logSim(`💾 [SET EX ${ttlSegundos}] Dados do disco gravados no Redis na chave '${chave}' em ${latenciaDisco} ms`, 'text-blue-400 font-semibold');
+        }, 120);
+      }
+    }
+
+    function invalidarCache() {
+      const termo = document.getElementById('inputTermo').value.trim().toLowerCase();
+      const chave = 'busca:termo:' + termo.replace(/\s+/g, '_');
+      if (cacheEmMemoria[chave]) {
+        delete cacheEmMemoria[chave];
+        document.getElementById('simStatus').innerHTML = '<span class="text-red-600 dark:text-red-400 font-bold">🗑️ CHAVE DELETADA (DEL)</span>';
+        document.getElementById('simTTL').innerText = '0 s';
+        logSim(`🗑️ [DEL ${chave}] Chave removida do Redis! Próxima consulta resultará em Cache Miss.`, 'text-red-400 font-bold');
+      } else {
+        logSim(`ℹ️ Chave '${chave}' não encontrada na memória para deleção.`, 'text-slate-400');
+      }
+    }
+  </script>
+</body>
+</html>
