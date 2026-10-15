@@ -1,0 +1,75 @@
+\changecolours{ScoutGreen}
+\section[Sessões e Carrinho com Hashes]{Controle de Sessão e Carrinho Atômico com Hashes}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Gestão de Sessão do Usuário em Memória},leftcol=7.1cm,rightcol=6.9cm]{%
+  \alert{Por que Armazenar Sessões no Redis?}\par
+  \itemseps[topsepi=0.2mm,itemsepi=0.4mm,labelsep=1.5mm,leftmargini=2.5mm]
+  \begin{itemize}
+    \item \textbf{Escala Horizontal:} Com múltiplos servidores/containers, uma sessão local fica isolada.
+    \item \textbf{Centralização em Memória:} O Redis atua como o \textit{Session Store} único compartilhado.
+    \item \textbf{Expiração Deslizante (\textit{Sliding}):}
+      A cada requisição, o TTL renova com \texttt{EXPIRE session:<token> 1800} (30 minutos de inatividade).
+  \end{itemize}
+}{%
+  \alert{Hashes vs. Strings no Carrinho de Compras}\par
+  \itemseps[topsepi=0.2mm,itemsepi=0.4mm,labelsep=1.5mm,leftmargini=2.5mm]
+  \begin{itemize}
+    \item \textbf{String (JSON Serializado):}
+      Exige ler o carrinho inteiro, desserializar e salvar tudo de volta. Risco grave de \textit{Race Condition}.
+    \item \textbf{Hashes do Redis:}
+      A chave é o carrinho (\texttt{cart:<session>}) e os campos são os produtos (\texttt{prod\_1}, \texttt{prod\_2}).
+    \item \textbf{Operação Atômica \texttt{HINCRBY}:}
+      O Redis incrementa o campo diretamente na memória sem leitura prévia.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Operações Atômicas de Carrinho no FastCommerce}
+  \vspace{0.1cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \footnotesize
+      \alert{Comandos Canônicos no Terminal}\par
+      \vspace{0.15cm}
+      \begin{itemize}\setlength{\itemsep}{1.2mm}\setlength{\parskip}{0pt}
+        \item \textbf{Adicionar Item:}
+          \texttt{HINCRBY cart:usr\_10 prod\_laptop 1}
+        \item \textbf{Consultar Carrinho:}
+          \texttt{HGETALL cart:usr\_10}
+        \item \textbf{Remover Item:}
+          \texttt{HDEL cart:usr\_10 prod\_mouse}
+        \item \textbf{Limpar Carrinho pós-checkout:}
+          \texttt{DEL cart:usr\_10}
+        \item \textbf{Carrinhos Abandonados:}
+          \texttt{EXPIRE cart:usr\_10 3600} elimina inativos após 1 hora.
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \alert{Código Python no FastCommerce}\par
+      \vspace{0.1cm}
+\begin{lstlisting}[language=Python,basicstyle=\fontsize{4.8pt}{5.8pt}\selectfont\ttfamily]
+@app.route("/api/carrinho/adicionar", methods=["POST"])
+def adicionar_ao_carrinho():
+    dados = request.get_json()
+    prod_id = dados.get("produto_id")
+    qtd = int(dados.get("quantidade", 1))
+
+    chave = f"cart:{session_id}"
+    
+    # HINCRBY: Incremento atomico no Hash
+    nova_qtd = r.hincrby(chave, prod_id, qtd)
+    
+    # Define TTL de 1 hora no carrinho
+    r.expire(chave, 3600)
+    
+    return jsonify({
+        "status": "success",
+        "produto_id": prod_id,
+        "quantidade": nova_qtd
+    })
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}

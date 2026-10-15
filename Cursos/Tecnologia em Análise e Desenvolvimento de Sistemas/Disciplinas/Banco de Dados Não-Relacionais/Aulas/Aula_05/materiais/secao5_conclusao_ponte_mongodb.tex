@@ -1,0 +1,67 @@
+\changecolours{ScoutGreen}
+\section[Conclusão e Próximos Passos]{Síntese e Conexão Arquitetural com o MongoDB}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Checklist de Competências Consolidadas},leftcol=7.1cm,rightcol=6.9cm]{%
+  \alert{O Que Aprendemos e Executamos}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Padrão Cache-Aside:} Implementação com expiração automática (TTL) e mensuração do Speedup de acesso em memória ($> 250\times$).
+    \item \textbf{Gerenciamento de Sessão:} Tokens efêmeros centralizados com renovação dinâmica (\textit{Sliding Expiration}).
+    \item \textbf{Hashes do Redis:} Carrinho de compras atômico com \texttt{HINCRBY}, evitando condições de corrida em e-commerce.
+    \item \textbf{Filas com Listas:} Desacoplamento assíncrono entre a API de checkout (\texttt{LPUSH}) e o worker de processamento (\texttt{BRPOP}).
+  \end{itemize}
+}{%
+  \alert{Ponte com a Aula 06: O Modelo de Documentos}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Onde o Redis Termina?}\par
+      O Redis é excelente para dados em trânsito e alta frequência. Porém, memória RAM é cara: não guardamos histórico fiscal de 10 anos no Redis!
+    \item \textbf{O Papel do MongoDB (Aula 06):}
+      \begin{enumerate}
+        \item O catálogo de produtos passará a ser uma coleção flexível de documentos BSON (\texttt{produtos}).
+        \item O worker que consome a fila do Redis salvará os pedidos confirmados na coleção \texttt{pedidos} no MongoDB.
+      \end{enumerate}
+    \item \textbf{Resultado:} Uma arquitetura poliglota completa e pronta para a AVP1!
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Evolução do Projeto FastCommerce rumo à AVP1}
+  \vspace{0.1cm}
+  \begin{center}
+    \tikz[scale=0.78, transform shape]{
+      % Etapa 1: Aula 05
+      \node[draw=red!80!black, fill=red!10, thick, rounded corners, minimum width=3.8cm, minimum height=2.2cm, align=left] (etapa1) {
+        \textbf{Aula 05 (20/10): Redis}\\
+        \tiny $\bullet$ Cache-Aside com TTL\\
+        \tiny $\bullet$ Sessão e Tokens em Memória\\
+        \tiny $\bullet$ Carrinho de Compras em Hashes\\
+        \tiny $\bullet$ Fila de Checkout com Listas
+      };
+
+      % Seta de evolucao
+      \draw[->, ultra thick, ScoutNavy] (etapa1) -- node[above, font=\bfseries\tiny] {Consumo} ++(4.8cm, 0) coordinate (meio);
+
+      % Etapa 2: Aulas 06 e 07
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, rounded corners, minimum width=3.8cm, minimum height=2.2cm, align=left, right=0.2cm of meio] (etapa2) {
+        \textbf{Aulas 06/07: MongoDB}\\
+        \tiny $\bullet$ Catálogo BSON Flexível\\
+        \tiny $\bullet$ Embedding de Itens/Avaliações\\
+        \tiny $\bullet$ Persistência do Worker no MongoDB\\
+        \tiny $\bullet$ Índices e Agregações de Vendas
+      };
+
+      % Etapa 3: AVP1
+      \node[draw=ScoutNavy, fill=ScoutNavy!15, thick, rounded corners, minimum width=8.5cm, minimum height=0.9cm, below=0.6cm of etapa1, xshift=2.4cm, align=center] (avp1) {
+        \textbf{Aula 10 (17/11): Avaliação Prática AVP1 em Laboratório}\\
+        \tiny Sistema Web Completo com Persistência Poliglota Integrada (FastCommerce: Redis + MongoDB)
+      };
+
+      \draw[->, thick, black!70] (etapa1.south) |- (avp1.west);
+      \draw[->, thick, black!70] (etapa2.south) |- (avp1.east);
+    }
+  \end{center}
+  \vspace{0.15cm}
+  \centering{\footnotesize \textbf{Roteiro Prático:} Execute o servidor web e o worker para testar o ciclo completo em laboratório!}
+\end{frame}

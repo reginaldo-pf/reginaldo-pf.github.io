@@ -1,0 +1,73 @@
+\changecolours{ScoutGreen}
+\section[Cache-Aside e TTL]{Padrão Cache-Aside e Estratégias de Expiração (TTL)}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Padrão Cache-Aside (Lazy Loading)},leftcol=7.1cm,rightcol=6.9cm]{%
+  \alert{Mecânica de Funcionamento}\par
+  \itemseps[topsepi=0.2mm,itemsepi=0.4mm,labelsep=1.5mm,leftmargini=2.5mm]
+  \begin{itemize}
+    \item \textbf{A Aplicação Coordena:} O back-end busca na memória rápida (Redis) e na base persistente (Disco/SQL).
+    \item \textbf{Fluxo de Leitura:}
+      \begin{enumerate}
+        \item \textbf{Cache Hit:} Se a chave existir, retorna da RAM ($\approx 0.4\text{ ms}$).
+        \item \textbf{Cache Miss:} Se não existir, busca na base lenta ($\approx 120\text{ ms}$), salva no Redis com \texttt{SETEX} e retorna.
+      \end{enumerate}
+    \item \textbf{Vantagem:} Apenas dados ativamente consultados consomem memória RAM.
+  \end{itemize}
+}{%
+  \alert{Por que o Cache DEVE Ter TTL?}\par
+  \itemseps[topsepi=0.2mm,itemsepi=0.4mm,labelsep=1.5mm,leftmargini=2.5mm]
+  \begin{itemize}
+    \item \textbf{Finitude de RAM:} Evita que o Redis atinja \texttt{maxmemory} e entre em evicção forçada.
+    \item \textbf{Autocura:} Dados defasados (\textit{Stale Reads}) são eliminados após o tempo de vida.
+    \item \textbf{Invalidação Pró-Ativa:} Ao atualizar o catálogo, deleta-se a chave (\texttt{DEL cache:catalogo}).
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Implementação do Cache-Aside em Python no FastCommerce}
+  \vspace{0.1cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \footnotesize
+      \alert{Lógica de Negócio na API}\par
+      \vspace{0.15cm}
+      \begin{itemize}\setlength{\itemsep}{1.2mm}\setlength{\parskip}{0pt}
+        \item Utiliza \texttt{r.get(chave)} para consulta em memória.
+        \item Grava no Redis com \texttt{r.setex(chave, 45, dados)} aplicando TTL de 45 segundos.
+        \item Mensura a latência em tempo real para o painel de telemetria da interface web.
+        \item Speedup comprovado: de $\approx 120\text{ ms}$ no Miss para $\approx 0.4\text{ ms}$ no Hit ($> 250\times$ mais rápido!).
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \alert{Código Python no FastCommerce}\par
+      \vspace{0.1cm}
+\begin{lstlisting}[language=Python,basicstyle=\fontsize{4.6pt}{5.6pt}\selectfont\ttfamily]
+@app.route("/api/produtos")
+def get_produtos():
+    inicio = time.time()
+    chave = "cache:catalogo_produtos"
+
+    # 1. Verifica Cache no Redis (RAM)
+    if r.exists(chave):
+        produtos = json.loads(r.get(chave))
+        origem = "CACHE_HIT (RAM Redis)"
+    else:
+        # 2. Cache Miss: Busca lenta simulada
+        time.sleep(0.12)
+        produtos = CATALOGO_DISCO
+        # 3. Grava no Redis com TTL de 45s
+        r.setex(chave, 45, json.dumps(produtos))
+        origem = "CACHE_MISS (Disco/DB)"
+
+    latencia = (time.time() - inicio) * 1000
+    return jsonify({
+        "origem": origem, 
+        "latencia_ms": round(latencia, 2),
+        "produtos": produtos
+    })
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}

@@ -1,0 +1,71 @@
+\changecolours{ScoutGreen}
+\section[Projeto FastCommerce]{Projeto FastCommerce e a Persistência Poliglota}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Persistência Poliglota na Arquitetura Moderna},leftcol=7.1cm,rightcol=6.9cm]{%
+  \alert{O Fim do Monolito de Dados Único}\par
+  \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+  \begin{itemize}
+    \item \textbf{Cenário Tradicional:} Um único banco relacional sofrendo com leitura pesada de catálogo e filas concorrentes.
+    \item \textbf{Persistência Poliglota:} Adoção de tecnologias NoSQL distintas especializadas em cada regra de negócio.
+    \item \textbf{Solução em Camadas:}
+      \begin{itemize}
+        \item \textbf{Redis (RAM):} Sessões rápidas, cache expirável e filas transitórias de checkout.
+        \item \textbf{MongoDB (Disco/BSON):} Catálogo flexível e histórico de pedidos (Aula 06).
+      \end{itemize}
+  \end{itemize}
+}{%
+  \alert{O Projeto Transversal da Disciplina}\par
+  \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+  \begin{itemize}
+    \item \textbf{FastCommerce NoSQL:} Aplicação web real desenvolvida em sala de aula.
+    \item \textbf{Ciclo Metodológico:}
+      \begin{enumerate}
+        \item \textbf{Projeto:} Modelagem de chaves e tipos no Redis.
+        \item \textbf{Implementação:} Código Python com API e interface web.
+        \item \textbf{Uso Prático:} Navegação, telemetria e filas.
+      \end{enumerate}
+    \item \textbf{Continuidade:} O mesmo código será estendido nas Aulas 06 a 08 rumo à AVP1.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Arquitetura de Dados em Tempo Real do FastCommerce}
+  \vspace{0.1cm}
+  \begin{center}
+    \tikz[scale=0.76, transform shape]{
+      % Camada Web Front-end
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, rounded corners, minimum width=3.2cm, minimum height=0.8cm, font=\bfseries\sffamily\scriptsize] (front) {Interface Web (HTML/JS)};
+
+      % API Back-end
+      \node[draw=ScoutNavy, fill=ScoutNavy!15, thick, rounded corners, minimum width=3.2cm, minimum height=0.8cm, font=\bfseries\sffamily\scriptsize, below=0.8cm of front] (api) {API Python (Flask / FastAPI)};
+
+      % Redis em Memória
+      \node[draw=red!80!black, fill=red!10, thick, rounded corners, minimum width=4.0cm, minimum height=1.6cm, font=\bfseries\sffamily\scriptsize, right=1.6cm of api] (redis) {
+        \begin{tabular}{c}
+          \textbf{REDIS (In-Memory 6379)} \\
+          \tiny $\bullet$ Hashes: \texttt{cart:<session>} \\
+          \tiny $\bullet$ Strings c/ TTL: \texttt{session:<id>}, \texttt{cache:catalogo} \\
+          \tiny $\bullet$ Lists: \texttt{fila:pedidos}
+        \end{tabular}
+      };
+
+      % Worker Background
+      \node[draw=blue!80!black, fill=blue!10, thick, rounded corners, minimum width=3.4cm, minimum height=0.8cm, font=\bfseries\sffamily\scriptsize, below=1.0cm of redis] (worker) {Worker Assíncrono (\texttt{BRPOP})};
+
+      % Conexoes
+      \draw[<->, thick, ScoutGreen] (front) -- node[right, font=\tiny] {HTTP / JSON} (api);
+      \draw[<->, thick, red!80!black] (api) -- node[above, font=\tiny] {Cache / Sessão / Fila} (redis);
+      \draw[->, thick, blue!80!black] (redis) -- node[right, font=\tiny] {BRPOP fila:pedidos} (worker);
+    }
+  \end{center}
+  \vspace{0.1cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \footnotesize \textbf{Camada de Entrada (Memória):} Respostas em microssegundos ($\mu\text{s}$) para 100\% das interações ativas do usuário.
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \footnotesize \textbf{Desacoplamento Assíncrono:} O checkout enfileira o pedido instantaneamente, liberando a interface do usuário.
+    \end{column}
+  \end{columns}
+\end{frame}

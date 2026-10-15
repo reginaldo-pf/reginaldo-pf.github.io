@@ -1,0 +1,82 @@
+\changecolours{ScoutGreen}
+\section[Filas e Desacoplamento]{Filas Assíncronas de Checkout com Listas do Redis}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Problema do Checkout Síncrono no E-commerce},leftcol=7.1cm,rightcol=6.9cm]{%
+  \alert{Por que o Checkout Síncrono Falha?}\par
+  \itemseps[topsepi=0.2mm,itemsepi=0.4mm,labelsep=1.5mm,leftmargini=2.5mm]
+  \begin{itemize}
+    \item \textbf{Cadeia Lenta:} Cartão, antifraude, NF-e e e-mail levam de 2 a 6 segundos.
+    \item \textbf{Esgotamento:} 1000 clientes simultâneos derrubam servidores por conexões abertas.
+    \item \textbf{Solução com Fila:} A API valida o carrinho, empacota e joga na fila do Redis ($\approx 0.5\text{ ms}$).
+  \end{itemize}
+}{%
+  \alert{O Padrão Produtor-Consumidor FIFO}\par
+  \itemseps[topsepi=0.2mm,itemsepi=0.4mm,labelsep=1.5mm,leftmargini=2.5mm]
+  \begin{itemize}
+    \item \textbf{Produtor (API Web):}
+      Insere na esquerda com \texttt{LPUSH fila:pedidos <dados>}.
+    \item \textbf{Consumidor (Worker):}
+      Retira na direita com \texttt{BRPOP fila:pedidos 5}.
+    \item \textbf{Por que \texttt{BRPOP}?}\par
+      Não consome CPU em loop (\textit{busy waiting}). O processo dorme no kernel até um item chegar!
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Implementação do Produtor e do Consumidor}
+  \vspace{0.1cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \footnotesize
+      \alert{Produtor (API Web no Checkout)}\par
+      \vspace{0.1cm}
+\begin{lstlisting}[language=Python,basicstyle=\fontsize{4.6pt}{5.6pt}\selectfont\ttfamily]
+@app.route("/api/checkout", methods=["POST"])
+def checkout():
+    # 1. Le carrinho do Redis Hash
+    itens = r.hgetall(f"cart:{session_id}")
+    if not itens:
+        return jsonify({"erro": "vazio"}), 400
+
+    pedido = {
+        "id_pedido": f"PED-{int(time.time())}",
+        "session_id": session_id,
+        "total": calcular_total(itens),
+        "status": "ENFILEIRADO"
+    }
+    
+    # 2. LPUSH: Enfileira pedido na lista
+    pos = r.lpush("fila:pedidos", json.dumps(pedido))
+    # 3. Limpa o carrinho
+    r.delete(f"cart:{session_id}")
+    return jsonify({"pedido": pedido, "pos": pos})
+\end{lstlisting}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \alert{Consumidor (\texttt{worker\_pedidos.py})}\par
+      \vspace{0.1cm}
+\begin{lstlisting}[language=Python,basicstyle=\fontsize{4.6pt}{5.6pt}\selectfont\ttfamily]
+def processar_pedidos():
+    chave = "fila:pedidos"
+    print("Worker escutando via BRPOP...")
+    
+    while True:
+        # BRPOP bloqueia ate 5s sem CPU
+        res = r.brpop(chave, timeout=5)
+        if res is None:
+            continue
+            
+        _, pedido_raw = res
+        pedido = json.loads(pedido_raw)
+        
+        print(f"Processando: {pedido['id_pedido']}")
+        executar_pagamento(pedido)
+        
+        # PREVIEW DA AULA 06 (MONGODB):
+        # db.pedidos.insert_one(pedido)
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}

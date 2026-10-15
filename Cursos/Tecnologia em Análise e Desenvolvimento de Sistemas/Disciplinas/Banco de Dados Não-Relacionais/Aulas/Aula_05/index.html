@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 05: Redis na Prática (Cache, Sessões e Filas) | BDNR - IFCE Tauá</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b'
+            },
+            redis: {
+              50: '#fef2f2',
+              500: '#ef4444',
+              600: '#dc2626',
+              700: '#b91c1c'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome & Prism.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- ========================================== -->
+  <!-- CABEÇALHO INSTITUCIONAL                    -->
+  <!-- ========================================== -->
+  <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 shadow-sm backdrop-blur-md bg-white/90 dark:bg-slate-800/90">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="../../index.html" class="flex items-center space-x-3 group">
+          <div class="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center text-white shadow-md shadow-red-500/20 group-hover:scale-105 transition-transform">
+            <i class="fa-solid fa-bolt text-lg"></i>
+          </div>
+          <div>
+            <span class="text-xs uppercase tracking-wider font-bold text-red-600 dark:text-red-400 block leading-tight">IFCE Campus Tauá • ADS</span>
+            <span class="text-base font-bold text-slate-900 dark:text-white leading-tight">Banco de Dados Não-Relacionais — Aula 05</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <a href="../../index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center space-x-1.5">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span class="hidden sm:inline">Portal da Disciplina</span>
+        </a>
+        <button id="theme-toggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-red-600 transition-colors" title="Alternar Modo Escuro/Claro">
+          <i class="fa-solid fa-moon dark:hidden"></i>
+          <i class="fa-solid fa-sun hidden dark:inline"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- BANNER DA AULA                             -->
+  <!-- ========================================== -->
+  <section class="bg-gradient-to-r from-red-950 via-slate-900 to-slate-950 text-white py-10 border-b border-red-950/40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold mb-3">
+        <i class="fa-solid fa-microchip"></i>
+        <span>Unidade II (N1) — O Modelo Chave-Valor e Arquiteturas In-Memory</span>
+      </div>
+      <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
+        Redis na Prática: Estratégias de Cache (TTL), Controle de Sessão e Filas
+      </h1>
+      <p class="text-slate-300 text-sm sm:text-base mt-2 max-w-3xl leading-relaxed">
+        Construção completa da aplicação web <strong>FastCommerce NoSQL</strong> sob a ótica da <strong>Persistência Poliglota</strong>: implemente o padrão Cache-Aside com expiração automática, gerencie sessões e carrinhos em Hashes atômicos e desacople o checkout com Filas do Redis (<code class="text-red-300 font-mono">LPUSH</code> / <code class="text-red-300 font-mono">BRPOP</code>) antecipando a persistência no MongoDB (Aula 06).
+      </p>
+
+      <div class="flex flex-wrap gap-4 mt-6 text-xs text-slate-300">
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-regular fa-calendar text-red-400"></i>
+          <span>20/10/2026 (Terça-feira)</span>
+        </div>
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-regular fa-clock text-red-400"></i>
+          <span>2 h/a (120 min)</span>
+        </div>
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-solid fa-chalkboard-user text-red-400"></i>
+          <span>Prof. Me. Reginaldo Fernandes</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- NAVEGAÇÃO DE ABAS                          -->
+  <!-- ========================================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+    <div class="flex border-b border-slate-200 dark:border-slate-700 mb-6 space-x-2 overflow-x-auto pb-1">
+      <button onclick="switchTab('tab-laboratorio')" id="btn-tab-laboratorio" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm border-b-2 border-red-600 text-red-600 dark:text-red-400 flex items-center space-x-2">
+        <i class="fa-solid fa-laptop-code"></i>
+        <span>Laboratório Web & Teoria</span>
+      </button>
+      <button onclick="switchTab('tab-slides')" id="btn-tab-slides" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-regular fa-file-pdf"></i>
+        <span>Slides da Aula (PDF)</span>
+      </button>
+      <button onclick="switchTab('tab-plano')" id="btn-tab-plano" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Plano Pedagógico</span>
+      </button>
+      <button onclick="switchTab('tab-exercicios')" id="btn-tab-exercicios" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-solid fa-pen-to-square"></i>
+        <span>Exercícios de Fixação</span>
+      </button>
+      <button onclick="switchTab('tab-arquivos')" id="btn-tab-arquivos" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-solid fa-download"></i>
+        <span>Central de Arquivos</span>
+      </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 1: LABORATÓRIO WEB & TEORIA            -->
+    <!-- ========================================== -->
+    <div id="tab-laboratorio" class="tab-content space-y-6">
+
+      <!-- Visão Geral do FastCommerce -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-store text-red-600 dark:text-red-400"></i>
+          <span>1. O Projeto Transversal: FastCommerce NoSQL</span>
+        </h2>
+        <p class="text-slate-700 dark:text-slate-300 mb-4">
+          Nesta aula prática, construímos uma aplicação web real sob o padrão de <strong>Persistência Poliglota (*Polyglot Persistence*)</strong>. O Redis assume o papel crítico de memória de alta velocidade ($\mu\text{s}$), mitigando o gargalo de acesso a disco que acomete os sistemas tradicionais.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 space-y-2 text-xs text-slate-600 dark:text-slate-300">
+            <span class="font-bold text-slate-900 dark:text-white text-sm block">Estruturas Utilizadas no Redis:</span>
+            <ul class="list-disc list-inside space-y-1.5">
+              <li><strong>Strings com TTL:</strong> <code class="text-red-600">session:&lt;token&gt;</code> para sessões ativas e <code class="text-red-600">cache:catalogo_produtos</code> com expiração.</li>
+              <li><strong>Hashes:</strong> <code class="text-red-600">cart:&lt;session_id&gt;</code> para controle atômico de produtos e quantidades.</li>
+              <li><strong>Listas (Queue):</strong> <code class="text-red-600">fila:pedidos</code> para o desacoplamento do checkout assíncrono.</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 space-y-2 text-xs text-slate-600 dark:text-slate-300">
+            <span class="font-bold text-slate-900 dark:text-white text-sm block">A Conexão com o MongoDB (Aula 06):</span>
+            <ul class="list-disc list-inside space-y-1.5">
+              <li><strong>Finitude da Memória:</strong> O Redis retém apenas dados transitórios de alta frequência.</li>
+              <li><strong>Camada Permanente:</strong> O worker de pedidos gravará os documentos definitivos no <strong>MongoDB</strong> na próxima aula.</li>
+              <li><strong>Catálogo Flexível:</strong> O catálogo deixará de ser um mock para se tornar uma coleção rica em documentos BSON.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Os 4 Pilares da Prática -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <div class="p-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
+          <span class="px-2 py-0.5 text-xs font-bold rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 inline-block">Pilar 1</span>
+          <h3 class="font-bold text-slate-900 dark:text-white text-sm">Cache-Aside com TTL</h3>
+          <p class="text-xs text-slate-600 dark:text-slate-400">
+            A API consulta o Redis primeiro. Se houver miss, busca no disco, grava com <code class="text-red-500 font-mono">SETEX</code> e retorna. Latência cai de 120ms para 0.4ms.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
+          <span class="px-2 py-0.5 text-xs font-bold rounded bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 inline-block">Pilar 2</span>
+          <h3 class="font-bold text-slate-900 dark:text-white text-sm">Sessão Distribuída</h3>
+          <p class="text-xs text-slate-600 dark:text-slate-400">
+            Tokens de sessão centralizados no Redis com expiração deslizante (<code class="text-red-500 font-mono">EXPIRE</code>), permitindo escala horizontal transparente.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
+          <span class="px-2 py-0.5 text-xs font-bold rounded bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 inline-block">Pilar 3</span>
+          <h3 class="font-bold text-slate-900 dark:text-white text-sm">Carrinho em Hashes</h3>
+          <p class="text-xs text-slate-600 dark:text-slate-400">
+            Operações com <code class="text-red-500 font-mono">HINCRBY</code> garantem atomicidade nativa e eliminam condições de corrida sem lock síncrono.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
+          <span class="px-2 py-0.5 text-xs font-bold rounded bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 inline-block">Pilar 4</span>
+          <h3 class="font-bold text-slate-900 dark:text-white text-sm">Fila Assíncrona</h3>
+          <p class="text-xs text-slate-600 dark:text-slate-400">
+            Checkout com <code class="text-red-500 font-mono">LPUSH</code> e processamento em background com <code class="text-red-500 font-mono">BRPOP</code> bloqueante sem sobrecarga de CPU.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Trecho de Código em Destaque -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-2 flex items-center space-x-2">
+          <i class="fa-solid fa-code text-red-600 dark:text-red-400"></i>
+          <span>2. Código Essencial: Produtor (API) e Consumidor (Worker)</span>
+        </h3>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mb-4">
+          Veja como o desacoplamento assíncrono é implementado de forma limpa com as estruturas nativas do Redis:
+        </p>
+
+        <pre><code class="language-python"># PRODUTOR: A rota de checkout apenas enfileira o pedido e libera o cliente
+@app.route("/api/checkout", methods=["POST"])
+def checkout():
+    itens = r.hgetall(f"cart:{session_id}")
+    pedido = {"id_pedido": f"PED-{int(time.time())}", "itens": itens, "status": "ENFILEIRADO"}
+    
+    # LPUSH insere na ponta esquerda da lista em microssegundos (< 1 ms)
+    posicao = r.lpush("fila:pedidos", json.dumps(pedido))
+    r.delete(f"cart:{session_id}")
+    return jsonify({"pedido": pedido, "posicao_fila": posicao})
+
+# CONSUMIDOR: O worker escuta com BRPOP (bloqueio de baixo consumo de CPU)
+def processar_pedidos():
+    while True:
+        _, pedido_raw = r.brpop("fila:pedidos", timeout=5)
+        pedido = json.loads(pedido_raw)
+        executar_pagamento(pedido)
+        # NA AULA 06: db.pedidos.insert_one(pedido) salvará no MongoDB!</code></pre>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 2: VISUALIZADOR DE SLIDES (PDF)        -->
+    <!-- ========================================== -->
+    <div id="tab-slides" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700/60 shadow-sm flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h2 class="font-bold text-slate-900 dark:text-white text-base">Apresentação Oficial em Slides (Beamer 16:9)</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">18 slides com fundamentação formal, diagramas canônicos e código pareado.</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <a href="materiais/main.pdf" target="_blank" class="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-semibold flex items-center space-x-1.5 transition-colors">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            <span>Abrir em Nova Aba</span>
+          </a>
+          <a href="materiais/main.pdf" download="Aula_05_Redis_na_Pratica.pdf" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center space-x-1.5 transition-colors">
+            <i class="fa-solid fa-download"></i>
+            <span>Baixar PDF</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="w-full h-[650px] rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 shadow-inner">
+        <iframe src="materiais/main.pdf" class="w-full h-full border-0" title="Slides da Aula 05"></iframe>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 3: PLANO PEDAGÓGICO                   -->
+    <!-- ========================================== -->
+    <div id="tab-plano" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Cronograma e Dinâmica da Aula (120 Minutos)</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
+                <th class="py-2.5 px-3">Etapa</th>
+                <th class="py-2.5 px-3">Tempo</th>
+                <th class="py-2.5 px-4">Atividade Principal</th>
+                <th class="py-2.5 px-3">Foco Metodológico</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50">
+              <tr>
+                <td class="py-3 px-3 font-bold text-red-600">1. Projeto</td>
+                <td class="py-3 px-3 whitespace-nowrap">00 - 25 min</td>
+                <td class="py-3 px-4">Modelagem conceitual de chaves e namespaces no Redis (Hashes, Strings, Lists).</td>
+                <td class="py-3 px-3">Exposição dialogada e diagrama de fluxo.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-red-600">2. Implementação</td>
+                <td class="py-3 px-3 whitespace-nowrap">25 - 70 min</td>
+                <td class="py-3 px-4">Construção guiada da API FastCommerce: Cache-Aside, Sessão, Carrinho e Fila.</td>
+                <td class="py-3 px-3">Live coding em Python com Flask e redis-py.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-red-600">3. Uso Prático</td>
+                <td class="py-3 px-3 whitespace-nowrap">70 - 105 min</td>
+                <td class="py-3 px-4">Hands-on na interface web: medição de latência (Hit vs Miss), carrinho e worker BRPOP.</td>
+                <td class="py-3 px-3">Operação no navegador e redis-cli.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-red-600">4. Síntese</td>
+                <td class="py-3 px-3 whitespace-nowrap">105 - 120 min</td>
+                <td class="py-3 px-4">Fechamento conceitual e ponte para o MongoDB (persistência de documentos BSON).</td>
+                <td class="py-3 px-3">Mentoria docente e direcionamento AVP1.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 4: EXERCÍCIOS DE FIXAÇÃO               -->
+    <!-- ========================================== -->
+    <div id="tab-exercicios" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm space-y-4">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Exercícios de Fixação Conceitual</h2>
+
+        <div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+          <span class="font-bold text-red-600 dark:text-red-400 block mb-1">Questão 1: Padrão Cache-Aside e Invalidação</span>
+          <p class="text-xs text-slate-600 dark:text-slate-300">
+            Explique por que a estratégia recomendada ao alterar o preço de um produto em um banco de dados é executar <code class="text-red-600 font-mono">DEL cache:produto</code> em vez de <code class="text-red-600 font-mono">SET cache:produto &lt;novo_preco&gt;</code>.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+          <span class="font-bold text-red-600 dark:text-red-400 block mb-1">Questão 2: Atomicidade e Hashes no E-commerce</span>
+          <p class="text-xs text-slate-600 dark:text-slate-300">
+            Durante uma promoção de Black Friday com milhares de compras simultâneas, por que o comando <code class="text-red-600 font-mono">HINCRBY cart:usr_1 prod_1 1</code> é muito mais seguro e performático do que desserializar um JSON, alterar no Python e salvar de volta com <code class="text-red-600 font-mono">SET</code>?
+          </p>
+        </div>
+
+        <div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+          <span class="font-bold text-red-600 dark:text-red-400 block mb-1">Questão 3: Políticas de Expiração (TTL)</span>
+          <p class="text-xs text-slate-600 dark:text-slate-300">
+            Diferencie <strong>Absolute Expiration</strong> (expiração rígida) de <strong>Sliding Expiration</strong> (expiração deslizante), citando em qual situação cada uma foi aplicada no FastCommerce (catálogo vs. sessão).
+          </p>
+        </div>
+
+        <div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+          <span class="font-bold text-red-600 dark:text-red-400 block mb-1">Questão 4: Filas Bloqueantes (BRPOP vs. RPOP)</span>
+          <p class="text-xs text-slate-600 dark:text-slate-300">
+            Por que a implementação de workers com <code class="text-red-600 font-mono">BRPOP chave timeout</code> é superior à implementação com loop infinito usando <code class="text-red-600 font-mono">RPOP</code> intercalado com <code class="text-red-600 font-mono">time.sleep(1)</code>?
+          </p>
+        </div>
+
+        <div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+          <span class="font-bold text-red-600 dark:text-red-400 block mb-1">Questão 5: Persistência Poliglota com MongoDB</span>
+          <p class="text-xs text-slate-600 dark:text-slate-300">
+            Discuta as razões técnicas pelas quais uma loja virtual moderna utiliza o Redis para carrinhos e sessões em trânsito, mas transfere os pedidos finalizados para o MongoDB na camada de persistência definitiva.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 5: CENTRAL DE ARQUIVOS                 -->
+    <!-- ========================================== -->
+    <div id="tab-arquivos" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Repositório de Arquivos Didáticos da Aula 05</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Slides PDF -->
+          <a href="materiais/main.pdf" download="Aula_05_Slides.pdf" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-red-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-solid fa-file-pdf text-red-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Slides Oficiais (PDF)</h3>
+              <p class="text-[11px] text-slate-500">18 slides Beamer com arquitetura, código pareado e diagramas.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-red-600 dark:text-red-400 mt-3 inline-flex items-center">
+              Download <i class="fa-solid fa-download ml-1 text-[10px]"></i>
+            </span>
+          </a>
+
+          <!-- App Python -->
+          <a href="codigo/app.py" download="app.py" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-red-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-brands fa-python text-emerald-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Aplicação Web (app.py)</h3>
+              <p class="text-[11px] text-slate-500">Servidor Flask com Cache-Aside, Sessões e Checkout.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-red-600 dark:text-red-400 mt-3 inline-flex items-center">
+              Download <i class="fa-solid fa-download ml-1 text-[10px]"></i>
+            </span>
+          </a>
+
+          <!-- Worker Python -->
+          <a href="codigo/worker_pedidos.py" download="worker_pedidos.py" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-red-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-solid fa-gears text-blue-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Worker Assíncrono</h3>
+              <p class="text-[11px] text-slate-500">Consumidor de pedidos via BRPOP com gancho para MongoDB.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-red-600 dark:text-red-400 mt-3 inline-flex items-center">
+              Download <i class="fa-solid fa-download ml-1 text-[10px]"></i>
+            </span>
+          </a>
+
+          <!-- Notebook Jupyter -->
+          <a href="codigo/demonstracao_aula05.ipynb" download="demonstracao_aula05.ipynb" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-red-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-solid fa-book-open text-amber-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Jupyter Notebook (.ipynb)</h3>
+              <p class="text-[11px] text-slate-500">Caderno interativo pronto para Google Colab ou VS Code.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-red-600 dark:text-red-400 mt-3 inline-flex items-center">
+              Download <i class="fa-solid fa-download ml-1 text-[10px]"></i>
+            </span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- RODAPÉ INSTITUCIONAL                       -->
+  <!-- ========================================== -->
+  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center space-x-2">
+        <span>Instituto Federal de Educação, Ciência e Tecnologia do Ceará — Campus Tauá</span>
+      </div>
+      <div>
+        <span>Banco de Dados Não-Relacionais (2026.2) • Prof. Me. Reginaldo Fernandes</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script de Controle de Abas e Modo Escuro -->
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-red-600', 'text-red-600', 'dark:text-red-400');
+        btn.classList.add('text-slate-500', 'dark:text-slate-400');
+      });
+
+      const selectedTab = document.getElementById(tabId);
+      const selectedBtn = document.getElementById('btn-' + tabId);
+
+      if (selectedTab) selectedTab.classList.remove('hidden');
+      if (selectedBtn) {
+        selectedBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
+        selectedBtn.classList.add('border-b-2', 'border-red-600', 'text-red-600', 'dark:text-red-400');
+      }
+    }
+
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        localStorage.theme = 'light';
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.theme = 'dark';
+      }
+    });
+  </script>
+</body>
+
+</html>
