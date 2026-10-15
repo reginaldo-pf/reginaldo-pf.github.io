@@ -1,0 +1,41 @@
+\changecolours{ScoutGreen}
+\section{Revisão \& Objetivos de Aprendizagem}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Retrospectiva: Das Entidades aos Relacionamentos},leftcol=7cm,rightcol=7cm]{%
+  \alert{O Que Vimos nas Aulas Anteriores}\par
+  \itemseps[topsepi=1mm,itemsepi=2mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Entidades e Instâncias:} Aprendemos a identificar objetos do mundo real com existência autônoma (\texttt{ALUNO}, \texttt{PROFESSOR}, \texttt{DEPARTAMENTO}).
+    \item \textbf{Taxonomia de Atributos:} Classificamos atributos simples, compostos, multivalorados, derivados e identificadores (chaves).
+    \item \textbf{Notação de Peter Chen:} Dominamos retângulos para entidades e elipses para atributos.
+  \end{itemize}
+}{%
+  \alert{O Desafio da Conexão Semântica}\par
+  \itemseps[topsepi=1mm,itemsepi=2mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Entidades Não Vivem Isoladas:} Em qualquer organização real, coisas interagem: alunos cursam disciplinas, médicos atendem pacientes e funcionários atuam em projetos.
+    \item \textbf{O Papel do Relacionamento:} É a cola semântica que une as entidades, estabelecendo regras de negócio claras e precisas.
+    \item \textbf{Foco Conceitual Puro:} Nesta aula, focamos puramente nas regras semânticas do MER, antes de qualquer código SQL!
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Objetivos de Aprendizagem da Aula 05},leftcol=7cm,rightcol=7cm]{%
+  \alert{Competências Teóricas e Conceituais}\par
+  \itemseps[topsepi=1mm,itemsepi=2mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Conceito de Relacionamento:} Compreender Tipo, Conjunto e Instância de Relacionamento sob a teoria dos conjuntos.
+    \item \textbf{Grau e Papéis:} Distinguir relacionamentos unários (auto-relacionamento com papéis), binários e ternários.
+    \item \textbf{Razão de Cardinalidade:} Dominar com segurança as três razões fundamentais: $1:1$, $1:N$ e $N:M$.
+    \item \textbf{Participação e $(min, max)$:} Diferenciar participação total (linha dupla) de parcial (linha simples).
+  \end{itemize}
+}{%
+  \alert{Habilidades Práticas e Visuais}\par
+  \itemseps[topsepi=1mm,itemsepi=2mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{DER de Peter Chen:} Desenhar losangos, linhas simples/duplas e elipses de atributos de relacionamento.
+    \item \textbf{Atributos da Associação:} Identificar propriedades que nascem da própria ligação (ex: \texttt{horas\_semanais}, \texttt{nota}).
+    \item \textbf{Validação em Python:} Explorar o metamodelo conceitual que valida cardinalidades e integridade em memória.
+  \end{itemize}
+}

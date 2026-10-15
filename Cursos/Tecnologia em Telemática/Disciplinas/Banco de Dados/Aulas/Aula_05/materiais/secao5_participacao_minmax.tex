@@ -1,0 +1,91 @@
+\changecolours{ScoutGreen}
+\section[Participação e (min, max)]{Restrições de Participação e Notação (min, max)}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Restrições de Participação (Existência Dependente)},leftcol=7.1cm,rightcol=6.9cm]{%
+  \alert{Participação Total vs. Participação Parcial}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Participação Total (Existência Dependente):}
+      Cada entidade deve participar obrigatoriamente de ao menos uma instância do relacionamento (\textbf{Linha Dupla} no DER Chen).
+      \par\textit{Exemplo:} Todo \texttt{FUNCIONARIO} deve ter um \texttt{DEPARTAMENTO}.
+    \item \textbf{Participação Parcial (Opcional):}
+      Algumas instâncias podem existir sem participar do relacionamento (\textbf{Linha Simples} no DER Chen).
+      \par\textit{Exemplo:} Um novo \texttt{DEPARTAMENTO} pode ainda não ter funcionários.
+  \end{itemize}
+}{%
+  \alert{Critérios de Existência e Mapeamento}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Pergunta do Modelador:}
+      ``Uma entidade pode existir no banco sem estar vinculada a nenhuma outra do outro lado?''
+      \par $\bullet$ \textbf{Não:} Total ($min \ge 1$) \quad $\bullet$ \textbf{Sim:} Parcial ($min = 0$).
+    \item \textbf{Impacto no Modelo Lógico:}
+      \par $\bullet$ Total $\implies$ Chave estrangeira com restrição \texttt{NOT NULL}.
+      \par $\bullet$ Parcial $\implies$ Chave estrangeira aceita valores \texttt{NULL}.
+    \item \textbf{Integridade Referencial:}
+      Evita registros órfãos e define regras de integridade na exclusão (\textit{cascade} ou restrição).
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Representação Gráfica Canônica: Linha Simples vs. Linha Dupla}
+  \vspace{0.1cm}
+  \begin{center}
+    \tikz[scale=0.85, transform shape]{
+      % Entidade 1 (Participacao Parcial - Linha Simples)
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\bfseries\sffamily\scriptsize, minimum width=2.4cm, minimum height=0.7cm] (dep) {DEPARTAMENTO};
+      
+      % Relacionamento
+      \node[diamond, draw=ScoutNavy, fill=ScoutNavy!15, thick, inner sep=3pt, font=\bfseries\sffamily\scriptsize, right=1.6cm of dep] (lot) {LOTADO\_EM};
+      
+      % Entidade 2 (Participacao Total - Linha Dupla)
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\bfseries\sffamily\scriptsize, minimum width=2.4cm, minimum height=0.7cm, right=1.6cm of lot] (func) {FUNCIONARIO};
+      
+      % Linha Simples (Parcial) com cardinalidade 1
+      \draw[thick, black!80] (dep) -- node[above, font=\scriptsize\bfseries] {1} node[below, font=\tiny\color{ScoutNavy}] {(Parcial: Linha Simples)} (lot);
+      
+      % Linha Dupla (Total) com cardinalidade N
+      \draw[thick, double, double distance=1.5pt, black!80] (lot) -- node[above, font=\scriptsize\bfseries] {N} node[below, font=\tiny\color{ScoutGreen!70!black}] {(Total: Linha Dupla)} (func);
+    }
+  \end{center}
+  \vspace{0.2cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \footnotesize
+      \alert{Lado DEPARTAMENTO (1, Parcial)}\par
+      Pode existir um departamento cadastrado que contenha zero funcionários no momento da fundação de um novo setor.
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \footnotesize
+      \alert{Lado FUNCIONARIO (N, Total)}\par
+      É expressamente proibido cadastrar um funcionário na empresa sem vinculá-lo imediatamente a um departamento responsável.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={A Notação Estrutural Alternativa (min, max)},leftcol=7.2cm,rightcol=6.8cm]{%
+  \alert{O Conceito de Pares $(min, max)$}\par
+  \itemseps[topsepi=0.5mm,itemsepi=0.8mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Chen \& Elmasri:} Substitui a linha dupla por par $(min, max)$ posicionado na entidade participante.
+    \item \textbf{$min$ (Participação Mínima):}\\
+      $\bullet$ $min = 0 \implies$ Participação Parcial (opcional).\\
+      $\bullet$ $min \ge 1 \implies$ Participação Total (obrigatória).
+    \item \textbf{$max$ (Cardinalidade Máxima):}\\
+      $\bullet$ $max = 1 \implies$ No máximo uma associação.\\
+      $\bullet$ $max = N \implies$ Múltiplas associações.
+  \end{itemize}
+}{%
+  \alert{Exemplo Didático na Empresa}\par
+  \itemseps[topsepi=0.5mm,itemsepi=0.8mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Relacionamento \texttt{LOTADO\_EM}:}\\
+      $\bullet$ \texttt{DEPARTAMENTO} $\to (0, N)$\\
+      $\bullet$ \texttt{FUNCIONARIO} $\to (1, 1)$
+    \item \textbf{Relacionamento \texttt{GERENCIA}:}\\
+      $\bullet$ \texttt{DEPARTAMENTO} $\to (1, 1)$\\
+      $\bullet$ \texttt{FUNCIONARIO} $\to (0, 1)$
+  \end{itemize}
+}

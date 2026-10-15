@@ -1,0 +1,69 @@
+\changecolours{ScoutGreen}
+\section[Atributos em Relacionamentos]{Atributos Descritivos em Relacionamentos}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Quando um Atributo Pertence à Associação?},leftcol=7.2cm,rightcol=6.8cm]{%
+  \alert{O Conceito de Atributo Descritivo}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{A Propriedade do Vínculo:} Muitas vezes, um fato do mundo real descreve o \textbf{ato da ligação entre as entidades}, e não as entidades isoladamente.
+    \item \textbf{Exemplo 1 (Empresa):}\\
+      $\bullet$ Relacionamento: \texttt{TRABALHA\_EM} ($N:M$).\\
+      $\bullet$ O atributo \texttt{horas\_semanais} não pertence ao \texttt{FUNCIONARIO} (ele tem horas diferentes em cada projeto) nem ao \texttt{PROJETO} (que tem vários funcionários)!
+    \item \textbf{Exemplo 2 (Universidade):}\\
+      $\bullet$ A \texttt{nota\_final} em \texttt{CURSA} pertence ao par (\texttt{ALUNO}, \texttt{DISCIPLINA}).
+  \end{itemize}
+}{%
+  \alert{Regras de Migração e Cardinalidade}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Relacionamentos 1:1:}
+      O atributo descritivo pode ser alocado em qualquer uma das duas entidades participantes sem perda semântica.
+    \item \textbf{Relacionamentos 1:N:}
+      O atributo descritivo pode migrar para a entidade participante do lado $N$ (a entidade filha).
+    \item \textbf{Relacionamentos N:M:}
+      O atributo descritivo pertence \textbf{obrigatoriamente} ao relacionamento! Não pode ir para nenhuma entidade isolada.
+    \item \textbf{Regra de Teste Prático:}
+      Se o valor muda a cada nova combinação do par $(e_1, e_2)$, o atributo pertence à associação.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Representação Gráfica Canônica no DER de Peter Chen}
+  \vspace{0.05cm}
+  \begin{center}
+    \tikz[scale=0.82, transform shape]{
+      % Entidade 1
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\bfseries\sffamily\scriptsize, minimum width=2.2cm, minimum height=0.65cm] (e1) {FUNCIONARIO};
+      
+      % Relacionamento
+      \node[diamond, draw=ScoutNavy, fill=ScoutNavy!15, thick, inner sep=2.5pt, font=\bfseries\sffamily\scriptsize, right=1.5cm of e1] (r) {TRABALHA\_EM};
+      
+      % Entidade 2
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\bfseries\sffamily\scriptsize, minimum width=2.2cm, minimum height=0.65cm, right=1.5cm of r] (e2) {PROJETO};
+      
+      % Atributo do Relacionamento
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\scriptsize\sffamily, above=0.75cm of r] (atr) {horas\_semanais};
+      
+      % Linhas com cardinalidades
+      \draw[thick] (e1) -- node[above, font=\scriptsize\bfseries] {N} (r);
+      \draw[thick] (r) -- node[above, font=\scriptsize\bfseries] {M} (e2);
+      \draw[thick, ScoutNavy] (r) -- (atr);
+    }
+  \end{center}
+  \vspace{0.15cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \footnotesize
+      \alert{Por que a elipse liga-se ao Losango?}\par
+      Porque o valor de \texttt{horas\_semanais} só existe para aquela combinação específica de funcionário e projeto.
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \footnotesize
+      \alert{Outros Exemplos Clássicos}\par
+      $\bullet$ \texttt{data\_posse} no relacionamento 1:1 \texttt{GERENCIA}.\\
+      $\bullet$ \texttt{data\_inicio} no relacionamento \texttt{LOTADO\_EM}.\\
+      $\bullet$ \texttt{preco\_venda} no relacionamento \texttt{ITEM\_PEDIDO}.
+    \end{column}
+  \end{columns}
+\end{frame}

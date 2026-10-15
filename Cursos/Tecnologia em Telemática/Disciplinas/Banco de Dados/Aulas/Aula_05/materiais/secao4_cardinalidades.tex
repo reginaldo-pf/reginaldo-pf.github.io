@@ -1,0 +1,99 @@
+\changecolours{ScoutGreen}
+\section[Razões de Cardinalidade]{Razões de Cardinalidade: 1:1, 1:N e N:M}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Que é Razão de Cardinalidade?},leftcol=7.1cm,rightcol=6.9cm]{%
+  \alert{Definição Formal de Cardinalidade}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Conceito:} Número máximo de instâncias de relacionamento das quais uma entidade pode participar.
+    \item \textbf{Razões Canônicas Binárias:}
+      \begin{itemize}\setlength{\itemsep}{0.3mm}
+        \item \textbf{1:1 (Um para Um):} Associação biunívoca estrita.
+        \item \textbf{1:N (Um para Muitos):} Associação de lotação ou posse.
+        \item \textbf{N:M (Muitos para Muitos):} Associação matricial complexa.
+      \end{itemize}
+    \item \textbf{Regra de Ouro:} Cardinalidade expressa as \textbf{regras de negócio do mundo real}, e não opções técnicas de implementação!
+  \end{itemize}
+}{%
+  \alert{Como Determinar a Cardinalidade}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Análise Bidirecional:}
+      Avalia-se a relação nos dois sentidos:
+      \begin{itemize}\setlength{\itemsep}{0.3mm}
+        \item $A \to B$: Um $A$ relaciona-se com até quantos $B$?
+        \item $B \to A$: Um $B$ relaciona-se com até quantos $A$?
+      \end{itemize}
+    \item \textbf{Síntese das Combinações:}\\
+      $\bullet$ $1 \leftrightarrow 1 \implies$ \textbf{1:1}\\
+      $\bullet$ $1 \leftrightarrow N \implies$ \textbf{1:N}\\
+      $\bullet$ $N \leftrightarrow M \implies$ \textbf{N:M}
+    \item \textbf{Restrição do Domínio:}
+      O projetista não escolhe a cardinalidade: ela é imposta pelas normas da instituição modelada.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Cardinalidade 1:1 e 1:N no Contexto Corporativo},leftcol=7cm,rightcol=7cm]{%
+  \alert{Cardinalidade 1:1 (Um para Um)}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Semântica:} Uma entidade $A$ associa-se a no máximo um $B$, e vice-versa.
+    \item \textbf{Exemplo Cotidiano:} Cada departamento possui no máximo um gerente, e cada funcionário gerencia no máximo um departamento.
+    \item \textbf{Representação Chen:} Rótulo “1” em ambas as extremidades.
+  \end{itemize}
+  \vspace{0.1cm}
+  \centering
+  \tikz[scale=0.8, transform shape]{
+    \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\tiny\bfseries] (e1) {DEPARTAMENTO};
+    \node[diamond, draw=ScoutNavy, fill=ScoutNavy!15, thick, inner sep=2pt, font=\tiny\bfseries, right=0.8cm of e1] (r) {GERENCIA};
+    \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\tiny\bfseries, right=0.8cm of r] (e2) {FUNCIONARIO};
+    \draw[thick] (e1) -- node[above, font=\tiny] {1} (r);
+    \draw[thick] (r) -- node[above, font=\tiny] {1} (e2);
+  }
+}{%
+  \alert{Cardinalidade 1:N (Um para Muitos)}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Semântica:} Uma entidade $A$ associa-se a vários $B$; mas cada $B$ liga-se a no máximo um $A$.
+    \item \textbf{Exemplo Cotidiano:} Um departamento abriga muitos funcionários; cada funcionário trabalha em exatamente um departamento.
+    \item \textbf{Representação Chen:} Rótulo “1” no lado pai e “N” no lado filho.
+  \end{itemize}
+  \vspace{0.1cm}
+  \centering
+  \tikz[scale=0.8, transform shape]{
+    \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\tiny\bfseries] (e1) {DEPARTAMENTO};
+    \node[diamond, draw=ScoutNavy, fill=ScoutNavy!15, thick, inner sep=2pt, font=\tiny\bfseries, right=0.8cm of e1] (r) {POSSUI};
+    \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\tiny\bfseries, right=0.8cm of r] (e2) {FUNCIONARIO};
+    \draw[thick] (e1) -- node[above, font=\tiny] {1} (r);
+    \draw[thick] (r) -- node[above, font=\tiny] {N} (e2);
+  }
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Cardinalidade N:M (Muitos para Muitos)},leftcol=7cm,rightcol=7cm]{%
+  \alert{Cardinalidade N:M (Muitos para Muitos)}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Semântica:} Uma entidade $A$ pode associar-se a várias instâncias de $B$, e cada entidade $B$ pode associar-se a várias de $A$.
+    \item \textbf{Exemplos Intuitivos:}\\
+      $\bullet$ Um \texttt{FUNCIONARIO} atua em vários \texttt{PROJETOS}, e cada \texttt{PROJETO} possui vários funcionários.\\
+      $\bullet$ Um \texttt{ALUNO} cursa várias \texttt{DISCIPLINAS}, e cada \texttt{DISCIPLINA} possui vários alunos.
+    \item \textbf{Representação Chen:} Rótulos “N” e “M”.
+  \end{itemize}
+}{%
+  \alert{Diagrama Canônico N:M no DER Chen}\par
+  \vspace{0.2cm}
+  \centering
+  \tikz[scale=0.85, transform shape]{
+    \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\tiny\bfseries] (e1) {FUNCIONARIO};
+    \node[diamond, draw=ScoutNavy, fill=ScoutNavy!15, thick, inner sep=2pt, font=\tiny\bfseries, right=0.9cm of e1] (r) {TRABALHA\_EM};
+    \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\tiny\bfseries, right=0.9cm of r] (e2) {PROJETO};
+    \draw[thick] (e1) -- node[above, font=\tiny] {N} (r);
+    \draw[thick] (r) -- node[above, font=\tiny] {M} (e2);
+  }\par
+  \vspace{0.3cm}
+  \raggedright
+  {\scriptsize \textbf{Regra de Negócio:} Permite modelar alocações flexíveis de recursos humanos onde colaboradores dividem seu tempo entre diferentes frentes de trabalho.}
+}

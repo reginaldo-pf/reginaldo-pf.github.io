@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 05: Relacionamentos no MER (Grau, Papéis, Cardinalidades e Participação) | IFCE Campus Tauá</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            ifce: {
+              green: '#2F855A',
+              red: '#C53030',
+              dark: '#1C4532',
+              emerald: '#059669'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Prism.js para Realce de Sintaxe -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    code, pre { font-family: 'JetBrains Mono', monospace !important; }
+    .tab-active {
+      border-color: #059669;
+      color: #059669;
+      background-color: rgba(5, 150, 105, 0.08);
+    }
+    .dark .tab-active {
+      border-color: #34d399;
+      color: #34d399;
+      background-color: rgba(52, 211, 153, 0.12);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- Navbar Superior -->
+  <header class="border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="../../index.html" class="flex items-center space-x-2 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium text-sm transition-colors">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Voltar para Disciplina</span>
+        </a>
+      </div>
+      <div class="flex items-center space-x-4">
+        <a href="https://github.com/reginaldo-pf" target="_blank" rel="noopener noreferrer" class="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white text-lg" title="GitHub @reginaldo-pf">
+          <i class="fa-brands fa-github"></i>
+        </a>
+        <button id="themeToggle" class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Alternar tema">
+          <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 py-8 w-full">
+
+    <!-- Breadcrumb -->
+    <nav class="text-xs text-slate-500 dark:text-slate-400 mb-4 flex items-center space-x-2 flex-wrap">
+      <a href="../../../../../../index.html" class="hover:underline">Início</a>
+      <span>/</span>
+      <span>Tecnologia em Telemática</span>
+      <span>/</span>
+      <a href="../../index.html" class="hover:underline">Banco de Dados</a>
+      <span>/</span>
+      <span class="text-emerald-600 dark:text-emerald-400 font-medium">Aula 05</span>
+    </nav>
+
+    <!-- Header do Bloco da Aula -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/60 shadow-sm mb-8">
+      <div class="flex flex-wrap items-center gap-2 mb-3">
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">Aula 05</span>
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200">Telemática • 100 min (2 h/a)</span>
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300">Semestre 2026.2 / 2027.1</span>
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300">13 de Outubro de 2026</span>
+      </div>
+
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+        Relacionamentos no Modelo Entidade-Relacionamento (MER)
+      </h1>
+      <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+        <strong>Grau, Papéis, Razões de Cardinalidade (1:1, 1:N, N:M) e Restrições de Participação</strong> | <strong>Docente:</strong> Prof. Me. Reginaldo Pereira Fernandes
+      </p>
+
+      <!-- Botões de Ação Rápida no Topo -->
+      <div class="flex flex-wrap items-center gap-3 mt-6 pt-5 border-t border-slate-100 dark:border-slate-700/60">
+        <!-- Botão Google Colab -->
+        <a href="https://colab.research.google.com/github/reginaldo-pf/reginaldo-pf.github.io/blob/main/Cursos/Tecnologia%20em%20Telem%C3%A1tica/Disciplinas/Banco%20de%20Dados/Aulas/Aula_05/codigo/script_apoio.ipynb" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-sm transition-all transform hover:-translate-y-0.5">
+          <i class="fa-solid fa-bolt"></i>
+          <span>Abrir no Google Colab</span>
+        </a>
+
+        <!-- Botão Ver Slides -->
+        <button onclick="switchTab('tab-slides')" class="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all">
+          <i class="fa-solid fa-file-pdf"></i>
+          <span>Visualizar Slides (PDF)</span>
+        </button>
+
+        <!-- Botão Baixar Script Python -->
+        <a href="codigo/script_apoio.py" download class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors">
+          <i class="fa-brands fa-python text-emerald-500"></i>
+          <span>Baixar Script (.py)</span>
+        </a>
+
+        <!-- Botão Baixar Notebook -->
+        <a href="codigo/script_apoio.ipynb" download class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors">
+          <i class="fa-solid fa-book-open text-amber-500"></i>
+          <span>Baixar Notebook (.ipynb)</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Navegação por Abas -->
+    <div class="flex items-center space-x-2 border-b border-slate-200 dark:border-slate-700 mb-8 overflow-x-auto pb-1">
+      <button onclick="switchTab('tab-notebook')" id="btn-tab-notebook" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent transition-all flex items-center space-x-2 tab-active">
+        <i class="fa-solid fa-code"></i>
+        <span>Caderno Didático (Notebook)</span>
+      </button>
+
+      <button onclick="switchTab('tab-slides')" id="btn-tab-slides" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all flex items-center space-x-2">
+        <i class="fa-solid fa-file-pdf"></i>
+        <span>Slides da Apresentação</span>
+      </button>
+
+      <button onclick="switchTab('tab-plano')" id="btn-tab-plano" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all flex items-center space-x-2">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Plano Pedagógico & Atividades</span>
+      </button>
+
+      <button onclick="switchTab('tab-recursos')" id="btn-tab-recursos" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all flex items-center space-x-2">
+        <i class="fa-solid fa-download"></i>
+        <span>Central de Arquivos</span>
+      </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 1: CADERNO DIDÁTICO (NOTEBOOK PYTHON) -->
+    <!-- ========================================== -->
+    <div id="tab-notebook" class="tab-content space-y-6">
+
+      <!-- Bloco Teórico 1: Conceito de Relacionamento e Gramática Visual -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-diagram-project text-emerald-600 dark:text-emerald-400"></i>
+          <span>1. O Conceito Formal de Relacionamento no MER (Peter Chen, 1976)</span>
+        </h2>
+        <p class="text-slate-700 dark:text-slate-300 mb-4">
+          No mundo real, objetos não existem isolados. Um <strong>Tipo de Relacionamento ($R$)</strong> define formalmente uma associação estruturada entre conjuntos de entidades ($E_1, E_2, \dots, E_n$). Matematicamente, o conjunto de relacionamentos é um subconjunto do produto cartesiano:
+        </p>
+        <div class="p-3 bg-slate-100 dark:bg-slate-900 rounded-lg text-center font-mono text-xs sm:text-sm text-emerald-700 dark:text-emerald-400 mb-4">
+          R ⊆ E₁ × E₂ × ... × Eₙ &nbsp;&nbsp;|&nbsp;&nbsp; Instância: r = (e₁, e₂, ..., eₙ)
+        </div>
+
+        <!-- Grid de Cards Explicativos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 space-y-2 text-xs text-slate-600 dark:text-slate-300">
+            <span class="font-bold text-slate-900 dark:text-white text-sm block">A Gramática Visual de Peter Chen:</span>
+            <ul class="list-disc list-inside space-y-1.5">
+              <li><strong>Losango (Diamante):</strong> Representa o tipo de relacionamento, nomeado por um verbo em maiúsculo (ex: <code class="text-emerald-600">LOTADO_EM</code>, <code class="text-emerald-600">GERENCIA</code>).</li>
+              <li><strong>Linhas de Ligação:</strong> Conectam o losango aos retângulos das entidades participantes.</li>
+              <li><strong>Arestas com Papéis (*Roles*):</strong> Rótulos explicativos essenciais em auto-relacionamentos (ex: <code class="text-emerald-600">Supervisor</code> / <code class="text-emerald-600">Supervisionado</code>).</li>
+              <li><strong>Atributos em Losangos:</strong> Elipses conectadas ao losango descrevem propriedades exclusivas da ligação (ex: <code class="text-emerald-600">horas_semanais</code>).</li>
+            </ul>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 space-y-2 text-xs text-slate-600 dark:text-slate-300">
+            <span class="font-bold text-slate-900 dark:text-white text-sm block">Fundamentação Semântica do Vínculo:</span>
+            <ul class="list-disc list-inside space-y-1.5">
+              <li><strong>Entidade vs. Relacionamento:</strong> Entidades são substantivos com existência autônoma; relacionamentos são verbos que conectam conjuntos de entidades.</li>
+              <li><strong>Existência Dependente:</strong> Um relacionamento não possui identidade isolada: ele só existe enquanto persistirem as entidades que ele associa.</li>
+              <li><strong>Instanciação Concreta:</strong> Uma tupla de relacionamento <code class="text-emerald-600">r = (e₁, e₂)</code> formaliza o fato associativo ocorrido no minimundo real.</li>
+              <li><strong>Regras de Negócio:</strong> Restrições de cardinalidade e participação traduzem diretamente as políticas corporativas da organização.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bloco Teórico 2: Graus, Cardinalidades e Participação -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-arrows-split-up-and-left text-emerald-600 dark:text-emerald-400"></i>
+          <span>2. Graus, Razões de Cardinalidade e Restrições de Participação</span>
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
+          <!-- 1:1 -->
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+            <span class="px-2 py-0.5 text-xs font-bold rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 mb-2 inline-block">Cardinalidade 1:1</span>
+            <h3 class="font-bold text-slate-900 dark:text-white text-sm mb-1">Um para Um</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300">Cada instância de A liga-se a no máximo uma de B, e vice-versa.</p>
+            <p class="text-[11px] text-emerald-600 dark:text-emerald-400 mt-2 font-medium">Ex: FUNCIONARIO gerencia 1 DEPARTAMENTO (e vice-versa).</p>
+          </div>
+
+          <!-- 1:N -->
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+            <span class="px-2 py-0.5 text-xs font-bold rounded bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 mb-2 inline-block">Cardinalidade 1:N</span>
+            <h3 class="font-bold text-slate-900 dark:text-white text-sm mb-1">Um para Muitos</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300">Uma instância de A associa-se a vários B; cada B liga-se a no máximo um A.</p>
+            <p class="text-[11px] text-blue-600 dark:text-blue-400 mt-2 font-medium">Ex: DEPARTAMENTO abriga N FUNCIONARIOS; cada funcionário está em 1 departamento.</p>
+          </div>
+
+          <!-- N:M -->
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+            <span class="px-2 py-0.5 text-xs font-bold rounded bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 mb-2 inline-block">Cardinalidade N:M</span>
+            <h3 class="font-bold text-slate-900 dark:text-white text-sm mb-1">Muitos para Muitos</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300">Instâncias de A associam-se a vários B, e vice-versa. Carrega atributos da associação.</p>
+            <p class="text-[11px] text-purple-600 dark:text-purple-400 mt-2 font-medium">Ex: FUNCIONARIO trabalha em M PROJETOS; cada projeto tem N funcionários (com horas_semanais).</p>
+          </div>
+        </div>
+
+        <!-- Comparativo de Participação -->
+        <div class="mt-4 p-4 rounded-xl bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/60">
+          <h4 class="font-bold text-slate-900 dark:text-white text-xs sm:text-sm mb-2 flex items-center space-x-2">
+            <i class="fa-solid fa-link text-amber-600 dark:text-amber-400"></i>
+            <span>Participação Total (Linha Dupla) vs. Parcial (Linha Simples)</span>
+          </h4>
+          <p class="text-xs text-slate-700 dark:text-slate-300">
+            <strong>Participação Total (Existência Dependente):</strong> Toda entidade do conjunto DEVE obrigatoriamente participar de ao menos uma instância do relacionamento (linha dupla no DER Chen). Exemplo: Todo <code>FUNCIONARIO</code> deve estar formalmente lotado em um <code>DEPARTAMENTO</code>.<br>
+            <strong>Participação Parcial (Opcional):</strong> A entidade pode existir sem estar vinculada a nenhuma instância do relacionamento (linha simples no DER Chen). Exemplo: Um <code>DEPARTAMENTO</code> recém-criado pode existir sem nenhum funcionário cadastrado no momento da criação.
+          </p>
+        </div>
+      </div>
+
+      <!-- Célula de Código 1: Metamodelo do MER em Python -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-sm overflow-hidden">
+        <div class="bg-slate-100 dark:bg-slate-850 px-4 py-2 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center space-x-2">
+            <span class="font-mono font-bold text-emerald-600 dark:text-emerald-400">In [1]:</span>
+            <span>Metamodelo Orientado a Objetos: Estrutura Formal de Relacionamentos (Peter Chen)</span>
+          </div>
+          <button onclick="copiarCodigo('code-cell-1')" class="hover:text-emerald-600 transition-colors flex items-center space-x-1">
+            <i class="fa-regular fa-copy"></i>
+            <span>Copiar</span>
+          </button>
+        </div>
+        <pre class="p-4 text-xs sm:text-sm overflow-x-auto"><code id="code-cell-1" class="language-python">from enum import Enum
+from typing import Any, Dict, List, Optional, Set, Tuple
+
+class TipoCardinalidade(Enum):
+    UM_PARA_UM = "1:1"
+    UM_PARA_MUITOS = "1:N"
+    MUITOS_PARA_MUITOS = "N:M"
+
+class TipoParticipacao(Enum):
+    TOTAL = "Total (Obrigatória / Linha Dupla)"
+    PARCIAL = "Parcial (Opcional / Linha Simples)"
+
+class InstanciaRelacionamento:
+    """Representa uma ligação concreta entre duas instâncias de entidades."""
+    def __init__(self, id_a: str, id_b: str, atributos: Optional[Dict[str, Any]] = None, papel_a: Optional[str] = None, papel_b: Optional[str] = None):
+        self.id_a = id_a
+        self.id_b = id_b
+        self.atributos = atributos or {}
+        self.papel_a = papel_a
+        self.papel_b = papel_b
+
+class DefinicaoRelacionamento:
+    """Representa a especificação conceitual de um Tipo de Relacionamento no MER."""
+    def __init__(self, nome: str, entidade_a: str, entidade_b: str, cardinalidade: TipoCardinalidade, participacao_a: TipoParticipacao, participacao_b: TipoParticipacao, papeis: Optional[Tuple[str, str]] = None, atributos_descritivos: Optional[List[str]] = None):
+        self.nome = nome
+        self.entidade_a = entidade_a
+        self.entidade_b = entidade_b
+        self.cardinalidade = cardinalidade
+        self.participacao_a = participacao_a
+        self.participacao_b = participacao_b
+        self.papeis = papeis
+        self.atributos_descritivos = atributos_descritivos or []
+        self.instancias: List[InstanciaRelacionamento] = []
+
+    def adicionar_ligacao(self, id_a: str, id_b: str, atributos: Optional[Dict[str, Any]] = None):
+        atributos = atributos or {}
+        # Validação de atributos obrigatórios da associação
+        for attr in self.atributos_descritivos:
+            if attr not in atributos:
+                raise ValueError(f"Violação em '{self.nome}': Atributo descritivo obrigatório '{attr}' ausente.")
+        
+        # Validação de Cardinalidade 1:1
+        if self.cardinalidade == TipoCardinalidade.UM_PARA_UM:
+            for inst in self.instancias:
+                if inst.id_a == id_a or inst.id_b == id_b:
+                    raise ValueError(f"Violação 1:1 em '{self.nome}': Associação exclusiva violada.")
+
+        # Validação de Cardinalidade 1:N
+        elif self.cardinalidade == TipoCardinalidade.UM_PARA_MUITOS:
+            for inst in self.instancias:
+                if inst.id_b == id_b:
+                    raise ValueError(f"Violação 1:N em '{self.nome}': '{id_b}' já está vinculado a '{inst.id_a}'.")
+
+        # Validação de Unicidade em N:M
+        elif self.cardinalidade == TipoCardinalidade.MUITOS_PARA_MUITOS:
+            for inst in self.instancias:
+                if inst.id_a == id_a and inst.id_b == id_b:
+                    raise ValueError(f"Violação N:M em '{self.nome}': Par ({id_a}, {id_b}) já registrado.")
+
+        p_a = self.papeis[0] if self.papeis else None
+        p_b = self.papeis[1] if self.papeis else None
+        self.instancias.append(InstanciaRelacionamento(id_a, id_b, atributos, p_a, p_b))
+        print(f"✅ Vínculo ({id_a} <--> {id_b}) adicionado ao relacionamento {self.nome}.")
+
+    def auditar_participacao(self, todos_a: Set[str], todos_b: Set[str]) -> Dict[str, Any]:
+        presentes_a = {inst.id_a for inst in self.instancias}
+        presentes_b = {inst.id_b for inst in self.instancias}
+        pendencias_a = todos_a - presentes_a if self.participacao_a == TipoParticipacao.TOTAL else set()
+        pendencias_b = todos_b - presentes_b if self.participacao_b == TipoParticipacao.TOTAL else set()
+        return {"valido": len(pendencias_a) == 0 and len(pendencias_b) == 0, "pendencias_a": pendencias_a, "pendencias_b": pendencias_b}
+</code></pre>
+      </div>
+
+      <!-- Célula de Código 2: Simulação Didática das Regras de Negócio -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-sm overflow-hidden">
+        <div class="bg-slate-100 dark:bg-slate-850 px-4 py-2 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center space-x-2">
+            <span class="font-mono font-bold text-emerald-600 dark:text-emerald-400">In [2]:</span>
+            <span>Simulação Prática das Regras de Negócio (1:1, 1:N, N:M, Papéis e Auditoria)</span>
+          </div>
+          <button onclick="copiarCodigo('code-cell-2')" class="hover:text-emerald-600 transition-colors flex items-center space-x-1">
+            <i class="fa-regular fa-copy"></i>
+            <span>Copiar</span>
+          </button>
+        </div>
+        <pre class="p-4 text-xs sm:text-sm overflow-x-auto"><code id="code-cell-2" class="language-python"># --- 1. Relacionamento 1:1 (DEPARTAMENTO <--- GERENCIA ---> FUNCIONARIO) ---
+rel_gerencia = DefinicaoRelacionamento(
+    nome="GERENCIA", entidade_a="DEPARTAMENTO", entidade_b="FUNCIONARIO",
+    cardinalidade=TipoCardinalidade.UM_PARA_UM,
+    participacao_a=TipoParticipacao.TOTAL, participacao_b=TipoParticipacao.PARCIAL,
+    atributos_descritivos=["data_posse"]
+)
+rel_gerencia.adicionar_ligacao("Engenharia", "Ana Silva", {"data_posse": "2026-01-15"})
+
+# --- 2. Relacionamento 1:N (DEPARTAMENTO <--- LOTADO_EM ---> FUNCIONARIO) ---
+rel_lotacao = DefinicaoRelacionamento(
+    nome="LOTADO_EM", entidade_a="DEPARTAMENTO", entidade_b="FUNCIONARIO",
+    cardinalidade=TipoCardinalidade.UM_PARA_MUITOS,
+    participacao_a=TipoParticipacao.PARCIAL, participacao_b=TipoParticipacao.TOTAL
+)
+rel_lotacao.adicionar_ligacao("Engenharia", "Ana Silva")
+rel_lotacao.adicionar_ligacao("Engenharia", "Carlos Souza")
+
+# --- 3. Relacionamento N:M com Atributo (FUNCIONARIO <--- TRABALHA_EM ---> PROJETO) ---
+rel_projetos = DefinicaoRelacionamento(
+    nome="TRABALHA_EM", entidade_a="FUNCIONARIO", entidade_b="PROJETO",
+    cardinalidade=TipoCardinalidade.MUITOS_PARA_MUITOS,
+    participacao_a=TipoParticipacao.PARCIAL, participacao_b=TipoParticipacao.PARCIAL,
+    atributos_descritivos=["horas_semanais"]
+)
+rel_projetos.adicionar_ligacao("Ana Silva", "Sistema Web", {"horas_semanais": 20})
+rel_projetos.adicionar_ligacao("Ana Silva", "App Mobile", {"horas_semanais": 15})
+rel_projetos.adicionar_ligacao("Carlos Souza", "Sistema Web", {"horas_semanais": 30})
+
+# --- 4. Auto-relacionamento Unário com Papéis (SUPERVISAO) ---
+rel_supervisao = DefinicaoRelacionamento(
+    nome="SUPERVISAO", entidade_a="FUNCIONARIO", entidade_b="FUNCIONARIO",
+    cardinalidade=TipoCardinalidade.UM_PARA_MUITOS,
+    participacao_a=TipoParticipacao.PARCIAL, participacao_b=TipoParticipacao.PARCIAL,
+    papeis=("Supervisor", "Supervisionado")
+)
+rel_supervisao.adicionar_ligacao("Ana Silva", "Carlos Souza")
+
+# --- 5. Auditoria de Participação Total ---
+todos_func = {"Ana Silva", "Carlos Souza", "Beatriz Lima", "Daniel Rocha"}
+todos_dept = {"Engenharia", "Recursos Humanos", "Marketing"}
+auditoria = rel_lotacao.auditar_participacao(todos_dept, todos_func)
+print("Auditoria de Lotação:", auditoria)
+</code></pre>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 2: SLIDES DA APRESENTAÇÃO (PDF)       -->
+    <!-- ========================================== -->
+    <div id="tab-slides" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div>
+            <h3 class="font-bold text-base text-slate-900 dark:text-white flex items-center space-x-2">
+              <i class="fa-solid fa-file-pdf text-red-500"></i>
+              <span>Apresentação Oficial em Slides (LaTeX Beamer - 34 Slides)</span>
+            </h3>
+            <p class="text-xs text-slate-500 mt-0.5">Widescreen 16:9 • Padrão Visual Institucional IFCE Tauá / Scouts</p>
+          </div>
+          <a href="materiais/main.pdf" download class="inline-flex items-center space-x-2 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors">
+            <i class="fa-solid fa-download"></i>
+            <span>Baixar PDF</span>
+          </a>
+        </div>
+
+        <!-- Visualizador PDF Integrado -->
+        <div class="w-full h-[650px] bg-slate-100 dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
+          <object data="materiais/main.pdf" type="application/pdf" class="w-full h-full">
+            <iframe src="materiais/main.pdf" class="w-full h-full border-none">
+              <div class="p-8 text-center text-slate-500 text-sm">
+                Seu navegador não suporta visualização direta de PDFs.
+                <a href="materiais/main.pdf" class="text-emerald-600 underline font-semibold ml-1">Clique aqui para baixar o arquivo PDF</a>.
+              </div>
+            </iframe>
+          </object>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 3: PLANO PEDAGÓGICO & ATIVIDADES      -->
+    <!-- ========================================== -->
+    <div id="tab-plano" class="tab-content hidden space-y-6">
+
+      <!-- Metadados da Aula -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center space-x-2">
+          <i class="fa-solid fa-graduation-cap text-emerald-600 dark:text-emerald-400"></i>
+          <span>Metadados e Objetivos de Aprendizagem</span>
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+          <div>
+            <p><strong>Curso:</strong> Tecnologia em Telemática</p>
+            <p><strong>Carga Horária:</strong> 100 minutos (2 horas/aula presenciais)</p>
+            <p><strong>Data:</strong> 13 de Outubro de 2026 (Terça-feira)</p>
+          </div>
+          <div>
+            <p><strong>Regime Didático:</strong> Mentoria e Tutoria Individual (1 Aluno)</p>
+            <p><strong>Instituição:</strong> IFCE Campus Tauá</p>
+            <p><strong>Docente:</strong> Prof. Me. Reginaldo Pereira Fernandes</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cronograma -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h3 class="font-bold text-base mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-clock text-emerald-600 dark:text-emerald-400"></i>
+          <span>Cronograma da Aula (100 Minutos)</span>
+        </h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left">
+            <thead class="bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200">
+              <tr>
+                <th class="py-2.5 px-3">Bloco</th>
+                <th class="py-2.5 px-3">Duração</th>
+                <th class="py-2.5 px-4">Atividade Pedagógica</th>
+                <th class="py-2.5 px-3">Metodologia</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+              <tr>
+                <td class="py-2.5 px-3 font-bold">1</td>
+                <td class="py-2.5 px-3 whitespace-nowrap">00 - 15 min</td>
+                <td class="py-2.5 px-4">Acolhimento & Ponte Conceitual: Da modelagem de entidades à necessidade de conectar o mundo real.</td>
+                <td class="py-2.5 px-3">Exposição dialogada</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-bold">2</td>
+                <td class="py-2.5 px-3 whitespace-nowrap">15 - 40 min</td>
+                <td class="py-2.5 px-4">Fundamentação Formal de Relacionamentos: Teoria dos conjuntos, grau unário/binário/ternário e papéis.</td>
+                <td class="py-2.5 px-3">Slides Beamer & Figuras</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-bold">3</td>
+                <td class="py-2.5 px-3 whitespace-nowrap">40 - 65 min</td>
+                <td class="py-2.5 px-4">Restrições Estruturais: Cardinalidades (1:1, 1:N, N:M), Participação (Total/Parcial), notação (min, max) e atributos descritivos.</td>
+                <td class="py-2.5 px-3">Diagramas DER TikZ</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-bold">4</td>
+                <td class="py-2.5 px-3 whitespace-nowrap">65 - 85 min</td>
+                <td class="py-2.5 px-4">Laboratório Computacional: Metamodelo Python e Simulação de Regras de Negócio e Cardinalidades no MER.</td>
+                <td class="py-2.5 px-3">Prática Python / Colab</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-bold">5</td>
+                <td class="py-2.5 px-3 whitespace-nowrap">85 - 100 min</td>
+                <td class="py-2.5 px-4">Síntese, Resolução de Dúvidas, Alinhamento do Projeto AVP1 e Introdução à Aula 06 (Entidades Fracas).</td>
+                <td class="py-2.5 px-3">Tutoria Individualizada</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Exercícios de Fixação -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h3 class="font-bold text-base mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-pen-to-square text-amber-500"></i>
+          <span>Exercícios de Fixação da Aula 05</span>
+        </h3>
+        <ol class="list-decimal list-inside space-y-3 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+          <li><strong>Definição e Grau:</strong> Em um sistema de biblioteca escolar, explique por que o ato de um aluno pegar um livro emprestado é modelado como um <strong>relacionamento</strong> e não como um atributo da entidade <code>ALUNO</code>. O relacionamento <code>EMPRESTIMO</code> entre <code>ALUNO</code> e <code>LIVRO</code> é de que grau?</li>
+          <li><strong>Auto-relacionamento e Papéis:</strong> Considere o conjunto de entidades <code>PESSOA</code>:
+            <ul class="list-disc list-inside ml-6 mt-1 space-y-0.5 text-xs">
+              <li>a) Modele um auto-relacionamento para representar o casamento civil monogâmico. Qual a sua cardinalidade (1:1, 1:N ou N:M)?</li>
+              <li>b) Modele um auto-relacionamento para representar a filiação biológica de paternidade. Quais papéis (*roles*) devem ser atribuídos às arestas? Qual a cardinalidade de pai para filho e de filho para pai?</li>
+            </ul>
+          </li>
+          <li><strong>Razões de Cardinalidade:</strong> Identifique e justifique a cardinalidade mais adequada para cada um dos seguintes relacionamentos do cotidiano:
+            <ul class="list-disc list-inside ml-6 mt-1 space-y-0.5 text-xs">
+              <li>a) <code>MEDICO</code> e <code>PACIENTE</code> em uma consulta ambulatorial;</li>
+              <li>b) <code>CURSO</code> e <code>TURMA</code>;</li>
+              <li>c) <code>CIDADAO</code> e <code>PASSAPORTE</code>;</li>
+              <li>d) <code>AUTOR</code> e <code>LIVRO</code>.</li>
+            </ul>
+          </li>
+          <li><strong>Participação e Linha Dupla:</strong> Em um hospital, todo <code>LEITO</code> obrigatoriamente pertence a uma <code>ALA_HOSPITALAR</code>, mas uma ala recém-inaugurada pode ainda não possuir nenhum leito instalado.
+            <ul class="list-disc list-inside ml-6 mt-1 space-y-0.5 text-xs">
+              <li>a) Qual entidade possui participação total e qual possui participação parcial?</li>
+              <li>b) Como essa restrição é desenhada no diagrama canônico de Peter Chen?</li>
+              <li>c) Como essa restrição é expressa na notação estrutural (min, max)?</li>
+            </ul>
+          </li>
+          <li><strong>Atributos de Relacionamento:</strong> No relacionamento <code>CURSA</code> entre <code>ALUNO</code> e <code>DISCIPLINA</code>:
+            <ul class="list-disc list-inside ml-6 mt-1 space-y-0.5 text-xs">
+              <li>a) Por que o atributo <code>nota_final</code> não pode pertencer à entidade <code>ALUNO</code>?</li>
+              <li>b) Por que ele não pode pertencer à entidade <code>DISCIPLINA</code>?</li>
+              <li>c) Em que elemento do Diagrama de Peter Chen a elipse de <code>nota_final</code> deve ser conectada?</li>
+            </ul>
+          </li>
+        </ol>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 4: CENTRAL DE RECURSOS & ARQUIVOS     -->
+    <!-- ========================================== -->
+    <div id="tab-recursos" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <h3 class="font-bold text-base mb-4 flex items-center space-x-2">
+          <i class="fa-solid fa-folder-open text-amber-500"></i>
+          <span>Arquivos e Recursos Disponíveis para Esta Aula</span>
+        </h3>
+        <div class="divide-y divide-slate-100 dark:divide-slate-700">
+          
+          <div class="py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <i class="fa-brands fa-python text-emerald-500 text-xl"></i>
+              <div>
+                <p class="font-semibold text-sm">script_apoio.py</p>
+                <p class="text-xs text-slate-500">Código Python com metamodelo de relacionamentos, validações conceituais de cardinalidade e restrições</p>
+              </div>
+            </div>
+            <a href="codigo/script_apoio.py" download class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200">
+              Download
+            </a>
+          </div>
+
+          <div class="py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <i class="fa-solid fa-book-open text-amber-500 text-xl"></i>
+              <div>
+                <p class="font-semibold text-sm">script_apoio.ipynb</p>
+                <p class="text-xs text-slate-500">Jupyter Notebook interativo para execução local ou nuvem (Google Colab)</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <a href="https://colab.research.google.com/github/reginaldo-pf/reginaldo-pf.github.io/blob/main/Cursos/Tecnologia%20em%20Telem%C3%A1tica/Disciplinas/Banco%20de%20Dados/Aulas/Aula_05/codigo/script_apoio.ipynb" target="_blank" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-amber-500 text-slate-900">
+                Colab
+              </a>
+              <a href="codigo/script_apoio.ipynb" download class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200">
+                Download
+              </a>
+            </div>
+          </div>
+
+          <div class="py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <i class="fa-solid fa-file-pdf text-red-500 text-xl"></i>
+              <div>
+                <p class="font-semibold text-sm">main.pdf</p>
+                <p class="text-xs text-slate-500">Apresentação de slides oficial compilada (LaTeX Beamer Widescreen 16:9 - 34 slides)</p>
+              </div>
+            </div>
+            <a href="materiais/main.pdf" download class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200">
+              Download
+            </a>
+          </div>
+
+          <div class="py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <i class="fa-solid fa-file-lines text-blue-500 text-xl"></i>
+              <div>
+                <p class="font-semibold text-sm">plano_de_aula.md</p>
+                <p class="text-xs text-slate-500">Documento estruturado com planejamento curricular, objetivos e bibliografia</p>
+              </div>
+            </div>
+            <a href="plano_de_aula.md" download class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200">
+              Download
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-6xl mx-auto px-4">
+      <p>© 2026 Instituto Federal do Ceará -- Campus Tauá. Todos os direitos reservados.</p>
+      <p class="mt-1">Prof. Reginaldo Pereira Fernandes | Tecnologia em Telemática</p>
+    </div>
+  </footer>
+
+  <!-- Scripts: Alternância de Abas e Modo Escuro -->
+  <script>
+    // Gerenciamento de Abas
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
+      
+      const activeContent = document.getElementById(tabId);
+      const activeBtn = document.getElementById('btn-' + tabId);
+      
+      if (activeContent) activeContent.classList.remove('hidden');
+      if (activeBtn) activeBtn.classList.add('tab-active');
+    }
+
+    // Copiar Código para Área de Transferência
+    function copiarCodigo(elementId) {
+      const code = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        alert('Código copiado para a área de transferência!');
+      });
+    }
+
+    // Modo Escuro / Claro (Tema padrão: Claro)
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const html = document.documentElement;
+
+    if (localStorage.theme === 'dark') {
+      html.classList.add('dark');
+      themeIcon.className = 'fa-solid fa-sun text-lg text-amber-400';
+    } else {
+      html.classList.remove('dark');
+      themeIcon.className = 'fa-solid fa-moon text-lg';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        localStorage.theme = 'light';
+        themeIcon.className = 'fa-solid fa-moon text-lg';
+      } else {
+        html.classList.add('dark');
+        localStorage.theme = 'dark';
+        themeIcon.className = 'fa-solid fa-sun text-lg text-amber-400';
+      }
+    });
+  </script>
+</body>
+</html>

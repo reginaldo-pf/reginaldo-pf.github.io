@@ -1,0 +1,90 @@
+\changecolours{ScoutGreen}
+\section[Grau e Papéis]{Grau do Relacionamento e Papéis (\textit{Roles})}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Grau de um Relacionamento},leftcol=7.2cm,rightcol=6.8cm]{%
+  \alert{O Número de Entidades Participantes}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Definição:} O grau corresponde ao número de conjuntos de entidades que participam do relacionamento.
+    \item \textbf{Grau 1 -- Unário (Recursivo / Auto-relacionamento):}
+      Uma única entidade relaciona-se consigo mesma em papéis distintos.
+    \item \textbf{Grau 2 -- Binário:}
+      Associação entre dois conjuntos de entidades (a imensa maioria nos projetos práticos).
+    \item \textbf{Grau 3 -- Ternário:}
+      Associação simultânea entre três entidades distintas (ex: médico, paciente e remédio).
+  \end{itemize}
+}{%
+  \alert{Classificação e Diretrizes Práticas}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Predominância dos Binários:}
+      Mais de 90\% das associações reais em sistemas de bancos de dados são binárias, simplificando o esquema relacional.
+    \item \textbf{Graus Superiores ($n \ge 3$):}
+      Relacionamentos ternários aumentam a complexidade de restrições e, frequentemente, são decompostos em múltiplos binários.
+    \item \textbf{Papéis Obrigatórios em Grau 1:}
+      Como ambas as arestas ligam-se à mesma entidade, a rotulação de papéis (\textit{roles}) é indispensável para evitar ambiguidades.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Auto-relacionamento e Papéis (\textit{Roles})},leftcol=7cm,rightcol=7cm]{%
+  \alert{O Que é um Auto-relacionamento?}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Conceito:} Ocorre quando instâncias da mesma entidade associam-se entre si.
+    \item \textbf{Exemplo 1 (Empresa):} Um \texttt{FUNCIONARIO} pode gerenciar ou supervisionar outros \texttt{FUNCIONARIOS}.
+    \item \textbf{Exemplo 2 (Família):} Uma \texttt{PESSOA} pode ser mãe ou pai de outra \texttt{PESSOA}.
+    \item \textbf{Exemplo 3 (Cursos):} Uma \texttt{DISCIPLINA} pode ser pré-requisito de outra \texttt{DISCIPLINA}.
+  \end{itemize}
+}{%
+  \alert{A Necessidade Obrigatória de Papéis}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Desambiguação Semântica:} Como ambas as linhas conectam-se à mesma entidade, é obrigatório rotular as arestas para saber quem desempenha cada função!
+    \item \textbf{Rótulos no DER Chen:}\\
+      $\bullet$ Aresta 1: papel de \textbf{Supervisor}\\
+      $\bullet$ Aresta 2: papel de \textbf{Supervisionado}
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Representação Gráfica: Auto-relacionamento e Grau Ternário}
+  \vspace{0.1cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{Auto-relacionamento Unário com Papéis}\par
+      \vspace{0.15cm}
+      \centering
+      \tikz[scale=0.75, transform shape]{
+        \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.4cm, minimum height=0.7cm, font=\bfseries\sffamily\scriptsize] (e) {FUNCIONARIO};
+        \node[diamond, draw=ScoutNavy, fill=ScoutNavy!15, thick, inner sep=3pt, font=\bfseries\sffamily\tiny, below=0.9cm of e] (r) {SUPERVISIONA};
+        
+        \draw[thick, black!80] (e.west) -| node[pos=0.25, above, font=\tiny\itshape] {supervisor} (r.west);
+        \draw[thick, black!80] (e.east) -| node[pos=0.25, above, font=\tiny\itshape] {supervisionado} (r.east);
+      }\par
+      \vspace{0.15cm}
+      \raggedright
+      {\scriptsize Um funcionário experiente atua como supervisor de colegas mais novos na equipe.}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \alert{Relacionamento Ternário (Grau 3)}\par
+      \vspace{0.15cm}
+      \centering
+      \tikz[scale=0.72, transform shape]{
+        \node[diamond, draw=ScoutNavy, fill=ScoutNavy!15, thick, inner sep=3pt, font=\bfseries\sffamily\tiny] (r) {PRESCREVE};
+        \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\bfseries\sffamily\tiny, above=0.7cm of r] (e1) {MEDICO};
+        \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\bfseries\sffamily\tiny, below left=0.6cm and 0.3cm of r] (e2) {PACIENTE};
+        \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\bfseries\sffamily\tiny, below right=0.6cm and 0.3cm of r] (e3) {MEDICAMENTO};
+        
+        \draw[thick, black!80] (e1) -- (r);
+        \draw[thick, black!80] (e2) -- (r);
+        \draw[thick, black!80] (e3) -- (r);
+      }\par
+      \vspace{0.15cm}
+      \raggedright
+      {\scriptsize O médico receita um medicamento específico para um paciente determinado.}
+    \end{column}
+  \end{columns}
+\end{frame}

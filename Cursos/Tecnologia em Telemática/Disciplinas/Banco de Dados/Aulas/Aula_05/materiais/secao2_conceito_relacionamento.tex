@@ -1,0 +1,81 @@
+\changecolours{ScoutGreen}
+\section[Conceito de Relacionamento]{O Conceito Formal de Relacionamento no MER}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Definição Formal de Relacionamento (Peter Chen, 1976)},leftcol=7.2cm,rightcol=6.8cm]{%
+  \alert{Fundamentação Matemática na Teoria dos Conjuntos}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Tipo de Relacionamento ($R$):} Associação semântica estruturada entre $n$ conjuntos de entidades ($E_1, E_2, \dots, E_n$).
+    \item \textbf{Conjunto de Relacionamentos (\textit{Relationship Set}):} Subconjunto matemático do produto cartesiano entre as entidades participantes:
+      $$R \subseteq E_1 \times E_2 \times \dots \times E_n$$
+    \item \textbf{Instância de Relacionamento ($r$):} Uma tupla de entidades concretas associadas no mundo real:
+      $$r = (e_1, e_2, \dots, e_n), \quad e_i \in E_i$$
+  \end{itemize}
+}{%
+  \alert{Instanciação Concreta no Minimundo}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Conjuntos Concretos de Entidades:}
+      \begin{itemize}\setlength{\itemsep}{0.5mm}
+        \item $E_1 (\text{\texttt{FUNCIONARIO}}) = \{e_1, e_2, e_3\}$
+        \item $E_2 (\text{\texttt{DEPARTAMENTO}}) = \{d_1, d_2\}$
+      \end{itemize}
+    \item \textbf{Instâncias Válidas ($r \in R$):}
+      $$r_1 = (e_1, d_1), \quad r_2 = (e_2, d_1), \quad r_3 = (e_3, d_2)$$
+    \item \textbf{Semântica do Vínculo:}
+      Cada par ordenado formaliza o fato real de que um funcionário específico atua em um dado departamento.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={A Notação Canônica de Chen: O Losango},leftcol=7cm,rightcol=7cm]{%
+  \alert{Gramática Visual do Relacionamento}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Símbolo Gráfico:} Um \textbf{Losango (Diamante)} contendo o nome do relacionamento no centro.
+    \item \textbf{Convenção de Nomenclatura:} Verbo de ação no infinitivo ou presente, em caixa alta (ex: \texttt{LOTADO\_EM}, \texttt{CURSA}, \texttt{CONSULTA}).
+    \item \textbf{Linhas Retas de Conexão:} Ligam o losango diretamente aos retângulos das entidades participantes.
+  \end{itemize}
+}{%
+  \alert{Entidade vs. Relacionamento}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Entidade:} Substantivo do mundo real com existência autônoma (ex: \texttt{FUNCIONARIO}, \texttt{DEPARTAMENTO}).
+    \item \textbf{Relacionamento:} Verbo que descreve a interação mútua (ex: \texttt{TRABALHA\_EM}).
+    \item \textbf{Existência Dependente:} Um relacionamento só existe enquanto existirem as entidades que ele conecta.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Exemplo Comparativo: Entidades, Instâncias e Associações}
+  \vspace{0.1cm}
+  \begin{table}[h]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{l l l}
+      \toprule
+      \textbf{Nível Conceitual} & \textbf{Elemento Formal} & \textbf{Exemplo no Minimundo Empresarial} \\
+      \midrule
+      \textbf{Conjuntos de Entidades} & $E_1, E_2$ & $E_1 = \text{\texttt{FUNCIONARIO}}$, \quad $E_2 = \text{\texttt{DEPARTAMENTO}}$ \\
+      \addlinespace[1.2mm]
+      \textbf{Tipo de Relacionamento} & $R$ & $R = \text{\texttt{LOTADO\_EM}}$ \\
+      \addlinespace[1.2mm]
+      \textbf{Instâncias de Entidades} & $e_1 \in E_1, \; e_2 \in E_2$ & $e_1 = \text{``Ana Silva''}$, \quad $e_2 = \text{``Engenharia''}$ \\
+      \addlinespace[1.2mm]
+      \textbf{Instância de Relacionamento} & $r = (e_1, e_2) \in R$ & $r = (\text{``Ana Silva''}, \text{``Engenharia''})$ \\
+      \bottomrule
+    \end{tabular}%
+    }
+  \end{table}
+  \vspace{0.2cm}
+  \begin{center}
+    \tikz[baseline=-0.5ex, scale=0.85, transform shape]{
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, inner sep=5pt, font=\bfseries\sffamily\scriptsize] (e1) {FUNCIONARIO};
+      \node[diamond, draw=ScoutNavy, fill=ScoutNavy!15, thick, inner sep=4pt, font=\bfseries\sffamily\scriptsize, right=1.6cm of e1] (r) {LOTADO\_EM};
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, inner sep=5pt, font=\bfseries\sffamily\scriptsize, right=1.6cm of r] (e2) {DEPARTAMENTO};
+      \draw[thick, black!80] (e1) -- (r);
+      \draw[thick, black!80] (r) -- (e2);
+    }
+  \end{center}
+\end{frame}

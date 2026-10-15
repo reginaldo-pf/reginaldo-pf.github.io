@@ -1,0 +1,102 @@
+\changecolours{ScoutGreen}
+\section[Laboratório em Python]{Laboratório Computacional: Validação de Relacionamentos em Python}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Metamodelo Conceitual em Python},leftcol=7.1cm,rightcol=6.9cm]{%
+  \alert{Por Que Simular o Modelo em Python?}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Validação Semântica Antes da Tecnologia:} Permite testar as regras de negócio em memória, garantindo que o modelo conceitual seja consistente.
+    \item \textbf{Sem Dependência de SQL:} Nesta fase, nosso foco é 100\% nas regras formais do MER (Peter Chen, 1976).
+    \item \textbf{Cenários Testados:}\\
+      1. Regra 1:1 (\texttt{GERENCIA}): Impede que um departamento tenha dois gerentes.\\
+      2. Regra 1:N (\texttt{LOTADO\_EM}): Impede que um funcionário pertença a dois departamentos.\\
+      3. Regra N:M (\texttt{TRABALHA\_EM}): Registra horas semanais.
+  \end{itemize}
+}{%
+  \alert{Objetivos do Laboratório em Memória}\par
+  \itemseps[topsepi=1mm,itemsepi=1.5mm,labelsep=2mm,leftmargini=3.5mm]
+  \begin{itemize}
+    \item \textbf{Abstração Pura:}
+      Compreender restrições conceituais sem o ruído sintático de dialetos de SGBDs específicos.
+    \item \textbf{Tratamento de Exceções:}
+      Disparar erros explícitos (\texttt{ValueError}) no momento em que operações violarem regras 1:1 ou 1:N.
+    \item \textbf{Auditoria de Integridade:}
+      Função de varredura que detecta instâncias órfãs que violam a participação total obrigatória.
+    \item \textbf{Fixação Algorítmica:}
+      Aproximar o raciocínio matemático de conjuntos da lógica de estruturas de dados em Python.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Código Python: Estrutura da Classe do Relacionamento}
+  \vspace{0.1cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \footnotesize
+      \alert{Representação em Memória}\par
+      \vspace{0.15cm}
+      \begin{itemize}\setlength{\itemsep}{1.5mm}\setlength{\parskip}{0pt}
+        \item Definimos enumerações para cardinalidade (\texttt{1:1}, \texttt{1:N}, \texttt{N:M}) e participação (\texttt{TOTAL}, \texttt{PARCIAL}).
+        \item A classe gerencia o conjunto de instâncias e aplica as travas de cardinalidade.
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \alert{Definição em Python}\par
+      \vspace{0.1cm}
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\fontsize{5.2}{6.2}\selectfont]
+class DefinicaoRelacionamento:
+    def __init__(self, nome, ent_a, ent_b, 
+                 cardinalidade, part_a, part_b,
+                 papeis=None, atributos=None):
+        self.nome = nome
+        self.ent_a = ent_a
+        self.ent_b = ent_b
+        self.cardinalidade = cardinalidade
+        self.part_a = part_a
+        self.part_b = part_b
+        self.papeis = papeis
+        self.atributos = atributos or []
+        self.instancias = []
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Código Python: Bloqueio Semântico de Violações}
+  \vspace{0.1cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \footnotesize
+      \alert{Validação de Cardinalidade 1:1 e 1:N}\par
+      \vspace{0.15cm}
+      \begin{itemize}\setlength{\itemsep}{1.5mm}\setlength{\parskip}{0pt}
+        \item \textbf{Em 1:1:} Se qualquer uma das entidades já estiver em uma instância, o método rejeita uma nova ligação.
+        \item \textbf{Em 1:N:} Se a entidade do lado filho já estiver ligada a um pai, ela não pode ser cadastrada em outro.
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \alert{Método adicionar\_ligacao}\par
+      \vspace{0.1cm}
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\fontsize{5.2}{6.2}\selectfont]
+def adicionar_ligacao(self, id_a, id_b, attrs=None):
+    # Validacao de Cardinalidade 1:1
+    if self.cardinalidade == TipoCardinalidade.UM_PARA_UM:
+        for inst in self.instancias:
+            if inst.id_a == id_a or inst.id_b == id_b:
+                raise ValueError("Violacao de exclusividade 1:1!")
+
+    # Validacao de Cardinalidade 1:N
+    elif self.cardinalidade == TipoCardinalidade.UM_PARA_MUITOS:
+        for inst in self.instancias:
+            if inst.id_b == id_b:
+                raise ValueError(f"[{id_b}] ja pertence a [{inst.id_a}]!")
+
+    self.instancias.append(InstanciaRelacionamento(id_a, id_b, attrs))
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
