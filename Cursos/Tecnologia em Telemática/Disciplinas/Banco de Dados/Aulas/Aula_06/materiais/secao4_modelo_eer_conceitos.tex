@@ -1,0 +1,49 @@
+\changecolours{ScoutGreen}
+\section[Modelo EER]{O Modelo Entidade-Relacionamento Estendido (EER)}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Por Que Estender o MER Clássico?},leftcol=7.1cm,rightcol=6.9cm]{%
+  \alert{As Limitações do MER Tradicional}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Complexidade Crescente:} Sistemas modernos exigem modelar relações semânticas do tipo ``é um'' (\textit{is-a}).
+    \item \textbf{Problema da Redundância:} Sem herança, atributos comuns (como \texttt{nome}, \texttt{fabricante}, \texttt{data\_compra}) seriam replicados em dezenas de tabelas.
+    \item \textbf{O Modelo EER:} Introduzido para agregar conceitos de orientação a objetos, abstração e classificação taxonômica.
+  \end{itemize}
+}{%
+  \alert{Superclasses e Subclasses}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Superclasse:} Tipo de entidade genérico que agrupa características comuns a várias entidades distintas.
+    \item \textbf{Subclasse:} Agrupamento especializado de instâncias que compartilham atributos ou relacionamentos próprios exclusivos.
+    \item \textbf{Exemplo Intuitivo:}
+      \begin{itemize}\setlength{\itemsep}{0.3mm}
+        \item Superclasse: \texttt{DISPOSITIVO\_REDE}
+        \item Subclasses: \texttt{ROTEADOR}, \texttt{SWITCH}, \texttt{FIREWALL}
+      \end{itemize}
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Mecanismo de Herança de Tipos no EER},leftcol=7.1cm,rightcol=6.9cm]{%
+  \alert{Herança Universal de Atributos}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Regra Áurea:} Toda instância que pertence a uma subclasse herda \textbf{automaticamente todos os atributos} da sua superclasse.
+    \item \textbf{Atributos Específicos:}
+      Além dos atributos herdados, a subclasse pode possuir atributos descritivos que só fazem sentido para ela.
+    \item \textbf{Identidade Única:}
+      A chave primária da subclasse é sempre a mesma chave primária herdada da superclasse!
+  \end{itemize}
+}{%
+  \alert{Herança de Relacionamentos}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Participação Indireta:}
+      A subclasse participa automaticamente de qualquer relacionamento no qual sua superclasse esteja envolvida.
+    \item \textbf{Relacionamentos Exclusivos:}
+      A subclasse pode também participar de relacionamentos especializados que não se aplicam às demais irmãs.
+    \item \textbf{Exemplo:}
+      Todo \texttt{ROTEADOR} é um \texttt{DISPOSITIVO} (está em um rack), mas só roteadores participam de \texttt{TABELA\_BGP}.
+  \end{itemize}
+}

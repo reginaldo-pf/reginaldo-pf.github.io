@@ -1,0 +1,76 @@
+\changecolours{ScoutGreen}
+\section[Laboratório em Python]{Laboratório Computacional: Metamodelo EER em Python}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Código Python: Estrutura da Entidade Fraca e Discriminador}
+  \vspace{0.1cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \footnotesize
+      \alert{Entidade Fraca e Chave Composta}\par
+      \vspace{0.15cm}
+      \begin{itemize}\setlength{\itemsep}{1.2mm}\setlength{\parskip}{0pt}
+        \item A entidade forte possui chave primaria autonoma (\texttt{ip\_gestao}).
+        \item A entidade fraca armazena apenas seu discriminador (\texttt{numero\_porta}).
+        \item A propriedade \texttt{chave\_completa} calcula dinamicamente a tupla identificadora global.
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \alert{Implementação Orientada a Objetos}\par
+      \vspace{0.1cm}
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\fontsize{5.2}{6.2}\selectfont]
+class PortaInterface:
+    def __init__(self, numero_porta, tipo_midia, velocidade_mbps):
+        # Discriminador (Chave Parcial)
+        self.numero_porta = numero_porta
+        self.tipo_midia = tipo_midia
+        self.velocidade_mbps = velocidade_mbps
+        self.dispositivo_proprietario = None
+
+    @property
+    def chave_completa(self):
+        if not self.dispositivo_proprietario:
+            return None
+        # PK Composta: (PK_Proprietario, Discriminador)
+        return (self.dispositivo_proprietario.ip_gestao, 
+                self.numero_porta)
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Código Python: Herança e Bloqueio de Disjunção no EER}
+  \vspace{0.1cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \footnotesize
+      \alert{Herança e Validação Disjunta}\par
+      \vspace{0.15cm}
+      \begin{itemize}\setlength{\itemsep}{1.2mm}\setlength{\parskip}{0pt}
+        \item A superclasse gerencia atributos universais (\texttt{patrimonio}, \texttt{fabricante}).
+        \item Subclasses herdam via \texttt{super().\_\_init\_\_}.
+        \item O validador rejeita cadastros simultaneos quando a regra de disjuncao for estrita ($d$).
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \alert{Herança e Trava Semântica}\par
+      \vspace{0.1cm}
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\fontsize{5.0}{6.0}\selectfont]
+class Roteador(DispositivoGenerico):
+    def __init__(self, pat, fab, mod, rotas, bgp):
+        super().__init__(pat, fab, mod)
+        self.tabela_rotas_max = rotas
+        self.suporta_bgp = bgp
+
+def especializar(validador, pat, subclasse):
+    subs = validador.classificacoes[pat]
+    if validador.disjuncao == 'd' and len(subs) > 0:
+        raise ValueError(f"Violacao (d): {pat} ja e {list(subs)[0]}!")
+    subs.add(subclasse)
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}

@@ -1,0 +1,67 @@
+\changecolours{ScoutGreen}
+\section[Entidades Fracas]{O Conceito Formal de Entidade Fraca no MER}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Definição Formal de Entidade Fraca (Peter Chen, 1976)},leftcol=7.1cm,rightcol=6.9cm]{%
+  \alert{O Que é uma Entidade Fraca?}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Definição Clássica:} É uma entidade que \textbf{não possui atributos próprios suficientes} para compor uma chave primária autônoma e exclusiva no sistema.
+    \item \textbf{Entidade Forte / Regular (*Owner*):}
+      Possui chave primária intrínseca e existência independente no minimundo.
+    \item \textbf{Subordinação Semântica:}
+      A entidade fraca só adquire identidade e sentido quando contextualizada por meio de uma entidade proprietária.
+  \end{itemize}
+}{%
+  \alert{Tipos de Dependência Estrutural}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Dependência Existencial:}
+      Uma instância da entidade fraca não pode existir no banco se a entidade proprietária correspondente for excluída.
+    \item \textbf{Dependência de Identificação:}
+      A chave primária da entidade fraca é obrigatoriamente formada pela combinação da chave da proprietária com seu próprio discriminador local.
+    \item \textbf{Regra Canônica:}
+      Toda dependência de identificação implica dependência existencial, mas o inverso nem sempre é verdadeiro!
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Gramática Gráfica Canônica de Peter Chen para Entidades Fracas}
+  \vspace{0.1cm}
+  \begin{center}
+    \tikz[scale=0.76, transform shape]{
+      % Entidade Forte (Proprietaria)
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\bfseries\sffamily\scriptsize, minimum width=2.4cm, minimum height=0.7cm] (forte) {FUNCIONARIO};
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily, above left=0.5cm and 0.1cm of forte] (pk_forte) {\underline{cpf}};
+      \draw[thick, ScoutNavy] (forte) -- (pk_forte);
+
+      % Relacionamento Identificador (Losango Duplo)
+      \node[diamond, draw=ScoutNavy, double, double distance=1.2pt, fill=ScoutNavy!15, thick, inner sep=2pt, font=\bfseries\sffamily\tiny, right=1.2cm of forte] (rel_id) {POSSUI\_DEP};
+
+      % Entidade Fraca (Retangulo Duplo)
+      \node[draw=ScoutGreen, double, double distance=1.2pt, fill=ScoutGreen!15, thick, font=\bfseries\sffamily\scriptsize, minimum width=2.4cm, minimum height=0.7cm, right=1.2cm of rel_id] (fraca) {DEPENDENTE};
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily, above right=0.5cm and 0.1cm of fraca] (disc) {\dashuline{nome\_dep}};
+      \draw[thick, ScoutNavy] (fraca) -- (disc);
+
+      % Linhas de conexao
+      \draw[thick, black!80] (forte) -- node[above, font=\scriptsize\bfseries] {1} (rel_id);
+      \draw[thick, double, double distance=1.5pt, black!80] (rel_id) -- node[above, font=\scriptsize\bfseries] {N} (fraca);
+    }
+  \end{center}
+  \vspace{0.15cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \footnotesize
+      \alert{Convenções Visuais Obrigatórias:}\par
+      $\bullet$ \textbf{Retângulo Duplo:} Indica a entidade fraca.\\
+      $\bullet$ \textbf{Losango Duplo:} Indica o relacionamento identificador.\\
+      $\bullet$ \textbf{Linha Dupla Fraca-Losango:} Participação total obrigatória.
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \footnotesize
+      \alert{Semântica da Ligação:}\par
+      $\bullet$ O relacionamento identificador é sempre $1:N$ do lado do proprietário para o fraco.\\
+      $\bullet$ O discriminador (\texttt{nome\_dep}) é grafado com sublinhado tracejado.
+    \end{column}
+  \end{columns}
+\end{frame}

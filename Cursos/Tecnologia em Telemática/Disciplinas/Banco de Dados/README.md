@@ -46,6 +46,7 @@ A avaliação da disciplina é estruturada em dois períodos (N1 e N2), combinan
   - [Aula 03: Fases do Projeto de BD & Modelo Entidade-Relacionamento](Aulas/Aula_03/) (Disponível na plataforma web).
   - [Aula 04: Aplicação da Lista de Exercícios 01 (N1) - Sábado Letivo](Aulas/Aula_04/materiais/lista_01.pdf) (Disponível diretamente em PDF).
   - [Aula 05: Relacionamentos no MER: Grau, Papéis, Cardinalidades e Participação](Aulas/Aula_05/) (Disponível na plataforma web).
+  - [Aula 06: Entidades Fracas e Modelo EER: Especialização e Generalização](Aulas/Aula_06/) (Disponível na plataforma web).
 
 ### 📝 [Avaliações](Avaliacoes/)
 - [Lista 01 (N1): Fundamentos de SGBD, Arquitetura ANSI/SPARC e Modelagem de Entidades](Avaliacoes/Lista_01_N1.md) ([PDF Oficial](Avaliacoes/lista_01.pdf) | [LaTeX / TikZ](Avaliacoes/lista_01.tex)).

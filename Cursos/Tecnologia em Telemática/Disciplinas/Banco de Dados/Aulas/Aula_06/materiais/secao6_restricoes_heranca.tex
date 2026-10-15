@@ -1,0 +1,57 @@
+\changecolours{ScoutGreen}
+\section[Restrições Estruturais]{Restrições Estruturais: Disjunção e Integralidade}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Restrições de Disjunção: Disjunta (d) vs. Sobreposta (o)},leftcol=7.1cm,rightcol=6.9cm]{%
+  \alert{Especialização Disjunta (Letra $d$)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Regra de Exclusividade:} Uma entidade da superclasse pode pertencer a \textbf{no máximo uma} subclasse especializada.
+    \item \textbf{Subconjuntos Disjuntos:}
+      As subclasses são mutuamente exclusivas ($S_1 \cap S_2 = \emptyset$).
+    \item \textbf{Exemplo:} Um equipamento em operação na rede atua como \texttt{ROTEADOR} OU como \texttt{SWITCH}, mas nunca como ambos simultaneamente.
+  \end{itemize}
+}{%
+  \alert{Especialização Sobreposta (Letra $o$)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Regra de Não-Exclusividade:} Uma mesma entidade pode pertencer a \textbf{múltiplas subclasses} ao mesmo tempo.
+    \item \textbf{Interseção Permitida:}
+      $S_1 \cap S_2 \neq \emptyset$.
+    \item \textbf{Exemplo Acadêmico:} Em uma universidade, uma mesma \texttt{PESSOA} pode ser cadastrada simultaneamente como \texttt{ALUNO} e como \texttt{FUNCIONARIO}.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Restrições de Integralidade e Matriz Canônica EER},leftcol=7.1cm,rightcol=6.9cm]{%
+  \alert{Integralidade (Completude) da Hierarquia}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Total (Linha Dupla no EER):}
+      Toda instância da superclasse \textbf{deve obrigatoriamente} pertencer a pelo menos uma das subclasses. Não existe superclasse ``pura''.
+    \item \textbf{Parcial (Linha Simples no EER):}
+      Uma instância da superclasse pode existir sem ser classificada em nenhuma das subclasses especializadas.
+  \end{itemize}
+}{%
+  \alert{As Quatro Combinações Canônicas}\par
+  \vspace{0.1cm}
+  \begin{table}[h]
+    \centering
+    \resizebox{\linewidth}{!}{%
+    \begin{tabular}{l l l}
+      \toprule
+      \textbf{Integralidade} & \textbf{Disjunta ($d$)} & \textbf{Sobreposta ($o$)} \\
+      \midrule
+      \textbf{Total (Dupla)} & Exclusiva e Obrigatória & Múltipla e Obrigatória \\
+      \addlinespace[1.5mm]
+      \textbf{Parcial (Simples)} & Exclusiva e Opcional & Múltipla e Opcional \\
+      \bottomrule
+    \end{tabular}%
+    }
+  \end{table}
+  \vspace{0.15cm}
+  \begin{itemize}\setlength{\itemsep}{0.5mm}
+    \item \textbf{Importância de Projeto:}
+      Determina como as tabelas serão mapeadas no modelo lógico relacional (tabela única, tabelas separadas ou tabela base).
+  \end{itemize}
+}

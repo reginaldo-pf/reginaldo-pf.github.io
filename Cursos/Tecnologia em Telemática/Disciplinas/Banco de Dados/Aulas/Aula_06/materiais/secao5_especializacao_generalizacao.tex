@@ -1,0 +1,61 @@
+\changecolours{ScoutGreen}
+\section[Especialização e Generalização]{Especialização, Generalização e a Notação EER}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Abordagens: Top-Down vs. Bottom-Up},leftcol=7.1cm,rightcol=6.9cm]{%
+  \alert{Especialização (Abordagem Top-Down)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Processo:} Parte-se de um tipo de entidade genérico existente e criam-se subclasses baseadas em características distintivas.
+    \item \textbf{Quando Ocorre?}
+      Quando o analista percebe que certos subgrupos de instâncias possuem propriedades específicas ou regras de negócio exclusivas.
+    \item \textbf{Exemplo:} \texttt{FUNCIONARIO} especializa-se em \texttt{ENGENHEIRO}, \texttt{SECRETARIO} e \texttt{TECNICO}.
+  \end{itemize}
+}{%
+  \alert{Generalização (Abordagem Bottom-Up)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Processo:} Identificam-se múltiplos tipos de entidades já existentes com características comuns e cria-se uma superclasse genérica para unificá-los.
+    \item \textbf{Quando Ocorre?}
+      Em fases de consolidação de requisitos onde modelos parciais são integrados.
+    \item \textbf{Exemplo:} Unificar \texttt{CARRO}, \texttt{CAMINHAO} e \texttt{MOTO} na superclasse \texttt{VEICULO}.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Representação Gráfica Canônica no Diagrama EER}
+  \vspace{0.1cm}
+  \begin{center}
+    \tikz[scale=0.75, transform shape]{
+      % Superclasse
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\bfseries\sffamily\scriptsize, minimum width=3.0cm, minimum height=0.65cm] (super) {DISPOSITIVO\_REDE};
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily, above left=0.4cm and 0.3cm of super] (pk) {\underline{patrimonio}};
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily, above right=0.4cm and 0.3cm of super] (fab) {fabricante};
+      \draw[thick, ScoutNavy] (super) -- (pk);
+      \draw[thick, ScoutNavy] (super) -- (fab);
+
+      % Circulo EER (Letra d indicando disjuncao)
+      \node[draw=ScoutNavy, fill=ScoutNavy!20, circle, thick, inner sep=2.5pt, font=\bfseries\sffamily\scriptsize, below=0.65cm of super] (circ) {d};
+
+      % Subclasses
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\bfseries\sffamily\scriptsize, minimum width=2.2cm, minimum height=0.65cm, below left=0.7cm and 1.0cm of circ] (sub1) {ROTEADOR};
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily, below=0.35cm of sub1] (atr_sub1) {tabela\_rotas\_max};
+      \draw[thick, ScoutNavy] (sub1) -- (atr_sub1);
+
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\bfseries\sffamily\scriptsize, minimum width=2.2cm, minimum height=0.65cm, below right=0.7cm and 1.0cm of circ] (sub2) {SWITCH};
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily, below=0.35cm of sub2] (atr_sub2) {qtd\_portas\_poe};
+      \draw[thick, ScoutNavy] (sub2) -- (atr_sub2);
+
+      % Linhas conectando superclasse ao circulo e circulo as subclasses
+      \draw[thick, double, double distance=1.5pt, black!80] (super) -- (circ);
+      \draw[thick, black!80] (circ) -| (sub1);
+      \draw[thick, black!80] (circ) -| (sub2);
+
+      % Simbolo de subconjunto U na ligacao
+      \node[font=\footnotesize, left=0.2cm of sub1.north, yshift=0.3cm] {$\cup$};
+      \node[font=\footnotesize, right=0.2cm of sub2.north, yshift=0.3cm] {$\cup$};
+    }
+  \end{center}
+  \vspace{0.05cm}
+  \centering{\tiny \textbf{Notação EER:} A linha dupla para o círculo indica especialização total; a letra ``d'' indica disjunção exclusiva.}
+\end{frame}
