@@ -28,9 +28,9 @@
   \begin{center}
     \tikz[scale=0.75, transform shape]{
       % Superclasse
-      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\bfseries\sffamily\scriptsize, minimum width=3.0cm, minimum height=0.65cm] (super) {DISPOSITIVO\_REDE};
-      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily, above left=0.4cm and 0.3cm of super] (pk) {\underline{patrimonio}};
-      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily, above right=0.4cm and 0.3cm of super] (fab) {fabricante};
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\bfseries\sffamily\scriptsize, minimum width=3.0cm, minimum height=0.65cm] (super) {VEICULO};
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily, above left=0.4cm and 0.3cm of super] (pk) {\underline{placa}};
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily, above right=0.4cm and 0.3cm of super] (fab) {marca};
       \draw[thick, ScoutNavy] (super) -- (pk);
       \draw[thick, ScoutNavy] (super) -- (fab);
 
@@ -38,12 +38,12 @@
       \node[draw=ScoutNavy, fill=ScoutNavy!20, circle, thick, inner sep=2.5pt, font=\bfseries\sffamily\scriptsize, below=0.65cm of super] (circ) {d};
 
       % Subclasses
-      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\bfseries\sffamily\scriptsize, minimum width=2.2cm, minimum height=0.65cm, below left=0.7cm and 1.0cm of circ] (sub1) {ROTEADOR};
-      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily, below=0.35cm of sub1] (atr_sub1) {tabela\_rotas\_max};
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\bfseries\sffamily\scriptsize, minimum width=2.2cm, minimum height=0.65cm, below left=0.7cm and 1.0cm of circ] (sub1) {CARRO};
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily, below=0.35cm of sub1] (atr_sub1) {qtd\_portas};
       \draw[thick, ScoutNavy] (sub1) -- (atr_sub1);
 
-      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\bfseries\sffamily\scriptsize, minimum width=2.2cm, minimum height=0.65cm, below right=0.7cm and 1.0cm of circ] (sub2) {SWITCH};
-      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily, below=0.35cm of sub2] (atr_sub2) {qtd\_portas\_poe};
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\bfseries\sffamily\scriptsize, minimum width=2.2cm, minimum height=0.65cm, below right=0.7cm and 1.0cm of circ] (sub2) {CAMINHAO};
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily, below=0.35cm of sub2] (atr_sub2) {capacidade\_carga};
       \draw[thick, ScoutNavy] (sub2) -- (atr_sub2);
 
       % Linhas conectando superclasse ao circulo e circulo as subclasses

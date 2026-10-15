@@ -18,8 +18,8 @@
     \item \textbf{Subclasse:} Agrupamento especializado de instâncias que compartilham atributos ou relacionamentos próprios exclusivos.
     \item \textbf{Exemplo Intuitivo:}
       \begin{itemize}\setlength{\itemsep}{0.3mm}
-        \item Superclasse: \texttt{DISPOSITIVO\_REDE}
-        \item Subclasses: \texttt{ROTEADOR}, \texttt{SWITCH}, \texttt{FIREWALL}
+        \item Superclasse: \texttt{VEICULO}
+        \item Subclasses: \texttt{CARRO}, \texttt{MOTO}, \texttt{CAMINHAO}
       \end{itemize}
   \end{itemize}
 }
@@ -43,7 +43,7 @@
       A subclasse participa automaticamente de qualquer relacionamento no qual sua superclasse esteja envolvida.
     \item \textbf{Relacionamentos Exclusivos:}
       A subclasse pode também participar de relacionamentos especializados que não se aplicam às demais irmãs.
-    \item \textbf{Exemplo:}
-      Todo \texttt{ROTEADOR} é um \texttt{DISPOSITIVO} (está em um rack), mas só roteadores participam de \texttt{TABELA\_BGP}.
+    \item \textbf{Exemplo Cotidiano:}
+      Todo \texttt{CAMINHAO} é um \texttt{VEICULO} (possui licenciamento e emplacamento), mas somente caminhões participam de \texttt{PESAGEM\_BALANCA}.
   \end{itemize}
 }

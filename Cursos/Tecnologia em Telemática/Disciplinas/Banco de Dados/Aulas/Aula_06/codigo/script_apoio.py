@@ -5,9 +5,9 @@ Aula 06: Entidades Fracas e Modelo EER (Especialização/Generalização)
 Prof. Me. Reginaldo Fernandes
 
 Script didático de validação conceitual em Python puro (sem SQL).
-Demonstra em memória:
-1. Entidades Fracas, Discriminador e Dependência de Existência/Identificação.
-2. Modelo EER: Superclasses, Subclasses, Herança de Atributos e Restrições de Disjunção.
+Demonstra em memória com cenários cotidianos e intuitivos:
+1. Entidades Fracas, Discriminador e Dependência de Existência/Identificação (Hotel e Quarto).
+2. Modelo EER: Superclasses, Subclasses, Herança de Atributos e Restrições de Disjunção (Veículo, Carro e Caminhão).
 """
 
 from enum import Enum
@@ -26,142 +26,144 @@ class RestricaoDisjuncao(Enum):
 
 class RestricaoIntegralidade(Enum):
     """Define se toda instancia da superclasse deve obrigatoriamente pertencer a uma subclasse."""
-    TOTAL = "Total (Linha Dupla)"     # Mandatory: toda superclasse e especializada
+    TOTAL = "Total (Linha Dupla)"       # Mandatory: toda superclasse e especializada
     PARCIAL = "Parcial (Linha Simples)" # Optional: instancia pode ser apenas superclasse
 
 
 # ==============================================================================
-# PARTE 1: ENTIDADES FRACAS E RELACIONAMENTOS IDENTIFICADORES
+# PARTE 1: ENTIDADES FRACAS E RELACIONAMENTOS IDENTIFICADORES (CENÁRIO HOTELEIRO)
 # ==============================================================================
 
-class EntidadeForte:
+class Hotel:
     """
     Representa uma entidade regular/forte no MER.
     Possui chave primaria propria e independente no minimundo.
-    Exemplo: DISPOSITIVO_REDE (identificado unicamente por ip_gestao).
+    Exemplo: HOTEL (identificado unicamente por id_hotel).
     """
-    def __init__(self, ip_gestao: str, hostname: str, localizacao: str):
-        self.ip_gestao = ip_gestao
-        self.hostname = hostname
-        self.localizacao = localizacao
-        self.portas_associadas: Dict[str, 'PortaInterface'] = {}
+    def __init__(self, id_hotel: int, nome: str, cidade: str):
+        self.id_hotel = id_hotel
+        self.nome = nome
+        self.cidade = cidade
+        self.quartos_associados: Dict[str, 'Quarto'] = {}
 
     def __repr__(self) -> str:
-        return f"<Dispositivo ip={self.ip_gestao} host={self.hostname}>"
+        return f"<Hotel id={self.id_hotel} nome='{self.nome}' cidade='{self.cidade}'>"
 
 
-class PortaInterface:
+class Quarto:
     """
     Representa uma entidade fraca no MER.
     NÃO possui chave primaria propria independente.
-    Seu atributo 'numero_porta' atua apenas como discriminador (chave parcial).
-    Sua chave completa e a tupla (ip_gestao, numero_porta).
+    Seu atributo 'numero_quarto' atua apenas como discriminador (chave parcial).
+    Sua chave completa e a tupla (id_hotel, numero_quarto).
     """
-    def __init__(self, numero_porta: str, tipo_midia: str, velocidade_mbps: int):
-        self.numero_porta = numero_porta  # Chave Parcial / Discriminador
-        self.tipo_midia = tipo_midia      # Atributo descritivo (ex: 'Fibra', 'Par Trancado')
-        self.velocidade_mbps = velocidade_mbps
-        self.dispositivo_proprietario: Optional[EntidadeForte] = None
+    def __init__(self, numero_quarto: str, tipo_leito: str, valor_diaria: float):
+        self.numero_quarto = numero_quarto  # Chave Parcial / Discriminador (ex: '101', '102')
+        self.tipo_leito = tipo_leito        # Atributo descritivo (ex: 'Casal', 'Duplo Solteiro')
+        self.valor_diaria = valor_diaria
+        self.hotel: Optional[Hotel] = None
 
     @property
     def chave_completa(self) -> Optional[tuple]:
         """Calcula a chave identificadora composta: (PK_Proprietario, Discriminador)."""
-        if not self.dispositivo_proprietario:
+        if not self.hotel:
             return None
-        return (self.dispositivo_proprietario.ip_gestao, self.numero_porta)
+        return (self.hotel.id_hotel, self.numero_quarto)
 
     def __repr__(self) -> str:
-        chave = self.chave_completa or "SEM_PROPRIETARIO"
-        return f"<Porta {chave} ({self.tipo_midia}, {self.velocidade_mbps}Mbps)>"
+        chave = self.chave_completa or "SEM_HOTEL"
+        return f"<Quarto {chave} ({self.tipo_leito}, R$ {self.valor_diaria:.2f})>"
 
 
 class RelacionamentoIdentificador:
     """
     Representa o relacionamento identificador (Losango Duplo de Chen).
     Garante:
-    1. Dependencia de Existencia: A porta nao existe sem o dispositivo.
-    2. Dependencia de Identificacao: Unicidade do discriminador dentro do mesmo dispositivo.
+    1. Dependencia de Existencia: O quarto nao existe sem o hotel.
+    2. Dependencia de Identificacao: Unicidade do discriminador dentro do mesmo hotel.
     """
-    def __init__(self, nome: str = "CONTEM_PORTA"):
+    def __init__(self, nome: str = "POSSUI_QUARTO"):
         self.nome = nome
-        self.ligacoes: Dict[tuple, PortaInterface] = {}
+        self.ligacoes: Dict[tuple, Quarto] = {}
 
-    def vincular_porta(self, dispositivo: EntidadeForte, porta: PortaInterface) -> None:
-        """Associa uma entidade fraca ao seu proprietario aplicando as regras de integridade."""
-        if not isinstance(dispositivo, EntidadeForte):
-            raise TypeError("A entidade proprietaria deve ser uma EntidadeForte valida!")
+    def vincular_quarto(self, hotel: Hotel, quarto: Quarto) -> None:
+        """Associa uma entidade fraca ao seu hotel aplicando as regras de integridade."""
+        if not isinstance(hotel, Hotel):
+            raise TypeError("A entidade proprietaria deve ser uma instancia valida de Hotel!")
 
         # Regra de Unicidade do Discriminador dentro da mesma entidade proprietaria
-        if porta.numero_porta in dispositivo.portas_associadas:
+        if quarto.numero_quarto in hotel.quartos_associados:
             raise ValueError(
-                f"[VIOLACAO DE DISCRIMINADOR] O dispositivo '{dispositivo.hostname}' "
-                f"ja possui uma porta '{porta.numero_porta}' cadastrada!"
+                f"[VIOLACAO DE DISCRIMINADOR] O hotel '{hotel.nome}' (ID: {hotel.id_hotel}) "
+                f"ja possui um quarto de numero '{quarto.numero_quarto}' cadastrado!"
             )
 
         # Estabelece o vinculo de dependencia
-        porta.dispositivo_proprietario = dispositivo
-        dispositivo.portas_associadas[porta.numero_porta] = porta
-        self.ligacoes[porta.chave_completa] = porta
+        quarto.hotel = hotel
+        hotel.quartos_associados[quarto.numero_quarto] = quarto
+        self.ligacoes[quarto.chave_completa] = quarto
 
 
 # ==============================================================================
-# PARTE 2: MODELO EER (ESPECIALIZAÇÃO, GENERALIZAÇÃO E HERANÇA)
+# PARTE 2: MODELO EER (ESPECIALIZAÇÃO, GENERALIZAÇÃO E HERANÇA - CENÁRIO DE VEÍCULOS)
 # ==============================================================================
 
-class DispositivoGenerico:
+class Veiculo:
     """
     Superclasse no Modelo EER.
-    Contem atributos comuns compartilhados por todos os dispositivos da infraestrutura.
+    Contem atributos comuns compartilhados por todos os veiculos da frota.
     """
-    def __init__(self, patrimonio: str, fabricante: str, modelo: str):
-        self.patrimonio = patrimonio  # Chave Primaria Universal
-        self.fabricante = fabricante
+    def __init__(self, placa: str, marca: str, modelo: str, ano: int):
+        self.placa = placa  # Chave Primaria Universal
+        self.marca = marca
         self.modelo = modelo
+        self.ano = ano
         self.subclasses_vinculadas: Set[str] = set()
 
     def obter_atributos_comuns(self) -> Dict[str, Any]:
         return {
-            "patrimonio": self.patrimonio,
-            "fabricante": self.fabricante,
-            "modelo": self.modelo
+            "placa": self.placa,
+            "marca": self.marca,
+            "modelo": self.modelo,
+            "ano": self.ano
         }
 
     def __repr__(self) -> str:
-        return f"<DispositivoGenerico #{self.patrimonio} [{self.fabricante} {self.modelo}]>"
+        return f"<Veiculo Placa={self.placa} [{self.marca} {self.modelo} ({self.ano})]>"
 
 
-class Roteador(DispositivoGenerico):
-    """Subclasse especializada de Roteador com atributos exclusivos."""
-    def __init__(self, patrimonio: str, fabricante: str, modelo: str,
-                 tabela_rotas_max: int, suporta_bgp: bool):
-        super().__init__(patrimonio, fabricante, modelo)
-        self.tabela_rotas_max = tabela_rotas_max
-        self.suporta_bgp = suporta_bgp
+class Carro(Veiculo):
+    """Subclasse especializada de Carro com atributos exclusivos."""
+    def __init__(self, placa: str, marca: str, modelo: str, ano: int,
+                 quantidade_portas: int, capacidade_porta_malas_litros: int):
+        super().__init__(placa, marca, modelo, ano)
+        self.quantidade_portas = quantidade_portas
+        self.capacidade_porta_malas_litros = capacidade_porta_malas_litros
 
     def detalhes_completos(self) -> Dict[str, Any]:
         dados = self.obter_atributos_comuns()
         dados.update({
-            "tipo": "ROTEADOR",
-            "tabela_rotas_max": self.tabela_rotas_max,
-            "suporta_bgp": self.suporta_bgp
+            "tipo": "CARRO",
+            "quantidade_portas": self.quantidade_portas,
+            "capacidade_porta_malas_litros": self.capacidade_porta_malas_litros
         })
         return dados
 
 
-class Switch(DispositivoGenerico):
-    """Subclasse especializada de Switch com atributos exclusivos."""
-    def __init__(self, patrimonio: str, fabricante: str, modelo: str,
-                 quantidade_portas: int, capacidade_switching_gbps: float):
-        super().__init__(patrimonio, fabricante, modelo)
-        self.quantidade_portas = quantidade_portas
-        self.capacidade_switching_gbps = capacidade_switching_gbps
+class Caminhao(Veiculo):
+    """Subclasse especializada de Caminhao com atributos exclusivos."""
+    def __init__(self, placa: str, marca: str, modelo: str, ano: int,
+                 capacidade_carga_toneladas: float, quantidade_eixos: int):
+        super().__init__(placa, marca, modelo, ano)
+        self.capacidade_carga_toneladas = capacidade_carga_toneladas
+        self.quantidade_eixos = quantidade_eixos
 
     def detalhes_completos(self) -> Dict[str, Any]:
         dados = self.obter_atributos_comuns()
         dados.update({
-            "tipo": "SWITCH",
-            "quantidade_portas": self.quantidade_portas,
-            "capacidade_switching_gbps": self.capacidade_switching_gbps
+            "tipo": "CAMINHAO",
+            "capacidade_carga_toneladas": self.capacidade_carga_toneladas,
+            "quantidade_eixos": self.quantidade_eixos
         })
         return dados
 
@@ -174,37 +176,37 @@ class ValidadorEER:
         self.nome_hierarquia = nome_hierarquia
         self.disjuncao = disjuncao
         self.integralidade = integralidade
-        self.registro_superclasses: Dict[str, DispositivoGenerico] = {}
+        self.registro_superclasses: Dict[str, Veiculo] = {}
         self.classificacoes: Dict[str, Set[str]] = {}
 
-    def registrar_dispositivo(self, disp: DispositivoGenerico) -> None:
-        self.registro_superclasses[disp.patrimonio] = disp
-        self.classificacoes[disp.patrimonio] = set()
+    def registrar_veiculo(self, veiculo: Veiculo) -> None:
+        self.registro_superclasses[veiculo.placa] = veiculo
+        self.classificacoes[veiculo.placa] = set()
 
-    def especializar(self, patrimonio: str, tipo_subclasse: str) -> None:
+    def especializar(self, placa: str, tipo_subclasse: str) -> None:
         """Associa uma superclasse a uma subclasse, testando a restricao de disjuncao."""
-        if patrimonio not in self.registro_superclasses:
-            raise KeyError(f"Patrimonio '{patrimonio}' nao registrado na superclasse!")
+        if placa not in self.registro_superclasses:
+            raise KeyError(f"Placa '{placa}' nao registrada na superclasse Veiculo!")
 
-        subclasses_atuais = self.classificacoes[patrimonio]
+        subclasses_atuais = self.classificacoes[placa]
 
         # Verificacao de Disjuncao (d)
         if self.disjuncao == RestricaoDisjuncao.DISJUNTA and len(subclasses_atuais) > 0:
             subclasse_existente = list(subclasses_atuais)[0]
             raise ValueError(
-                f"[VIOLACAO DE DISJUNCAO (d)] O equipamento '{patrimonio}' ja foi classificado como "
+                f"[VIOLACAO DE DISJUNCAO (d)] O veiculo '{placa}' ja foi classificado como "
                 f"'{subclasse_existente}' e nao pode ser cumulativamente um '{tipo_subclasse}'!"
             )
 
         subclasses_atuais.add(tipo_subclasse)
 
     def auditar_integralidade_total(self) -> List[str]:
-        """Identifica equipamentos sem especializacao quando a regra for Total."""
+        """Identifica veiculos sem especializacao quando a regra for Total."""
         violacoes = []
         if self.integralidade == RestricaoIntegralidade.TOTAL:
-            for pat, subs in self.classificacoes.items():
+            for placa, subs in self.classificacoes.items():
                 if len(subs) == 0:
-                    violacoes.append(pat)
+                    violacoes.append(placa)
         return violacoes
 
 
@@ -214,76 +216,78 @@ class ValidadorEER:
 
 def executar_demonstracao():
     print("=" * 80)
-    print("IFCE TAUÁ - AULA 06: ENTIDADES FRACAS E MODELO EER EM TELEMÁTICA")
+    print("IFCE TAUÁ - AULA 06: ENTIDADES FRACAS E MODELO EER (CENÁRIOS COTIDIANOS)")
     print("=" * 80)
 
     # --------------------------------------------------------------------------
-    # CENÁRIO 1: Entidade Fraca e Chave Parcial (Discriminador)
+    # CENÁRIO 1: Entidade Fraca e Chave Parcial (Discriminador) em Hotelaria
     # --------------------------------------------------------------------------
-    print("\n--- [CENÁRIO 1] Teste de Entidade Fraca e Chave Composta ---")
-    rel_identificador = RelacionamentoIdentificador("CONTEM_PORTA")
+    print("\n--- [CENÁRIO 1] Teste de Entidade Fraca e Chave Composta (Hotel e Quarto) ---")
+    rel_identificador = RelacionamentoIdentificador("POSSUI_QUARTO")
 
-    # Criando duas entidades fortes (Roteadores)
-    rt_taua = EntidadeForte("10.0.1.1", "RT-IFCE-TAUA", "Rack Central Tauá")
-    sw_taua = EntidadeForte("10.0.1.2", "SW-CORE-TAUA", "Rack Central Tauá")
+    # Criando duas entidades fortes (Hotéis)
+    hotel_taua = Hotel(101, "Hotel Tauá Palace", "Tauá - CE")
+    hotel_fortaleza = Hotel(202, "Beira Mar Hotel", "Fortaleza - CE")
 
-    # Criando entidades fracas (Portas com o mesmo discriminador 'Gi0/1')
-    p1 = PortaInterface("Gi0/1", "Fibra Óptica", 1000)
-    p2 = PortaInterface("Gi0/1", "Par Trançado", 1000)
-    p3 = PortaInterface("Gi0/2", "Par Trançado", 1000)
+    # Criando entidades fracas (Quartos com o mesmo discriminador '101')
+    q1 = Quarto("101", "Casal Standard", 180.00)
+    q2 = Quarto("101", "Suíte Luxo", 350.00)
+    q3 = Quarto("102", "Duplo Solteiro", 150.00)
 
-    print(f"Dispositivo Forte 1: {rt_taua}")
-    print(f"Dispositivo Forte 2: {sw_taua}")
+    print(f"Hotel Forte 1: {hotel_taua}")
+    print(f"Hotel Forte 2: {hotel_fortaleza}")
 
-    # Vinculando portas aos seus respectivos proprietarios
-    rel_identificador.vincular_porta(rt_taua, p1)
-    rel_identificador.vincular_porta(sw_taua, p2)
-    rel_identificador.vincular_porta(rt_taua, p3)
+    # Vinculando quartos aos seus respectivos hotéis proprietários
+    rel_identificador.vincular_quarto(hotel_taua, q1)
+    rel_identificador.vincular_quarto(hotel_fortaleza, q2)
+    rel_identificador.vincular_quarto(hotel_taua, q3)
 
-    print(f"\n[SUCESSO] Portas cadastradas com chave composta:")
-    print(f" - {p1} -> Chave: {p1.chave_completa}")
-    print(f" - {p2} -> Chave: {p2.chave_completa}")
-    print(f" - {p3} -> Chave: {p3.chave_completa}")
-    print(">> Note que 'Gi0/1' pode existir em ambos os dispositivos sem conflito de PK!")
+    print(f"\n[SUCESSO] Quartos cadastrados com chave composta identificadora:")
+    print(f" - {q1} -> Chave Completa: {q1.chave_completa}")
+    print(f" - {q2} -> Chave Completa: {q2.chave_completa}")
+    print(f" - {q3} -> Chave Completa: {q3.chave_completa}")
+    print(">> Note que o quarto '101' existe em ambos os hotéis sem nenhum conflito de unicidade!")
 
-    # Teste de violacao de discriminador no mesmo dispositivo
-    print("\n[TESTE DE BLOQUEIO] Tentando adicionar outra porta 'Gi0/1' no RT-IFCE-TAUA...")
-    porta_duplicada = PortaInterface("Gi0/1", "Par Trançado", 100)
+    # Teste de violação de discriminador no mesmo hotel
+    print("\n[TESTE DE BLOQUEIO] Tentando adicionar outro quarto '101' no Hotel Tauá Palace...")
+    quarto_duplicado = Quarto("101", "Individual Simples", 120.00)
     try:
-        rel_identificador.vincular_porta(rt_taua, porta_duplicada)
+        rel_identificador.vincular_quarto(hotel_taua, quarto_duplicado)
     except ValueError as e:
         print(f" >> SUCESSO NO BLOQUEIO: {e}")
 
     # --------------------------------------------------------------------------
-    # CENÁRIO 2: Modelo EER - Herança de Atributos e Especialização Disjunta
+    # CENÁRIO 2: Modelo EER - Herança de Atributos e Especialização de Veículos
     # --------------------------------------------------------------------------
     print("\n" + "=" * 80)
-    print("--- [CENÁRIO 2] Modelo EER: Herança de Tipos e Restrições ---")
+    print("--- [CENÁRIO 2] Modelo EER: Herança de Tipos e Atributos Especializados ---")
 
-    # Criando objetos especializados com herança de atributos
-    meu_roteador = Roteador(
-        patrimonio="PAT-2026-001",
-        fabricante="Cisco Systems",
-        modelo="ASR 1001-X",
-        tabela_rotas_max=1000000,
-        suporta_bgp=True
+    # Criando objetos especializados com herança de atributos da superclasse Veículo
+    meu_carro = Carro(
+        placa="POQ-7F89",
+        marca="Toyota",
+        modelo="Corolla",
+        ano=2024,
+        quantidade_portas=4,
+        capacidade_porta_malas_litros=470
     )
 
-    meu_switch = Switch(
-        patrimonio="PAT-2026-002",
-        fabricante="Huawei",
-        modelo="CloudEngine S5735",
-        quantidade_portas=48,
-        capacidade_switching_gbps=176.0
+    meu_caminhao = Caminhao(
+        placa="KLY-9B34",
+        marca="Volvo",
+        modelo="FH 540",
+        ano=2023,
+        capacidade_carga_toneladas=30.5,
+        quantidade_eixos=6
     )
 
-    print("\n[OBJETO ROTEADOR] Atributos herdados e especializados:")
-    for k, v in meu_roteador.detalhes_completos().items():
-        print(f"  • {k:22}: {v}")
+    print("\n[OBJETO CARRO] Atributos herdados (Veiculo) e específicos (Carro):")
+    for k, v in meu_carro.detalhes_completos().items():
+        print(f"  • {k:30}: {v}")
 
-    print("\n[OBJETO SWITCH] Atributos herdados e especializados:")
-    for k, v in meu_switch.detalhes_completos().items():
-        print(f"  • {k:22}: {v}")
+    print("\n[OBJETO CAMINHÃO] Atributos herdados (Veiculo) e específicos (Caminhao):")
+    for k, v in meu_caminhao.detalhes_completos().items():
+        print(f"  • {k:30}: {v}")
 
     # --------------------------------------------------------------------------
     # CENÁRIO 3: Validação de Restrição de Disjunção (d) e Integralidade Total
@@ -291,34 +295,34 @@ def executar_demonstracao():
     print("\n" + "=" * 80)
     print("--- [CENÁRIO 3] Auditoria de Restrições EER: Disjunta (d) & Total ---")
     validador = ValidadorEER(
-        nome_hierarquia="Taxonomia de Equipamentos",
+        nome_hierarquia="Taxonomia de Veículos da Frota",
         disjuncao=RestricaoDisjuncao.DISJUNTA,
         integralidade=RestricaoIntegralidade.TOTAL
     )
 
-    d1 = DispositivoGenerico("PAT-101", "Cisco", "Catalyst 2960")
-    d2 = DispositivoGenerico("PAT-102", "MikroTik", "CCR1036")
-    d3 = DispositivoGenerico("PAT-103", "Dell", "PowerEdge R740")
+    v1 = Veiculo("ABC-1D23", "Chevrolet", "Onix", 2023)
+    v2 = Veiculo("XYZ-9E87", "Scania", "R450", 2022)
+    v3 = Veiculo("MNO-4K56", "Ford", "Ranger", 2024)
 
-    validador.registrar_dispositivo(d1)
-    validador.registrar_dispositivo(d2)
-    validador.registrar_dispositivo(d3)
+    validador.registrar_veiculo(v1)
+    validador.registrar_veiculo(v2)
+    validador.registrar_veiculo(v3)
 
-    # Classificando d1 como Switch e d2 como Roteador
-    validador.especializar("PAT-101", "SWITCH")
-    validador.especializar("PAT-102", "ROTEADOR")
+    # Classificando v1 como CARRO e v2 como CAMINHAO
+    validador.especializar("ABC-1D23", "CARRO")
+    validador.especializar("XYZ-9E87", "CAMINHAO")
 
-    # Tentando classificar d1 tambem como ROTEADOR (Violacao da Disjuncao)
-    print("\n[TESTE DE BLOQUEIO] Tentando classificar PAT-101 (Switch) como ROTEADOR...")
+    # Tentando classificar v1 também como CAMINHÃO (Violação da Disjunção 'd')
+    print("\n[TESTE DE BLOQUEIO] Tentando classificar 'ABC-1D23' (já Carro) como CAMINHÃO...")
     try:
-        validador.especializar("PAT-101", "ROTEADOR")
+        validador.especializar("ABC-1D23", "CAMINHAO")
     except ValueError as e:
         print(f" >> SUCESSO NO BLOQUEIO: {e}")
 
-    # Auditoria de Integralidade Total: d3 ainda nao foi especializado!
+    # Auditoria de Integralidade Total: v3 ainda não foi especializado!
     pendencias = validador.auditar_integralidade_total()
     print(f"\n[AUDITORIA DE INTEGRALIDADE TOTAL]")
-    print(f" >> Equipamentos pendentes de especialização obrigatória: {pendencias}")
+    print(f" >> Veículos pendentes de especialização obrigatória: {pendencias}")
     print(" >> Isso viola a regra de especialização Total (linha dupla no EER)!")
     print("=" * 80)
 

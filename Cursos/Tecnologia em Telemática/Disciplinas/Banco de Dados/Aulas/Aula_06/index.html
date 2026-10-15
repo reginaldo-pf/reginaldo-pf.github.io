@@ -151,20 +151,20 @@
           <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 space-y-2 text-xs text-slate-600 dark:text-slate-300">
             <span class="font-bold text-slate-900 dark:text-white text-sm block">A Notação Canônica de Peter Chen:</span>
             <ul class="list-disc list-inside space-y-1.5">
-              <li><strong>Retângulo Duplo:</strong> Representa a entidade fraca (ex: <code class="text-emerald-600">PORTA_INTERFACE</code>, <code class="text-emerald-600">DEPENDENTE</code>).</li>
+              <li><strong>Retângulo Duplo:</strong> Representa a entidade fraca (ex: <code class="text-emerald-600">QUARTO</code>, <code class="text-emerald-600">DEPENDENTE</code>).</li>
               <li><strong>Losango Duplo:</strong> Representa o relacionamento identificador que vincula o fraco ao proprietário.</li>
               <li><strong>Linha Dupla:</strong> Conecta a entidade fraca ao losango, indicando participação total obrigatória.</li>
-              <li><strong>Sublinhado Tracejado:</strong> Destaca o atributo discriminador (ex: <code class="text-emerald-600">numero_porta</code>).</li>
+              <li><strong>Sublinhado Tracejado:</strong> Destaca o atributo discriminador (ex: <code class="text-emerald-600">numero_quarto</code>).</li>
             </ul>
           </div>
 
           <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 space-y-2 text-xs text-slate-600 dark:text-slate-300">
-            <span class="font-bold text-slate-900 dark:text-white text-sm block">Caso Real em Telemática:</span>
+            <span class="font-bold text-slate-900 dark:text-white text-sm block">Caso Cotidiano: Rede Hoteleira</span>
             <ul class="list-disc list-inside space-y-1.5">
-              <li><strong>Dispositivo Proprietário:</strong> <code class="text-emerald-600">DISPOSITIVO_REDE</code> com chave primária <code class="text-emerald-600">ip_gestao</code>.</li>
-              <li><strong>Entidade Fraca:</strong> <code class="text-emerald-600">PORTA_INTERFACE</code> com discriminador <code class="text-emerald-600">numero_porta</code> (ex: <code class="text-emerald-600">Gi0/1</code>).</li>
-              <li><strong>Chave Composta Global:</strong> <code class="text-emerald-600">(10.0.1.1, Gi0/1)</code> e <code class="text-emerald-600">(10.0.1.2, Gi0/1)</code>.</li>
-              <li><strong>Vantagem:</strong> Múltiplos switches podem ter portas <code class="text-emerald-600">Gi0/1</code> sem qualquer colisão de chave primária.</li>
+              <li><strong>Hotel Proprietário:</strong> <code class="text-emerald-600">HOTEL</code> com chave primária <code class="text-emerald-600">id_hotel</code>.</li>
+              <li><strong>Entidade Fraca:</strong> <code class="text-emerald-600">QUARTO</code> com discriminador <code class="text-emerald-600">numero_quarto</code> (ex: <code class="text-emerald-600">101</code>, <code class="text-emerald-600">102</code>).</li>
+              <li><strong>Chave Composta Global:</strong> <code class="text-emerald-600">(101, '101')</code> e <code class="text-emerald-600">(202, '101')</code>.</li>
+              <li><strong>Vantagem:</strong> Múltiplos hotéis podem ter quartos de número <code class="text-emerald-600">101</code> sem qualquer colisão de chave primária.</li>
             </ul>
           </div>
         </div>
@@ -186,7 +186,7 @@
             <span class="px-2 py-0.5 text-xs font-bold rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 mb-2 inline-block">Restrição de Disjunção</span>
             <h3 class="font-bold text-slate-900 dark:text-white text-sm mb-1">Disjunta (d) vs. Sobreposta (o)</h3>
             <ul class="list-disc list-inside text-xs text-slate-600 dark:text-slate-300 space-y-1">
-              <li><strong>Disjunta ($d$):</strong> Instância pertence a no máximo uma subclasse ($S_1 \cap S_2 = \emptyset$). Ex: Roteador OU Switch.</li>
+              <li><strong>Disjunta ($d$):</strong> Instância pertence a no máximo uma subclasse ($S_1 \cap S_2 = \emptyset$). Ex: Carro OU Caminhão.</li>
               <li><strong>Sobreposta ($o$):</strong> Instância pode pertencer a múltiplas subclasses simultaneamente. Ex: Aluno E Monitor.</li>
             </ul>
           </div>
@@ -213,24 +213,24 @@
           Código orientado a objetos demonstrando a formação da tupla composta de chave primária e a validação de regras de disjunção no modelo EER:
         </p>
 
-        <pre><code class="language-python">class PortaInterface:
-    def __init__(self, numero_porta: str, tipo_midia: str, velocidade_mbps: int):
-        self.numero_porta = numero_porta  # Chave Parcial / Discriminador
-        self.tipo_midia = tipo_midia
-        self.velocidade_mbps = velocidade_mbps
-        self.dispositivo_proprietario = None
+        <pre><code class="language-python">class Quarto:
+    def __init__(self, numero_quarto: str, tipo_leito: str, valor_diaria: float):
+        self.numero_quarto = numero_quarto  # Chave Parcial / Discriminador
+        self.tipo_leito = tipo_leito
+        self.valor_diaria = valor_diaria
+        self.hotel = None
 
     @property
     def chave_completa(self) -> tuple:
         """PK Composta: (PK_Proprietario, Discriminador)"""
-        return (self.dispositivo_proprietario.ip_gestao, self.numero_porta)
+        return (self.hotel.id_hotel, self.numero_quarto)
 
-class Roteador(DispositivoGenerico):
+class Carro(Veiculo):
     """Subclasse com herança de atributos e campos exclusivos"""
-    def __init__(self, patrimonio, fabricante, modelo, rotas_max, bgp):
-        super().__init__(patrimonio, fabricante, modelo)
-        self.tabela_rotas_max = rotas_max
-        self.suporta_bgp = bgp</code></pre>
+    def __init__(self, placa, marca, modelo, portas, mala_litros):
+        super().__init__(placa, marca, modelo)
+        self.quantidade_portas = portas
+        self.capacidade_porta_malas_litros = mala_litros</code></pre>
       </div>
     </div>
 
@@ -293,7 +293,7 @@ class Roteador(DispositivoGenerico):
                 <td class="py-3 px-3 font-bold text-emerald-600">3</td>
                 <td class="py-3 px-3 whitespace-nowrap">40 - 65 min</td>
                 <td class="py-3 px-4">Modelo EER: Herança, Especialização Disjunta/Sobreposta e Total/Parcial.</td>
-                <td class="py-3 px-3">Diagramas EER e estudo de casos em Telemática.</td>
+                <td class="py-3 px-3">Diagramas EER e estudo de casos cotidianos (frotas de veículos).</td>
               </tr>
               <tr>
                 <td class="py-3 px-3 font-bold text-emerald-600">4</td>
@@ -335,16 +335,16 @@ class Roteador(DispositivoGenerico):
         </div>
 
         <div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
-          <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">Questão 3: Caso de Telemática</span>
+          <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">Questão 3: Dependência de Identificação</span>
           <p class="text-xs text-slate-600 dark:text-slate-300">
-            Um provedor gerencia roteadores identificados por <code class="text-emerald-600">ip_gestao</code>, cada um contendo portas como <code class="text-emerald-600">eth0</code> e <code class="text-emerald-600">eth1</code>. O que acontece com as portas se o roteador for desativado e removido?
+            Considere um condomínio com blocos de edifícios, onde cada bloco possui apartamentos identificados por <code class="text-emerald-600">numero_apartamento</code>. O que acontece com os apartamentos se o bloco for demolido ou desativado?
           </p>
         </div>
 
         <div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
           <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">Questão 4: Herança no Modelo EER</span>
           <p class="text-xs text-slate-600 dark:text-slate-300">
-            A superclasse <code class="text-emerald-600">DISPOSITIVO_REDE</code> especializa-se em <code class="text-emerald-600">ROTEADOR</code> e <code class="text-emerald-600">SWITCH</code>. Explique o que é herança de atributos e se a restrição deve ser disjunta ($d$) ou sobreposta ($o$).
+            A superclasse <code class="text-emerald-600">VEICULO</code> especializa-se em <code class="text-emerald-600">CARRO</code> e <code class="text-emerald-600">CAMINHAO</code>. Explique o que é herança de atributos e se essa restrição deve ser classificada formalmente como disjunta ($d$) ou sobreposta ($o$).
           </p>
         </div>
 

@@ -32,30 +32,30 @@
 }
 
 % ------------------------------------------------------------------------------
-\begin{frame}{Caso de Telemática: Dispositivos e Portas de Interface}
+\begin{frame}{Exemplo Cotidiano: Redes de Hotéis e Quartos}
   \vspace{0.1cm}
   \begin{center}
     \tikz[scale=0.70, transform shape]{
-      % Dispositivo de Rede (Entidade Forte)
-      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\bfseries\sffamily\scriptsize, minimum width=2.4cm, minimum height=0.65cm] (disp) {DISPOSITIVO\_REDE};
-      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily, above left=0.5cm and 0.1cm of disp] (pk_disp) {\underline{ip\_gestao}};
-      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily, below left=0.4cm and 0.1cm of disp] (host) {hostname};
-      \draw[thick, ScoutNavy] (disp) -- (pk_disp);
-      \draw[thick, ScoutNavy] (disp) -- (host);
+      % Hotel (Entidade Forte)
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, font=\bfseries\sffamily\scriptsize, minimum width=2.4cm, minimum height=0.65cm] (hotel) {HOTEL};
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily, above left=0.5cm and 0.1cm of hotel] (pk_hotel) {\underline{id\_hotel}};
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily, below left=0.4cm and 0.1cm of hotel] (nome_h) {nome\_hotel};
+      \draw[thick, ScoutNavy] (hotel) -- (pk_hotel);
+      \draw[thick, ScoutNavy] (hotel) -- (nome_h);
 
       % Relacionamento Identificador
-      \node[diamond, draw=ScoutNavy, double, double distance=1.2pt, fill=ScoutNavy!15, thick, inner sep=2pt, font=\bfseries\sffamily\tiny, right=1.0cm of disp] (rel) {CONTEM\_PORTA};
+      \node[diamond, draw=ScoutNavy, double, double distance=1.2pt, fill=ScoutNavy!15, thick, inner sep=2pt, font=\bfseries\sffamily\tiny, right=1.0cm of hotel] (rel) {POSSUI\_QUARTO};
 
-      % Porta de Interface (Entidade Fraca)
-      \node[draw=ScoutGreen, double, double distance=1.2pt, fill=ScoutGreen!15, thick, font=\bfseries\sffamily\scriptsize, minimum width=2.4cm, minimum height=0.65cm, right=1.0cm of rel] (porta) {PORTA\_INTERFACE};
-      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily, above right=0.5cm and 0.1cm of porta] (disc) {\dashuline{numero\_porta}};
-      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily, below right=0.4cm and 0.1cm of porta] (vel) {velocidade\_mbps};
-      \draw[thick, ScoutNavy] (porta) -- (disc);
-      \draw[thick, ScoutNavy] (porta) -- (vel);
+      % Quarto (Entidade Fraca)
+      \node[draw=ScoutGreen, double, double distance=1.2pt, fill=ScoutGreen!15, thick, font=\bfseries\sffamily\scriptsize, minimum width=2.4cm, minimum height=0.65cm, right=1.0cm of rel] (quarto) {QUARTO};
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily, above right=0.5cm and 0.1cm of quarto] (disc) {\dashuline{numero\_quarto}};
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily, below right=0.4cm and 0.1cm of quarto] (valor) {valor\_diaria};
+      \draw[thick, ScoutNavy] (quarto) -- (disc);
+      \draw[thick, ScoutNavy] (quarto) -- (valor);
 
       % Conexoes Chen
-      \draw[thick, black!80] (disp) -- node[above, font=\scriptsize\bfseries] {1} (rel);
-      \draw[thick, double, double distance=1.5pt, black!80] (rel) -- node[above, font=\scriptsize\bfseries] {N} (porta);
+      \draw[thick, black!80] (hotel) -- node[above, font=\scriptsize\bfseries] {1} (rel);
+      \draw[thick, double, double distance=1.5pt, black!80] (rel) -- node[above, font=\scriptsize\bfseries] {N} (quarto);
     }
   \end{center}
   \vspace{-0.1cm}
@@ -64,15 +64,15 @@
     \resizebox{0.78\textwidth}{!}{%
     \begin{tabular}{l l l l}
       \toprule
-      \textbf{IP Gestão (Proprietário)} & \textbf{Hostname} & \textbf{Discriminador (Porta)} & \textbf{Chave Composta Global} \\
+      \textbf{ID Hotel (Proprietário)} & \textbf{Nome do Hotel} & \textbf{Discriminador (Quarto)} & \textbf{Chave Composta Global} \\
       \midrule
-      \texttt{10.0.1.1} & \texttt{RT-CORE-01} & \texttt{Gi0/1} & \texttt{(10.0.1.1, Gi0/1)} \\
-      \texttt{10.0.1.1} & \texttt{RT-CORE-01} & \texttt{Gi0/2} & \texttt{(10.0.1.1, Gi0/2)} \\
-      \texttt{10.0.1.2} & \texttt{SW-DIST-01} & \texttt{Gi0/1} & \texttt{(10.0.1.2, Gi0/1)} \\
+      \texttt{H-01} & \texttt{Hotel Beira-Mar} & \texttt{101} & \texttt{(H-01, 101)} \\
+      \texttt{H-01} & \texttt{Hotel Beira-Mar} & \texttt{102} & \texttt{(H-01, 102)} \\
+      \texttt{H-02} & \texttt{Pousada do Sol} & \texttt{101} & \texttt{(H-02, 101)} \\
       \bottomrule
     \end{tabular}%
     }
   \end{table}
   \vspace{-0.1cm}
-  {\centering\tiny \textbf{Observação:} \texttt{Gi0/1} repete-se em dispositivos distintos sem colisão de chave primária.\par}
+  {\centering\tiny \textbf{Observação:} O quarto 101 repete-se em hotéis distintos sem qualquer colisão de chave primária.\par}
 \end{frame}
