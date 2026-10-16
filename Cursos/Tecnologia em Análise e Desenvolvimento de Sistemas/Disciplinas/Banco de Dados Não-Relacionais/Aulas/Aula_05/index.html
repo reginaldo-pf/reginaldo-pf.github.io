@@ -118,6 +118,10 @@
         <i class="fa-solid fa-laptop-code"></i>
         <span>Laboratório Web & Teoria</span>
       </button>
+      <button onclick="switchTab('tab-tutorial')" id="btn-tab-tutorial" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-solid fa-code-merge"></i>
+        <span>Tutorial Passo a Passo</span>
+      </button>
       <button onclick="switchTab('tab-slides')" id="btn-tab-slides" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
         <i class="fa-regular fa-file-pdf"></i>
         <span>Slides da Aula (PDF)</span>
@@ -238,6 +242,224 @@ def processar_pedidos():
         executar_pagamento(pedido)
         # NA AULA 06: db.pedidos.insert_one(pedido) salvará no MongoDB!</code></pre>
       </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA: TUTORIAL PASSO A PASSO (FAZENDO E TESTANDO) -->
+    <!-- ========================================== -->
+    <div id="tab-tutorial" class="tab-content hidden space-y-6">
+      
+      <!-- Cabeçalho do Tutorial -->
+      <div class="bg-gradient-to-r from-red-900 to-slate-900 text-white rounded-xl p-6 border border-red-800/50 shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <div class="inline-flex items-center space-x-2 px-2.5 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold mb-2">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <span>Metodologia: Construindo e Testando Resultados</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-black">Guia de Construção Passo a Passo: FastCommerce NoSQL</h2>
+          <p class="text-xs sm:text-sm text-slate-300 mt-1 max-w-2xl">
+            Aprenda a construir o sistema etapa por etapa, compreendendo a necessidade de negócio, o porquê de cada linha de código, o histórico evolutivo de cada refatoração e como testar imediatamente as saídas.
+          </p>
+        </div>
+        <a href="tutorial_construcao_passo_a_passo.md" download="tutorial_construcao_passo_a_passo.md" class="px-4 py-2.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-xs flex items-center space-x-2 shadow-lg shadow-red-600/30 transition-all flex-shrink-0">
+          <i class="fa-solid fa-download"></i>
+          <span>Baixar Guia (.md)</span>
+        </a>
+      </div>
+
+      <!-- Estrutura Didática dos Blocos -->
+      <div class="grid grid-cols-1 sm:grid-cols-5 gap-2 text-xs">
+        <div class="p-3 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-center">
+          <span class="font-bold text-red-600 block mb-0.5">1. Necessidade</span>
+          <span class="text-[11px] text-slate-500">Qual problema de negócio resolvemos?</span>
+        </div>
+        <div class="p-3 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-center">
+          <span class="font-bold text-emerald-600 block mb-0.5">2. Implementação</span>
+          <span class="text-[11px] text-slate-500">Código enxuto e funcional</span>
+        </div>
+        <div class="p-3 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-center">
+          <span class="font-bold text-blue-600 block mb-0.5">3. Por quê da Linha</span>
+          <span class="text-[11px] text-slate-500">Justificativa técnica de cada instrução</span>
+        </div>
+        <div class="p-3 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-center">
+          <span class="font-bold text-amber-600 block mb-0.5">4. Histórico</span>
+          <span class="text-[11px] text-slate-500">O que mudou em relação ao anterior?</span>
+        </div>
+        <div class="p-3 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-center">
+          <span class="font-bold text-purple-600 block mb-0.5">5. Teste & Saída</span>
+          <span class="text-[11px] text-slate-500">Comando prático e saída esperada</span>
+        </div>
+      </div>
+
+      <!-- Etapa 1 -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700/60 shadow-sm space-y-3">
+        <div class="flex items-center space-x-2 text-sm font-bold text-slate-900 dark:text-white">
+          <span class="w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center text-xs">1</span>
+          <span>Etapa 1: Ambiente Mínimo e Teste de Conexão com o Redis</span>
+        </div>
+        <p class="text-xs text-slate-600 dark:text-slate-300">
+          <strong>Necessidade:</strong> Antes de expor APIs web, precisamos garantir conectividade com o socket do Redis em <code class="font-mono text-red-500">localhost:6379</code> com decodificação automática de strings UTF-8.
+        </p>
+        <pre class="text-xs rounded-lg"><code class="language-python">import redis
+
+# Conexão com decode_responses=True para receber strings ao invés de bytes brutos
+r = redis.Redis(host="localhost", port=6379, db=0, decode_responses=True)
+print("Conexão Redis:", r.ping()) # Retorna True se o servidor responder</code></pre>
+        <div class="bg-slate-900 text-emerald-400 p-3 rounded-lg text-xs font-mono">
+          <span class="text-slate-400 block mb-1"># Teste no terminal:</span>
+          $ .venv/bin/python -c "import redis; r=redis.Redis(decode_responses=True); print('PING ->', r.ping())"<br>
+          <span class="text-white font-bold">PING -> True</span>
+        </div>
+      </div>
+
+      <!-- Etapa 2 -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700/60 shadow-sm space-y-3">
+        <div class="flex items-center space-x-2 text-sm font-bold text-slate-900 dark:text-white">
+          <span class="w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center text-xs">2</span>
+          <span>Etapa 2: A Camada Web e a Medição do Gargalo sem Cache (120 ms)</span>
+        </div>
+        <p class="text-xs text-slate-600 dark:text-slate-300">
+          <strong>Necessidade:</strong> Estabelecer a linha de base de lentidão de I/O em disco para poder calcular o <em>Speedup</em> do Redis posteriormente.
+        </p>
+        <pre class="text-xs rounded-lg"><code class="language-python">@app.route("/api/produtos", methods=["GET"])
+def get_produtos_sem_cache():
+    inicio = time.time()
+    time.sleep(0.12) # Simulação proposital de gargalo de disco / SGBD relacional
+    latencia = round((time.time() - inicio) * 1000, 2)
+    return jsonify({"origem": "DISCO / BANCO", "latencia_ms": latencia, "produtos": CATALOGO})</code></pre>
+        <div class="bg-slate-900 text-emerald-400 p-3 rounded-lg text-xs font-mono">
+          <span class="text-slate-400 block mb-1"># Teste de saída com curl:</span>
+          $ curl -s http://localhost:5000/api/produtos | jq '{origem, latencia_ms}'<br>
+          <span class="text-amber-400">{ "origem": "DISCO / BANCO", "latencia_ms": 120.45 }</span>
+        </div>
+      </div>
+
+      <!-- Etapa 3 -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700/60 shadow-sm space-y-3">
+        <div class="flex items-center space-x-2 text-sm font-bold text-slate-900 dark:text-white">
+          <span class="w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center text-xs">3</span>
+          <span>Etapa 3: Gestão de Sessões em Memória com Expiração Deslizante (SETEX / EXPIRE)</span>
+        </div>
+        <p class="text-xs text-slate-600 dark:text-slate-300">
+          <strong>Necessidade:</strong> Sessões em memória de um único processo impedem o balanceamento de carga e sessões em disco são lentas. No Redis, usamos chaves <code class="font-mono text-red-500">session:&lt;uuid&gt;</code> com TTL de 1800 segundos renovado a cada clique (<em>Sliding Expiration</em>).
+        </p>
+        <pre class="text-xs rounded-lg"><code class="language-python">def obter_ou_criar_sessao(req):
+    session_id = req.cookies.get("fastcommerce_session") or str(uuid.uuid4())
+    chave = f"session:{session_id}"
+    if not r.exists(chave):
+        # SETEX atômico: grava e define TTL de 30min sem risco de chaves órfãs na RAM
+        r.setex(chave, 1800, json.dumps({"usuario": "Estudante ADS", "perfil": "Cliente VIP"}))
+    else:
+        # Usuário navegando: renova o TTL para mais 30min
+        r.expire(chave, 1800)
+    return session_id</code></pre>
+        <div class="bg-slate-900 text-emerald-400 p-3 rounded-lg text-xs font-mono">
+          <span class="text-slate-400 block mb-1"># Teste de verificação no redis-cli:</span>
+          $ redis-cli TTL "session:8a31c510-fd11-4f18-b0a3-677a28e9cf94"<br>
+          <span class="text-white font-bold">(integer) 1795</span> <span class="text-slate-400">(tempo decrescendo segundo a segundo)</span>
+        </div>
+      </div>
+
+      <!-- Etapa 4 -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700/60 shadow-sm space-y-3">
+        <div class="flex items-center space-x-2 text-sm font-bold text-slate-900 dark:text-white">
+          <span class="w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center text-xs">4</span>
+          <span>Etapa 4: Catálogo com Padrão Cache-Aside e TTL (Speedup &gt; 250x)</span>
+        </div>
+        <p class="text-xs text-slate-600 dark:text-slate-300">
+          <strong>Necessidade:</strong> Proteger o banco principal de avalanche de requisições de leitura, mantendo consistência eventual através de TTL de 45 segundos e rota de invalidação manual (<code class="font-mono text-red-500">DEL</code>).
+        </p>
+        <pre class="text-xs rounded-lg"><code class="language-python">@app.route("/api/produtos", methods=["GET"])
+def get_produtos_cache_aside():
+    inicio = time.time()
+    chave = "cache:catalogo_produtos"
+    if r.exists(chave): # CACHE HIT
+        produtos = json.loads(r.get(chave))
+        origem = "CACHE_HIT (RAM Redis)"
+    else:               # CACHE MISS
+        time.sleep(0.12)
+        produtos = CATALOGO
+        r.setex(chave, 45, json.dumps(produtos)) # Armazena com TTL de 45s
+        origem = "CACHE_MISS (Disco/SGBD)"
+    latencia = round((time.time() - inicio) * 1000, 2)
+    return jsonify({"origem": origem, "latencia_ms": latencia, "ttl": r.ttl(chave)})</code></pre>
+        <div class="bg-slate-900 text-emerald-400 p-3 rounded-lg text-xs font-mono">
+          <span class="text-slate-400 block mb-1"># Teste de comparação de latência:</span>
+          1ª Requisição (MISS): <span class="text-amber-400">{ "origem": "CACHE_MISS", "latencia_ms": 120.52, "ttl": 45 }</span><br>
+          2ª Requisição (HIT):  <span class="text-emerald-400">{ "origem": "CACHE_HIT",  "latencia_ms": 0.42,   "ttl": 44 }</span><br>
+          <span class="text-cyan-400 font-bold">&gt;&gt; Aceleração comprovada: 286x mais rápido!</span>
+        </div>
+      </div>
+
+      <!-- Etapa 5 -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700/60 shadow-sm space-y-3">
+        <div class="flex items-center space-x-2 text-sm font-bold text-slate-900 dark:text-white">
+          <span class="w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center text-xs">5</span>
+          <span>Etapa 5: Carrinho de Compras Atômico em Hashes (HINCRBY / HDEL)</span>
+        </div>
+        <p class="text-xs text-slate-600 dark:text-slate-300">
+          <strong>Necessidade:</strong> Evitar condições de corrida (<em>Race Conditions</em>) quando o usuário clica rápido ou abre várias abas. Hashes permitem alterar campos individuais de forma atômica na CPU do Redis sem ler ou serializar o objeto inteiro.
+        </p>
+        <pre class="text-xs rounded-lg"><code class="language-python"># Adiciona item ao carrinho atômica e nativamente no Redis
+r.hincrby(f"cart:{session_id}", produto_id, quantidade)
+r.expire(f"cart:{session_id}", 3600) # Carrinho abandonado expira após 1 hora
+
+# Leitura do carrinho completo em O(N) itens
+itens = r.hgetall(f"cart:{session_id}") # Retorna {'prod_1': '2', 'prod_3': '1'}</code></pre>
+        <div class="bg-slate-900 text-emerald-400 p-3 rounded-lg text-xs font-mono">
+          <span class="text-slate-400 block mb-1"># Teste de inspeção no redis-cli:</span>
+          $ redis-cli HGETALL "cart:usr_8a31c510"<br>
+          <span class="text-white">1) "prod_1" &nbsp; 2) "2"<br>3) "prod_3" &nbsp; 4) "1"</span>
+        </div>
+      </div>
+
+      <!-- Etapa 6 & 7 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Etapa 6 -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700/60 shadow-sm space-y-3">
+          <div class="flex items-center space-x-2 text-sm font-bold text-slate-900 dark:text-white">
+            <span class="w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center text-xs">6</span>
+            <span>Etapa 6: Checkout Assíncrono com Fila (LPUSH)</span>
+          </div>
+          <p class="text-xs text-slate-600 dark:text-slate-300">
+            <strong>Necessidade:</strong> Validação bancária e emissão de NFe levam 5+ segundos. Em vez de travar o cliente HTTP, enfileiramos o pedido em 0.3 ms e liberamos o navegador.
+          </p>
+          <pre class="text-xs rounded-lg"><code class="language-python"># Enfileira na lista FIFO do Redis e deleta o carrinho
+r.lpush("fila:pedidos", json.dumps(pedido))
+r.delete(f"cart:{session_id}")
+return jsonify({"status": "ENFILEIRADO", "posicao": r.llen("fila:pedidos")})</code></pre>
+        </div>
+
+        <!-- Etapa 7 -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700/60 shadow-sm space-y-3">
+          <div class="flex items-center space-x-2 text-sm font-bold text-slate-900 dark:text-white">
+            <span class="w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center text-xs">7</span>
+            <span>Etapa 7: Worker com Bloqueio Inteligente (BRPOP)</span>
+          </div>
+          <p class="text-xs text-slate-600 dark:text-slate-300">
+            <strong>Necessidade:</strong> Consumir pedidos sem fritar a CPU em um loop com sleep. <code class="font-mono text-red-500">BRPOP</code> bloqueia o processo com 0% de CPU até que um item chegue.
+          </p>
+          <pre class="text-xs rounded-lg"><code class="language-python">while True:
+    # Bloqueia por até 5s aguardando itens (0% consumo de CPU)
+    item = r.brpop("fila:pedidos", timeout=5)
+    if item:
+        _, pedido_json = item
+        processar_pedido(json.loads(pedido_json))
+        # NA AULA 06: Salvará o documento no MongoDB!</code></pre>
+        </div>
+      </div>
+
+      <!-- Etapa 8 -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700/60 shadow-sm space-y-3">
+        <div class="flex items-center space-x-2 text-sm font-bold text-slate-900 dark:text-white">
+          <span class="w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center text-xs">8</span>
+          <span>Etapa 8: Telemetria de RAM e a Transição para a Persistência no MongoDB (Aula 06)</span>
+        </div>
+        <p class="text-xs text-slate-600 dark:text-slate-300">
+          O comando <code class="font-mono text-red-500">INFO memory</code> nos permite vigiar a finitude da RAM (<code class="font-mono text-emerald-400">used_memory_human</code>). Na <strong>Aula 06</strong>, conectaremos o <strong>MongoDB</strong> como camada persistente definitiva para armazenar os documentos finais de pedidos e um catálogo com esquemas ricos e flexíveis.
+        </p>
+      </div>
+
     </div>
 
     <!-- ========================================== -->
@@ -406,6 +628,42 @@ def processar_pedidos():
               <i class="fa-solid fa-book-open text-amber-500 text-2xl group-hover:scale-110 transition-transform"></i>
               <h3 class="font-bold text-slate-900 dark:text-white text-xs">Jupyter Notebook (.ipynb)</h3>
               <p class="text-[11px] text-slate-500">Caderno interativo pronto para Google Colab ou VS Code.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-red-600 dark:text-red-400 mt-3 inline-flex items-center">
+              Download <i class="fa-solid fa-download ml-1 text-[10px]"></i>
+            </span>
+          </a>
+
+          <!-- Tutorial Markdown Passo a Passo -->
+          <a href="tutorial_construcao_passo_a_passo.md" download="tutorial_construcao_passo_a_passo.md" class="p-4 rounded-xl border border-red-200 dark:border-red-900/50 hover:border-red-500 hover:shadow-md transition-all flex flex-col justify-between group bg-red-50/30 dark:bg-red-950/20">
+            <div class="space-y-2">
+              <i class="fa-solid fa-file-code text-red-600 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Tutorial Passo a Passo (.md)</h3>
+              <p class="text-[11px] text-slate-500">Guia completo "Construindo e Testando" com histórico e saídas.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-red-600 dark:text-red-400 mt-3 inline-flex items-center">
+              Download <i class="fa-solid fa-download ml-1 text-[10px]"></i>
+            </span>
+          </a>
+
+          <!-- Script Iniciar -->
+          <a href="codigo/iniciar.sh" download="iniciar.sh" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-red-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-solid fa-terminal text-purple-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Script Iniciar (iniciar.sh)</h3>
+              <p class="text-[11px] text-slate-500">Checagem de Redis e inicialização do servidor Flask.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-red-600 dark:text-red-400 mt-3 inline-flex items-center">
+              Download <i class="fa-solid fa-download ml-1 text-[10px]"></i>
+            </span>
+          </a>
+
+          <!-- Script Worker -->
+          <a href="codigo/iniciar_worker.sh" download="iniciar_worker.sh" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-red-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-solid fa-play text-cyan-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Script Worker (iniciar_worker.sh)</h3>
+              <p class="text-[11px] text-slate-500">Disparo do consumidor assíncrono de pedidos.</p>
             </div>
             <span class="text-[11px] font-semibold text-red-600 dark:text-red-400 mt-3 inline-flex items-center">
               Download <i class="fa-solid fa-download ml-1 text-[10px]"></i>

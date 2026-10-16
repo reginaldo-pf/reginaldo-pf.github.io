@@ -24,9 +24,12 @@
 
 ## 📁 Estrutura de Arquivos da Aula 05
 
+- [`tutorial_construcao_passo_a_passo.md`](tutorial_construcao_passo_a_passo.md): **Guia Prático Passo a Passo ("Construindo e Testando")** com a explicação detalhada de cada linha de código, testes imediatos de saída e histórico de construção.
 - [`plano_de_aula.md`](plano_de_aula.md): Roteiro pedagógico estruturado em 4 etapas (*Projeto $\to$ Implementação $\to$ Uso $\to$ Síntese*), objetivos detalhados, slides e 5 exercícios de fixação.
 - [`index.html`](index.html): Portal web didático interativo e responsivo com Tailwind CSS, Prism.js, visualizador de slides em PDF e abas integradas.
 - `codigo/`:
+  - [`iniciar.sh`](codigo/iniciar.sh): Script utilitário para checagem do Redis e inicialização automática do Flask na porta 5000.
+  - [`iniciar_worker.sh`](codigo/iniciar_worker.sh): Script utilitário para inicialização do worker assíncrono de pedidos.
   - [`app.py`](codigo/app.py): Aplicação web / API em Python com Flask e `redis-py`, implementando sessões, cache-aside, carrinho em hash e checkout enfileirado.
   - [`worker_pedidos.py`](codigo/worker_pedidos.py): Script de worker em background consumindo pedidos da fila via `BRPOP` e simulando aprovação de pagamento.
   - [`templates/index.html`](codigo/templates/index.html): Interface web moderna e reativa do FastCommerce com monitor de telemetria, vitrine e carrinho drawer.
