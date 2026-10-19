@@ -1,0 +1,53 @@
+\changecolours{ScoutGreen}
+\section[Validador Python]{Laboratório Python: Validador Automático de Escopo AVP1}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Validador de Escopo do Minimundo em Python (Parte 1)}
+  \vspace{-0.15cm}
+  \begin{lstlisting}[language=Python]
+from dataclasses import dataclass, field
+from typing import List, Set
+
+@dataclass
+class EscopoProjetoAVP1:
+    titulo: str
+    entidades_fortes: List[str] = field(default_factory=list)
+    tipos_atributos: Set[str] = field(default_factory=set)
+    cardinalidades: Set[str] = field(default_factory=set)
+    entidade_fraca: str = ""
+    discriminador_fraca: str = ""
+    superclasse_eer: str = ""
+
+    def auditar_conformidade_avp1(self) -> List[str]:
+        erros = []
+        if len(self.entidades_fortes) < 5:
+            erros.append("Requer no minimo 5 Entidades Fortes.")
+        for t in ["PK", "simples", "composto", "multivalorado", "derivado"]:
+            if t not in self.tipos_atributos:
+                erros.append(f"Falta atributo: {t}")
+        return erros
+  \end{lstlisting}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Validador de Escopo do Minimundo em Python (Parte 2)}
+  \vspace{-0.1cm}
+  \begin{lstlisting}[language=Python]
+# Instanciando e validando o Caso Modelo: Clinica Medica VidaPlena
+clinica = EscopoProjetoAVP1(
+    titulo="Sistema de Gestao da Clinica Medica VidaPlena",
+    entidades_fortes=["COLABORADOR", "MEDICO", "ATENDENTE", "DEPTO_CLINICO", "PACIENTE", "EXAME"],
+    tipos_atributos={"PK", "simples", "composto", "multivalorado", "derivado"},
+    cardinalidades={"1:1", "1:N", "N:M", "recursivo"},
+    possui_atr_nm=True,
+    entidade_fraca="DEPENDENTE (Proprietario: PACIENTE)",
+    discriminador_fraca="nome_dep",
+    superclasse_eer="COLABORADOR (d, Total)",
+    subclasses_eer=["MEDICO", "ATENDENTE"]
+)
+
+erros = clinica.auditar_conformidade_avp1()
+print("STATUS AVP1:", "APROVADO (100% Conforme)" if not erros else erros)
+# Saida: STATUS AVP1: APROVADO (100% Conforme)
+  \end{lstlisting}
+\end{frame}

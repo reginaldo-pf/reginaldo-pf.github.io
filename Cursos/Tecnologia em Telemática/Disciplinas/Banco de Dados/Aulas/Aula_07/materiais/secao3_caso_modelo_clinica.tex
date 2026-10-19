@@ -1,0 +1,43 @@
+\changecolours{ScoutGreen}
+\section[Caso Modelo: Clínica]{Caso Modelo Resolvido: Clínica Médica ``VidaPlena''}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Narrativa do Minimundo Modelo: Clínica Médica ``VidaPlena''},leftcol=7.1cm,rightcol=6.9cm]{%
+  \alert{Parte 1: Quadro Clínico e Departamentos}\par
+  \footnotesize
+  ``Todo profissional é registrado como \textbf{Colaborador} (\underline{matricula}, CPF, nome, data de admissão, \textit{tempo\_servico} derivado, \textit{endereco} composto por rua/num/bairro e múltiplos \textit{telefones}).\\
+  \vspace{0.15cm}
+  Todo colaborador é obrigatoriamente e exclusivamente especializado em \textbf{Médico} (\texttt{crm} e múltiplas \textit{especialidades}) ou \textbf{Atendente} (\texttt{ramal} e \texttt{turno}). Médicos seniores (\textit{preceptores}) supervisionam médicos \textit{residentes}.\\
+  \vspace{0.15cm}
+  Cada \textbf{Departamento Clínico} (\underline{cod\_depto}, nome) é dirigido por um médico ($1:1$) e aloca vários médicos ($1:N$).''
+}{%
+  \alert{Parte 2: Pacientes, Dependentes e Exames}\par
+  \footnotesize
+  ``Os \textbf{Pacientes} possuem prontuário único (\underline{id\_prontuario}), CPF, nome, data de nascimento e \textit{idade} (calculada automaticamente).\\
+  \vspace{0.15cm}
+  Um paciente titular pode cadastrar seus \textbf{Dependentes} familiares; cada dependente é identificado pelo seu primeiro nome (\dashuline{nome\_dep}) combinado ao prontuário do titular, além de data de nascimento e parentesco.\\
+  \vspace{0.15cm}
+  Os pacientes realizam diversos \textbf{Exames Laboratoriais} (\underline{cod\_exame}, nome, preparo) em relação $N:M$ que registra a \textit{data\_solicitacao} e o \textit{laudo}.''
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Extração das Entidades Fortes, Atributos e Relacionamentos},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Entidades Fortes e Atributos de Chen}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Entidades Fortes:} \texttt{COLABORADOR}, \texttt{DEPTO\_CLINICO}, \texttt{PACIENTE} e \texttt{EXAME}.
+    \item \textbf{Chaves Primárias:} \underline{matricula}, \underline{cod\_depto}, \underline{id\_prontuario}, \underline{cod\_exame}.
+    \item \textbf{Composto:} \texttt{endereco} $\to$ (\texttt{rua}, \texttt{numero}, \texttt{bairro}).
+    \item \textbf{Multivalorados:} \texttt{telefones} e \texttt{especialidades}.
+    \item \textbf{Derivados:} \texttt{tempo\_servico} e \texttt{idade}.
+  \end{itemize}
+}{%
+  \alert{Matriz de Relacionamentos do Caso Modelo}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Binário $1:1$ (\texttt{DIRIGE}):} \texttt{MEDICO} $(0,1)$ dirige \texttt{DEPTO\_CLINICO} $(1,1)$.
+    \item \textbf{Binário $1:N$ (\texttt{ALOCA}):} \texttt{DEPTO\_CLINICO} $(1,N)$ aloca \texttt{MEDICO} $(1,1)$.
+    \item \textbf{Binário $N:M$ (\texttt{REALIZA\_EXAME}):} \texttt{PACIENTE} e \texttt{EXAME} com atributo descritivo \texttt{data\_solicitacao}.
+    \item \textbf{Unário Recursivo (\texttt{SUPERVISIONA}):} \texttt{MEDICO} (\textit{preceptor}) $1:N$ \texttt{MEDICO} (\textit{residente}).
+  \end{itemize}
+}

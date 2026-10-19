@@ -53,7 +53,7 @@ $$MF = \frac{N1 + N2}{2} \ge 6.0 \implies \text{Aprovação}$$
 | **04** | 10/10/2026 (Sáb) | Sábado Letivo | **Assíncrono (Sem conteúdo novo):** Aplicação e resolução da **Lista de Exercícios 01 (N1)**. | **Lista 01 (N1)** |
 | **05** | 13/10/2026 (Ter) | Presencial | **Unidade III:** Relacionamentos no MER: grau, papéis, restrições de cardinalidade (1:1, 1:N, N:M) e restrições de participação (total/parcial). | Modelagem |
 | **06** | 14/10/2026 (Qua) | Presencial | **Unidade III:** Entidades Fracas, chaves parciais/discriminadores e introdução a herança/especialização no EER. | Modelagem |
-| **07** | 17/10/2026 (Sáb) | Sábado Letivo | **Assíncrono (Sem conteúdo novo):** Estudo dirigido e definição do escopo do **Projeto de Banco de Dados (AVP1)** voltado para Telemática. | Escopo AVP1 |
+| **07** | 17/10/2026 (Sáb) | Sábado Letivo | **Assíncrono (Sem conteúdo novo):** Estudo dirigido e definição do escopo do **Projeto Prático de Banco de Dados (AVP1)** utilizando minimundo didático do cotidiano. | Escopo AVP1 |
 | **08** | 20/10/2026 (Ter) | Presencial | **Unidade III:** Laboratório de Modelagem Conceitual com Ferramentas CASE (brModelo/Draw.io). Construção do DER do projeto. | Laboratório |
 | **09** | 21/10/2026 (Qua) | Presencial | **Unidade II:** Fundamentos Formais do Modelo Relacional: tuplas, atributos, domínios, chaves candidatas/primárias e integridade referencial. | Teórico |
 | **10** | 27/10/2026 (Ter) | Presencial | **Unidade IV:** Mapeamento Lógico Relacional (Parte 1): Regras para entidades regulares, entidades fracas e relacionamentos 1:1 e 1:N. | Prática |

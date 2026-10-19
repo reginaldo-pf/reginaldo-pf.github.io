@@ -1,0 +1,50 @@
+\changecolours{ScoutGreen}
+\section[O Projeto AVP1]{O Projeto Prático (AVP1) e Diretrizes do Escopo}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={A Importância do Projeto Prático (AVP1) no Período N1},leftcol=7.1cm,rightcol=6.9cm]{%
+  \alert{Composição da Nota N1}\par
+  \vspace{0.1cm}
+  {\scriptsize
+  $$N1 = (AVT1 \times 0.40) + (AVP1 \times 0.40) + (\overline{\text{Listas}}_{1..3} \times 0.20)$$
+  }
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Peso Expressivo (40\% da N1):} O Projeto Prático Fase 1 (AVP1) é o coração prático da primeira metade da disciplina.
+    \item \textbf{Objetivo deste Sábado Letivo (Aula 07):} Definir formalmente o \textbf{Escopo do Minimundo} e a especificação conceitual preliminar.
+    \item \textbf{Ponte Direta para a Aula 08:} O documento preenchido hoje será digitalizado na terça-feira (20/10) usando ferramentas CASE (\textit{brModelo} / \textit{Draw.io}).
+  \end{itemize}
+}{%
+  \alert{Diretrizes para Definição do Minimundo}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Delimitação do Problema:} Selecione um sistema de informação de domínio estruturado (ex.: Clínica Médica, Universidade, Biblioteca ou E-Commerce).
+    \item \textbf{Riqueza Semântica:} O cenário deve comportar entidades regulares, entidade fraca, diferentes cardinalidades e especialização/generalização (EER).
+    \item \textbf{Rastreabilidade:} Toda estrutura representada no diagrama deve estar explicitamente descrita no texto das regras de negócio.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Checklist Obrigatório de Construtos no Escopo da AVP1},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{1. Entidades e Atributos (Aula 03)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Mínimo de 5 Entidades Fortes:} Conjuntos de entidades regulares com existência autônoma.
+    \item \textbf{Chaves Primárias (PK):} Identificador único sublinhado em cada entidade forte.
+    \item \textbf{Taxonomia Completa de Chen:}
+      \begin{itemize}\scriptsize
+        \item Ao menos \textbf{1 Atributo Composto} (ramificado);
+        \item Ao menos \textbf{1 Atributo Multivalorado} (elipse dupla);
+        \item Ao menos \textbf{1 Atributo Derivado} (elipse tracejada).
+      \end{itemize}
+  \end{itemize}
+}{%
+  \alert{2. Relacionamentos, Fracas e EER (Aulas 05 e 06)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Três Razões de Cardinalidade:} Relacionamentos binários \textbf{1:1}, \textbf{1:N} e \textbf{N:M com atributo descritivo}.
+    \item \textbf{Auto-relacionamento (Unário):} Relacionamento recursivo com papéis explícitos (\textit{roles}).
+    \item \textbf{Entidade Fraca (Retângulo Duplo):} Vinculada por relacionamento identificador e com \textbf{discriminador} tracejado.
+    \item \textbf{Hierarquia EER (Herança):} Superclasse e $\ge 2$ subclasses com restrições $d/o$ e Total/Parcial.
+  \end{itemize}
+}

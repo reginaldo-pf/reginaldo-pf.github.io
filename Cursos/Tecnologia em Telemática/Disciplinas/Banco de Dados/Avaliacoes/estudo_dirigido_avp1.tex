@@ -1,0 +1,495 @@
+\documentclass[11pt,a4paper]{article}
+
+% Idioma e Codificacao
+\usepackage[brazilian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% Margens e Layout
+\usepackage[top=1.8cm,bottom=2.0cm,left=1.8cm,right=1.8cm]{geometry}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+
+% Tabelas, Sublinhado Tracejado e Matematica
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[normalem]{ulem}
+\usepackage{xcolor}
+\usepackage{graphicx}
+
+% TikZ para Desenho de Diagramas Peter Chen / EER
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit}
+
+% Definicao de Cores Institucionais
+\definecolor{ifcegreen}{RGB}{5, 150, 105}
+\definecolor{ifcedark}{RGB}{28, 69, 50}
+\definecolor{scoutnavy}{RGB}{30, 58, 138}
+\definecolor{boxbg}{RGB}{248, 250, 252}
+\definecolor{amber}{RGB}{217, 119, 6}
+
+% Comando para linhas de escrita manuscrita
+\newcommand{\linhaescrita}{\noindent\textcolor{black!40}{\rule{\linewidth}{0.4pt}}\par\vspace{0.28cm}}
+
+% Configuracao de Cabecalho e Rodape
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\footnotesize\textbf{IFCE Campus Tauá} -- Banco de Dados (2026.2)}
+\rhead{\footnotesize\textbf{Aula 07 (Sábado Letivo)} -- Estudo Dirigido AVP1}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+
+% Estilos TikZ para Notacao Canonica de Peter Chen (1976) e EER
+\tikzset{
+    entidade/.style={
+        draw=ifcedark,
+        fill=ifcegreen!12,
+        thick,
+        rectangle,
+        minimum width=2.5cm,
+        minimum height=0.75cm,
+        font=\bfseries\scriptsize\sffamily,
+        align=center
+    },
+    entidade_fraca/.style={
+        draw=ifcedark,
+        fill=ifcegreen!15,
+        thick,
+        double,
+        double distance=1.4pt,
+        rectangle,
+        minimum width=2.5cm,
+        minimum height=0.75cm,
+        font=\bfseries\scriptsize\sffamily,
+        align=center
+    },
+    relacionamento/.style={
+        draw=scoutnavy,
+        fill=scoutnavy!10,
+        thick,
+        diamond,
+        aspect=1.9,
+        inner sep=1.5pt,
+        font=\bfseries\tiny\sffamily,
+        align=center
+    },
+    rel_identificador/.style={
+        draw=scoutnavy,
+        fill=scoutnavy!15,
+        thick,
+        double,
+        double distance=1.3pt,
+        diamond,
+        aspect=1.9,
+        inner sep=1.5pt,
+        font=\bfseries\tiny\sffamily,
+        align=center
+    },
+    atributo/.style={
+        draw=black!75,
+        fill=white,
+        semithick,
+        ellipse,
+        inner sep=1.5pt,
+        minimum width=1.6cm,
+        minimum height=0.5cm,
+        font=\tiny\sffamily,
+        align=center
+    },
+    identificador/.style={
+        draw=scoutnavy,
+        fill=blue!10,
+        thick,
+        ellipse,
+        inner sep=1.5pt,
+        minimum width=1.7cm,
+        minimum height=0.5cm,
+        font=\tiny\bfseries\sffamily,
+        align=center
+    },
+    discriminador/.style={
+        draw=amber!90!black,
+        fill=amber!12,
+        thick,
+        ellipse,
+        inner sep=1.5pt,
+        minimum width=1.8cm,
+        minimum height=0.5cm,
+        font=\tiny\bfseries\sffamily,
+        align=center
+    },
+    multivalorado/.style={
+        draw=black!80,
+        fill=pink!15,
+        semithick,
+        double,
+        double distance=1.0pt,
+        ellipse,
+        inner sep=1.5pt,
+        minimum width=1.8cm,
+        minimum height=0.52cm,
+        font=\tiny\sffamily,
+        align=center
+    },
+    derivado/.style={
+        draw=black!80,
+        fill=purple!10,
+        dashed,
+        semithick,
+        ellipse,
+        inner sep=1.5pt,
+        minimum width=1.8cm,
+        minimum height=0.5cm,
+        font=\tiny\sffamily,
+        align=center
+    },
+    eer_circle/.style={
+        draw=ifcedark,
+        fill=amber!20,
+        thick,
+        circle,
+        minimum size=0.55cm,
+        inner sep=1pt,
+        font=\bfseries\scriptsize\sffamily
+    },
+    ligacao/.style={
+        draw=black!80,
+        semithick
+    },
+    total/.style={
+        draw=black!85,
+        semithick,
+        double,
+        double distance=1.4pt
+    }
+}
+
+\begin{document}
+
+% ------------------------------------------------------------------------------
+% CABECALHO INSTITUCIONAL
+% ------------------------------------------------------------------------------
+\noindent
+\begin{tabularx}{\textwidth}{@{} l X r @{}}
+\toprule
+\textbf{INSTITUIÇÃO:} & Instituto Federal do Ceará (IFCE) -- Campus Tauá & \textbf{SEMESTRE:} 2026.2 \\
+\textbf{CURSO:} & Tecnologia em Telemática & \textbf{DATA:} 17/10/2026 (Sáb) \\
+\textbf{DISCIPLINA:} & Banco de Dados (Unidade III -- Modelagem Conceitual) & \textbf{PESO AVP1:} 40\% da N1 \\
+\textbf{DOCENTE:} & Prof. Me. Reginaldo Pereira Fernandes & \textbf{VALOR ETAPA 1:} 10,0 pts \\
+\midrule
+\textbf{ALUNO(A):} & \multicolumn{2}{l}{\dotfill \quad \textbf{MATRÍCULA:} \underline{\hspace{3cm}}} \\
+\bottomrule
+\end{tabularx}
+
+\vspace{0.3cm}
+\begin{center}
+    {\Large\bfseries CADERNO DE ESTUDO DIRIGIDO -- PROJETO PRÁTICO (AVP1)}\\[0.12cm]
+    {\normalsize\bfseries Etapa 1: Definição do Escopo do Minimundo, Requisitos de Dados e Esboço MER/EER}
+\end{center}
+
+\vspace{0.1cm}
+\noindent\fcolorbox{ifcedark}{boxbg}{%
+\parbox{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}{%
+\footnotesize
+\textbf{DIRETRIZES DO ESTUDO DIRIGIDO (SÁBADO LETIVO ASSÍNCRONO):}
+\begin{enumerate}[leftmargin=*, itemsep=1pt, topsep=2pt]
+    \item \textbf{Propósito da Atividade:} Este estudo dirigido orienta a concepção do seu \textbf{Projeto Prático de Banco de Dados -- Fase 1 (AVP1)}, que compõe \textbf{40\% da nota da Etapa N1}. O documento aqui produzido será utilizado diretamente na \textbf{Aula 08 (20/10/2026)} durante o laboratório prático de modelagem em ferramentas CASE (\textit{brModelo} / \textit{Draw.io}).
+    \item \textbf{Definição do Domínio do Minimundo:} Selecione um sistema de informação (como Gestão Acadêmica, Biblioteca, Clínica Médica, Rede Hoteleira ou Comércio Eletrônico) a partir do catálogo de opções sugerido neste caderno ou proponha um tema equivalente.
+    \item \textbf{Checklist de Elementos Obrigatórios no Escopo:} O minimundo definido pelo aluno deve conter obrigatoriamente:
+    \textbf{(a)} Mínimo de \textbf{5 Entidades Regulares (Fortes)};
+    \textbf{(b)} Todos os \textbf{5 tipos de atributos de Chen} (identificador/PK, simples, composto, multivalorado e derivado);
+    \textbf{(c)} Relacionamentos binários \textbf{1:1}, \textbf{1:N} e \textbf{N:M} (este último com atributo descritivo próprio);
+    \textbf{(d)} Ao menos \textbf{1 Auto-relacionamento (Unário/Recursivo)} com papéis explícitos;
+    \textbf{(e)} Ao menos \textbf{1 Entidade Fraca} com relacionamento identificador e discriminador (chave parcial);
+    \textbf{(f)} Ao menos \textbf{1 Hierarquia de Especialização/Generalização (EER)} com restrições de disjunção ($d/o$) e integralidade (Total/Parcial).
+\end{enumerate}
+}}
+
+\vspace{0.2cm}
+
+% ==============================================================================
+% PARTE A: ESTUDO DE CASO MODELO RESOLVIDO (CLINICA MEDICA VIDAPLENA)
+% ==============================================================================
+\section*{PARTE A -- Exemplo Modelo Resolvido: Clínica Médica ``VidaPlena''}
+
+Antes de preencher o seu projeto na Parte B, analise atentamente como o texto narrativo de um minimundo é transformado em especificações formais e em um Diagrama Entidade-Relacionamento Estendido (EER) completo.
+
+\subsection*{A.1. Narrativa do Minimundo Modelo (Requisitos de Dados)}
+\noindent\fcolorbox{black!30}{white}{%
+\parbox{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}{%
+\footnotesize
+``A \textbf{Clínica Médica VidaPlena} deseja informatizar o controle de seu quadro clínico, departamentos, pacientes e prescrições de exames. Todo profissional contratado é registrado como \textbf{Colaborador}, possuindo matrícula única (\underline{matricula}), CPF, nome completo, data de admissão, \textit{tempo de serviço} (calculado a partir da data de admissão), \textit{endereço residencial} (composto por rua, número e bairro) e múltiplos \textit{telefones} de contato. Todo colaborador é obrigatoriamente e exclusivamente especializado em uma de duas funções: \textbf{Médico} (registrando o número do CRM e uma ou mais \textit{especialidades}) ou \textbf{Atendente} (registrando o ramal e o turno). Médicos seniores atuam como \textit{preceptores} que supervisionam vários médicos \textit{residentes}.\\
+A clínica possui diversos \textbf{Departamentos Clínicos} (\underline{cod\_depto}, nome\_depto e bloco). Cada departamento é chefiado por um único médico diretor $(1:1)$, e cada departamento aloca vários médicos $(1:N)$.\\
+Os \textbf{Pacientes} possuem código de prontuário único (\underline{id\_prontuario}), CPF, nome, data de nascimento e \textit{idade} (calculada). Um paciente titular pode cadastrar seus \textbf{Dependentes} familiares; cada dependente não possui código próprio global, sendo identificado pelo seu primeiro nome (\dashuline{nome\_dep}) em conjunto com o prontuário do titular, além de possuir data de nascimento e parentesco. Por fim, os pacientes realizam diversos \textbf{Exames Laboratoriais} (\underline{cod\_exame}, nome\_exame e preparo) em um relacionamento $N:M$ que registra a \textit{data\_solicitacao} e o \textit{resultado\_laudo}.''
+}}
+
+\newpage
+
+\subsection*{A.2. Quadro Resumo de Extração Conceitual do Caso Modelo}
+
+\noindent
+{\scriptsize
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\textwidth}{@{} l p{4.8cm} >{\raggedright\arraybackslash}X @{}}
+\toprule
+\textbf{Construto MER/EER} & \textbf{Elemento no Caso Modelo} & \textbf{Especificação Técnica e Restrições Semânticas} \\
+\midrule
+\textbf{Entidades Fortes (4)} & \texttt{COLABORADOR}, \texttt{DEPTO\_CLINICO}, \texttt{PACIENTE}, \texttt{EXAME} & Chaves primárias sublinhadas: \underline{matricula}, \underline{cod\_depto}, \underline{id\_prontuario} e \underline{cod\_exame}. \\
+\textbf{Taxonomia Atributos} & Composto, Multivalorado, Derivado & Composto: \texttt{endereco} (\texttt{rua}, \texttt{num}, \texttt{bairro}); Multivalorado: \texttt{telefones}, \texttt{especialidades}; Derivado: \texttt{tempo\_servico}, \texttt{idade}. \\
+\textbf{Hierarquia EER (2)} & \texttt{COLABORADOR} $\to$ \texttt{MEDICO}, \texttt{ATENDENTE} & Especialização \textbf{Disjunta ($d$)} e \textbf{Total (Linha Dupla)}. Subclasses herdam \underline{matricula} e demais atributos de \texttt{COLABORADOR}. \\
+\textbf{Entidade Fraca (1)} & \texttt{DEPENDENTE} (Proprietário: \texttt{PACIENTE}) & Relacionamento identificador \texttt{POSSUI\_DEP} ($1:N$, participação total). Discriminador: \dashuline{nome\_dep}. PK global: $(\text{id\_prontuario}, \text{nome\_dep})$. \\
+\textbf{Relacionamentos (4)} & \texttt{DIRIGE} ($1:1$), \texttt{ALOCA} ($1:N$), \texttt{SUPERVISIONA} ($1:N$), \texttt{REALIZA\_EXAME} ($N:M$) & Auto-relacionamento \texttt{SUPERVISIONA} com papéis \textit{preceptor}/\textit{residente}. \texttt{REALIZA\_EXAME} ($N:M$) com atributo descritivo \texttt{data\_solicitacao}. \\
+\bottomrule
+\end{tabularx}
+}
+
+\vspace{0.25cm}
+\subsection*{A.3. Diagrama EER Completo do Caso Modelo}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.82, transform shape]
+    % --- SUPERCLASSE COLABORADOR ---
+    \node[entidade] (colab) at (0, 3.8) {COLABORADOR};
+    \node[identificador] (pk_colab) at (-3.1, 4.7) {\underline{matricula}};
+    \node[atributo] (nome_colab) at (-3.1, 3.8) {nome};
+    \node[derivado] (tempo_colab) at (-3.1, 2.9) {tempo\_serv};
+    \node[multivalorado] (tel_colab) at (0, 5.1) {telefones};
+    \node[atributo] (end_colab) at (3.0, 4.8) {endereco};
+    \node[atributo, minimum width=1.2cm] (rua) at (5.2, 5.3) {rua};
+    \node[atributo, minimum width=1.2cm] (bairro) at (5.2, 4.4) {bairro};
+
+    \draw[ligacao] (colab) -- (pk_colab);
+    \draw[ligacao] (colab) -- (nome_colab);
+    \draw[ligacao, dashed] (colab) -- (tempo_colab);
+    \draw[ligacao] (colab) -- (tel_colab);
+    \draw[ligacao] (colab) -- (end_colab);
+    \draw[ligacao] (end_colab) -- (rua);
+    \draw[ligacao] (end_colab) -- (bairro);
+
+    % --- ESPECIALIZACAO EER (d, Total) ---
+    \node[eer_circle] (eer_d) at (0, 2.3) {d};
+    \draw[total] (colab) -- (eer_d);
+
+    \node[entidade] (atend) at (-3.2, 1.0) {ATENDENTE};
+    \node[atributo] (ramal) at (-5.6, 1.0) {ramal};
+    \draw[ligacao] (atend) -- (ramal);
+
+    \node[entidade] (medico) at (2.8, 1.0) {MEDICO};
+    \node[atributo] (crm) at (2.8, 2.3) {crm};
+    \node[multivalorado] (espec) at (5.5, 2.2) {especialidades};
+    \draw[ligacao] (medico) -- (crm);
+    \draw[ligacao] (medico) -- (espec);
+
+    % Arcos U da especializacao EER
+    \draw[ligacao] (eer_d) -- node[above left, font=\tiny\bfseries] {$\cup$} (atend);
+    \draw[ligacao] (eer_d) -- node[above right, font=\tiny\bfseries] {$\cup$} (medico);
+
+    % --- AUTO-RELACIONAMENTO SUPERVISIONA (MEDICO) ---
+    \node[relacionamento] (superv) at (6.8, 1.0) {SUPERVISIONA};
+    \draw[ligacao] (medico.east) to[bend left=18] node[above, font=\tiny] {preceptor (1)} (superv.west);
+    \draw[ligacao] (medico.south east) to[bend right=18] node[below, font=\tiny] {residente (N)} (superv.south west);
+
+    % --- DEPARTAMENTO CLINICO E RELACIONAMENTOS 1:1 / 1:N ---
+    \node[entidade] (depto) at (-3.2, -1.6) {DEPTO\_CLINICO};
+    \node[identificador] (pk_depto) at (-6.0, -1.2) {\underline{cod\_depto}};
+    \node[atributo] (nome_depto) at (-6.0, -2.0) {nome\_depto};
+    \draw[ligacao] (depto) -- (pk_depto);
+    \draw[ligacao] (depto) -- (nome_depto);
+
+    \node[relacionamento] (dirige) at (-0.2, -0.3) {DIRIGE};
+    \node[relacionamento] (aloca) at (-0.2, -1.6) {ALOCA};
+
+    \draw[ligacao] (medico.west) -- node[above, font=\tiny\bfseries] {1} (dirige.east);
+    \draw[total] (dirige.west) -- node[above left, font=\tiny\bfseries] {1} (depto.north east);
+
+    \draw[total] (medico.south west) -- node[above, font=\tiny\bfseries] {N} (aloca.east);
+    \draw[total] (aloca.west) -- node[above, font=\tiny\bfseries] {1} (depto.east);
+
+    % --- PACIENTE, ENTIDADE FRACA DEPENDENTE E EXAME (N:M) ---
+    \node[entidade] (paciente) at (2.8, -3.5) {PACIENTE};
+    \node[identificador] (pk_pac) at (0.2, -3.1) {\underline{id\_prontuario}};
+    \node[derivado] (idade_pac) at (0.2, -3.9) {idade};
+    \draw[ligacao] (paciente) -- (pk_pac);
+    \draw[ligacao, dashed] (paciente) -- (idade_pac);
+
+    % Entidade Fraca DEPENDENTE
+    \node[rel_identificador] (possui_dep) at (6.2, -3.5) {POSSUI\_DEP};
+    \node[entidade_fraca] (dep) at (9.6, -3.5) {DEPENDENTE};
+    \node[discriminador] (disc_dep) at (9.6, -2.2) {\dashuline{nome\_dep}};
+    \node[atributo] (parentesco) at (9.6, -4.7) {parentesco};
+
+    \draw[ligacao] (paciente.east) -- node[above, font=\tiny\bfseries] {1} (possui_dep.west);
+    \draw[total] (possui_dep.east) -- node[above, font=\tiny\bfseries] {N} (dep.west);
+    \draw[ligacao] (dep) -- (disc_dep);
+    \draw[ligacao] (dep) -- (parentesco);
+
+    % Exame Laboratorial e N:M
+    \node[relacionamento] (realiza_ex) at (2.8, -5.3) {REALIZA\_EXAME};
+    \node[atributo] (dt_solic) at (5.6, -5.3) {data\_solicitacao};
+    \node[entidade] (exame) at (-1.5, -5.3) {EXAME};
+    \node[identificador] (pk_ex) at (-4.5, -4.9) {\underline{cod\_exame}};
+    \node[atributo] (nome_ex) at (-4.5, -5.7) {nome\_exame};
+
+    \draw[ligacao] (paciente.south) -- node[right, font=\tiny\bfseries] {N} (realiza_ex.north);
+    \draw[ligacao] (realiza_ex.west) -- node[above, font=\tiny\bfseries] {M} (exame.east);
+    \draw[ligacao] (realiza_ex.east) -- (dt_solic.west);
+    \draw[ligacao] (exame) -- (pk_ex);
+    \draw[ligacao] (exame) -- (nome_ex);
+\end{tikzpicture}
+\end{center}
+
+\newpage
+
+% ==============================================================================
+% CATALOGO DE OPCOES DE MINIMUNDO PARA O ALUNO
+% ==============================================================================
+\section*{Catálogo de Opções de Minimundos Sugeridos}
+
+Escolha \textbf{uma (1)} das opções abaixo (ou proponha outro tema equivalente, como Rede Hoteleira, Locadora de Veículos ou Clínica Veterinária) para desenvolver as 5 Etapas da Parte B:
+
+\begin{itemize}[leftmargin=*, itemsep=2pt, topsep=2pt]
+    \item \textbf{Opção A -- Sistema de Gestão Acadêmica Universitária (``SGA-Universidade''):}
+    Gerencia Servidores (especializados em \texttt{PROFESSOR} e \texttt{TECNICO\_ADM}), Departamentos Acadêmicos, Cursos de Graduação, Disciplinas (com auto-relacionamento de pré-requisito), Alunos, Matrículas em Disciplinas ($N:M$ com \texttt{semestre}, \texttt{nota\_final} e \texttt{frequencia}) e \texttt{ETAPA\_AVALIATIVA} ou \texttt{DEPENDENTE\_SERVIDOR} como Entidade Fraca.
+    \item \textbf{Opção B -- Sistema de Gestão de Biblioteca e Acervo (``BiblioTech''):}
+    Gerencia Usuários Leitores (especializados em \texttt{LEITOR\_ALUNO} e \texttt{LEITOR\_PROFESSOR}), Obras Literárias (\underline{isbn}, título, ano), Editoras ($1:N$), Autores ($N:M$ com \texttt{ordem\_autoria}), Funcionários (com auto-relacionamento de supervisão e gerência de setor $1:1$) e \texttt{EXEMPLAR\_FISICO} como Entidade Fraca (identificada pelo \dashuline{num\_exemplar} dentro de cada Obra).
+    \item \textbf{Opção C -- Sistema Comercial de E-Commerce e Pedidos (``MercadoFácil''):}
+    Gerencia Clientes (especializados em \texttt{PESSOA\_FISICA} e \texttt{PESSOA\_JURIDICA}), Produtos, Categorias (com auto-relacionamento de subcategoria), Fornecedores ($N:M$ com \texttt{preco\_custo} e \texttt{prazo\_entrega}), Vendedores, Pedidos de Compra ($1:N$) e \texttt{ITEM\_PEDIDO} ou \texttt{PARCELA\_PAGAMENTO} como Entidade Fraca (identificada pelo \dashuline{numero\_sequencial} dentro de cada Pedido).
+\end{itemize}
+
+\vspace{0.15cm}
+\hrule
+\vspace{0.2cm}
+
+% ==============================================================================
+% PARTE B: FORMULARIO OFICIAL DE ESPECIFICACAO DO PROJETO (AVP1 - ETAPA 1)
+% ==============================================================================
+\section*{PARTE B -- Especificação do Escopo do Aluno (Entregável AVP1 -- 10,0 pts)}
+
+\subsection*{Etapa 1 (Valor: 2,0 pontos) -- Identificação do Tema e Narrativa do Minimundo}
+\textbf{a) Título e Domínio do Sistema Escolhido:} \\[0.2cm]
+\linhaescrita
+
+\vspace{0.05cm}
+\noindent\textbf{b) Descrição Narrativa Completa das Regras de Negócio do Minimundo (15 a 20 linhas):} \\
+{\footnotesize\textit{(Redija um texto contínuo descrevendo todas as entidades, seus atributos, como elas se relacionam, quem depende de quem e qual é a hierarquia de especialização/herança do seu sistema.)}}
+
+\vspace{0.1cm}
+\noindent\fbox{\parbox{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}{%
+\vspace{0.2cm}
+\linhaescrita
+\linhaescrita
+\linhaescrita
+\linhaescrita
+\linhaescrita
+\linhaescrita
+\linhaescrita
+\linhaescrita
+\linhaescrita
+\linhaescrita
+\noindent\textcolor{black!40}{\rule{\linewidth}{0.4pt}}\par\vspace{0.12cm}
+}}
+
+\newpage
+
+\subsection*{Etapa 2 (Valor: 2,0 pontos) -- Catálogo de Entidades Fortes e Taxonomia de Atributos}
+
+\textbf{a) Liste pelo menos 5 Conjuntos de Entidades Regulares (Fortes) do seu Minimundo:}
+
+\vspace{0.15cm}
+\noindent
+{\renewcommand{\arraystretch}{1.85}
+\begin{tabularx}{\textwidth}{|c|p{3.8cm}|p{3.2cm}|X|}
+\hline
+\textbf{Nº} & \textbf{Nome da Entidade Forte} & \textbf{Atributo Identificador (PK)} & \textbf{Demais Atributos Próprios da Entidade} \\
+\hline
+1 & & & \\
+\hline
+2 & & & \\
+\hline
+3 & & & \\
+\hline
+4 & & & \\
+\hline
+5 & & & \\
+\hline
+6 & & & \\
+\hline
+\end{tabularx}}
+
+\vspace{0.3cm}
+\noindent\textbf{b) Destaque Explicitamente os Atributos Especiais de Peter Chen presentes no seu Projeto:}
+\begin{enumerate}[label=\textbf{\arabic*.}, itemsep=4pt]
+    \item \textbf{Atributo Composto} (Nome, Entidade a que pertence e seus Subatributos componentes):\\[0.2cm]
+    \linhaescrita
+    \item \textbf{Atributo Multivalorado} (Nome, Entidade a que pertence e justificativa de multiplicidade):\\[0.2cm]
+    \linhaescrita
+    \item \textbf{Atributo Derivado} (Nome, Entidade a que pertence e fórmula/regra de cálculo):\\[0.2cm]
+    \linhaescrita
+\end{enumerate}
+
+\vspace{0.2cm}
+\subsection*{Etapa 3 (Valor: 2,0 pontos) -- Matriz de Relacionamentos, Cardinalidades e Participações}
+
+Especifique abaixo os relacionamentos do seu minimundo, contemplando obrigatoriamente \textbf{1:1}, \textbf{1:N}, \textbf{N:M com atributo descritivo} e \textbf{Auto-relacionamento (Unário) com papéis}:
+
+\vspace{0.15cm}
+\noindent
+{\renewcommand{\arraystretch}{1.9}
+\begin{tabularx}{\textwidth}{|p{2.7cm}|p{2.7cm}|p{3.4cm}|c|p{2.4cm}|>{\raggedright\arraybackslash}X|}
+\hline
+\textbf{Tipo Exigido} & \textbf{Verbo / Nome} & \textbf{Entidades (e Papéis)} & \textbf{Card.} & \textbf{Participação $(min,max)$} & \textbf{Atributos do Relacionamento} \\
+\hline
+\textbf{Binário $1:1$} & & & $1:1$ & & \\
+\hline
+\textbf{Binário $1:N$} & & & $1:N$ & & \\
+\hline
+\textbf{Binário $N:M$} & & & $N:M$ & & \\
+\hline
+\textbf{Unário (Recursivo)} & & & & & \\
+\hline
+\textbf{Extra (Opcional)} & & & & & \\
+\hline
+\end{tabularx}}
+
+\newpage
+
+\subsection*{Etapa 4 (Valor: 2,0 pontos) -- Especificação de Entidade Fraca e Hierarquia EER}
+
+\textbf{4.a) Especificação da Entidade Fraca e Relacionamento Identificador (1,0 ponto):}
+\begin{itemize}[leftmargin=*, itemsep=4pt, topsep=3pt]
+    \item \textbf{Entidade Proprietária (\textit{Owner Entity}) e sua PK:} \dotfill
+    \item \textbf{Nome da Entidade Fraca (Retângulo Duplo):} \dotfill
+    \item \textbf{Nome do Relacionamento Identificador (Losango Duplo):} \dotfill
+    \item \textbf{Atributo Discriminador / Chave Parcial (Sublinhado Tracejado):} \dotfill
+    \item \textbf{Chave Composta Global Formada e Justificativa da Dependência:} \\[0.2cm]
+    \linhaescrita
+\end{itemize}
+
+\vspace{0.1cm}
+\noindent\textbf{4.b) Especificação da Hierarquia de Especialização/Generalização no EER (1,0 ponto):}
+\begin{itemize}[leftmargin=*, itemsep=4pt, topsep=3pt]
+    \item \textbf{Superclasse (Entidade Genérica) e Atributos Universais Herdados:} \dotfill
+    \item \textbf{Subclasse 1 e seus Atributos/Relacionamentos Específicos:} \dotfill
+    \item \textbf{Subclasse 2 e seus Atributos/Relacionamentos Específicos:} \dotfill
+    \item \textbf{Restrição de Disjunção:} $(\quad)$ \textbf{Disjunta ($d$)} \quad ou \quad $(\quad)$ \textbf{Sobreposta ($o$)} --- \textbf{Justificativa:} \dotfill
+    \item \textbf{Restrição de Integralidade:} $(\quad)$ \textbf{Total (Dupla)} \quad ou \quad $(\quad)$ \textbf{Parcial (Simples)} --- \textbf{Justificativa:} \dotfill
+\end{itemize}
+
+\vspace{0.15cm}
+\subsection*{Etapa 5 (Valor: 2,0 pontos) -- Esboço do Diagrama Conceitual Integrado (DER/EER Peter Chen)}
+{\footnotesize\textit{(Desenhe abaixo, utilizando régua/gabarito e a notação canônica de Peter Chen, o DER/EER completo integrando as Etapas 2, 3 e 4.)}}
+
+\vspace{0.15cm}
+\noindent\fbox{\parbox[t][11.4cm][t]{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}{%
+\vspace{0.15cm}
+\centering\tiny\color{black!45}
+[ ESPAÇO PARA DESENHO DO DIAGRAMA ENTIDADE-RELACIONAMENTO ESTENDIDO (PETER CHEN / EER) ]\\
+Lembrete: Retângulo Simples (Entidade Forte) $\bullet$ Retângulo Duplo (Entidade Fraca) $\bullet$ Losango Simples/Duplo (Relacionamento) $\bullet$ Círculo c/ $d$ ou $o$ e $\cup$ (EER) $\bullet$ Elipses (PK Sublinhada, Discriminador Tracejado, Composto Ramificado, Multivalorado Duplo, Derivado Tracejado).
+}}
+
+\end{document}

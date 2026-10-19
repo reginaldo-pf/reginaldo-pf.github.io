@@ -1,0 +1,51 @@
+\changecolours{ScoutGreen}
+\section[As 5 Etapas e Barema]{Roteiro das 5 Etapas do Caderno e Barema Oficial}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Guia de Preenchimento do Caderno Oficial (Etapas 1 a 5)},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Etapas Textuais e Tabulares (6,0 pts)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1.2mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Etapa 1 (2,0 pts) -- Narrativa do Minimundo:}
+      Título do projeto e texto corrido (15 a 20 linhas) detalhando todas as regras de negócio.
+    \item \textbf{Etapa 2 (2,0 pts) -- Entidades e Atributos:}
+      Tabela com $\ge 5$ entidades fortes (e PKs) + destaque do atributo composto, multivalorado e derivado.
+    \item \textbf{Etapa 3 (2,0 pts) -- Matriz de Relacionamentos:}
+      Especificação formal de $1:1$, $1:N$, $N:M$ (com atributo) e Unário/Recursivo (com papéis e $(min,max)$).
+  \end{itemize}
+}{%
+  \alert{Etapas Avançadas e Diagrama (4,0 pts)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1.2mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Etapa 4.a (1,0 pt) -- Entidade Fraca:}
+      Proprietário, Entidade Fraca, Relacionamento Identificador e Chave Parcial (\dashuline{discriminador}).
+    \item \textbf{Etapa 4.b (1,0 pt) -- Hierarquia EER:}
+      Superclasse, Subclasses, atributos herdados/específicos, Disjunção ($d/o$) e Integralidade.
+    \item \textbf{Etapa 5 (2,0 pts) -- Esboço DER/EER:}
+      Desenho integrado na notação canônica de Peter Chen (base para a Aula 08).
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Barema Oficial de Avaliação da Etapa 1 da AVP1 (10,0 Pontos)}
+  \vspace{0.1cm}
+  \begin{table}[h]
+    \centering
+    \renewcommand{\arraystretch}{1.35}
+    \resizebox{\linewidth}{!}{%
+    \begin{tabular}{c l l c}
+      \toprule
+      \textbf{Etapa} & \textbf{Componente Avaliado} & \textbf{Critério Técnico de Conformidade} & \textbf{Pontuação} \\
+      \midrule
+      \textbf{1} & Narrativa do Minimundo & Clareza, coesão textual e cobertura das regras de negócio & \textbf{2,0 pts} \\
+      \textbf{2} & Entidades Fortes \& Atributos & $\ge 5$ entidades fortes + PK, composto, multivalorado e derivado & \textbf{2,0 pts} \\
+      \textbf{3} & Matriz de Relacionamentos & Presença correta de $1:1$, $1:N$, $N:M$ c/ atributo e recursivo & \textbf{2,0 pts} \\
+      \textbf{4} & Entidade Fraca \& Modelo EER & Discriminador fraco correto e restrições EER ($d/o$, Total/Parcial) & \textbf{2,0 pts} \\
+      \textbf{5} & Esboço Integrado DER/EER & Rigor na gramática gráfica canônica de Peter Chen (1976) & \textbf{2,0 pts} \\
+      \midrule
+      \textbf{Total} & \textbf{Escopo AVP1 (Etapa 1)} & \textbf{Insumo Oficial para o Laboratório CASE da Aula 08} & \textbf{10,0 pts} \\
+      \bottomrule
+    \end{tabular}%
+    }
+  \end{table}
+\end{frame}

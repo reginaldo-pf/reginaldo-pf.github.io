@@ -1,0 +1,47 @@
+\changecolours{ScoutGreen}
+\section[Catálogo de Temas]{Catálogo de Minimundos Sugeridos}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Opções A e B: Gestão Acadêmica ou Sistema de Biblioteca},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Opção A: Gestão Acadêmica Universitária}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Hierarquia EER:} \texttt{SERVIDOR} $\to$ \texttt{PROFESSOR} e \texttt{TECNICO\_ADM} (Disjunta, Total).
+    \item \textbf{Entidades Fortes:} \texttt{DEPARTAMENTO}, \texttt{CURSO}, \texttt{DISCIPLINA}, \texttt{ALUNO}.
+    \item \textbf{Entidade Fraca:} \texttt{ETAPA\_AVALIATIVA} (discriminador \dashuline{num\_etapa} por disciplina) ou \texttt{DEPENDENTE}.
+    \item \textbf{Relacionamentos:} \texttt{COORDENA} ($1:1$), \texttt{OFERTA} ($1:N$), \texttt{MATRICULA} ($N:M$ com \texttt{nota\_final}), \texttt{PRE\_REQUISITO} (Recursivo em \texttt{DISCIPLINA}).
+  \end{itemize}
+}{%
+  \alert{Opção B: Gestão de Biblioteca e Acervo}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Hierarquia EER:} \texttt{USUARIO\_LEITOR} $\to$ \texttt{LEITOR\_ALUNO} e \texttt{LEITOR\_PROFESSOR}.
+    \item \textbf{Entidades Fortes:} \texttt{OBRA\_LIVRO} (\underline{isbn}), \texttt{EDITORA}, \texttt{AUTOR}, \texttt{FUNCIONARIO}.
+    \item \textbf{Entidade Fraca:} \texttt{EXEMPLAR\_FISICO} (discriminador \dashuline{num\_exemplar} dentro da \texttt{OBRA\_LIVRO}).
+    \item \textbf{Relacionamentos:} \texttt{CHEFIA\_SETOR} ($1:1$), \texttt{PUBLICA} ($1:N$), \texttt{ESCREVE} ($N:M$ com \texttt{ordem\_autoria}), \texttt{SUPERVISIONA} (Recursivo).
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Opção C e Proposta de Tema Equivalente},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Opção C: E-Commerce e Pedidos (``MercadoFácil'')}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Hierarquia EER:} \texttt{CLIENTE} $\to$ \texttt{PESSOA\_FISICA} (\texttt{cpf}) e \texttt{PESSOA\_JURIDICA} (\texttt{cnpj}).
+    \item \textbf{Entidades Fortes:} \texttt{PRODUTO}, \texttt{CATEGORIA}, \texttt{FORNECEDOR}, \texttt{VENDEDOR}, \texttt{PEDIDO}.
+    \item \textbf{Entidade Fraca:} \texttt{ITEM\_PEDIDO} (ou \texttt{PARCELA}, discriminador \dashuline{num\_item} no \texttt{PEDIDO}).
+    \item \textbf{Relacionamentos:} \texttt{GERENCIA\_FILIAL} ($1:1$), \texttt{REALIZA} ($1:N$), \texttt{FORNECE} ($N:M$ com \texttt{preco\_custo}), \texttt{SUBCATEGORIA\_DE} (Recursivo).
+  \end{itemize}
+}{%
+  \alert{Proposta de Outro Tema Equivalente}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Outros domínios sugeridos para desenvolvimento:
+      \begin{itemize}\scriptsize
+        \item \textbf{Rede Hoteleira e Reservas} (\texttt{HOTEL} $\to$ \texttt{QUARTO} fraco);
+        \item \textbf{Locadora de Veículos e Frotas} (\texttt{VEICULO} $\to$ \texttt{CARRO}/\texttt{CAMINHAO});
+        \item \textbf{Clínica Veterinária e PetShop} (\texttt{TUTOR} $\to$ \texttt{ANIMAL\_PET}).
+      \end{itemize}
+    \item \textbf{Requisito Obrigatório:} Contemplar integralmente os 6 itens estruturais do checklist da avaliação.
+  \end{itemize}
+}

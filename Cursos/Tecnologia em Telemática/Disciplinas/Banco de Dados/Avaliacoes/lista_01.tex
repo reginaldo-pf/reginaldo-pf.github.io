@@ -181,10 +181,9 @@
 \vspace{0.4cm}
 \noindent\textbf{INSTRUÇÕES GERAIS:}
 \begin{itemize}[leftmargin=*,itemsep=1pt]
-  \item Esta avaliação é estritamente conceitual e arquitetural. \textbf{Não é necessária a utilização de sintaxe ou comandos SQL}, cujo estudo prático ocorrerá a partir do período N2.
   \item A lista é composta por \textbf{8 questões analíticas e de modelagem}.
-  \item \textbf{Forma de Entrega:} Resolução entregue obrigatoriamente \textbf{por escrito (manuscrita)}, preenchida a caneta azul ou preta no caderno de questões impresso ou em folhas anexas devidamente identificadas.
-  \item \textbf{Data Improrrogável de Entrega:} \textbf{12 de Outubro de 2026} (Segunda-feira).
+  \item \textbf{Forma de Entrega:} Resolução entregue obrigatoriamente \textbf{por escrito (manuscrita)}, preenchida a caneta azul ou preta e enviadas por fotografia ao classroom.
+  \item \textbf{Data de Entrega:} \textbf{12 de Outubro de 2026} (Segunda-feira).
   \item Os diagramas conceituais devem adotar a \textbf{notação canônica de Peter Chen (1976)}, desenhados com régua/gabarito para assegurar precisão geométrica (retângulos, elipses sólidas, chaves sublinhadas, ramificações, duplas concêntricas e tracejadas).
 \end{itemize}
 
@@ -247,7 +246,7 @@ A arquitetura em três níveis do padrão ANSI/SPARC constitui o alicerce fundam
   \draw[dashed, semithick, color=amber!80!black] (cat.south west) -- (intern.north east);
 \end{tikzpicture}
 \end{center}
-\centerline{\footnotesize\textbf{Figura 1:} Diagrama de referência da Arquitetura ANSI/SPARC de 3 Níveis em TikZ.}
+\centerline{\footnotesize\textbf{Figura 1:} Diagrama de referência da Arquitetura ANSI/SPARC de 3 Níveis.}
 
 \vspace{0.4cm}
 \hrule
@@ -355,7 +354,7 @@ No Modelo Entidade-Relacionamento (MER) estabelecido por Peter Chen (1976):
   \draw[ligacao_derivada] (serv) -- (custo);
 \end{tikzpicture}
 \end{center}
-\centerline{\footnotesize\textbf{Figura 2:} Modelo canônico em TikZ do DER de \texttt{SERVIDOR\_VIRTUALIZADO} segundo Peter Chen (1976).}
+\centerline{\footnotesize\textbf{Figura 2:} Modelo canônico do DER de \texttt{SERVIDOR\_VIRTUALIZADO} segundo Peter Chen (1976).}
 
 \newpage
 
@@ -377,7 +376,7 @@ Leia atentamente a especificação de requisitos da infraestrutura óptica regio
 \vspace{0.4cm}
 \noindent\textbf{Questão 8 (Valor: 1,0 ponto) -- [DIAGRAMA \& ANÁLISE] Decomposição de Planilha e Comparação Notacional}\\[0.1cm]
 Um estagiário de redes armazenava o inventário de roteadores de clientes em uma planilha eletrônica com o seguinte cabeçalho consolidado:\\
-\centerline{\texttt{[Roteador\_ID | Fabricante | Modelo | Localizacao(Predio-Sala-Andar) | DNS(8.8.8.8, 1.1.1.1) | Data\_Compra | Anos\_Uso]}}
+\texttt{[Roteador\_ID | Fabricante | Modelo | Localizacao(Predio-Sala-Andar) | DNS(8.8.8.8, 1.1.1.1) | Data\_Compra | Anos\_Uso]}
 \begin{enumerate}[label=\alph*),itemsep=1pt]
   \item Explique por que a presença de atributos não-atômicos na mesma coluna fere os princípios de qualidade de projeto de dados e dificulta a manutenção do banco de dados;
   \item \textbf{Desenhe o Diagrama Entidade-Relacionamento (DER) de Peter Chen correspondente} para a entidade \texttt{ROTEADOR\_CLIENTE}, demonstrando como atributos compostos e multivalorados acomodam conceitualmente essas informações com rigor semântico;

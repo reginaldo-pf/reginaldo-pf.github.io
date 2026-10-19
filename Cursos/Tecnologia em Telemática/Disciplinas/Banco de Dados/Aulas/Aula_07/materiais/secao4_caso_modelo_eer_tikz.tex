@@ -1,0 +1,106 @@
+\changecolours{ScoutGreen}
+\section[Diagrama EER Modelo]{Entidade Fraca, Herança EER e Diagrama Completo}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Entidade Fraca e Especialização EER na Clínica ``VidaPlena''},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Entidade Fraca: \texttt{DEPENDENTE}}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1.2mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Entidade Proprietária:} \texttt{PACIENTE} (\underline{id\_prontuario}).
+    \item \textbf{Relacionamento Identificador:} \texttt{POSSUI\_DEP} (Losango Duplo, $1:N$).
+    \item \textbf{Discriminador (Chave Parcial):} \dashuline{nome\_dep} (Sublinhado Tracejado).
+    \item \textbf{Chave Composta Formada:} $(\text{id\_prontuario}, \text{nome\_dep})$. Dois pacientes distintos podem ter dependentes chamados ``Lucas'' sem colisão!
+  \end{itemize}
+}{%
+  \alert{Hierarquia EER: \texttt{COLABORADOR}}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1.2mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Superclasse:} \texttt{COLABORADOR} (atributos universais: \underline{matricula}, \texttt{nome}, \texttt{endereco}, \texttt{telefones}).
+    \item \textbf{Subclasses:} \texttt{MEDICO} (\texttt{crm}, \texttt{especialidades}) e \texttt{ATENDENTE} (\texttt{ramal}, \texttt{turno}).
+    \item \textbf{Restrições EER:}
+      \begin{itemize}\scriptsize
+        \item \textbf{Disjunta ($d$):} Médico $\cap$ Atendente $= \emptyset$.
+        \item \textbf{Total (Linha Dupla):} Todo colaborador pertence a uma das subclasses.
+      \end{itemize}
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Diagrama EER Canônico Completo: Clínica Médica ``VidaPlena''}
+  \vspace{-0.2cm}
+  \begin{center}
+    \tikz[scale=0.54, transform shape]{
+      % Superclasse COLABORADOR
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.4cm, minimum height=0.7cm, font=\bfseries\sffamily\scriptsize] (colab) at (0, 3.3) {COLABORADOR};
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily\bfseries] (pk_colab) at (-3.0, 4.0) {\underline{matricula}};
+      \node[draw=black!80, fill=purple!10, dashed, ellipse, font=\tiny\sffamily] (tempo_colab) at (-3.0, 2.7) {tempo\_serv};
+      \node[draw=black!80, fill=pink!15, double, ellipse, font=\tiny\sffamily] (tel_colab) at (0, 4.5) {telefones};
+      \node[draw=black!80, fill=white, ellipse, font=\tiny\sffamily] (end_colab) at (3.0, 4.0) {endereco};
+      \node[draw=black!80, fill=white, ellipse, font=\tiny\sffamily] (rua) at (5.0, 4.4) {rua};
+      \node[draw=black!80, fill=white, ellipse, font=\tiny\sffamily] (bairro) at (5.0, 3.6) {bairro};
+
+      \draw[semithick] (colab) -- (pk_colab);
+      \draw[semithick, dashed] (colab) -- (tempo_colab);
+      \draw[semithick] (colab) -- (tel_colab);
+      \draw[semithick] (colab) -- (end_colab);
+      \draw[semithick] (end_colab) -- (rua);
+      \draw[semithick] (end_colab) -- (bairro);
+
+      % Circulo EER (d, Total)
+      \node[draw=ScoutNavy, fill=amber!25, circle, thick, minimum size=0.5cm, font=\bfseries\sffamily\scriptsize] (eer_d) at (0, 1.9) {d};
+      \draw[thick, double, double distance=1.4pt] (colab) -- (eer_d);
+
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.2cm, minimum height=0.65cm, font=\bfseries\sffamily\scriptsize] (atend) at (-3.2, 0.7) {ATENDENTE};
+      \node[draw=black!80, fill=white, ellipse, font=\tiny\sffamily] (ramal) at (-5.5, 0.7) {ramal};
+      \draw[semithick] (atend) -- (ramal);
+
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.2cm, minimum height=0.65cm, font=\bfseries\sffamily\scriptsize] (medico) at (2.8, 0.7) {MEDICO};
+      \node[draw=black!80, fill=white, ellipse, font=\tiny\sffamily] (crm) at (2.8, 1.9) {crm};
+      \node[draw=black!80, fill=pink!15, double, ellipse, font=\tiny\sffamily] (espec) at (5.4, 1.9) {especialidades};
+      \draw[semithick] (medico) -- (crm);
+      \draw[semithick] (medico) -- (espec);
+
+      \draw[semithick] (eer_d) -- node[above left, font=\tiny\bfseries] {$\cup$} (atend);
+      \draw[semithick] (eer_d) -- node[above right, font=\tiny\bfseries] {$\cup$} (medico);
+
+      % Auto-relacionamento SUPERVISIONA
+      \node[diamond, aspect=1.9, draw=ScoutNavy, fill=ScoutNavy!12, thick, inner sep=1.2pt, font=\bfseries\sffamily\tiny] (superv) at (6.8, 0.7) {SUPERVISIONA};
+      \draw[semithick] (medico.east) to[bend left=16] node[above, font=\tiny] {preceptor (1)} (superv.west);
+      \draw[semithick] (medico.south east) to[bend right=16] node[below, font=\tiny] {residente (N)} (superv.south west);
+
+      % DEPTO_CLINICO
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.3cm, minimum height=0.65cm, font=\bfseries\sffamily\scriptsize] (depto) at (-3.2, -1.5) {DEPTO\_CLINICO};
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily\bfseries] (pk_depto) at (-5.8, -1.5) {\underline{cod\_depto}};
+      \draw[semithick] (depto) -- (pk_depto);
+
+      \node[diamond, aspect=1.9, draw=ScoutNavy, fill=ScoutNavy!12, thick, inner sep=1.2pt, font=\bfseries\sffamily\tiny] (dirige) at (-0.2, -0.3) {DIRIGE};
+      \node[diamond, aspect=1.9, draw=ScoutNavy, fill=ScoutNavy!12, thick, inner sep=1.2pt, font=\bfseries\sffamily\tiny] (aloca) at (-0.2, -1.5) {ALOCA};
+
+      \draw[semithick] (medico.west) -- node[above, font=\tiny\bfseries] {1} (dirige.east);
+      \draw[thick, double, double distance=1.3pt] (dirige.west) -- node[above left, font=\tiny\bfseries] {1} (depto.north east);
+      \draw[thick, double, double distance=1.3pt] (medico.south west) -- node[above, font=\tiny\bfseries] {N} (aloca.east);
+      \draw[thick, double, double distance=1.3pt] (aloca.west) -- node[above, font=\tiny\bfseries] {1} (depto.east);
+
+      % PACIENTE, DEPENDENTE (Fraca) e EXAME (N:M)
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.2cm, minimum height=0.65cm, font=\bfseries\sffamily\scriptsize] (paciente) at (2.8, -2.9) {PACIENTE};
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily\bfseries] (pk_pac) at (0.2, -2.9) {\underline{id\_prontuario}};
+      \draw[semithick] (paciente) -- (pk_pac);
+
+      \node[diamond, aspect=1.9, draw=ScoutNavy, double, double distance=1.2pt, fill=ScoutNavy!15, thick, inner sep=1.2pt, font=\bfseries\sffamily\tiny] (possui_dep) at (6.0, -2.9) {POSSUI\_DEP};
+      \node[draw=ScoutGreen, double, double distance=1.3pt, fill=ScoutGreen!15, thick, minimum width=2.3cm, minimum height=0.65cm, font=\bfseries\sffamily\scriptsize] (dep) at (9.3, -2.9) {DEPENDENTE};
+      \node[draw=ScoutNavy, fill=amber!15, ellipse, font=\tiny\sffamily\bfseries] (disc_dep) at (9.3, -1.7) {\dashuline{nome\_dep}};
+      \draw[semithick] (paciente.east) -- node[above, font=\tiny\bfseries] {1} (possui_dep.west);
+      \draw[thick, double, double distance=1.3pt] (possui_dep.east) -- node[above, font=\tiny\bfseries] {N} (dep.west);
+      \draw[semithick] (dep) -- (disc_dep);
+
+      \node[diamond, aspect=1.9, draw=ScoutNavy, fill=ScoutNavy!12, thick, inner sep=1.2pt, font=\bfseries\sffamily\tiny] (realiza_ex) at (2.8, -4.4) {REALIZA\_EXAME};
+      \node[draw=black!80, fill=white, ellipse, font=\tiny\sffamily] (dt_solic) at (5.6, -4.4) {data\_solicitacao};
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.2cm, minimum height=0.65cm, font=\bfseries\sffamily\scriptsize] (exame) at (-1.2, -4.4) {EXAME};
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily\bfseries] (pk_ex) at (-3.8, -4.4) {\underline{cod\_exame}};
+      \draw[semithick] (paciente.south) -- node[right, font=\tiny\bfseries] {N} (realiza_ex.north);
+      \draw[semithick] (realiza_ex.west) -- node[above, font=\tiny\bfseries] {M} (exame.east);
+      \draw[semithick] (realiza_ex.east) -- (dt_solic.west);
+      \draw[semithick] (exame) -- (pk_ex);
+    }
+  \end{center}
+\end{frame}

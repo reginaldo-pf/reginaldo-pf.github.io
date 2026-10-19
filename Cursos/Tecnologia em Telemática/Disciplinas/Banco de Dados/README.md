@@ -47,9 +47,11 @@ A avaliação da disciplina é estruturada em dois períodos (N1 e N2), combinan
   - [Aula 04: Aplicação da Lista de Exercícios 01 (N1) - Sábado Letivo](Aulas/Aula_04/materiais/lista_01.pdf) (Disponível diretamente em PDF).
   - [Aula 05: Relacionamentos no MER: Grau, Papéis, Cardinalidades e Participação](Aulas/Aula_05/) (Disponível na plataforma web).
   - [Aula 06: Entidades Fracas e Modelo EER: Especialização e Generalização](Aulas/Aula_06/) (Disponível na plataforma web).
+  - [Aula 07: Estudo Dirigido do Projeto Prático (AVP1) - Definição do Escopo do Minimundo (Sábado Letivo)](Aulas/Aula_07/) ([Caderno PDF](Aulas/Aula_07/materiais/estudo_dirigido_avp1.pdf)).
 
 ### 📝 [Avaliações](Avaliacoes/)
-- [Lista 01 (N1): Fundamentos de SGBD, Arquitetura ANSI/SPARC e Modelagem de Entidades](Avaliacoes/Lista_01_N1.md) ([PDF Oficial](Avaliacoes/lista_01.pdf) | [LaTeX / TikZ](Avaliacoes/lista_01.tex)).
+- [Lista 01 (N1): Fundamentos de SGBD, Arquitetura ANSI/SPARC e Modelagem de Entidades](Avaliacoes/Lista_01_N1.md) ([PDF Oficial](Avaliacoes/lista_01.pdf) | [Código-Fonte](Avaliacoes/lista_01.tex)).
+- [Estudo Dirigido AVP1 (Etapa 1): Definição do Escopo do Minimundo](Avaliacoes/Estudo_Dirigido_AVP1.md) ([PDF Oficial](Avaliacoes/estudo_dirigido_avp1.pdf) | [Código-Fonte](Avaliacoes/estudo_dirigido_avp1.tex)).
 
 ### 📚 [Referências e Cronograma](Referencias/)
 - [Ementa Banco de dados.pdf](Referencias/Ementa%20Banco%20de%20dados.pdf) -- Programa de Unidade Didática (PUD oficial IFCE).

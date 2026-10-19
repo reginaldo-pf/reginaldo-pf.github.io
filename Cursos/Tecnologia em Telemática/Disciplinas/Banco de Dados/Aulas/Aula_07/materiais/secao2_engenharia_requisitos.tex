@@ -1,0 +1,59 @@
+\changecolours{ScoutGreen}
+\section[Engenharia de Requisitos]{Engenharia de Requisitos de Dados: Do Texto ao Modelo}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Técnica de Análise Gramatical do Minimundo (Heuser, 2009)},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Como Extrair Conceitos de um Texto?}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1.2mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Substantivos Próprios/Comuns Principais:}
+      Tornam-se candidatos a \textbf{Conjuntos de Entidades} (ex: \textit{Médico}, \textit{Paciente}, \textit{Departamento}, \textit{Livro}).
+    \item \textbf{Substantivos Descritivos de Propriedades:}
+      Tornam-se \textbf{Atributos} (ex: \textit{CPF}, \textit{data de nascimento}, \textit{endereço residencial}, \textit{telefones}).
+    \item \textbf{Verbos Transitivos de Ação/Vínculo:}
+      Tornam-se \textbf{Relacionamentos} (ex: \textit{chefiar}, \textit{alocar}, \textit{matricular-se}, \textit{fornecer}).
+  \end{itemize}
+}{%
+  \alert{Identificando Restrições Estruturais}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1.2mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Quantificadores de Cardinalidade:}
+      Expressões como \textit{``no máximo um''}, \textit{``exatamente um''} e \textit{``diversos/múltiplos''} definem $1:1$, $1:N$ e $N:M$.
+    \item \textbf{Obrigatoriedade (Participação):}
+      \textit{``Todo X deve...''} indica \textbf{Participação Total (Linha Dupla)}. \textit{``Um X pode opcionalmente...''} indica \textbf{Participação Parcial}.
+    \item \textbf{Expressões ``É um tipo de'' (\textit{IS-A}):}
+      Indicam \textbf{Especialização/Generalização (EER)}.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Pipeline Metodológico de Concepção do Projeto Prático (AVP1)}
+  \vspace{0.15cm}
+  \begin{center}
+    \tikz[scale=0.64, transform shape]{
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, rounded corners=4pt, thick, minimum width=2.6cm, minimum height=1.3cm, align=center, font=\bfseries\sffamily\scriptsize] (p1) at (0,0) {ETAPA 1\\Narrativa do\\Minimundo};
+      \node[draw=ScoutNavy, fill=ScoutNavy!12, rounded corners=4pt, thick, minimum width=2.6cm, minimum height=1.3cm, align=center, font=\bfseries\sffamily\scriptsize] (p2) at (3.4,0) {ETAPA 2\\Entidades Fortes\\\& Atributos};
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, rounded corners=4pt, thick, minimum width=2.6cm, minimum height=1.3cm, align=center, font=\bfseries\sffamily\scriptsize] (p3) at (6.8,0) {ETAPA 3\\Relacionamentos\\$1:1, 1:N, N:M$};
+      \node[draw=ScoutNavy, fill=ScoutNavy!12, rounded corners=4pt, thick, minimum width=2.6cm, minimum height=1.3cm, align=center, font=\bfseries\sffamily\scriptsize] (p4) at (10.2,0) {ETAPA 4\\Entidade Fraca\\\& Herança EER};
+      \node[draw=amber!90!black, fill=amber!20, rounded corners=4pt, thick, minimum width=2.6cm, minimum height=1.3cm, align=center, font=\bfseries\sffamily\scriptsize] (p5) at (13.6,0) {ETAPA 5\\Esboço DER/EER\\(Peter Chen)};
+
+      \draw[-{Stealth[length=2.5mm]}, very thick, ScoutGreen] (p1) -- (p2);
+      \draw[-{Stealth[length=2.5mm]}, very thick, ScoutNavy] (p2) -- (p3);
+      \draw[-{Stealth[length=2.5mm]}, very thick, ScoutGreen] (p3) -- (p4);
+      \draw[-{Stealth[length=2.5mm]}, very thick, amber!90!black] (p4) -- (p5);
+    }
+  \end{center}
+  \vspace{0.15cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \scriptsize
+      \alert{Regra de Ouro da Rastreabilidade:}\par
+      Cada elemento desenhado no diagrama da \textbf{Etapa 5} deve estar respaldado por uma frase explícita na narrativa da \textbf{Etapa 1}.
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \scriptsize
+      \alert{Prevenção de Omissões:}\par
+      As tabelas intermediárias (\textbf{Etapas 2, 3 e 4}) funcionam como um filtro de qualidade antes de abrir o software CASE na Aula 08.
+    \end{column}
+  \end{columns}
+\end{frame}

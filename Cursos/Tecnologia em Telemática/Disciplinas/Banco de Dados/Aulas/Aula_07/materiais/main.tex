@@ -1,0 +1,75 @@
+\documentclass[aspectratio=169,utf8,t]{beamer}
+
+% Idioma e Codificacao
+\usepackage[brazilian]{babel}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+\usepackage[normalem]{ulem}
+\usepackage{tikz}
+\usetikzlibrary{shapes,shapes.geometric,arrows,arrows.meta,positioning,calc,fit}
+
+% Carrega o Tema Modelo dos Scouts (Widescreen 16:9, Nunito Sans)
+\usetheme{scouts}
+
+\definecolor{amber}{RGB}{245, 158, 11}
+
+% Configuracao para Codigo-Fonte (Python)
+\lstset{
+    basicstyle=\ttfamily\tiny,
+    keywordstyle=\bfseries\color{ScoutNavy},
+    stringstyle=\color{ScoutGreen},
+    commentstyle=\itshape\color{gray},
+    backgroundcolor=\color{black!3},
+    frame=single,
+    rulecolor=\color{black!15},
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=2
+}
+
+% Metadados Institucionais
+\author{Prof. Me. Reginaldo Fernandes}
+\institute{Instituto Federal do Ceará -- Campus Tauá \\ Tecnologia em Telemática}
+\title{Banco de Dados}
+\subtitle{Aula 07 (Sábado Letivo): Estudo Dirigido do Projeto Prático (AVP1) -- Escopo do Minimundo}
+\date{17 de Outubro de 2026}
+
+\begin{document}
+
+% ------------------------------------------------------------------------------
+% Capa da Apresentacao
+% ------------------------------------------------------------------------------
+\changecolours[inverse]{ScoutGreen}
+\frame[plain]{\titlepage}
+
+% ------------------------------------------------------------------------------
+% Sumario Executivo da Aula
+% ------------------------------------------------------------------------------
+\changecolours{ScoutGreen}
+\begin{frame}{Roteiro do Estudo Dirigido (AVP1)}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \scriptsize
+      \tableofcontents[sections={1-4}]
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \scriptsize
+      \tableofcontents[sections={5-8}]
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% Modulos Tematicos da Aula
+% ------------------------------------------------------------------------------
+\input{secao1_introducao_avp1}
+\input{secao2_engenharia_requisitos}
+\input{secao3_caso_modelo_clinica}
+\input{secao4_caso_modelo_eer_tikz}
+\input{secao5_catalogo_minimundos}
+\input{secao6_roteiro_5_etapas}
+\input{secao7_validador_python}
+\input{secao8_referencias}
+
+\end{document}
