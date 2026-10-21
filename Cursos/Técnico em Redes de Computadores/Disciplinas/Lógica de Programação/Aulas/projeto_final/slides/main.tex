@@ -1,0 +1,314 @@
+\documentclass[10pt]{beamer}
+
+% Tema Limpo e Profissional
+\usetheme{Madrid}
+\usecolortheme{whale}
+
+% Pacotes Essenciais
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Configuracoes de Codigo (Python)
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue}\bfseries,
+    stringstyle=\color{orange},
+    commentstyle=\color{gray!80!black}\itshape,
+    breaklines=true,
+    showstringspaces=false,
+    backgroundcolor=\color{gray!5},
+    frame=single,
+    rulecolor=\color{gray!30},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt
+}
+
+% Metadados da Apresentacao
+\title[Planejamento Financeiro em Python]{Projeto Final: Planejamento Financeiro}
+\subtitle{Do Orçamento Pessoal à Modelagem Computacional em Python}
+\author[Prof. Reginaldo]{Prof. Reginaldo Fernandes\texorpdfstring{\\ \small{Lógica de Programação com Python}}{}}
+\institute[IFCE]{Instituto Federal do Ceará -- Campus Tauá \\ Curso Técnico em Redes de Computadores}
+\date{\today}
+
+\begin{document}
+
+% Slide 1: Titulo
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% Slide 2: Sumario
+\begin{frame}{Roteiro da Apresentação}
+    \tableofcontents
+\end{frame}
+
+% ==============================================================================
+% SEÇÃO 1: O PROBLEMA REAL E A REGRA 50-30-20
+% ==============================================================================
+\section{O Desafio do Planejamento Financeiro}
+
+\begin{frame}{O Problema: Para Onde Vai o Dinheiro?}
+    \begin{columns}
+        \begin{column}{0.55\textwidth}
+            \textbf{Dificuldades comuns no dia a dia:}
+            \begin{itemize}
+                \item Falta de visibilidade clara entre o que entra e o que sai.
+                \item Gastos invisíveis (pequenas compras rotineiras que acumulam).
+                \item Ausência de reserva para imprevistos e emergências.
+                \item Sensação de que o dinheiro acaba antes do fim do mês.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.45\textwidth}
+            \begin{block}{O Papel da Computação}
+                Softwares orçamentários transformam números brutos em \textbf{métricas visuais} e \textbf{diagnósticos automáticos}, auxiliando na tomada de decisão consciente.
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{A Metodologia Orçamentária: Regra 50-30-20}
+    A regra divide a receita líquida mensal em três categorias estratégicas:
+
+    \vspace{0.3cm}
+    \begin{columns}
+        \begin{column}{0.33\textwidth}
+            \begin{exampleblock}{50\% Essenciais}
+                \textbf{Necessidades vitais:}
+                \begin{itemize}
+                    \item Moradia (aluguel)
+                    \item Alimentação
+                    \item Transporte
+                    \item Contas de consumo
+                    \item Saúde
+                \end{itemize}
+            \end{exampleblock}
+        \end{column}
+
+        \begin{column}{0.33\textwidth}
+            \begin{alertblock}{30\% Estilo de Vida}
+                \textbf{Desejos pessoais:}
+                \begin{itemize}
+                    \item Lazer e passeios
+                    \item Assinaturas digitais
+                    \item Restaurantes
+                    \item Compras e hobbies
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+
+        \begin{column}{0.33\textwidth}
+            \begin{block}{20\% Reserva e Metas}
+                \textbf{Segurança e futuro:}
+                \begin{itemize}
+                    \item Reserva de emergência
+                    \item Quitação de dívidas
+                    \item Investimentos
+                    \item Projetos de longo prazo
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SEÇÃO 2: A ARQUITETURA DO SOFTWARE
+% ==============================================================================
+\section{Arquitetura e Fluxo do Sistema}
+
+\begin{frame}{A Visão Geral da Solução em Python}
+    O sistema foi concebido como uma aplicação CLI (Interface em Linha de Comando) dividida em 3 pilares fundamentais:
+
+    \vspace{0.4cm}
+    \begin{columns}
+        \begin{column}{0.32\textwidth}
+            \begin{block}{1. Entrada e Estado}
+                \begin{itemize}
+                    \item Previsão de Renda.
+                    \item Lançamento seguro de Despesas.
+                    \item Validação de tipos com \texttt{try/except}.
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.32\textwidth}
+            \begin{block}{2. Estrutura}
+                \begin{itemize}
+                    \item Dicionários (\texttt{dict}) para cada gasto.
+                    \item Lista (\texttt{list}) agregadora.
+                    \item Menus em ciclo (\texttt{while True}).
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.32\textwidth}
+            \begin{block}{3. Inteligência}
+                \begin{itemize}
+                    \item Somatórios por categoria.
+                    \item Cálculo de saldo real.
+                    \item Avaliação percentual da regra 50-30-20.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{O Ciclo de Vida do Software (Listening Loop)}
+    \begin{center}
+        \textbf{Como o programa se mantém vivo no terminal?}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Inicialização:} Configura o estado inicial na memória (\texttt{renda = 0.0}, \texttt{despesas = []}).
+        \item \textbf{Laço Principal:} O comando \texttt{while True} garante que o menu não se encerre após uma ação.
+        \item \textbf{Escuta:} O comando \texttt{input()} aguarda a decisão do usuário técnico.
+        \item \textbf{Desvio Condicional:} \texttt{if / elif / else} encaminha para a função especialista responsável.
+        \item \textbf{Término Gracioso:} A opção \texttt{"0"} executa o comando \texttt{break}, liberando o terminal.
+    \end{itemize}
+\end{frame}
+
+% ==============================================================================
+% SEÇÃO 3: MODELAGEM DOS DADOS
+% ==============================================================================
+\section{Modelagem dos Dados em Python}
+
+\begin{frame}[fragile]{Modelagem: Dicionário como Registro Individual}
+    \textbf{Analogia de Redes:} Assim como uma entrada na tabela ARP contém IP, MAC e Interface, cada despesa no software possui campos bem definidos:
+
+    \vspace{0.2cm}
+    \begin{lstlisting}
+# Cada gasto do mundo real torna-se um Dicionario
+despesa = {
+    "descricao": "Aluguel da Residencia",
+    "valor": 1200.00,
+    "categoria": "Essencial"
+}
+
+# Acesso direto e legivel atraves das chaves:
+print(despesa["descricao"]) # Imprime: Aluguel da Residencia
+print(despesa["valor"])     # Imprime: 1200.0
+    \end{lstlisting}
+
+    \vspace{0.2cm}
+    \begin{block}{Vantagem do Dicionário}
+        Substitui variáveis soltas e desorganizadas por um \textbf{objeto estruturado} em que cada dado possui significado explícito por chave textual.
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Modelagem: Lista como Coleção de Registros}
+    Para armazenar múltiplos lançamentos ao longo do mês, agrupamos os dicionários dentro de uma lista dinâmica:
+
+    \vspace{0.2cm}
+    \begin{lstlisting}
+# Colecao inicial vazia
+despesas = []
+
+# Novos registros sao inseridos com .append()
+despesas.append({
+    "descricao": "Internet Fibra",
+    "valor": 110.0,
+    "categoria": "Essencial"
+})
+despesas.append({
+    "descricao": "Cinema e Pipoca",
+    "valor": 65.0,
+    "categoria": "Estilo de Vida"
+})
+
+# Quantidade total armazenada:
+print(len(despesas)) # Retorna: 2
+    \end{lstlisting}
+\end{frame}
+
+% ==============================================================================
+% SEÇÃO 4: LÓGICA DE NEGÓCIO E RELATÓRIO
+% ==============================================================================
+\section{Lógica de Negócio e Diagnóstico}
+
+\begin{frame}[fragile]{O Motor de Análise: Acumuladores e Diagnóstico}
+    \textbf{Como o algoritmo processa os dados na Opção 4?}
+
+    \vspace{0.2cm}
+    \begin{lstlisting}
+# 1. Acumuladores condicionais com laco for:
+for item in despesas:
+    if item["categoria"] == "Essencial":
+        total_essencial += item["valor"]
+    elif item["categoria"] == "Estilo de Vida":
+        total_estilo_vida += item["valor"]
+    elif item["categoria"] == "Reserva":
+        total_reserva += item["valor"]
+
+# 2. Calculo do saldo liquido:
+total_gasto = total_essencial + total_estilo_vida + total_reserva
+saldo_restante = renda_prevista - total_gasto
+
+# 3. Diagnostico percentual (Meta 50-30-20):
+if renda_prevista > 0:
+    pct_essencial = (total_essencial / renda_prevista) * 100
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}{Diagnóstico Automatizado da Saúde Financeira}
+    O sistema classifica a situação financeira em três estados orçamentários:
+
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item \textbf{Orçamento Deficitário (\texttt{saldo < 0}):}
+        Os gastos superam as entradas. Alerta vermelho acionado para cortes imediatos.
+        \item \textbf{Orçamento no Limite (\texttt{saldo == 0}):}
+        Saldo zerado. Não há reserva para contingências.
+        \item \textbf{Orçamento Superavitário (\texttt{saldo > 0}):}
+        Sobra financeira. Recursos disponíveis para poupança e metas futuras.
+    \end{itemize}
+
+    \vspace{0.3cm}
+    \begin{block}{Defesa Contra Divisão por Zero}
+        A verificação \texttt{if renda\_prevista > 0:} impede que o Python quebre com \texttt{ZeroDivisionError} caso o usuário acesse o relatório sem registrar a receita.
+    \end{block}
+\end{frame}
+
+% ==============================================================================
+% SEÇÃO 5: CRONOGRAMA DE CONSTRUÇÃO
+% ==============================================================================
+\section{Nossa Jornada: As 5 Aulas do Projeto}
+
+\begin{frame}{Mapa de Construção Passo a Passo}
+    Construiremos o software juntos, aula a aula, em pequenas fatias funcionais:
+
+    \vspace{0.3cm}
+    \begin{enumerate}
+        \item \textbf{Aula 1:} Estrutura do Programa, Loop Principal e Menu Interativo.
+        \item \textbf{Aula 2:} Validação de Entrada com \texttt{try/except} e Previsão de Renda.
+        \item \textbf{Aula 3:} Cadastro de Despesas com Listas e Dicionários.
+        \item \textbf{Aula 4:} Listagem Formatada em Tabela e UX no Terminal.
+        \item \textbf{Aula 5:} Inteligência de Negócio, Regra 50-30-20 e Entrega Final.
+    \end{enumerate}
+
+    \vspace{0.3cm}
+    \begin{center}
+        \textit{"Não tente escrever 200 linhas de uma vez. Programadores profissionais constroem software um bloco funcional por vez!"}
+    \end{center}
+\end{frame}
+
+\begin{frame}
+    \begin{center}
+        \Huge{\textbf{Mãos à Obra!}}
+
+        \vspace{0.5cm}
+        \normalsize{Vamos iniciar com a \textbf{Etapa 1}: o menu e o fluxo de controle.}
+
+        \vspace{1.0cm}
+        \small{Instituto Federal do Ceará -- Campus Tauá \\ Curso Técnico em Redes de Computadores}
+    \end{center}
+\end{frame}
+
+\end{document}
