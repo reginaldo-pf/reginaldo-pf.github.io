@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 20: Introdução à UML, Revisão de OO e Casos de Uso | Engenharia de Software - IFCE Tauá</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- Cabeçalho Institucional -->
+  <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 shadow-sm backdrop-blur-md bg-white/90 dark:bg-slate-800/90">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="../../index.html" class="flex items-center space-x-3 group">
+          <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+            <i class="fa-solid fa-diagram-project text-lg"></i>
+          </div>
+          <div>
+            <span class="text-xs uppercase tracking-wider font-bold text-emerald-600 dark:text-emerald-400 block leading-tight">IFCE Campus Tauá • Informática para Internet</span>
+            <span class="text-base font-bold text-slate-900 dark:text-white leading-tight">Engenharia de Software — Aula 20</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <a href="../Aula_21/index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 hover:bg-emerald-100 transition-colors flex items-center space-x-1.5">
+          <span>Ir para Aula 21</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+        <a href="../../index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center space-x-1.5">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span class="hidden sm:inline">Portal da Disciplina</span>
+        </a>
+        <button id="theme-toggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-emerald-600 transition-colors" title="Alternar Modo Escuro/Claro">
+          <i class="fa-solid fa-moon dark:hidden"></i>
+          <i class="fa-solid fa-sun hidden dark:inline"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Banner da Aula -->
+  <section class="bg-gradient-to-r from-emerald-900 via-slate-900 to-slate-950 text-white py-10 border-b border-emerald-950/40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold mb-3">
+        <i class="fa-solid fa-cubes"></i>
+        <span>Unidade III (N2) — Modelagem Visual UML 2 (Capítulos 1, 2 e 3 - Gilleanes Guedes)</span>
+      </div>
+      <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
+        Introdução à UML, Revisão de OO e Diagrama de Casos de Uso
+      </h1>
+      <p class="text-slate-300 text-sm sm:text-base mt-2 max-w-3xl leading-relaxed">
+        Fundamentação da modelagem visual de software, taxonomia dos 14 diagramas oficiais da UML 2, revisão de Orientação a Objetos (encapsulamento, herança e polimorfismo em Python) e captura de requisitos funcionais com o Diagrama de Casos de Uso.
+      </p>
+
+      <div class="flex flex-wrap gap-4 mt-6 text-xs text-slate-300">
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-solid fa-book text-emerald-400"></i>
+          <span>Capítulos 1, 2 e 3 (Guedes)</span>
+        </div>
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-regular fa-clock text-emerald-400"></i>
+          <span>2 h/a (100 min)</span>
+        </div>
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-solid fa-chalkboard-user text-emerald-400"></i>
+          <span>Prof. Reginaldo Pereira Fernandes</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Navegação de Abas -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+    <div class="flex border-b border-slate-200 dark:border-slate-700 mb-6 space-x-2 overflow-x-auto pb-1">
+      <button onclick="switchTab('tab-teoria')" id="btn-tab-teoria" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm border-b-2 border-emerald-600 text-emerald-600 dark:text-emerald-400 flex items-center space-x-2">
+        <i class="fa-brands fa-python"></i>
+        <span>Síntese Teórica & POO em Python</span>
+      </button>
+      <button onclick="switchTab('tab-slides')" id="btn-tab-slides" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-regular fa-file-pdf"></i>
+        <span>Slides da Aula (PDF)</span>
+      </button>
+      <button onclick="switchTab('tab-atividade')" id="btn-tab-atividade" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-solid fa-pen-to-square"></i>
+        <span>Atividade Prática (TauáDelivery)</span>
+      </button>
+      <button onclick="switchTab('tab-arquivos')" id="btn-tab-arquivos" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-solid fa-download"></i>
+        <span>Central de Arquivos</span>
+      </button>
+    </div>
+
+    <!-- ABA 1: TEORIA E CÓDIGO -->
+    <div id="tab-teoria" class="tab-content space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm leading-relaxed">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-sitemap text-emerald-600 dark:text-emerald-400"></i>
+          <span>1. Taxonomia dos 14 Diagramas da UML 2 e Pilares de OO (Caps. 1 e 2)</span>
+        </h2>
+        <p class="text-slate-700 dark:text-slate-300 mb-4">
+          Padronizada pelo OMG a partir do trabalho de Grady Booch, James Rumbaugh e Ivar Jacobson (<em>Three Amigos</em>), a UML 2 organiza seus 14 diagramas em dois grandes grupos: <strong>7 Diagramas Estruturais</strong> (visão estática) e <strong>7 Diagramas Comportamentais</strong> (visão dinâmica, incluindo os 4 Diagramas de Interação).
+        </p>
+        <div class="my-4 flex justify-center">
+          <img src="imagens/Fig1.15.png" alt="Taxonomia da UML 2 - Figura 1.15" class="max-h-72 rounded-xl border border-slate-200 dark:border-slate-700 bg-white p-2 shadow-sm">
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm leading-relaxed">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-users-viewfinder text-emerald-600 dark:text-emerald-400"></i>
+          <span>2. Diagrama de Casos de Uso: Atores, Include, Extend e Fronteira (Cap. 3)</span>
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-3">
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 text-xs space-y-2">
+            <span class="px-2 py-0.5 font-bold rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 inline-block">Inclusão (&lt;&lt;include&gt;&gt;)</span>
+            <p class="text-slate-600 dark:text-slate-300">Execução <strong>obrigatória</strong> de um comportamento compartilhado. A seta tracejada aponta do <strong>Caso Base &rarr; Caso Incluído</strong>.</p>
+            <img src="imagens/Fig3.7.png" alt="Include - Fig 3.7" class="max-h-36 mx-auto rounded bg-white p-1 border">
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 text-xs space-y-2">
+            <span class="px-2 py-0.5 font-bold rounded bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 inline-block">Extensão (&lt;&lt;extend&gt;&gt;)</span>
+            <p class="text-slate-600 dark:text-slate-300">Execução <strong>opcional/condicional</strong> disparada em um ponto de extensão. A seta aponta do <strong>Caso Extensor &rarr; Caso Base</strong>.</p>
+            <img src="imagens/Fig3.12.png" alt="Extend - Fig 3.12" class="max-h-36 mx-auto rounded bg-white p-1 border">
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm">
+        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-2 flex items-center space-x-2">
+          <i class="fa-solid fa-code text-emerald-600 dark:text-emerald-400"></i>
+          <span>3. Mapeamento de Polimorfismo e Visibilidade em Python (exemplo_poo.py)</span>
+        </h3>
+        <pre><code class="language-python">class ContaComum:
+    def __init__(self, numero: str, saldo_inicial: float = 0.0):
+        self._numero = numero
+        self._saldo = float(saldo_inicial)  # Visibilidade protegida (#)
+
+    def saque(self, valor: float) -> bool:
+        if 0 < valor <= self._saldo:
+            self._saldo -= valor
+            return True
+        return False
+
+class ContaEspecial(ContaComum):
+    def __init__(self, numero: str, saldo_inicial: float = 0.0, limite: float = 500.0):
+        super().__init__(numero, saldo_inicial)
+        self._limite = float(limite)
+
+    def saque(self, valor: float) -> bool:
+        """Polimorfismo (Override): permite saque até (saldo + limite)."""
+        if 0 < valor <= (self._saldo + self._limite):
+            self._saldo -= valor
+            return True
+        return False</code></pre>
+      </div>
+    </div>
+
+    <!-- ABA 2: SLIDES PDF -->
+    <div id="tab-slides" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700/60 shadow-sm flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h2 class="font-bold text-slate-900 dark:text-white text-base">Apresentação Oficial em Slides (Beamer)</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">34 páginas ilustradas com as figuras oficiais dos Capítulos 1, 2 e 3 de Gilleanes Guedes.</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <a href="slides_aula.pdf" target="_blank" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center space-x-1.5 transition-colors">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            <span>Abrir em Nova Aba</span>
+          </a>
+          <a href="slides_aula.pdf" download="Aula_20_Slides.pdf" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center space-x-1.5 transition-colors">
+            <i class="fa-solid fa-download"></i>
+            <span>Baixar PDF</span>
+          </a>
+        </div>
+      </div>
+      <div class="w-full h-[650px] rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 shadow-inner">
+        <iframe src="slides_aula.pdf" class="w-full h-full border-0" title="Slides da Aula 20"></iframe>
+      </div>
+    </div>
+
+    <!-- ABA 3: ATIVIDADE PRÁTICA -->
+    <div id="tab-atividade" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm space-y-4">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white">Atividade Prática: Casos de Uso do <em>TauáDelivery Web</em> (RF01 a RF13)</h2>
+          <a href="atividade_pratica.md" download class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-semibold">Baixar Guia Completo (.md)</a>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+          Modelagem dos requisitos funcionais RF01 a RF13 da plataforma <em>TauáDelivery Web</em>, incluindo identificação de atores humanos e sistemas externos (Gateway de Pagamento), Fronteira do Sistema, relacionamentos <code>&lt;&lt;include&gt;&gt;</code> e <code>&lt;&lt;extend&gt;&gt;</code> e ficha de especificação textual do caso de uso <strong>UC03 - Finalizar Pedido</strong>.
+        </p>
+        <div class="my-4 flex justify-center">
+          <img src="imagens/modelagem_rf01_rf02.png" alt="Exemplo Resolvido RF01 e RF02" class="max-h-64 rounded-xl border border-slate-200 bg-white p-2 shadow-sm">
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA 4: CENTRAL DE ARQUIVOS -->
+    <div id="tab-arquivos" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Repositório de Arquivos da Aula 20</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <a href="slides_aula.pdf" download class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all flex flex-col justify-between bg-slate-50/50 dark:bg-slate-900/40">
+            <div>
+              <i class="fa-solid fa-file-pdf text-red-500 text-2xl mb-2"></i>
+              <h3 class="font-bold text-xs">slides_aula.pdf</h3>
+              <p class="text-[11px] text-slate-500 mt-1">Apresentação Beamer completa (Caps. 1, 2 e 3).</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 mt-3">Download <i class="fa-solid fa-download ml-1"></i></span>
+          </a>
+          <a href="exemplo_poo.py" download class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all flex flex-col justify-between bg-slate-50/50 dark:bg-slate-900/40">
+            <div>
+              <i class="fa-brands fa-python text-emerald-500 text-2xl mb-2"></i>
+              <h3 class="font-bold text-xs">exemplo_poo.py</h3>
+              <p class="text-[11px] text-slate-500 mt-1">Classes Pessoa, Ornitorrinco, ContaComum e ContaEspecial.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 mt-3">Download <i class="fa-solid fa-download ml-1"></i></span>
+          </a>
+          <a href="atividade_pratica.md" download class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all flex flex-col justify-between bg-slate-50/50 dark:bg-slate-900/40">
+            <div>
+              <i class="fa-solid fa-pen-to-square text-amber-500 text-2xl mb-2"></i>
+              <h3 class="font-bold text-xs">atividade_pratica.md</h3>
+              <p class="text-[11px] text-slate-500 mt-1">Requisitos RF01 a RF13, exemplo resolvido e gabarito.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 mt-3">Download <i class="fa-solid fa-download ml-1"></i></span>
+          </a>
+          <a href="plano_de_aula.md" download class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all flex flex-col justify-between bg-slate-50/50 dark:bg-slate-900/40">
+            <div>
+              <i class="fa-solid fa-file-lines text-blue-500 text-2xl mb-2"></i>
+              <h3 class="font-bold text-xs">plano_de_aula.md</h3>
+              <p class="text-[11px] text-slate-500 mt-1">Planejamento pedagógico de 100 minutos.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 mt-3">Download <i class="fa-solid fa-download ml-1"></i></span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <span>Instituto Federal de Educação, Ciência e Tecnologia do Ceará — Campus Tauá</span>
+      <span>Engenharia de Software • Prof. Reginaldo Pereira Fernandes</span>
+    </div>
+  </footer>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-emerald-600', 'text-emerald-600', 'dark:text-emerald-400');
+        btn.classList.add('text-slate-500', 'dark:text-slate-400');
+      });
+      const selectedTab = document.getElementById(tabId);
+      const selectedBtn = document.getElementById('btn-' + tabId);
+      if (selectedTab) selectedTab.classList.remove('hidden');
+      if (selectedBtn) {
+        selectedBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
+        selectedBtn.classList.add('border-b-2', 'border-emerald-600', 'text-emerald-600', 'dark:text-emerald-400');
+      }
+    }
+
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    if (localStorage.theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    themeToggleBtn.addEventListener('click', () => {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        localStorage.theme = 'light';
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.theme = 'dark';
+      }
+    });
+  </script>
+</body>
+
+</html>

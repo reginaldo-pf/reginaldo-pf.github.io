@@ -30,6 +30,12 @@ Capacitar os alunos nos processos modernos de engenharia de software com foco em
   - `exemplo_poo.py`: Código em Python mapeando os modelos de classes conceituais do livro para orientação a objetos.
   - `atividade_pratica.md`: Atividade prática com lista formal de requisitos (RF01 a RF13) para modelagem e especificação de Casos de Uso.
   - `imagens/`: Galeria completa das figuras oficiais extraídas do EPUB.
+- [Aula 21 - Aprofundamento no Diagrama de Classes e Diagrama de Atividades](Aulas/Aula_21/):
+  - `plano_de_aula.md`: Planejamento da aula de 100 minutos abrangendo os Capítulos 4 (Diagrama de Classes) e 10 (Diagrama de Atividades) do livro de Guedes.
+  - `slides_aula.tex` / `slides_aula.pdf`: Apresentação em Beamer (34 slides) ilustrada com figuras oficiais de associações complexas, interfaces, estereótipos, mapeamento relacional e fluxos de atividades.
+  - `exemplo_classes_atividades.py`: Código em Python implementando associação reflexiva com papéis, agregação, composição forte, classe associativa, realização de interface e simulação de atividade.
+  - `atividade_pratica.md`: Atividade prática continuando o projeto *TauáDelivery Web* com exemplos resolvidos, Diagrama de Classes de Domínio e Diagrama de Atividades com Partições (*Swimlanes*).
+  - `imagens/`: Galeria com as 108 figuras oficiais dos Capítulos 4 e 10 e diagramas de apoio.
 
 ### 📝 [Avaliacoes](Avaliacoes/)
 - Entregas de Sprints, relatórios de retrospectiva e avaliações práticas de projeto.
