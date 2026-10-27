@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 08: Laboratório CASE (brModelo e Draw.io) | Banco de Dados - IFCE Tauá</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- ========================================== -->
+  <!-- CABEÇALHO INSTITUCIONAL                    -->
+  <!-- ========================================== -->
+  <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 shadow-sm backdrop-blur-md bg-white/90 dark:bg-slate-800/90">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="../../index.html" class="flex items-center space-x-3 group">
+          <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+            <i class="fa-solid fa-compass-drafting text-lg"></i>
+          </div>
+          <div>
+            <span class="text-xs uppercase tracking-wider font-bold text-emerald-600 dark:text-emerald-400 block leading-tight">IFCE Campus Tauá • Telemática</span>
+            <span class="text-base font-bold text-slate-900 dark:text-white leading-tight">Banco de Dados — Aula 08</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <a href="../../index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center space-x-1.5">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span class="hidden sm:inline">Portal da Disciplina</span>
+        </a>
+        <button id="theme-toggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-emerald-600 transition-colors" title="Alternar Modo Escuro/Claro">
+          <i class="fa-solid fa-moon dark:hidden"></i>
+          <i class="fa-solid fa-sun hidden dark:inline"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- BANNER DA AULA                             -->
+  <!-- ========================================== -->
+  <section class="bg-gradient-to-r from-emerald-900 via-slate-900 to-slate-950 text-white py-10 border-b border-emerald-950/40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold mb-3">
+        <i class="fa-solid fa-diagram-project"></i>
+        <span>Unidade III (N1) — Laboratório Prático de Modelagem Conceitual (CASE)</span>
+      </div>
+      <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
+        Laboratório de Modelagem Conceitual com Ferramentas CASE (brModelo e Draw.io)
+      </h1>
+      <p class="text-slate-300 text-sm sm:text-base mt-2 max-w-3xl leading-relaxed">
+        Domine a construção profissional do Diagrama Entidade-Relacionamento Estendido (DER/EER) do Projeto Prático (AVP1), compreendendo a equivalência geométrica entre a notação de <strong>Peter Chen (Draw.io)</strong> e a notação de <strong>Carlos Alberto Heuser (brModelo)</strong>, além da <strong>Modelagem Descritiva e Textual (Dicionário de Dados)</strong>.
+      </p>
+
+      <div class="flex flex-wrap gap-4 mt-6 text-xs text-slate-300">
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-regular fa-calendar text-emerald-400"></i>
+          <span>20/10/2026 (Terça-feira)</span>
+        </div>
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-regular fa-clock text-emerald-400"></i>
+          <span>2 h/a (100 min)</span>
+        </div>
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-solid fa-chalkboard-user text-emerald-400"></i>
+          <span>Prof. Me. Reginaldo Fernandes</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- NAVEGAÇÃO DE ABAS                          -->
+  <!-- ========================================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+    <div class="flex border-b border-slate-200 dark:border-slate-700 mb-6 space-x-2 overflow-x-auto pb-1">
+      <button onclick="switchTab('tab-notebook')" id="btn-tab-notebook" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm border-b-2 border-emerald-600 text-emerald-600 dark:text-emerald-400 flex items-center space-x-2">
+        <i class="fa-solid fa-shapes"></i>
+        <span>Guia Visual CASE & Dicionário</span>
+      </button>
+      <button onclick="switchTab('tab-slides')" id="btn-tab-slides" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-regular fa-file-pdf"></i>
+        <span>Slides da Aula (PDF)</span>
+      </button>
+      <button onclick="switchTab('tab-plano')" id="btn-tab-plano" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Plano Pedagógico</span>
+      </button>
+      <button onclick="switchTab('tab-exercicios')" id="btn-tab-exercicios" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-solid fa-pen-to-square"></i>
+        <span>Exercícios de Fixação</span>
+      </button>
+      <button onclick="switchTab('tab-arquivos')" id="btn-tab-arquivos" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-solid fa-download"></i>
+        <span>Central de Arquivos</span>
+      </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 1: GUIA VISUAL CASE & DICIONÁRIO       -->
+    <!-- ========================================== -->
+    <div id="tab-notebook" class="tab-content space-y-6">
+
+      <!-- Bloco Teórico 1: Equivalência Chen (Draw.io) vs Heuser (brModelo) -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-scale-balanced text-emerald-600 dark:text-emerald-400"></i>
+          <span>1. Equivalência Geométrica: Peter Chen (Draw.io) vs. Carlos A. Heuser (brModelo)</span>
+        </h2>
+        <p class="text-slate-700 dark:text-slate-300 mb-4">
+          No Brasil, utilizamos duas convenções visuais para o Modelo Entidade-Relacionamento Conceitual: a notação clássica norte-americana de <strong>Peter Chen (1976) / Elmasri & Navathe</strong> (desenhada no <strong>Draw.io</strong> com a biblioteca <em>Entity Relation</em>) e a notação de <strong>Carlos Alberto Heuser</strong> (nativa do software brasileiro <strong>brModelo</strong>).
+        </p>
+
+        <!-- Catálogo Visual SVG das Formas Geométricas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <!-- Card 1: Entidades -->
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 flex flex-col items-center text-center">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-2">Entidade Forte vs. Fraca</span>
+            <svg viewBox="0 0 220 95" class="w-full h-24">
+              <!-- Forte -->
+              <rect x="10" y="10" width="90" height="34" fill="#d1fae5" stroke="#059669" stroke-width="2"/>
+              <text x="55" y="31" font-size="9" font-weight="bold" text-anchor="middle" fill="#064e3b">PACIENTE</text>
+              <text x="55" y="56" font-size="8" text-anchor="middle" fill="#64748b">Retângulo Simples</text>
+              <!-- Fraca -->
+              <rect x="116" y="8" width="94" height="38" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
+              <rect x="120" y="12" width="86" height="30" fill="#ecfdf5" stroke="#059669" stroke-width="1.5"/>
+              <text x="163" y="31" font-size="9" font-weight="bold" text-anchor="middle" fill="#064e3b">DEPENDENTE</text>
+              <text x="163" y="56" font-size="8" text-anchor="middle" fill="#64748b">Retângulo Duplo</text>
+            </svg>
+          </div>
+
+          <!-- Card 2: Relacionamentos -->
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 flex flex-col items-center text-center">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-2">Relacionamento Regular vs. Identificador</span>
+            <svg viewBox="0 0 220 95" class="w-full h-24">
+              <!-- Losango Simples -->
+              <polygon points="55,6 98,27 55,48 12,27" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+              <text x="55" y="30" font-size="8" font-weight="bold" text-anchor="middle" fill="#1e3a8a">CONSULTA</text>
+              <text x="55" y="62" font-size="8" text-anchor="middle" fill="#64748b">Losango Simples</text>
+              <!-- Losango Duplo -->
+              <polygon points="163,4 210,27 163,50 116,27" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.5"/>
+              <polygon points="163,9 201,27 163,45 125,27" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5"/>
+              <text x="163" y="30" font-size="8" font-weight="bold" text-anchor="middle" fill="#1e3a8a">POSSUI</text>
+              <text x="163" y="62" font-size="8" text-anchor="middle" fill="#64748b">Losango Duplo</text>
+            </svg>
+          </div>
+
+          <!-- Card 3: Atributos Chen -->
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 flex flex-col items-center text-center">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-2">Atributos em Peter Chen (Draw.io)</span>
+            <svg viewBox="0 0 220 95" class="w-full h-24">
+              <!-- PK -->
+              <ellipse cx="55" cy="22" rx="44" ry="14" fill="#e0f2fe" stroke="#0369a1" stroke-width="1.8"/>
+              <text x="55" y="25" font-size="8.5" font-weight="bold" text-decoration="underline" text-anchor="middle" fill="#0c4a6e">id_paciente</text>
+              <!-- Multivalorado -->
+              <ellipse cx="163" cy="22" rx="46" ry="15" fill="#f1f5f9" stroke="#334155" stroke-width="1.5"/>
+              <ellipse cx="163" cy="22" rx="41" ry="11" fill="#ffffff" stroke="#334155" stroke-width="1.5"/>
+              <text x="163" y="25" font-size="8" text-anchor="middle" fill="#0f172a">telefones</text>
+              <!-- Discriminador -->
+              <ellipse cx="55" cy="64" rx="44" ry="14" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
+              <text x="55" y="65" font-size="8" font-weight="bold" text-anchor="middle" fill="#78350f">nome_dep</text>
+              <line x1="32" y1="69" x2="78" y2="69" stroke="#78350f" stroke-width="1.2" stroke-dasharray="3,2"/>
+              <!-- Derivado -->
+              <ellipse cx="163" cy="64" rx="44" ry="14" fill="#fce7f3" stroke="#be185d" stroke-width="1.5" stroke-dasharray="4,3"/>
+              <text x="163" y="67" font-size="8" font-style="italic" text-anchor="middle" fill="#831843">idade</text>
+            </svg>
+          </div>
+
+          <!-- Card 4: Pinos e Triângulo brModelo -->
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 flex flex-col items-center text-center">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-2">Pinos e EER no brModelo (Heuser)</span>
+            <svg viewBox="0 0 220 95" class="w-full h-24">
+              <!-- Pino PK -->
+              <line x1="15" y1="20" x2="35" y2="20" stroke="#334155" stroke-width="1.5"/>
+              <circle cx="39" cy="20" r="4.5" fill="#0f172a" stroke="#0f172a"/>
+              <text x="48" y="23" font-size="8.5" font-weight="bold" fill="#0f172a">id_paciente (PK)</text>
+              <!-- Pino Simples -->
+              <line x1="15" y1="42" x2="35" y2="42" stroke="#334155" stroke-width="1.5"/>
+              <circle cx="39" cy="42" r="4.5" fill="#ffffff" stroke="#0f172a" stroke-width="1.5"/>
+              <text x="48" y="45" font-size="8.5" fill="#334155">telefone (1, n)</text>
+              <!-- Triângulo EER -->
+              <polygon points="165,48 190,78 140,78" fill="#fef3c7" stroke="#b45309" stroke-width="1.8"/>
+              <text x="195" y="68" font-size="8.5" font-weight="bold" fill="#b45309">(t, e)</text>
+              <text x="80" y="75" font-size="8" fill="#64748b">Herança:</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse border border-slate-200 dark:border-slate-700">
+            <thead>
+              <tr class="bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300">
+                <th class="p-3 border border-slate-200 dark:border-slate-700">Construto Conceitual</th>
+                <th class="p-3 border border-slate-200 dark:border-slate-700">Padrão Peter Chen (Draw.io)</th>
+                <th class="p-3 border border-slate-200 dark:border-slate-700">Padrão Carlos A. Heuser (brModelo)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 dark:divide-slate-700 text-slate-600 dark:text-slate-300">
+              <tr>
+                <td class="p-3 font-semibold">Atributo Identificador (PK)</td>
+                <td class="p-3">Elipse com nome <u>sublinhado contínuo</u></td>
+                <td class="p-3">Pino com <strong>bolinha preta preenchida (●)</strong></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold">Atributo Simples Descritor</td>
+                <td class="p-3">Elipse simples conectada ao retângulo</td>
+                <td class="p-3">Pino com <strong>bolinha branca vazia (○)</strong></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold">Atributo Composto</td>
+                <td class="p-3">Elipse ramificada em elipses menores</td>
+                <td class="p-3">Pino branco ramificado em sub-pinos</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold">Atributo Multivalorado</td>
+                <td class="p-3"><strong>Elipse de Borda Dupla</strong></td>
+                <td class="p-3">Pino branco seguido da cardinalidade <code class="text-emerald-600">(1, n)</code> ou <code class="text-emerald-600">(0, n)</code></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold">Atributo Derivado</td>
+                <td class="p-3"><strong>Elipse de Borda Tracejada</strong></td>
+                <td class="p-3">Documentado no Dicionário de Dados ou prefixo <code class="text-emerald-600">/atributo</code></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold">Participação Total vs. Parcial</td>
+                <td class="p-3"><strong>Linha Dupla</strong> (Total) vs. <strong>Linha Simples</strong> (Parcial)</td>
+                <td class="p-3">Cardinalidade mínima <code class="text-emerald-600">1</code> (Total) vs. <code class="text-emerald-600">0</code> (Parcial) no par <code class="text-emerald-600">(min, max)</code></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold">Hierarquia EER (Herança)</td>
+                <td class="p-3">Círculo com <strong>d</strong> (Disjunta) ou <strong>o</strong> (Sobreposta) + Linha Dupla/Simples</td>
+                <td class="p-3">Triângulo com par <strong>(t/p, e/c)</strong>: Total/Parcial, Exclusiva/Compartilhada</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Bloco Teórico 2: Antipadrões de Modelagem -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
+          <span>2. Os 4 Antipadrões Mais Graves em Diagramas Conceituais (AVP1)</span>
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-2">
+          <div class="p-4 rounded-xl bg-red-50/60 dark:bg-red-950/20 border border-red-200 dark:border-red-900/50 text-xs space-y-1.5">
+            <span class="font-bold text-red-700 dark:text-red-400 block text-sm">❌ 1. Inserir Chave Estrangeira (FK) como Atributo no DER</span>
+            <p class="text-slate-600 dark:text-slate-300">
+              No Modelo Conceitual (Chen/Heuser), <strong>jamais</strong> crie um atributo como <code class="text-red-600">id_departamento_fk</code> dentro da entidade <code class="text-emerald-600">MEDICO</code>. Chaves estrangeiras pertencem exclusivamente ao <strong>Modelo Lógico Relacional (Aulas 09 a 11)</strong>. No DER conceitual, a ligação é feita unicamente pelo losango!
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-red-50/60 dark:bg-red-950/20 border border-red-200 dark:border-red-900/50 text-xs space-y-1.5">
+            <span class="font-bold text-red-700 dark:text-red-400 block text-sm">❌ 2. Conectar Entidades Diretamente sem Losango</span>
+            <p class="text-slate-600 dark:text-slate-300">
+              Dois retângulos de entidade nunca podem ser ligados por uma linha reta direta (a única exceção é a conexão através de um círculo/triângulo de especialização EER). Toda associação entre entidades exige um losango de relacionamento.
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 text-xs space-y-1.5">
+            <span class="font-bold text-amber-700 dark:text-amber-400 block text-sm">⚠️ 3. Omitir Papéis em Auto-Relacionamentos</span>
+            <p class="text-slate-600 dark:text-slate-300">
+              Quando uma entidade se relaciona consigo mesma (ex: <code class="text-emerald-600">MEDICO</code> — <code class="text-emerald-600">SUPERVISIONA</code> — <code class="text-emerald-600">MEDICO</code>), é obrigatório rotular os papéis (<em>roles</em>) nas duas linhas (ex: <code class="text-emerald-600">preceptor</code> e <code class="text-emerald-600">residente</code>) para eliminar ambiguidade de leitura.
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 text-xs space-y-1.5">
+            <span class="font-bold text-amber-700 dark:text-amber-400 block text-sm">⚠️ 4. Misturar Notações Diferentes no Mesmo Diagrama</span>
+            <p class="text-slate-600 dark:text-slate-300">
+              Evite usar conectores "Pé de Galinha" (<em>Crow's Foot</em>, típicos de diagramas físicos de tabelas) misturados com elipses de atributos e losangos de Peter Chen. Mantenha 100% de consistência visual.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bloco Teórico 3: Modelagem Descritiva e Textual (Dicionário de Dados da AVP1) -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm space-y-4">
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+          <i class="fa-solid fa-table-list text-emerald-600 dark:text-emerald-400"></i>
+          <span>3. Modelagem Descritiva e Textual: O Dicionário de Dados Conceitual (Modelo AVP1)</span>
+        </h3>
+        <p class="text-xs text-slate-600 dark:text-slate-300">
+          O <strong>Dicionário de Dados Conceitual</strong> complementa o diagrama gráfico detalhando a semântica, os domínios conceituais, as fórmulas de atributos derivados e as restrições que as figuras geométricas não expressam sozinhas. Veja o modelo aplicado ao estudo de caso da <strong>Clínica Médica "VidaPlena"</strong>:
+        </p>
+
+        <!-- Tabela 1: Especificação de Atributos -->
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2">A) Especificação Descritiva de Entidades e Atributos</h4>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse border border-slate-200 dark:border-slate-700">
+              <thead>
+                <tr class="bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300">
+                  <th class="p-2.5 border border-slate-200 dark:border-slate-700">Entidade / Rel.</th>
+                  <th class="p-2.5 border border-slate-200 dark:border-slate-700">Atributo</th>
+                  <th class="p-2.5 border border-slate-200 dark:border-slate-700">Classificação Conceitual</th>
+                  <th class="p-2.5 border border-slate-200 dark:border-slate-700">Domínio Semântico</th>
+                  <th class="p-2.5 border border-slate-200 dark:border-slate-700">Obrig.</th>
+                  <th class="p-2.5 border border-slate-200 dark:border-slate-700">Descrição e Regra de Negócio</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 dark:divide-slate-700 text-slate-600 dark:text-slate-300">
+                <tr>
+                  <td class="p-2.5 font-mono font-bold">PESSOA</td>
+                  <td class="p-2.5 font-mono"><u>id_pessoa</u></td>
+                  <td class="p-2.5">Identificador (PK)</td>
+                  <td class="p-2.5">Inteiro Positivo</td>
+                  <td class="p-2.5">Sim</td>
+                  <td class="p-2.5">Identificador único herdado pelas subclasses <code class="text-emerald-600">PACIENTE</code> e <code class="text-emerald-600">MEDICO</code>.</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 font-mono font-bold">PESSOA</td>
+                  <td class="p-2.5 font-mono">cpf</td>
+                  <td class="p-2.5">Simples (Candidato)</td>
+                  <td class="p-2.5">Texto (11 dígitos)</td>
+                  <td class="p-2.5">Sim</td>
+                  <td class="p-2.5">Cadastro de Pessoa Física único; não admite repetição no sistema.</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 font-mono font-bold">PESSOA</td>
+                  <td class="p-2.5 font-mono">endereco</td>
+                  <td class="p-2.5">Composto</td>
+                  <td class="p-2.5">Subatributos (rua, num, cep)</td>
+                  <td class="p-2.5">Sim</td>
+                  <td class="p-2.5">Decomposto em <code class="text-emerald-600">logradouro</code>, <code class="text-emerald-600">numero</code>, <code class="text-emerald-600">bairro</code> e <code class="text-emerald-600">cep</code>.</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 font-mono font-bold">PESSOA</td>
+                  <td class="p-2.5 font-mono">telefones</td>
+                  <td class="p-2.5">Multivalorado</td>
+                  <td class="p-2.5">Conjunto de Textos</td>
+                  <td class="p-2.5">Sim</td>
+                  <td class="p-2.5">Aceita de 1 a N números de contato por pessoa cadastrada.</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 font-mono font-bold">PESSOA</td>
+                  <td class="p-2.5 font-mono">/idade</td>
+                  <td class="p-2.5">Derivado</td>
+                  <td class="p-2.5">Inteiro (Anos)</td>
+                  <td class="p-2.5">Não</td>
+                  <td class="p-2.5">Calculado dinamicamente: <code class="text-emerald-600">Data_Atual − data_nasc</code> (não armazenado).</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 font-mono font-bold">DEPENDENTE</td>
+                  <td class="p-2.5 font-mono"><span class=" border-b border-dashed border-slate-500">seq_dep</span></td>
+                  <td class="p-2.5">Chave Parcial (Discrim.)</td>
+                  <td class="p-2.5">Sequencial (1, 2, ...)</td>
+                  <td class="p-2.5">Sim</td>
+                  <td class="p-2.5">Identifica o dependente exclusivamente em conjunto com <code class="text-emerald-600">id_pessoa</code> do titular.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tabela 2: Matriz Descritiva de Relacionamentos -->
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2">B) Matriz Descritiva de Relacionamentos e Cardinalidades</h4>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse border border-slate-200 dark:border-slate-700">
+              <thead>
+                <tr class="bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300">
+                  <th class="p-2.5 border border-slate-200 dark:border-slate-700">Relacionamento</th>
+                  <th class="p-2.5 border border-slate-200 dark:border-slate-700">Entidades Conectadas (Papéis)</th>
+                  <th class="p-2.5 border border-slate-200 dark:border-slate-700">Notação Chen (Draw.io)</th>
+                  <th class="p-2.5 border border-slate-200 dark:border-slate-700">Notação Heuser (brModelo)</th>
+                  <th class="p-2.5 border border-slate-200 dark:border-slate-700">Atributos Próprios</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 dark:divide-slate-700 text-slate-600 dark:text-slate-300">
+                <tr>
+                  <td class="p-2.5 font-mono font-bold">REALIZA_CONSULTA</td>
+                  <td class="p-2.5"><code class="text-emerald-600">MEDICO</code> × <code class="text-emerald-600">PACIENTE</code></td>
+                  <td class="p-2.5">N : M (Parcial / Parcial)</td>
+                  <td class="p-2.5">(0, n) em ambos os lados</td>
+                  <td class="p-2.5"><code class="text-emerald-600">data_hora</code>, <code class="text-emerald-600">diagnostico</code></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 font-mono font-bold">POSSUI_DEP (Identif.)</td>
+                  <td class="p-2.5"><code class="text-emerald-600">PACIENTE</code> × <code class="text-emerald-600">DEPENDENTE</code></td>
+                  <td class="p-2.5">1 : N (Linha Dupla em Dependente)</td>
+                  <td class="p-2.5">Paciente (0, n) — Dependente (1, 1)</td>
+                  <td class="p-2.5">Nenhum</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 font-mono font-bold">SUPERVISIONA (Recursivo)</td>
+                  <td class="p-2.5"><code class="text-emerald-600">MEDICO</code> (preceptor) × <code class="text-emerald-600">MEDICO</code> (residente)</td>
+                  <td class="p-2.5">1 : N (Parcial / Parcial)</td>
+                  <td class="p-2.5">Preceptor (0, n) — Residente (0, 1)</td>
+                  <td class="p-2.5">Nenhum</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 2: VISUALIZADOR DE SLIDES (PDF)        -->
+    <!-- ========================================== -->
+    <div id="tab-slides" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700/60 shadow-sm flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h2 class="font-bold text-slate-900 dark:text-white text-base">Apresentação Oficial em Slides (Beamer 16:9)</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">24 slides com figuras geométricas em TikZ comparando Draw.io (Peter Chen) e brModelo (Heuser) e Dicionário de Dados.</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <a href="materiais/main.pdf" target="_blank" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center space-x-1.5 transition-colors">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            <span>Abrir em Nova Aba</span>
+          </a>
+          <a href="materiais/main.pdf" download="Aula_08_Laboratorio_CASE_DER.pdf" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center space-x-1.5 transition-colors">
+            <i class="fa-solid fa-download"></i>
+            <span>Baixar PDF</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="w-full h-[650px] rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 shadow-inner">
+        <iframe src="materiais/main.pdf" class="w-full h-full border-0" title="Slides da Aula 08"></iframe>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 3: PLANO PEDAGÓGICO                   -->
+    <!-- ========================================== -->
+    <div id="tab-plano" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Cronograma e Estrutura Pedagógica (100 Minutos)</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
+                <th class="py-2.5 px-3">Bloco</th>
+                <th class="py-2.5 px-3">Tempo</th>
+                <th class="py-2.5 px-4">Atividade</th>
+                <th class="py-2.5 px-3">Metodologia</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50">
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">1</td>
+                <td class="py-3 px-3 whitespace-nowrap">00 - 15 min</td>
+                <td class="py-3 px-4">Revisão do escopo da Aula 07 e introdução ao papel das ferramentas CASE.</td>
+                <td class="py-3 px-3">Exposição dialogada e revisão de escopo.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">2</td>
+                <td class="py-3 px-3 whitespace-nowrap">15 - 35 min</td>
+                <td class="py-3 px-4">Equivalência de formas geométricas: Peter Chen (Draw.io) vs. Carlos A. Heuser (brModelo).</td>
+                <td class="py-3 px-3">Slides Beamer 16:9 com comparativos em TikZ.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">3</td>
+                <td class="py-3 px-3 whitespace-nowrap">35 - 65 min</td>
+                <td class="py-3 px-4">Laboratório guiado mão na massa: digitalização completa do DER/EER da AVP1.</td>
+                <td class="py-3 px-3">Prática assistida em computador (brModelo / Draw.io).</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">4</td>
+                <td class="py-3 px-3 whitespace-nowrap">65 - 85 min</td>
+                <td class="py-3 px-4">Modelagem Descritiva e Textual: Construção do Dicionário de Dados Conceitual e Matriz de Relacionamentos.</td>
+                <td class="py-3 px-3">Documentação tabular e auditoria visual contra antipadrões.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">5</td>
+                <td class="py-3 px-3 whitespace-nowrap">85 - 100 min</td>
+                <td class="py-3 px-4">Exportação vetorial em alta resolução e ponte para o Modelo Relacional (Aula 09).</td>
+                <td class="py-3 px-3">Mentoria docente e fechamento da Unidade III.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 4: EXERCÍCIOS DE FIXAÇÃO               -->
+    <!-- ========================================== -->
+    <div id="tab-exercicios" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm space-y-4">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Exercícios de Fixação e Prática CASE</h2>
+
+        <div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+          <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">Questão 1: Equivalência de Notações (Chen vs. Heuser/brModelo)</span>
+          <p class="text-xs text-slate-600 dark:text-slate-300">
+            Explique como um atributo identificador (PK), um atributo multivalorado e uma especialização EER Disjunta e Total são representados geometricamente no <strong>brModelo</strong> em comparação ao padrão clássico de <strong>Peter Chen no Draw.io</strong>.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+          <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">Questão 2: Leitura de Pares (min, max)</span>
+          <p class="text-xs text-slate-600 dark:text-slate-300">
+            Considere o relacionamento <code class="text-emerald-600">MEDICO (0, 1) --- &lt;DIRIGE&gt; --- (1, 1) DEPARTAMENTO</code> no brModelo. Traduza essa representação para a gramática de linhas simples/duplas de Peter Chen.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+          <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">Questão 3: Caça aos Antipadrões em Diagramas CASE</span>
+          <p class="text-xs text-slate-600 dark:text-slate-300">
+            Por que a criação de um atributo chamado <code class="text-emerald-600">cod_departamento_fk</code> dentro da entidade <code class="text-emerald-600">FUNCIONARIO</code> é considerada um erro conceitual grave durante a construção de um DER?
+          </p>
+        </div>
+
+        <div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+          <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">Questão 4: Papel do Dicionário de Dados Descritivo</span>
+          <p class="text-xs text-slate-600 dark:text-slate-300">
+            Cite três informações semânticas ou de domínio que não aparecem visualmente nas formas geométricas do DER e que precisam ser documentadas nas tabelas do Dicionário de Dados Conceitual.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+          <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">Questão 5: Entregável Prático da AVP1 (Diagrama + Dicionário)</span>
+          <p class="text-xs text-slate-600 dark:text-slate-300">
+            Construa o DER/EER completo do seu projeto semestral no <strong>Draw.io</strong> ou <strong>brModelo</strong>, exporte o PDF/PNG de alta resolução e elabore a Especificação Tabular de Atributos e Matriz de Relacionamentos.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 5: CENTRAL DE ARQUIVOS                 -->
+    <!-- ========================================== -->
+    <div id="tab-arquivos" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Repositório de Arquivos Didáticos da Aula 08</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <!-- Slides PDF -->
+          <a href="materiais/main.pdf" download="Aula_08_Slides.pdf" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-solid fa-file-pdf text-red-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Slides Oficiais (PDF)</h3>
+              <p class="text-[11px] text-slate-500">24 slides Beamer com diagramas TikZ comparando Draw.io (Chen) e brModelo (Heuser).</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">
+              Download <i class="fa-solid fa-download ml-1 text-[10px]"></i>
+            </span>
+          </a>
+
+          <!-- Plano de Aula -->
+          <a href="plano_de_aula.md" download="plano_de_aula.md" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-solid fa-file-lines text-blue-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Plano de Aula (.md)</h3>
+              <p class="text-[11px] text-slate-500">Roteiro completo de laboratório CASE, modelagem descritiva e exercícios.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">
+              Download <i class="fa-solid fa-download ml-1 text-[10px]"></i>
+            </span>
+          </a>
+
+          <!-- Guia README -->
+          <a href="README.md" download="README.md" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-solid fa-book-bookmark text-emerald-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Síntese da Aula (README.md)</h3>
+              <p class="text-[11px] text-slate-500">Objetivos consolidados, estrutura de materiais e bibliografia oficial.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">
+              Download <i class="fa-solid fa-download ml-1 text-[10px]"></i>
+            </span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- RODAPÉ INSTITUCIONAL                       -->
+  <!-- ========================================== -->
+  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center space-x-2">
+        <span>Instituto Federal de Educação, Ciência e Tecnologia do Ceará — Campus Tauá</span>
+      </div>
+      <div>
+        <span>Banco de Dados (2026.2) • Prof. Me. Reginaldo Fernandes</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script de Controle de Abas e Modo Escuro -->
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-emerald-600', 'text-emerald-600', 'dark:text-emerald-400');
+        btn.classList.add('text-slate-500', 'dark:text-slate-400');
+      });
+
+      const selectedTab = document.getElementById(tabId);
+      const selectedBtn = document.getElementById('btn-' + tabId);
+
+      if (selectedTab) selectedTab.classList.remove('hidden');
+      if (selectedBtn) {
+        selectedBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
+        selectedBtn.classList.add('border-b-2', 'border-emerald-600', 'text-emerald-600', 'dark:text-emerald-400');
+      }
+    }
+
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        localStorage.theme = 'light';
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.theme = 'dark';
+      }
+    });
+  </script>
+</body>
+
+</html>

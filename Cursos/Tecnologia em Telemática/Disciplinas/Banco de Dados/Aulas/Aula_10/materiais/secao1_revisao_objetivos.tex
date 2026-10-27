@@ -1,0 +1,43 @@
+\changecolours{ScoutGreen}
+\section[Ponte e Objetivos]{Ponte Pedagógica e Objetivos de Aprendizagem}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Do DER Conceitual ao Esquema Lógico Relacional},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Onde Estávamos (Aulas 08 e 09)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Aula 08 (Modelagem Conceitual CASE):} Construímos o diagrama DER/EER completo no Draw.io e brModelo, livre de detalhes de armazenamento.
+    \item \textbf{Aula 09 (Modelo Relacional de Codd):} Dominamos a anatomia matemática das relações, domínios atômicos (1FN), chaves ($SK, CK, PK, AK, FK$) e as 4 restrições formais de integridade.
+    \item \textbf{A Pergunta Central de Hoje:} Como converter sistematicamente cada figura geométrica do DER em relações matemáticas sem perder nenhuma regra de negócio?
+  \end{itemize}
+}{%
+  \alert{Onde Chegaremos Hoje (Aula 10)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Projeto Lógico Relacional:} Iniciamos a \textbf{Unidade IV (N1)} aplicando o algoritmo formal de transformação \textbf{MER $\longrightarrow$ Modelo Relacional}.
+    \item \textbf{Escopo da Parte 1 (Passos 1 a 4):}\\
+      -- \textbf{Passo 1:} Entidades Fortes e atributos (simples, compostos e derivados).\\
+      -- \textbf{Passo 2:} Entidades Fracas e Relacionamentos Identificadores.\\
+      -- \textbf{Passo 3:} Relacionamentos Binários $1:1$.\\
+      -- \textbf{Passo 4:} Relacionamentos Binários $1:N$ e Auto-Relacionamentos.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Objetivos de Aprendizagem da Aula 10},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Competências Teóricas e Analíticas}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Compreender a lógica do \textbf{Algoritmo de Mapeamento de 7 Passos} de Elmasri \& Navathe e as regras de fusão/propagação de chaves de Carlos Alberto Heuser.
+    \item Explicar por que atributos compostos devem ser achatados (\textit{flattened}) e atributos derivados omitidos das relações base para atender à \textbf{1ª Forma Normal (1FN)}.
+    \item Justificar a escolha do lado de \textbf{Participação Total} ou de \textbf{Cardinalidade $N$} para posicionar Chaves Estrangeiras evitando valores \texttt{NULL}.
+  \end{itemize}
+}{%
+  \alert{Habilidades Práticas de Modelagem}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Transformar entidades regulares e fracas do DER em esquemas relacionais textuais e diagramas de esquema com arcos referenciais ($FK \longrightarrow PK$).
+    \item Aplicar e comparar as \textbf{3 estratégias de mapeamento de relacionamentos $1:1$} (Chave Estrangeira, Fusão em Relação Única e Relação Própria).
+    \item Mapear relacionamentos $1:N$ regulares e recursivos (auto-relacionamentos), renomeando chaves estrangeiras com base nos papéis (\textit{roles}).
+  \end{itemize}
+}

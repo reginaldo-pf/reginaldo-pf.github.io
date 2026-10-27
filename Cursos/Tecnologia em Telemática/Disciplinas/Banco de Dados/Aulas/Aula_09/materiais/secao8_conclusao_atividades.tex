@@ -1,0 +1,21 @@
+\changecolours{ScoutGreen}
+\section[Conclusão e Próximos Passos]{Síntese Conceitual, Exercícios e Ponte para a Aula 10}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Resumo Executivo da Aula 09 e Próximo Passo},leftcol=7.1cm,rightcol=6.9cm]{%
+  \alert{As 4 Regras de Ouro de Codd Consolidadas}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{1. Domínio Atômico (1FN):} Valores indivisíveis e compatíveis com o tipo do atributo.
+    \item \textbf{2. Unicidade de Chave:} Nenhuma duplicata na $PK$ ou nas Chaves Candidatas ($CK$).
+    \item \textbf{3. Integridade de Entidade:} $\text{PK} \neq \text{NULL}$ sempre.
+    \item \textbf{4. Integridade Referencial:} $\text{FK} \in \text{PK}_{\text{pai}}$ ou $\text{FK} = \text{NULL}$.
+  \end{itemize}
+}{%
+  \alert{Ponte Pedagógica: Aula 10 (27/10/2026)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Agora que dominamos o DER (Aulas 03--08) e o Modelo Relacional (Aula 09):} Como transformar sistematicamente qualquer Diagrama Entidade-Relacionamento em um Esquema Relacional de Tabelas?
+    \item \textbf{Aula 10 -- Mapeamento Lógico Relacional (Parte 1):} Algoritmo formal de 7 passos de Elmasri \& Navathe (entidades fortes, entidades fracas e relacionamentos $1:1$ e $1:N$)!
+  \end{itemize}
+}

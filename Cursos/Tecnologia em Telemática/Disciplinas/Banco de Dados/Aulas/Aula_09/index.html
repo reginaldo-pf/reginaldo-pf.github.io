@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 09: Fundamentos do Modelo Relacional e Integridade | Banco de Dados - IFCE Tauá</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- ========================================== -->
+  <!-- CABEÇALHO INSTITUCIONAL                    -->
+  <!-- ========================================== -->
+  <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 shadow-sm backdrop-blur-md bg-white/90 dark:bg-slate-800/90">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="../../index.html" class="flex items-center space-x-3 group">
+          <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+            <i class="fa-solid fa-table-cells text-lg"></i>
+          </div>
+          <div>
+            <span class="text-xs uppercase tracking-wider font-bold text-emerald-600 dark:text-emerald-400 block leading-tight">IFCE Campus Tauá • Telemática</span>
+            <span class="text-base font-bold text-slate-900 dark:text-white leading-tight">Banco de Dados — Aula 09</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <a href="../../index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center space-x-1.5">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span class="hidden sm:inline">Portal da Disciplina</span>
+        </a>
+        <button id="theme-toggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-emerald-600 transition-colors" title="Alternar Modo Escuro/Claro">
+          <i class="fa-solid fa-moon dark:hidden"></i>
+          <i class="fa-solid fa-sun hidden dark:inline"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- BANNER DA AULA                             -->
+  <!-- ========================================== -->
+  <section class="bg-gradient-to-r from-emerald-900 via-slate-900 to-slate-950 text-white py-10 border-b border-emerald-950/40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold mb-3">
+        <i class="fa-solid fa-table"></i>
+        <span>Unidade II (N1) — O Modelo Relacional de Dados (Edgar F. Codd, 1970)</span>
+      </div>
+      <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
+        Fundamentos Formais do Modelo Relacional e Restrições de Integridade
+      </h1>
+      <p class="text-slate-300 text-sm sm:text-base mt-2 max-w-3xl leading-relaxed">
+        Domine a estrutura matemática das relações propostas por <strong>Edgar Frank Codd (1970)</strong>: domínios atômicos (1FN), tuplas, esquemas intensionais vs. instâncias extensionais, grau vs. cardinalidade, hierarquia de chaves ($SK, CK, PK, AK, FK$), diagramas de esquema relacional e auditoria formal de integridade.
+      </p>
+
+      <div class="flex flex-wrap gap-4 mt-6 text-xs text-slate-300">
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-regular fa-calendar text-emerald-400"></i>
+          <span>21/10/2026 (Quarta-feira)</span>
+        </div>
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-regular fa-clock text-emerald-400"></i>
+          <span>2 h/a (100 min)</span>
+        </div>
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-solid fa-chalkboard-user text-emerald-400"></i>
+          <span>Prof. Me. Reginaldo Fernandes</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- NAVEGAÇÃO DE ABAS                          -->
+  <!-- ========================================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+    <div class="flex border-b border-slate-200 dark:border-slate-700 mb-6 space-x-2 overflow-x-auto pb-1">
+      <button onclick="switchTab('tab-notebook')" id="btn-tab-notebook" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm border-b-2 border-emerald-600 text-emerald-600 dark:text-emerald-400 flex items-center space-x-2">
+        <i class="fa-solid fa-diagram-next"></i>
+        <span>Modelagem Relacional & Auditoria Tabular</span>
+      </button>
+      <button onclick="switchTab('tab-slides')" id="btn-tab-slides" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-regular fa-file-pdf"></i>
+        <span>Slides da Aula (PDF)</span>
+      </button>
+      <button onclick="switchTab('tab-plano')" id="btn-tab-plano" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Plano Pedagógico</span>
+      </button>
+      <button onclick="switchTab('tab-exercicios')" id="btn-tab-exercicios" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-solid fa-pen-to-square"></i>
+        <span>Exercícios de Fixação</span>
+      </button>
+      <button onclick="switchTab('tab-arquivos')" id="btn-tab-arquivos" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-solid fa-download"></i>
+        <span>Central de Arquivos</span>
+      </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 1: MODELAGEM RELACIONAL & AUDITORIA    -->
+    <!-- ========================================== -->
+    <div id="tab-notebook" class="tab-content space-y-6">
+
+      <!-- Bloco Teórico 1: Anatomia Formal da Relação -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-square-root-variable text-emerald-600 dark:text-emerald-400"></i>
+          <span>1. Anatomia Matemática de uma Relação (Edgar F. Codd, 1970)</span>
+        </h2>
+        <p class="text-slate-700 dark:text-slate-300 mb-4">
+          No Modelo Relacional, todos os dados são estruturados como <strong>Relações Matemáticas</strong> (representadas visualmente como tabelas bidimensionais submetidas à teoria dos conjuntos). Um <strong>Esquema de Relação</strong> $R(A_1, A_2, \dots, A_n)$ define a estrutura intensional invariante, enquanto o <strong>Estado ou Instância</strong> $r(R)$ é um subconjunto finito do produto cartesiano dos domínios:
+        </p>
+
+        <div class="p-3 bg-slate-100 dark:bg-slate-900 rounded-lg text-center font-mono text-xs sm:text-sm text-emerald-700 dark:text-emerald-400 mb-4">
+          r(R) ⊆ dom(A₁) × dom(A₂) × ... × dom(Aₙ)
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 space-y-2 text-xs text-slate-600 dark:text-slate-300">
+            <span class="font-bold text-slate-900 dark:text-white text-sm block">Vocabulário Formal vs. Comercial:</span>
+            <ul class="list-disc list-inside space-y-1.5">
+              <li><strong>Relação ($R$):</strong> Tabela bidimensional.</li>
+              <li><strong>Tupla ($t = \langle v_1, v_2, \dots, v_n \rangle$):</strong> Linha da tabela (registro).</li>
+              <li><strong>Atributo ($A_i$):</strong> Coluna nomeada do cabeçalho.</li>
+              <li><strong>Grau (Aridade $n$):</strong> Número de atributos/colunas (propriedade estática do esquema).</li>
+              <li><strong>Cardinalidade ($m$):</strong> Número de tuplas/linhas (propriedade dinâmica da instância).</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 space-y-2 text-xs text-slate-600 dark:text-slate-300">
+            <span class="font-bold text-slate-900 dark:text-white text-sm block">Hierarquia Formal de Chaves ($SK \supset CK \supset PK$):</span>
+            <ul class="list-disc list-inside space-y-1.5">
+              <li><strong>Superchave ($SK$):</strong> Qualquer subconjunto de atributos que não se repete entre duas tuplas distintas ($t_1[SK] \neq t_2[SK]$).</li>
+              <li><strong>Chave Candidata ($CK$):</strong> Superchave <strong>mínima (irredutível)</strong> — se remover qualquer atributo, perde a unicidade.</li>
+              <li><strong>Chave Primária ($PK$):</strong> A chave candidata eleita pelo projetista como identificador principal (<u>sublinhada</u>).</li>
+              <li><strong>Chave Alternativa ($AK$):</strong> As demais chaves candidatas não escolhidas como PK.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bloco Teórico 2: As 4 Restrições Formais de Integridade -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-shield-halved text-emerald-600 dark:text-emerald-400"></i>
+          <span>2. As 4 Restrições Formais de Integridade Relacional</span>
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-3">
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+            <span class="px-2 py-0.5 text-xs font-bold rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 mb-2 inline-block">1. Domínio & 1FN</span>
+            <h3 class="font-bold text-slate-900 dark:text-white text-sm mb-1">Integridade de Domínio e Atomicidade</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300">
+              Todo valor de uma tupla $t[A_i]$ deve ser um valor <strong>atômico (indivisível)</strong> pertencente ao domínio $\text{dom}(A_i)$ (Primeira Forma Normal). Conjuntos ou atributos multivalorados dentro de uma célula são proibidos.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+            <span class="px-2 py-0.5 text-xs font-bold rounded bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 mb-2 inline-block">2. Unicidade</span>
+            <h3 class="font-bold text-slate-900 dark:text-white text-sm mb-1">Restrição de Chave</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300">
+              Para quaisquer duas tuplas distintas $t_1, t_2 \in r(R)$, é obrigatório que $t_1[CK] \neq t_2[CK]$. Nenhuma chave primária ou chave candidata alternativa pode ter valores duplicados.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+            <span class="px-2 py-0.5 text-xs font-bold rounded bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 mb-2 inline-block">3. Regra de Entidade</span>
+            <h3 class="font-bold text-slate-900 dark:text-white text-sm mb-1">Integridade de Entidade ($\text{PK} \neq \text{NULL}$)</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300">
+              Nenhum atributo que participe da Chave Primária ($PK$) de uma relação base pode assumir o valor <code class="text-emerald-600">NULL</code>, pois tuplas com chave desconhecida seriam indistinguíveis no conjunto.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+            <span class="px-2 py-0.5 text-xs font-bold rounded bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 mb-2 inline-block">4. Chave Estrangeira (FK)</span>
+            <h3 class="font-bold text-slate-900 dark:text-white text-sm mb-1">Integridade Referencial</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300">
+              Uma Chave Estrangeira $FK$ em $R_1$ que referencia $R_2$ deve satisfazer: ou $t_1[FK] = t_2[PK]$ para alguma tupla existente em $R_2$, ou $t_1[FK] = \text{NULL}$ (quando o vínculo é opcional e a FK não integra a PK).
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bloco Teórico 3: Diagrama de Esquema Relacional e Auditoria Tabular -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm space-y-5">
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+          <i class="fa-solid fa-sitemap text-emerald-600 dark:text-emerald-400"></i>
+          <span>3. Diagrama de Esquema Relacional com Arcos Referenciais e Auditoria Tabular</span>
+        </h3>
+        <p class="text-xs text-slate-600 dark:text-slate-300">
+          Na modelagem lógica relacional, representamos os esquemas das relações como caixas horizontais contendo seus atributos, sublinhando a Chave Primária (<u>PK</u>) e traçando <strong>arcos direcionados ($FK \longrightarrow PK$)</strong> que indicam as restrições de Integridade Referencial:
+        </p>
+
+        <!-- Diagrama SVG do Esquema Relacional Clínica VidaPlena -->
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 overflow-x-auto">
+          <svg viewBox="0 0 780 185" class="w-full min-w-[640px] h-auto">
+            <defs>
+              <marker id="arrow-fk" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                <path d="M0,1 L7,4 L0,7 Z" fill="#1d4ed8" />
+              </marker>
+              <marker id="arrow-self" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                <path d="M0,1 L7,4 L0,7 Z" fill="#059669" />
+              </marker>
+            </defs>
+
+            <!-- Relação 1: DEPARTAMENTO_CLINICO -->
+            <rect x="20" y="38" width="310" height="32" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1.8"/>
+            <text x="175" y="58" font-size="11" font-family="monospace" text-anchor="middle" fill="#064e3b">
+              <tspan font-weight="bold">DEPARTAMENTO_CLINICO</tspan>(<tspan text-decoration="underline" font-weight="bold">cod_depto</tspan>, nome_depto, bloco)
+            </text>
+
+            <!-- Relação 2: MEDICO -->
+            <rect x="370" y="38" width="390" height="32" rx="4" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.8"/>
+            <text x="565" y="58" font-size="11" font-family="monospace" text-anchor="middle" fill="#1e3a8a">
+              <tspan font-weight="bold">MEDICO</tspan>(<tspan text-decoration="underline" font-weight="bold">matricula</tspan>, cpf, nome, crm, <tspan fill="#1d4ed8" font-weight="bold">cod_depto_fk</tspan>, <tspan fill="#059669" font-weight="bold">mat_superv_fk</tspan>)
+            </text>
+
+            <!-- Arco FK 1: cod_depto_fk -> cod_depto -->
+            <polyline points="625,70 625,88 160,88 160,72" fill="none" stroke="#1d4ed8" stroke-width="2" marker-end="url(#arrow-fk)"/>
+            <text x="392" y="84" font-size="9.5" font-weight="bold" text-anchor="middle" fill="#1d4ed8">Integridade Referencial Externa (cod_depto_fk ⟶ cod_depto)</text>
+
+            <!-- Arco FK 2: mat_superv_fk -> matricula (Auto-referência) -->
+            <polyline points="715,38 715,18 465,18 465,36" fill="none" stroke="#059669" stroke-width="2" marker-end="url(#arrow-self)"/>
+            <text x="590" y="13" font-size="9.5" font-weight="bold" text-anchor="middle" fill="#059669">Auto-Referência Recursiva (mat_superv_fk ⟶ matricula)</text>
+
+            <!-- Relação 3: PACIENTE -->
+            <rect x="20" y="118" width="310" height="32" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1.8"/>
+            <text x="175" y="138" font-size="11" font-family="monospace" text-anchor="middle" fill="#064e3b">
+              <tspan font-weight="bold">PACIENTE</tspan>(<tspan text-decoration="underline" font-weight="bold">id_prontuario</tspan>, cpf, nome_paciente, data_nasc)
+            </text>
+
+            <!-- Relação 4: DEPENDENTE -->
+            <rect x="370" y="118" width="390" height="32" rx="4" fill="#fef3c7" stroke="#b45309" stroke-width="1.8"/>
+            <text x="565" y="138" font-size="11" font-family="monospace" text-anchor="middle" fill="#78350f">
+              <tspan font-weight="bold">DEPENDENTE</tspan>(<tspan text-decoration="underline" font-weight="bold" fill="#1d4ed8">id_prontuario_fk</tspan>, <tspan text-decoration="underline" font-weight="bold">nome_dep</tspan>, data_nasc, parentesco)
+            </text>
+
+            <!-- Arco FK 3: id_prontuario_fk -> id_prontuario -->
+            <polyline points="495,150 495,168 140,168 140,152" fill="none" stroke="#1d4ed8" stroke-width="2" marker-end="url(#arrow-fk)"/>
+            <text x="318" y="180" font-size="9.5" font-weight="bold" text-anchor="middle" fill="#1d4ed8">Dependência de Identificação: id_prontuario_fk compõe a PK de DEPENDENTE (Não aceita NULL!)</text>
+          </svg>
+        </div>
+
+        <!-- Tabela de Auditoria de Operações sobre Tuplas -->
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2">Matriz de Auditoria Formal de Operações sobre Tuplas</h4>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse border border-slate-200 dark:border-slate-700">
+              <thead>
+                <tr class="bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300">
+                  <th class="p-2.5 border border-slate-200 dark:border-slate-700">Operação Proposta sobre a Relação <code class="text-emerald-600">MEDICO</code></th>
+                  <th class="p-2.5 border border-slate-200 dark:border-slate-700">Tupla Avaliada $t = \langle v_1, v_2, \dots, v_6 \rangle$</th>
+                  <th class="p-2.5 border border-slate-200 dark:border-slate-700">Status</th>
+                  <th class="p-2.5 border border-slate-200 dark:border-slate-700">Justificativa Formal no Modelo de Codd</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 dark:divide-slate-700 text-slate-600 dark:text-slate-300">
+                <tr>
+                  <td class="p-2.5">Inserir médico sem matrícula definida</td>
+                  <td class="p-2.5 font-mono">⟨NULL, '111', 'Dr. Rui', 'CE-10', 10, NULL⟩</td>
+                  <td class="p-2.5 font-bold text-red-600 dark:text-red-400">REJEITADA</td>
+                  <td class="p-2.5">Viola a <strong>Integridade de Entidade</strong> ($\text{PK} \neq \text{NULL}$).</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5">Inserir dois CRMs na mesma célula</td>
+                  <td class="p-2.5 font-mono">⟨1004, '222', 'Dr. Ivo', {'CE-1', 'SP-2'}, 10, NULL⟩</td>
+                  <td class="p-2.5 font-bold text-red-600 dark:text-red-400">REJEITADA</td>
+                  <td class="p-2.5">Viola a <strong>Atomicidade de Domínio (1FN)</strong>.</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5">Inserir médico com CPF já existente em outra tupla</td>
+                  <td class="p-2.5 font-mono">⟨1005, '111.222.333-44', 'Dra. Lia', 'CE-99', 20, NULL⟩</td>
+                  <td class="p-2.5 font-bold text-red-600 dark:text-red-400">REJEITADA</td>
+                  <td class="p-2.5">Viola a <strong>Restrição de Unicidade de Chave Candidata</strong> (<code class="text-emerald-600">cpf</code>).</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5">Lotar médico no departamento 99 (inexistente)</td>
+                  <td class="p-2.5 font-mono">⟨1006, '333', 'Dr. Gil', 'CE-55', 99, 1001⟩</td>
+                  <td class="p-2.5 font-bold text-red-600 dark:text-red-400">REJEITADA</td>
+                  <td class="p-2.5">Viola a <strong>Integridade Referencial</strong> ($99 \notin \text{DEPARTAMENTO\_CLINICO}[\underline{\text{cod\_depto}}]$).</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5">Inserir médico plantonista sem depto. e sem preceptor</td>
+                  <td class="p-2.5 font-mono">⟨1007, '444', 'Dra. Eva', 'CE-77', NULL, NULL⟩</td>
+                  <td class="p-2.5 font-bold text-emerald-600 dark:text-emerald-400">ACEITA</td>
+                  <td class="p-2.5">Ambas as FKs são opcionais e não fazem parte da Chave Primária.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 2: VISUALIZADOR DE SLIDES (PDF)        -->
+    <!-- ========================================== -->
+    <div id="tab-slides" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700/60 shadow-sm flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h2 class="font-bold text-slate-900 dark:text-white text-base">Apresentação Oficial em Slides (Beamer 16:9)</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">22 slides cobrindo a teoria matemática de Codd (1970), chaves, diagramas de esquema e auditoria tabular de integridade.</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <a href="materiais/main.pdf" target="_blank" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center space-x-1.5 transition-colors">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            <span>Abrir em Nova Aba</span>
+          </a>
+          <a href="materiais/main.pdf" download="Aula_09_Fundamentos_Modelo_Relacional.pdf" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center space-x-1.5 transition-colors">
+            <i class="fa-solid fa-download"></i>
+            <span>Baixar PDF</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="w-full h-[650px] rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 shadow-inner">
+        <iframe src="materiais/main.pdf" class="w-full h-full border-0" title="Slides da Aula 09"></iframe>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 3: PLANO PEDAGÓGICO                   -->
+    <!-- ========================================== -->
+    <div id="tab-plano" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Cronograma e Estrutura Pedagógica (100 Minutos)</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
+                <th class="py-2.5 px-3">Bloco</th>
+                <th class="py-2.5 px-3">Tempo</th>
+                <th class="py-2.5 px-4">Atividade</th>
+                <th class="py-2.5 px-3">Metodologia</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50">
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">1</td>
+                <td class="py-3 px-3 whitespace-nowrap">00 - 15 min</td>
+                <td class="py-3 px-4">A Revolução de Edgar F. Codd (1970) e a transição do Conceitual para o Relacional.</td>
+                <td class="py-3 px-3">Exposição dialogada e contexto histórico.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">2</td>
+                <td class="py-3 px-3 whitespace-nowrap">15 - 40 min</td>
+                <td class="py-3 px-4">Anatomia da Relação: Domínios, Esquema vs. Instância, Grau vs. Cardinalidade e NULL.</td>
+                <td class="py-3 px-3">Slides Beamer 16:9 e diagramas em TikZ.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">3</td>
+                <td class="py-3 px-3 whitespace-nowrap">40 - 65 min</td>
+                <td class="py-3 px-4">Teoria das Chaves ($SK, CK, PK, AK, FK$) e as 4 Restrições Formais de Integridade.</td>
+                <td class="py-3 px-3">Análise de esquemas relacionais e arcos de FK.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">4</td>
+                <td class="py-3 px-3 whitespace-nowrap">65 - 85 min</td>
+                <td class="py-3 px-4">Estudo de Caso e Auditoria Tabular de Instâncias Relacionais: Diagramas de Esquema e Tuplas.</td>
+                <td class="py-3 px-3">Modelagem esquemática e verificação tabular.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">5</td>
+                <td class="py-3 px-3 whitespace-nowrap">85 - 100 min</td>
+                <td class="py-3 px-4">Resolução de exercícios analíticos e ponte para o Mapeamento Lógico (Aula 10).</td>
+                <td class="py-3 px-3">Mentoria docente e síntese.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 4: EXERCÍCIOS DE FIXAÇÃO               -->
+    <!-- ========================================== -->
+    <div id="tab-exercicios" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm space-y-4">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Exercícios de Fixação Conceitual</h2>
+
+        <div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+          <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">Questão 1: Grau (Aridade) vs. Cardinalidade</span>
+          <p class="text-xs text-slate-600 dark:text-slate-300">
+            Considere o esquema <code class="text-emerald-600">ALUNO(<u>matricula</u>, cpf, nome, email, curso, semestre)</code> com 450 tuplas válidas no estado atual. Qual é o Grau e qual é a Cardinalidade atual dessa relação? Qual dessas métricas muda quando novas tuplas são inseridas?
+          </p>
+        </div>
+
+        <div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+          <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">Questão 2: Superchave vs. Chave Candidata (Minimalidade)</span>
+          <p class="text-xs text-slate-600 dark:text-slate-300">
+            Na relação <code class="text-emerald-600">ALUNO</code> acima, por que o subconjunto <code class="text-emerald-600">{matricula, nome}</code> é classificado como uma <strong>Superchave</strong>, mas <strong>NÃO</strong> é uma <strong>Chave Candidata</strong>?
+          </p>
+        </div>
+
+        <div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+          <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">Questão 3: O Valor NULL em Chaves Primárias e Estrangeiras</span>
+          <p class="text-xs text-slate-600 dark:text-slate-300">
+            Explique por que a Regra de Integridade de Entidade proíbe terminantemente o valor <code class="text-emerald-600">NULL</code> na Chave Primária ($PK$), enquanto a Regra de Integridade Referencial permite <code class="text-emerald-600">NULL</code> na Chave Estrangeira ($FK$) em relacionamentos opcionais.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+          <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">Questão 4: Políticas de Reação Referencial</span>
+          <p class="text-xs text-slate-600 dark:text-slate-300">
+            Diferencie o comportamento formal das políticas de <strong>Restrição (Rejeição)</strong>, <strong>Anulação (Atribuir NULL)</strong> e <strong>Propagação em Cascata</strong> quando solicitamos a exclusão de uma tupla referenciada na relação pai.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+          <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">Questão 5: Aplicação ao Projeto AVP1</span>
+          <p class="text-xs text-slate-600 dark:text-slate-300">
+            Represente na notação formal de esquemas relacionais duas entidades fortes ligadas por um relacionamento $1:N$ do seu projeto da AVP1, indicando explícita e formalmente a $PK$, as chaves candidatas e o arco direcionado de $FK \longrightarrow PK$.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 5: CENTRAL DE ARQUIVOS                 -->
+    <!-- ========================================== -->
+    <div id="tab-arquivos" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Repositório de Arquivos Didáticos da Aula 09</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <!-- Slides PDF -->
+          <a href="materiais/main.pdf" download="Aula_09_Slides.pdf" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-solid fa-file-pdf text-red-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Slides Oficiais (PDF)</h3>
+              <p class="text-[11px] text-slate-500">22 slides Beamer sobre o Modelo Relacional de Codd, Diagramas de Esquema e Integridade.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">
+              Download <i class="fa-solid fa-download ml-1 text-[10px]"></i>
+            </span>
+          </a>
+
+          <!-- Plano de Aula -->
+          <a href="plano_de_aula.md" download="plano_de_aula.md" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-solid fa-file-lines text-blue-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Plano de Aula (.md)</h3>
+              <p class="text-[11px] text-slate-500">Fundamentação matemática completa, esquemas relacionais e exercícios analíticos.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">
+              Download <i class="fa-solid fa-download ml-1 text-[10px]"></i>
+            </span>
+          </a>
+
+          <!-- Guia README -->
+          <a href="README.md" download="README.md" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-solid fa-book-bookmark text-emerald-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Síntese da Aula (README.md)</h3>
+              <p class="text-[11px] text-slate-500">Competências consolidadas, estrutura de materiais e bibliografia recomendada.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">
+              Download <i class="fa-solid fa-download ml-1 text-[10px]"></i>
+            </span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- RODAPÉ INSTITUCIONAL                       -->
+  <!-- ========================================== -->
+  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center space-x-2">
+        <span>Instituto Federal de Educação, Ciência e Tecnologia do Ceará — Campus Tauá</span>
+      </div>
+      <div>
+        <span>Banco de Dados (2026.2) • Prof. Me. Reginaldo Fernandes</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script de Controle de Abas e Modo Escuro -->
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-emerald-600', 'text-emerald-600', 'dark:text-emerald-400');
+        btn.classList.add('text-slate-500', 'dark:text-slate-400');
+      });
+
+      const selectedTab = document.getElementById(tabId);
+      const selectedBtn = document.getElementById('btn-' + tabId);
+
+      if (selectedTab) selectedTab.classList.remove('hidden');
+      if (selectedBtn) {
+        selectedBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
+        selectedBtn.classList.add('border-b-2', 'border-emerald-600', 'text-emerald-600', 'dark:text-emerald-400');
+      }
+    }
+
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        localStorage.theme = 'light';
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.theme = 'dark';
+      }
+    });
+  </script>
+</body>
+
+</html>

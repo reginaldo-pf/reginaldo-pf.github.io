@@ -1,0 +1,61 @@
+\documentclass[aspectratio=169,utf8,t]{beamer}
+
+% Idioma e Codificacao
+\usepackage[brazilian]{babel}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[normalem]{ulem}
+\usepackage{tikz}
+\usetikzlibrary{shapes,shapes.geometric,arrows,arrows.meta,positioning,calc,fit}
+
+% Carrega o Tema Modelo dos Scouts (Widescreen 16:9, Nunito Sans)
+\usetheme{scouts}
+
+\definecolor{amber}{RGB}{245, 158, 11}
+
+% Metadados Institucionais
+\author{Prof. Me. Reginaldo Fernandes}
+\institute{Instituto Federal do Ceará -- Campus Tauá \\ Tecnologia em Telemática}
+\title{Banco de Dados}
+\subtitle{Aula 10: Mapeamento Lógico Relacional (Parte 1) -- Entidades Fortes, Fracas e Relacionamentos 1:1 e 1:N}
+\date{27 de Outubro de 2026}
+
+\begin{document}
+
+% ------------------------------------------------------------------------------
+% Capa da Apresentacao
+% ------------------------------------------------------------------------------
+\changecolours[inverse]{ScoutGreen}
+\frame[plain]{\titlepage}
+
+% ------------------------------------------------------------------------------
+% Sumario Executivo da Aula
+% ------------------------------------------------------------------------------
+\changecolours{ScoutGreen}
+\begin{frame}{Agenda do Encontro}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \scriptsize
+      \tableofcontents[sections={1-5}]
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \scriptsize
+      \tableofcontents[sections={6-9}]
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% Modulos Tematicos da Aula
+% ------------------------------------------------------------------------------
+\input{secao1_revisao_objetivos}
+\input{secao2_visao_geral_algoritmo}
+\input{secao3_passo1_entidades_fortes}
+\input{secao4_passo2_entidades_fracas}
+\input{secao5_passo3_relacionamentos_1_1}
+\input{secao6_passo4_relacionamentos_1_N}
+\input{secao7_estudo_caso_integrado}
+\input{secao8_conclusao_atividades}
+\input{secao9_referencias}
+
+\end{document}

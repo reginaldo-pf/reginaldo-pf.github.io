@@ -1,0 +1,79 @@
+\changecolours{ScoutGreen}
+\section[Passo 4: Relacionamentos 1:N]{Passo 4: Mapeamento de Relacionamentos Binários $1:N$ e Auto-Relacionamentos}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Passo 4: Regras para Relacionamentos $1:N$ e Recursivos},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{A Regra Universal do Lado $N$}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Propagação do Lado $1$ para o Lado $N$:} Para cada relacionamento binário $1:N$, identifica-se a relação $S$ que representa a entidade no \textbf{lado $N$} (aquela que se associa a no máximo 1 ocorrência da outra).
+    \item \textbf{Adição da Chave Estrangeira ($FK$):} Inclui-se na relação $S$ (lado $N$), como \textbf{Chave Estrangeira ($FK$)}, a Chave Primária da relação $T$ (lado $1$), além dos atributos simples do losango!
+    \item \textbf{Por que NUNCA no lado $1$?} Colocar a FK no lado $1$ exigiria múltiplos valores na mesma célula (violando a \textbf{1FN}!).
+  \end{itemize}
+}{%
+  \alert{Auto-Relacionamento $1:N$ e Obrigatoriedade}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Auto-Relacionamento Recursivo $1:N$:} Quando uma entidade se relaciona consigo mesma (ex: \texttt{MEDICO} preceptor $1 \longleftrightarrow N$ \texttt{MEDICO} residente), a $FK$ entra na \textbf{própria relação} renomeada pelo papel (\texttt{mat\_preceptor\_fk} $\longrightarrow$ \underline{\texttt{matricula}}).
+    \item \textbf{Obrigatoriedade da FK no Lado $N$:}\\
+      -- Lado $N$ com \textbf{Participação Total} $(1, 1)$: $FK$ \textbf{Não aceita \texttt{NULL}}.\\
+      -- Lado $N$ com \textbf{Participação Parcial} $(0, 1)$: $FK$ \textbf{admite \texttt{NULL}}.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Transformação Visual do Passo 4: Relacionamentos $1:N$}
+  \vspace{-0.18cm}
+  \begin{center}
+    \tikz[scale=0.66, transform shape]{
+      % ANTES: DER 1:N + Auto-relacionamento
+      \node[font=\scriptsize\bfseries\sffamily, ScoutGreen] at (-4.3, 2.05) {ANTES: DER com Relacionamento $1:N$ e Recursivo $1:N$};
+
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.4cm, minimum height=0.6cm, font=\bfseries\sffamily\scriptsize] (dep) at (-6.8, 0.85) {DEPTO\_CLINICO};
+      \node[diamond, aspect=1.7, draw=ScoutNavy, fill=ScoutNavy!12, thick, inner sep=1.2pt, font=\bfseries\sffamily\tiny] (lota) at (-4.1, 0.85) {LOTA};
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.1cm, minimum height=0.6cm, font=\bfseries\sffamily\scriptsize] (med) at (-1.5, 0.85) {MEDICO};
+
+      \draw[semithick] (dep) -- node[above, font=\scriptsize\bfseries, ScoutNavy] {1} node[below, font=\tiny\sffamily] {(0, n)} (lota);
+      \draw[semithick] (lota) -- node[above, font=\scriptsize\bfseries, ScoutGreen] {N} node[below, font=\tiny\sffamily] {(0, 1)} (med);
+
+      % Auto-relacionamento SUPERVISIONA
+      \node[diamond, aspect=1.8, draw=ScoutNavy, fill=amber!20, thick, inner sep=1pt, font=\bfseries\sffamily\tiny] (sup) at (-1.5, -0.75) {SUPERVISIONA};
+      \draw[semithick] (med.south west) -- (-2.4, -0.75) node[midway, left, font=\tiny\sffamily] {preceptor \textbf{1} (0,n)} -- (sup.west);
+      \draw[semithick] (med.south east) -- (-0.6, -0.75) node[midway, right, font=\tiny\sffamily] {\textbf{N} (0,1) residente} -- (sup.east);
+
+      % Seta
+      \draw[-{Latex[length=3mm]}, ultra thick, ScoutNavy] (0.5, 0.45) -- node[above, font=\tiny\bfseries\sffamily, ScoutNavy] {Passo 4} (1.6, 0.45);
+
+      % DEPOIS: Diagrama de Esquema
+      \node[font=\scriptsize\bfseries\sffamily, ScoutNavy] at (5.4, 2.05) {DEPOIS: Esquema Relacional (FKs no Lado $N$)};
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=6.4cm, minimum height=0.62cm, font=\sffamily\scriptsize] (rdep) at (5.4, 1.32) {
+        \textbf{DEPTO\_CLINICO}(\underline{cod\_depto}, nome\_depto, bloco)
+      };
+
+      \node[draw=ScoutNavy, fill=ScoutNavy!12, thick, minimum width=7.2cm, minimum height=0.62cm, font=\sffamily\scriptsize] (rmed) at (5.4, -0.35) {
+        \textbf{MEDICO}(\underline{matricula}, nome, \textbf{\color{ScoutNavy}cod\_depto\_fk}, \textbf{\color{ScoutGreen}mat\_preceptor\_fk})
+      };
+
+      % Arco 1: cod_depto_fk -> cod_depto
+      \draw[-{Latex[length=2.1mm]}, very thick, ScoutNavy] (6.4, -0.04) -- (6.4, 0.58) -- (3.1, 0.58) -- (3.1, 1.01);
+      \node[font=\tiny\bfseries\sffamily, ScoutNavy] at (4.85, 0.35) {FK do Lado 1 (\texttt{DEPTO}) no Lado N (\texttt{MEDICO})};
+
+      % Arco 2: mat_preceptor_fk -> matricula
+      \draw[-{Latex[length=2.1mm]}, very thick, ScoutGreen] (8.1, -0.66) -- (8.1, -1.08) -- (3.1, -1.08) -- (3.1, -0.66);
+      \node[font=\tiny\bfseries\sffamily, ScoutGreen] at (5.6, -1.30) {FK Recursiva do Papel Lado 1 (\texttt{preceptor}) no Lado N (\texttt{residente})};
+    }
+  \end{center}
+  \vspace{-0.18cm}
+  \renewcommand{\arraystretch}{1.24}
+  \resizebox{\textwidth}{!}{%
+    \begin{tabular}{@{}lllll@{}}
+      \toprule
+      \textbf{\underline{matricula} (PK)} & \textbf{nome} & \textbf{\color{ScoutNavy}cod\_depto\_fk} & \textbf{\color{ScoutGreen}mat\_preceptor\_fk} & \textbf{Interpretação Semântica da Tupla no Lado $N$} \\
+      \midrule
+      \texttt{1001} & \texttt{'Dra. Ana'} & \texttt{10} (Cardiologia) & \texttt{NULL} & Médica sênior lotada no depto. \texttt{10}; não possui preceptor. \\
+      \texttt{1002} & \texttt{'Dr. Bruno'} & \texttt{10} (Cardiologia) & \texttt{1001} (Dra. Ana) & Residente lotado no depto. \texttt{10} e supervisionado por \texttt{1001}. \\
+      \texttt{1003} & \texttt{'Dra. Carla'} & \texttt{10} (Cardiologia) & \texttt{1001} (Dra. Ana) & Ambos (\texttt{1002} e \texttt{1003}) apontam para \texttt{1001} (materializa o $1:N$!). \\
+      \bottomrule
+    \end{tabular}%
+  }
+\end{frame}

@@ -1,411 +1,295 @@
 """
-FastCommerce NoSQL - Aplicação Web Prática com Redis
+ShopGrids E-Commerce - Padrão Cache-Aside na Prática com Redis e TTL
 IFCE Campus Tauá - Tecnologia em Análise e Desenvolvimento de Sistemas (ADS)
 Disciplina: Banco de Dados Não-Relacionais (ADS16) - Aula 05 (20/10/2026)
 Prof. Me. Reginaldo Fernandes
 
-Objetivos Práticos Demonstrados:
-1. Cache-Aside com TTL (catálogo de produtos e medição de latência Hit vs Miss).
-2. Gerenciamento de Sessão de Usuário em Memória com Expiração Automática.
-3. Carrinho de Compras Atômico utilizando Hashes do Redis (HINCRBY, HGETALL, HDEL).
-4. Fila Assíncrona de Checkout utilizando Listas do Redis (LPUSH) e consumo com BRPOP.
+Baseado no exemplo prático do vídeo:
+"CACHE-ASIDE: Escalabilidade, Performance e Arquitetura de Software" (Renato Augusto)
+https://www.youtube.com/watch?v=vRO0UfvsbDw
+
+Roteiro Prático Demonstrado:
+1. Sem Cache: Consulta direta ao banco SQL (SELECT * FROM categories WHERE is_featured = 1).
+2. Cache-Aside Básico (GET + SET): Alívio do banco e resposta em < 1 ms, mas sem expiração.
+3. O Problema da Inconsistência: Alteração na tabela categories não reflete no cache sem TTL.
+4. Solução com TTL (SETEX 20s): Expiração automática e renovação transparente do cache.
 """
 
 import json
+import os
+import sqlite3
 import time
-import uuid
-from typing import Dict, Any, List
-from flask import Flask, render_template, request, jsonify, make_response
+from flask import Flask, render_template, request, jsonify
 import redis
 
 app = Flask(__name__)
 
-# Conexão com o Redis (padrão localhost:6379)
+DB_PATH = os.path.join(os.path.dirname(__file__), "shopgrids.db")
+CACHE_KEY = "featured_categories"
+DEFAULT_TTL = 20  # 20 segundos, exatamente como demonstrado no vídeo
+
+# Conexão com o Redis (localhost:6379)
 try:
     r = redis.Redis(host="localhost", port=6379, db=0, decode_responses=True)
     r.ping()
     REDIS_ATIVO = True
 except Exception as e:
-    print(f"[AVISO] Não foi possível conectar ao Redis: {e}")
+    print(f"[AVISO] Redis não detectado em localhost:6379 ({e}).")
     REDIS_ATIVO = False
 
+
 # ==============================================================================
-# BASE DE DADOS SIMULADA (MOCK DO BANCO RELACIONAL / DISCO)
-# NA AULA 06: Este catálogo passará a ser uma coleção de documentos no MongoDB!
+# INICIALIZAÇÃO DO BANCO DE DADOS RELACIONAL (SQLITE - TABELA 'categories')
 # ==============================================================================
-CATALOGO_PRODUTOS_ORIGINAL = [
-    {
-        "id": "prod_1",
-        "nome": "Notebook Dell Inspiron 15",
-        "categoria": "Informática",
-        "preco": 3899.90,
-        "imagem": "fa-laptop",
-        "estoque": 14,
-        "descricao": "Processador Intel Core i7, 16GB RAM, SSD 512GB NVMe, Tela FHD 15.6 polegadas."
-    },
-    {
-        "id": "prod_2",
-        "nome": "Monitor UltraWide LG 29\"",
-        "categoria": "Monitores",
-        "preco": 1249.00,
-        "imagem": "fa-desktop",
-        "estoque": 8,
-        "descricao": "Resolução 2560x1080 IPS, 75Hz, HDR10 com suporte a Split Screen multitarefa."
-    },
-    {
-        "id": "prod_3",
-        "nome": "Teclado Mecânico Keychron K2",
-        "categoria": "Periféricos",
-        "preco": 620.00,
-        "imagem": "fa-keyboard",
-        "estoque": 25,
-        "descricao": "Switches Gateron Brown, Bluetooth 5.1 e USB-C, compatível com Mac e Windows."
-    },
-    {
-        "id": "prod_4",
-        "nome": "Mouse Sem Fio Logitech MX Master 3S",
-        "categoria": "Periféricos",
-        "preco": 579.90,
-        "imagem": "fa-computer-mouse",
-        "estoque": 19,
-        "descricao": "Sensor óptico 8K DPI silencioso, roda MagSpeed de aço e rolagem horizontal."
-    },
-    {
-        "id": "prod_5",
-        "nome": "Headset Gamer HyperX Cloud II",
-        "categoria": "Áudio",
-        "preco": 489.00,
-        "imagem": "fa-headphones",
-        "estoque": 30,
-        "descricao": "Som Surround 7.1 virtual, drivers de 53mm e microfone com cancelamento de ruído."
-    },
-    {
-        "id": "prod_6",
-        "nome": "SSD NVMe Kingston KC3000 1TB",
-        "categoria": "Armazenamento",
-        "preco": 699.00,
-        "imagem": "fa-hard-drive",
-        "estoque": 42,
-        "descricao": "Interface PCIe 4.0 NVMe, velocidades de leitura de até 7000 MB/s."
-    }
+CATEGORIAS_INICIAIS = [
+    (1, "TV & Áudio", "fa-tv", 1),
+    (2, "Desktop & Laptop", "fa-laptop", 1),
+    (3, "Smartphones", "fa-mobile-screen-button", 1),
+    (4, "Acessórios Gamer", "fa-gamepad", 1),
+    (5, "Moda Inverno", "fa-mitten", 0),
+    (6, "Aquecedores & Clima", "fa-temperature-arrow-up", 0),
+    (7, "Câmeras & Drones", "fa-camera", 0),
+    (8, "Smartwatches", "fa-clock", 0),
 ]
 
-PRODUTOS_POR_ID = {p["id"]: p for p in CATALOGO_PRODUTOS_ORIGINAL}
+
+def init_db():
+    """Cria a tabela 'categories' caso não exista e popula com os registros iniciais."""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS categories (
+            id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL,
+            image TEXT NOT NULL,
+            is_featured INTEGER NOT NULL DEFAULT 0
+        )
+    """)
+    cursor.execute("SELECT COUNT(*) FROM categories")
+    if cursor.fetchone()[0] == 0:
+        cursor.executemany(
+            "INSERT INTO categories (id, name, image, is_featured) VALUES (?, ?, ?, ?)",
+            CATEGORIAS_INICIAIS,
+        )
+        conn.commit()
+    conn.close()
+
+
+def buscar_categorias_destaque_no_banco():
+    """
+    Simula a consulta pesada ao Banco de Dados Relacional:
+    SELECT id, name, image, is_featured FROM categories WHERE is_featured = 1
+    """
+    # Simula latência de I/O de disco e concorrência de conexões no banco relacional (~80 ms)
+    time.sleep(0.08)
+
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT id, name, image, is_featured FROM categories WHERE is_featured = 1 ORDER BY id"
+    )
+    categorias = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return categorias
+
+
+def listar_todas_categorias_no_banco():
+    """Retorna todas as categorias cadastradas no banco para o painel de administração."""
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, name, image, is_featured FROM categories ORDER BY id")
+    categorias = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return categorias
 
 
 # ==============================================================================
-# HELPERS DE SESSÃO DO USUÁRIO NO REDIS
+# ROTA PRINCIPAL DO EXEMPLO DO VÍDEO: GET /categories/featured
 # ==============================================================================
-def obter_ou_criar_sessao(request_obj) -> str:
-    """Recupera o token de sessão do cookie ou gera um novo."""
-    session_id = request_obj.cookies.get("fastcommerce_session")
-    if not session_id:
-        session_id = str(uuid.uuid4())
-    
-    if REDIS_ATIVO:
-        chave_sessao = f"session:{session_id}"
-        # Se a sessão não existir no Redis, cria com dados padrão e TTL de 30 minutos (1800s)
-        if not r.exists(chave_sessao):
-            dados_usuario = {
-                "id_usuario": f"usr_{session_id[:8]}",
-                "nome": "Estudante ADS Tauá",
-                "nivel": "Cliente VIP",
-                "criado_em": time.strftime("%Y-%m-%d %H:%M:%S")
-            }
-            r.setex(chave_sessao, 1800, json.dumps(dados_usuario))
-        else:
-            # Renova o TTL a cada acesso da sessão ativa (sliding expiration)
-            r.expire(chave_sessao, 1800)
-    return session_id
+@app.route("/categories/featured", methods=["GET"])
+def get_featured_categories():
+    """
+    Endpoint consultado pelo Front-end / Postman para exibir as Categorias em Destaque.
+    Suporta o parâmetro opcional ?estrategia=setex (padrão), ?estrategia=set ou ?estrategia=sem_cache
+    para demonstrar ao vivo as etapas do vídeo.
+    """
+    inicio = time.time()
+    estrategia = request.args.get("estrategia", "setex")  # 'setex' | 'set' | 'sem_cache'
+    ttl_segundos = int(request.args.get("ttl", DEFAULT_TTL))
+
+    # MODO 1: Sem Cache (Vai sempre direto ao banco de dados)
+    if estrategia == "sem_cache" or not REDIS_ATIVO:
+        categorias = buscar_categorias_destaque_no_banco()
+        tempo_ms = round((time.time() - inicio) * 1000, 2)
+        return jsonify({
+            "origem": "BANCO_DE_DADOS (SQL)",
+            "estrategia": "SEM_CACHE",
+            "tempo_ms": tempo_ms,
+            "ttl_restante": None,
+            "total": len(categorias),
+            "dados": categorias,
+        })
+
+    # MODO 2 e 3: Padrão Cache-Aside (Consulta o Redis primeiro!)
+    cached_categories = r.get(CACHE_KEY)
+
+    if cached_categories:
+        # CACHE HIT: Encontrou na memória RAM do Redis! Nem encosta no banco SQL.
+        categorias = json.loads(cached_categories)
+        ttl_restante = r.ttl(CACHE_KEY)
+        tempo_ms = round((time.time() - inicio) * 1000, 2)
+        return jsonify({
+            "origem": "CACHE_REDIS (Memória RAM)",
+            "estrategia": estrategia.upper(),
+            "tempo_ms": tempo_ms,
+            "ttl_restante": ttl_restante,
+            "total": len(categorias),
+            "dados": categorias,
+        })
+
+    # CACHE MISS: Não existe no Redis -> Busca no Banco de Dados SQL
+    categorias = buscar_categorias_destaque_no_banco()
+
+    # Cria uma cópia dos dados dentro do Redis
+    if estrategia == "set":
+        # Etapa 2 do vídeo: SET simples sem TTL (gera problema de inconsistência!)
+        r.set(CACHE_KEY, json.dumps(categorias))
+        ttl_restante = -1  # -1 no Redis significa chave sem expiração (infinita)
+    else:
+        # Etapa 4 do vídeo: SETEX com TTL de 20 segundos (expiração automática!)
+        r.setex(CACHE_KEY, ttl_segundos, json.dumps(categorias))
+        ttl_restante = ttl_segundos
+
+    tempo_ms = round((time.time() - inicio) * 1000, 2)
+    return jsonify({
+        "origem": "BANCO_DE_DADOS (SQL -> Salvo no Redis)",
+        "estrategia": estrategia.upper(),
+        "tempo_ms": tempo_ms,
+        "ttl_restante": ttl_restante,
+        "total": len(categorias),
+        "dados": categorias,
+    })
 
 
 # ==============================================================================
-# ROTAS PRINCIPAIS (FRONT-END E API)
+# ROTAS DE ADMINISTRAÇÃO DO BANCO (SIMULAÇÃO DO TIME DE PRODUTO / MARKETING)
 # ==============================================================================
+@app.route("/categories", methods=["GET"])
+def get_all_categories():
+    """Lista todas as categorias da tabela SQL (marcadas ou não como destaque)."""
+    categorias = listar_todas_categorias_no_banco()
+    ttl = r.ttl(CACHE_KEY) if REDIS_ATIVO else -2
+    existe_cache = bool(r.exists(CACHE_KEY)) if REDIS_ATIVO else False
+    return jsonify({
+        "total_banco": len(categorias),
+        "cache_ativo": existe_cache,
+        "ttl_restante": ttl,
+        "categorias": categorias,
+    })
+
+
+@app.route("/categories/<int:cat_id>/toggle", methods=["POST", "PUT"])
+def toggle_category_featured(cat_id: int):
+    """
+    Altera a coluna 'is_featured' diretamente no Banco de Dados SQL.
+    IMPORTANTE: Assim como no vídeo, a tela de CRUD do time de produto altera APENAS
+    o banco de dados (não toca no Redis), permitindo demonstrar a importância do TTL!
+    """
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT is_featured, name FROM categories WHERE id = ?", (cat_id,))
+    row = cursor.fetchone()
+    if not row:
+        conn.close()
+        return jsonify({"erro": "Categoria não encontrada"}), 404
+
+    novo_status = 0 if row[0] == 1 else 1
+    cursor.execute("UPDATE categories SET is_featured = ? WHERE id = ?", (novo_status, cat_id))
+    conn.commit()
+    conn.close()
+
+    return jsonify({
+        "status": "atualizado_no_banco",
+        "id": cat_id,
+        "name": row[1],
+        "is_featured": novo_status,
+        "aviso": "Alterado no Banco SQL! Se houver cache ativo no Redis, o Front-end só verá a mudança quando o TTL expirar (ou se o cache for deletado).",
+    })
+
+
+@app.route("/categories/preset/<nome_preset>", methods=["POST"])
+def aplicar_preset_banco(nome_preset: str):
+    """
+    Atalhos rápidos para reproduzir os cenários do vídeo em 1 clique:
+    - 'inicial': 4 categorias de tecnologia (TV, Laptop, Smartphones, Gamer)
+    - 'inverno': Apenas 2 categorias (Moda Inverno e Aquecedores)
+    - 'blackfriday': 6 categorias em destaque
+    """
+    presets = {
+        "inicial": [1, 2, 3, 4],
+        "inverno": [5, 6],
+        "blackfriday": [1, 2, 3, 4, 7, 8],
+    }
+    ids_ativos = presets.get(nome_preset, [1, 2, 3, 4])
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("UPDATE categories SET is_featured = 0")
+    cursor.executemany(
+        "UPDATE categories SET is_featured = 1 WHERE id = ?",
+        [(i,) for i in ids_ativos],
+    )
+    conn.commit()
+    conn.close()
+
+    return jsonify({
+        "status": "preset_aplicado_no_banco",
+        "preset": nome_preset,
+        "total_em_destaque_no_banco": len(ids_ativos),
+        "ids_em_destaque": ids_ativos,
+    })
+
+
+@app.route("/categories/inverno", methods=["POST"])
+def rota_inverno_atalho():
+    """Atalho direto usado no roteiro da videoaula (Passo 6)."""
+    return aplicar_preset_banco("inverno")
+
+
+@app.route("/categories/blackfriday", methods=["POST"])
+def rota_blackfriday_atalho():
+    """Atalho direto usado no roteiro da videoaula (Passo 7)."""
+    return aplicar_preset_banco("blackfriday")
+
+
+@app.route("/cache/featured", methods=["DELETE", "POST"])
+def deletar_cache():
+    """Remove manualmente a chave 'featured_categories' do Redis (DEL featured_categories)."""
+    if not REDIS_ATIVO:
+        return jsonify({"erro": "Redis offline"}), 503
+
+    removido = r.delete(CACHE_KEY)
+    return jsonify({
+        "status": "cache_removido",
+        "chave": CACHE_KEY,
+        "removido": bool(removido),
+        "mensagem": "Chave 'featured_categories' apagada do Redis! A próxima consulta buscará do banco SQL.",
+    })
+
+
 @app.route("/")
 def index():
-    """Página principal da loja com vitrine e carrinho."""
-    session_id = obter_ou_criar_sessao(request)
-    resp = make_response(render_template("index.html", session_id=session_id))
-    resp.set_cookie("fastcommerce_session", session_id, max_age=1800)
-    return resp
-
-
-@app.route("/api/session", methods=["GET"])
-def get_session():
-    """Retorna os dados da sessão do usuário e o TTL restante no Redis."""
-    session_id = obter_ou_criar_sessao(request)
-    if not REDIS_ATIVO:
-        return jsonify({"status": "error", "message": "Redis inativo"}), 503
-
-    chave_sessao = f"session:{session_id}"
-    ttl_restante = r.ttl(chave_sessao)
-    dados_raw = r.get(chave_sessao)
-    dados = json.loads(dados_raw) if dados_raw else {}
-
-    return jsonify({
-        "session_id": session_id,
-        "ttl_segundos": ttl_restante,
-        "usuario": dados
-    })
-
-
-@app.route("/api/produtos", methods=["GET"])
-def get_produtos():
-    """
-    Demonstração do Padrão Cache-Aside com TTL:
-    1. Verifica se a chave 'cache:catalogo_produtos' existe no Redis.
-    2. Se existir: CACHE HIT (retorno ultra rápido em < 1 ms).
-    3. Se não existir: CACHE MISS (simula busca em disco ~150 ms e grava no Redis com TTL).
-    """
-    tempo_inicio = time.time()
-    chave_cache = "cache:catalogo_produtos"
-
-    if REDIS_ATIVO and r.exists(chave_cache):
-        # CACHE HIT
-        dados_json = r.get(chave_cache)
-        produtos = json.loads(dados_json)
-        ttl = r.ttl(chave_cache)
-        latencia_ms = round((time.time() - tempo_inicio) * 1000, 2)
-        origem = "CACHE_HIT (RAM Redis)"
-    else:
-        # CACHE MISS (Simula leitura pesada de disco/SQL)
-        time.sleep(0.12)  # Simula 120 ms de gargalo de banco relacional
-        produtos = CATALOGO_PRODUTOS_ORIGINAL
-        
-        # Armazena no Redis com TTL de 45 segundos
-        if REDIS_ATIVO:
-            r.setex(chave_cache, 45, json.dumps(produtos))
-            ttl = 45
-        else:
-            ttl = 0
-
-        latencia_ms = round((time.time() - tempo_inicio) * 1000, 2)
-        origem = "CACHE_MISS (Simulação de Disco/SGBD)"
-
-    return jsonify({
-        "origem": origem,
-        "latencia_ms": latencia_ms,
-        "ttl_cache_segundos": ttl,
-        "total_produtos": len(produtos),
-        "produtos": produtos
-    })
-
-
-@app.route("/api/cache/invalidar", methods=["POST"])
-def invalidar_cache():
-    """Permite ao estudante forçar a invalidação do cache para ver o próximo CACHE MISS."""
-    if not REDIS_ATIVO:
-        return jsonify({"status": "error"}), 503
-
-    chave_cache = "cache:catalogo_produtos"
-    deletado = r.delete(chave_cache)
-    return jsonify({
-        "status": "success",
-        "chave": chave_cache,
-        "invalidados": deletado,
-        "mensagem": "Chave de cache removida! A próxima busca incorrerá em CACHE MISS proposital."
-    })
-
-
-@app.route("/api/carrinho", methods=["GET"])
-def get_carrinho():
-    """
-    Retorna o carrinho de compras armazenado como HASH no Redis:
-    Chave: cart:<session_id>
-    Campos: { prod_1: 2, prod_3: 1 }
-    """
-    session_id = obter_ou_criar_sessao(request)
-    if not REDIS_ATIVO:
-        return jsonify({"itens": [], "subtotal": 0.0})
-
-    chave_carrinho = f"cart:{session_id}"
-    itens_hash = r.hgetall(chave_carrinho)
-    ttl_carrinho = r.ttl(chave_carrinho)
-
-    itens = []
-    subtotal = 0.0
-
-    for prod_id, qtd_str in itens_hash.items():
-        qtd = int(qtd_str)
-        if prod_id in PRODUTOS_POR_ID:
-            prod = PRODUTOS_POR_ID[prod_id]
-            total_item = round(prod["preco"] * qtd, 2)
-            subtotal += total_item
-            itens.append({
-                "id": prod_id,
-                "nome": prod["nome"],
-                "preco_unitario": prod["preco"],
-                "quantidade": qtd,
-                "total_item": total_item
-            })
-
-    return jsonify({
-        "session_id": session_id,
-        "chave_redis": chave_carrinho,
-        "ttl_segundos": ttl_carrinho,
-        "itens": itens,
-        "subtotal": round(subtotal, 2)
-    })
-
-
-@app.route("/api/carrinho/adicionar", methods=["POST"])
-def adicionar_ao_carrinho():
-    """
-    Adiciona um item ao carrinho via HINCRBY atômico:
-    Incrementa a quantidade sem necessidade de leitura prévia (operações atômicas).
-    """
-    session_id = obter_ou_criar_sessao(request)
-    data = request.get_json() or {}
-    prod_id = data.get("produto_id")
-    qtd = int(data.get("quantidade", 1))
-
-    if prod_id not in PRODUTOS_POR_ID:
-        return jsonify({"status": "error", "message": "Produto inexistente"}), 404
-
-    if not REDIS_ATIVO:
-        return jsonify({"status": "error", "message": "Redis indisponível"}), 503
-
-    chave_carrinho = f"cart:{session_id}"
-    # HINCRBY: operação atômica de incremento no Hash
-    nova_qtd = r.hincrby(chave_carrinho, prod_id, qtd)
-    # Define TTL de 1 hora para o carrinho
-    r.expire(chave_carrinho, 3600)
-
-    return jsonify({
-        "status": "success",
-        "produto_id": prod_id,
-        "quantidade_atual": nova_qtd,
-        "mensagem": f"Item '{PRODUTOS_POR_ID[prod_id]['nome']}' adicionado ao carrinho!"
-    })
-
-
-@app.route("/api/carrinho/remover", methods=["POST"])
-def remover_do_carrinho():
-    """Remove um item do carrinho usando HDEL."""
-    session_id = obter_ou_criar_sessao(request)
-    data = request.get_json() or {}
-    prod_id = data.get("produto_id")
-
-    if not REDIS_ATIVO:
-        return jsonify({"status": "error"}), 503
-
-    chave_carrinho = f"cart:{session_id}"
-    r.hdel(chave_carrinho, prod_id)
-
-    return jsonify({
-        "status": "success",
-        "produto_id": prod_id,
-        "mensagem": "Item removido do carrinho com HDEL."
-    })
-
-
-@app.route("/api/checkout", methods=["POST"])
-def checkout():
-    """
-    Finaliza a compra e enfileira na LISTA do Redis (LPUSH fila:pedidos):
-    1. Lê os itens do Hash cart:<session_id>.
-    2. Serializa o pedido em JSON com ID único.
-    3. Dá LPUSH na fila de processamento assíncrono.
-    4. Deleta o carrinho com DEL cart:<session_id>.
-    """
-    session_id = obter_ou_criar_sessao(request)
-    if not REDIS_ATIVO:
-        return jsonify({"status": "error", "message": "Redis inativo"}), 503
-
-    chave_carrinho = f"cart:{session_id}"
-    itens_hash = r.hgetall(chave_carrinho)
-
-    if not itens_hash:
-        return jsonify({"status": "error", "message": "Carrinho vazio!"}), 400
-
-    itens_pedido = []
-    total_pedido = 0.0
-    for pid, qtd_str in itens_hash.items():
-        qtd = int(qtd_str)
-        if pid in PRODUTOS_POR_ID:
-            p = PRODUTOS_POR_ID[pid]
-            sub = round(p["preco"] * qtd, 2)
-            total_pedido += sub
-            itens_pedido.append({
-                "produto_id": pid,
-                "nome": p["nome"],
-                "quantidade": qtd,
-                "preco_unitario": p["preco"],
-                "total": sub
-            })
-
-    pedido = {
-        "id_pedido": f"PED-{int(time.time())}-{uuid.uuid4().hex[:6].upper()}",
-        "session_id": session_id,
-        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
-        "total": round(total_pedido, 2),
-        "itens": itens_pedido,
-        "status": "ENFILEIRADO_AGUARDANDO_WORKER"
-    }
-
-    # Enfileira na Lista do Redis (LPUSH)
-    chave_fila = "fila:pedidos"
-    posicao_fila = r.lpush(chave_fila, json.dumps(pedido))
-
-    # Limpa o carrinho de compras do Redis
-    r.delete(chave_carrinho)
-
-    return jsonify({
-        "status": "success",
-        "pedido": pedido,
-        "posicao_na_fila": posicao_fila,
-        "mensagem": "Pedido enviado com sucesso para a fila assíncrona do Redis (LPUSH)!"
-    })
-
-
-@app.route("/api/pedidos/fila", methods=["GET"])
-def get_fila_pedidos():
-    """Retorna os pedidos que estão na fila aguardando o worker."""
-    if not REDIS_ATIVO:
-        return jsonify({"tamanho": 0, "pedidos": []})
-
-    chave_fila = "fila:pedidos"
-    tamanho = r.llen(chave_fila)
-    # Pega até os últimos 10 itens da lista sem removê-los
-    itens_raw = r.lrange(chave_fila, 0, 9)
-    pedidos = [json.loads(p) for p in itens_raw]
-
-    return jsonify({
-        "tamanho_fila": tamanho,
-        "pedidos_recentes": pedidos
-    })
-
-
-@app.route("/api/telemetria", methods=["GET"])
-def telemetria():
-    """Retorna estatísticas operacionais do Redis para o painel de monitoramento."""
-    if not REDIS_ATIVO:
-        return jsonify({"status": "offline"})
-
-    try:
-        info_mem = r.info("memory")
-        info_stats = r.info("stats")
-        info_clients = r.info("clients")
-        chaves_existentes = r.keys("*")
-
-        return jsonify({
-            "status": "online",
-            "memoria_usada_humana": info_mem.get("used_memory_human", "N/A"),
-            "memoria_pico_humana": info_mem.get("used_memory_peak_human", "N/A"),
-            "conexoes_ativas": info_clients.get("connected_clients", 1),
-            "total_comandos_executados": info_stats.get("total_commands_processed", 0),
-            "total_chaves": len(chaves_existentes),
-            "chaves_amostra": chaves_existentes[:15]
-        })
-    except Exception as err:
-        return jsonify({"status": "error", "message": str(err)})
+    """Interface visual interativa que simula o Front-end ShopGrids + Banco SQL + Redis."""
+    return render_template("index.html", redis_ativo=REDIS_ATIVO)
 
 
 if __name__ == "__main__":
-    print("=" * 80)
-    print("INICIANDO SERVIDOR WEB FASTCOMMERCE (AULA 05 - BANCO DE DADOS NÃO-RELACIONAIS)")
-    print("Acesse no navegador: http://localhost:5000")
-    print("Conexão Redis: localhost:6379 -> Status:", "ONLINE" if REDIS_ATIVO else "OFFLINE")
-    print("=" * 80)
+    init_db()
+    print("=" * 70)
+    print(" SHOPGRIDS - LABORATÓRIO CACHE-ASIDE COM REDIS (AULA 05 - IFCE TAUÁ)")
+    print(" Endpoint principal: http://localhost:5000/categories/featured")
+    print(" Painel interativo : http://localhost:5000")
+    print("=" * 70)
     app.run(host="0.0.0.0", port=5000, debug=True)

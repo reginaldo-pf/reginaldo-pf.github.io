@@ -1,0 +1,76 @@
+\changecolours{ScoutGreen}
+\section[Passo 2: Entidades Fracas]{Passo 2: Mapeamento de Entidades Fracas e Relacionamentos Identificadores}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Passo 2: Regras para Entidades Fracas ($W$) e Donas ($E$)},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{O Algoritmo Formal do Passo 2}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{1. Criação da Relação Subordinada:} Para cada entidade fraca $W$ (retângulo duplo) pertencente a uma entidade forte proprietária $E$, cria-se uma relação $R_W$ com seus atributos simples.
+    \item \textbf{2. Importação da PK Proprietária:} Inclui-se em $R_W$, como \textbf{Chave Estrangeira ($FK$)}, o atributo que é Chave Primária da relação proprietária $R_E$.
+    \item \textbf{3. Chave Primária Composta:} A PK de $R_W$ é formada pela combinação da $FK$ importada + o Discriminador de $W$: $\underline{\text{PK}_{W}} = \underline{\text{FK}_{E} + \text{Discriminador}_{W}}$.
+  \end{itemize}
+}{%
+  \alert{Consequências de Integridade no Passo 2}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Absorção do Losango Duplo:} O relacionamento identificador ($\diamond\diamond$) já fica 100\% representado pela $FK$ embutida na PK de $R_W$; \textbf{não se cria tabela extra para ele}!
+    \item \textbf{Proibição Absoluta de \texttt{NULL}:} Como a $FK$ integra a Chave Primária de $R_W$, pela Integridade de Entidade ela \textbf{jamais aceita \texttt{NULL}}.
+    \item \textbf{Exclusão em Cascata:} Se a tupla proprietária em $R_E$ for excluída, todas as tuplas dependentes em $R_W$ são removidas em \textbf{Cascata}.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Transformação Visual do Passo 2: Entidade Fraca}
+  \vspace{-0.18cm}
+  \begin{center}
+    \tikz[scale=0.67, transform shape]{
+      % ANTES: DER
+      \node[font=\scriptsize\bfseries\sffamily, ScoutGreen] at (-4.5, 1.90) {ANTES: Entidade Fraca no DER};
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.0cm, minimum height=0.6cm, font=\bfseries\sffamily\scriptsize] (pac) at (-6.8, 0.5) {PACIENTE};
+      \node[draw=ScoutNavy, fill=ScoutNavy!12, ellipse, font=\tiny\sffamily\bfseries, inner sep=1.3pt] (pkp) at (-6.8, 1.45) {\underline{id\_prontuario}};
+
+      \node[diamond, aspect=1.8, draw=ScoutNavy, double, double distance=1.3pt, fill=ScoutNavy!15, thick, inner sep=1pt, font=\bfseries\sffamily\tiny] (rel) at (-4.5, 0.5) {POSSUI\_DEP};
+
+      \node[draw=ScoutGreen, double, double distance=1.4pt, fill=ScoutGreen!15, thick, minimum width=2.1cm, minimum height=0.6cm, font=\bfseries\sffamily\scriptsize] (dep) at (-2.0, 0.5) {DEPENDENTE};
+      \node[draw=ScoutNavy, fill=amber!25, ellipse, font=\tiny\sffamily\bfseries, inner sep=1.3pt] (disc) at (-3.1, -0.55) {\dashuline{nome\_dep}};
+      \node[draw=black!80, fill=white, ellipse, font=\tiny\sffamily, inner sep=1.3pt] (par) at (-1.1, -0.55) {parentesco};
+
+      \draw[semithick] (pac) -- (pkp);
+      \draw[semithick] (pac) -- node[above, font=\tiny\bfseries] {1} (rel);
+      \draw[semithick] ($(rel.east)+(0,0.04)$) -- node[above, font=\tiny\bfseries] {N} ($(dep.west)+(0,0.04)$);
+      \draw[semithick] ($(rel.east)+(0,-0.04)$) -- ($(dep.west)+(0,-0.04)$);
+      \draw[semithick] (dep) -- (disc);
+      \draw[semithick] (dep) -- (par);
+
+      % Seta
+      \draw[-{Latex[length=3mm]}, ultra thick, ScoutNavy] (-0.5, 0.5) -- node[above, font=\tiny\bfseries\sffamily, ScoutNavy] {Passo 2} (0.7, 0.5);
+
+      % DEPOIS: Esquema Relacional
+      \node[font=\scriptsize\bfseries\sffamily, ScoutNavy] at (4.8, 1.90) {DEPOIS: Diagrama de Esquema Relacional};
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=6.2cm, minimum height=0.62cm, font=\sffamily\scriptsize] (rpac) at (4.8, 1.15) {
+        \textbf{PACIENTE}(\underline{id\_prontuario}, cpf, nome\_paciente)
+      };
+
+      \node[draw=ScoutNavy, fill=amber!15, thick, minimum width=6.8cm, minimum height=0.62cm, font=\sffamily\scriptsize] (rdep) at (4.8, -0.15) {
+        \textbf{DEPENDENTE}(\underline{\textbf{\color{ScoutNavy}id\_prontuario\_fk}, \dashuline{nome\_dep}}, parentesco)
+      };
+
+      \draw[-{Latex[length=2.2mm]}, very thick, ScoutNavy] (3.4, -0.46) -- (3.4, -0.78) -- (1.1, -0.78) -- (1.1, 1.15) -- (1.7, 1.15);
+      \node[font=\tiny\bfseries\sffamily, ScoutNavy] at (4.8, -0.98) {PK Composta = FK do Titular + Discriminador (Política: Exclusão em Cascata)};
+    }
+  \end{center}
+  \vspace{-0.15cm}
+  \renewcommand{\arraystretch}{1.24}
+  \resizebox{\textwidth}{!}{%
+    \begin{tabular}{@{}llll@{}}
+      \toprule
+      \textbf{\underline{\color{ScoutNavy}id\_prontuario\_fk} (PK/FK)} & \textbf{\underline{nome\_dep} (PK Parcial)} & \textbf{parentesco} & \textbf{Observação sobre Unicidade na Chave Composta} \\
+      \midrule
+      \texttt{501} & \texttt{'Lucas'} & \texttt{'Filho'} & Par $\langle 501, \text{'Lucas'} \rangle$ é único na relação \texttt{DEPENDENTE}. \\
+      \texttt{501} & \texttt{'Marina'} & \texttt{'Cônjuge'} & Mesmo titular \texttt{501}, mas discriminador \texttt{'Marina'} distinto (Válido!). \\
+      \texttt{502} & \texttt{'Lucas'} & \texttt{'Filho'} & O nome \texttt{'Lucas'} pode se repetir para outro paciente titular (\texttt{502} $\neq$ \texttt{501})! \\
+      \bottomrule
+    \end{tabular}%
+  }
+\end{frame}

@@ -3,537 +3,295 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FastCommerce NoSQL - Laboratório Prático Redis | IFCE Campus Tauá</title>
-  
-  <!-- Tailwind CSS CDN -->
+  <title>ShopGrids — Laboratório Prático Cache-Aside & TTL | Aula 05 - IFCE Tauá</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              50: '#ecfdf5',
-              100: '#d1fae5',
-              500: '#10b981',
-              600: '#059669',
-              700: '#047857',
-              800: '#065f46',
-              900: '#064e3b'
-            },
-            redis: {
-              500: '#dc2626',
-              600: '#b91c1c',
-              700: '#991b1b'
-            }
-          }
-        }
-      }
-    }
-  </script>
-
-  <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <!-- Google Fonts: Inter & JetBrains Mono -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; }
-    code, pre { font-family: 'JetBrains Mono', monospace !important; }
+    code, pre, .font-mono { font-family: 'JetBrains Mono', monospace !important; }
   </style>
 </head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
 
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
-
-  <!-- ========================================================================= -->
-  <!-- BARRA DE NAVEGAÇÃO SUPERIOR                                               -->
-  <!-- ========================================================================= -->
-  <header class="bg-slate-900 text-white sticky top-0 z-50 shadow-md border-b border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      
-      <!-- Logo da Aplicação -->
+  <!-- Cabeçalho -->
+  <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-red-600 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-red-500/20">
+        <div class="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center text-white shadow-lg shadow-red-600/30">
           <i class="fa-solid fa-bolt text-lg"></i>
         </div>
         <div>
-          <span class="text-xs uppercase tracking-wider font-extrabold text-red-400 block leading-tight">Redis Lab • IFCE Tauá</span>
-          <span class="text-lg font-black tracking-tight leading-tight">FastCommerce <span class="text-xs font-semibold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">NoSQL v1.0</span></span>
+          <span class="text-[11px] uppercase tracking-wider font-bold text-red-400 block">IFCE Campus Tauá • Aula 05 — Banco de Dados Não-Relacionais</span>
+          <h1 class="text-lg font-extrabold tracking-tight text-white">
+            ShopGrids E-Commerce <span class="text-xs font-semibold px-2 py-0.5 rounded bg-red-500/20 text-red-300 border border-red-500/30 ml-1">Cache-Aside + TTL</span>
+          </h1>
         </div>
       </div>
 
-      <!-- Informações de Sessão em Memória -->
-      <div class="flex items-center space-x-4 text-xs">
-        <div class="hidden md:flex items-center space-x-2 bg-slate-800/90 px-3 py-1.5 rounded-lg border border-slate-700">
-          <i class="fa-solid fa-user-clock text-amber-400"></i>
-          <span class="text-slate-300">Sessão:</span>
-          <span id="session-badge" class="font-mono text-emerald-400 font-bold">Carregando...</span>
-          <span class="text-slate-500">|</span>
-          <span class="text-slate-400">TTL:</span>
-          <span id="session-ttl" class="font-mono text-amber-300 font-bold">--s</span>
-        </div>
-
-        <!-- Botão do Carrinho -->
-        <button onclick="toggleCarrinho()" class="relative bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3.5 py-2 rounded-lg flex items-center space-x-2 transition-all shadow-md shadow-emerald-600/20">
-          <i class="fa-solid fa-cart-shopping"></i>
-          <span class="hidden sm:inline">Carrinho</span>
-          <span id="cart-counter" class="bg-white text-emerald-700 font-extrabold text-[11px] px-1.5 py-0.2 rounded-full min-w-[20px] text-center">0</span>
+      <div class="flex items-center space-x-3 text-xs">
+        <span class="px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-300">
+          Chave Redis: <code class="text-red-400 font-bold">featured_categories</code>
+        </span>
+        <button onclick="limparCacheRedis()" class="px-3 py-1.5 rounded-lg bg-red-600/20 hover:bg-red-600/40 text-red-300 border border-red-500/40 font-semibold transition flex items-center space-x-1.5">
+          <i class="fa-solid fa-trash-can"></i>
+          <span>DEL featured_categories</span>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- ========================================================================= -->
-  <!-- BANNER PEDAGÓGICO DE TELEMETRIA DO REDIS                                  -->
-  <!-- ========================================================================= -->
-  <section class="bg-gradient-to-b from-slate-900 to-slate-800 text-white py-6 border-b border-slate-700/60 shadow-inner">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      
-      <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
-        
-        <!-- Cartão 1: Latência do Cache-Aside (Hit vs Miss) -->
-        <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700 flex flex-col justify-between">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Latência da Vitrine</span>
-            <span id="cache-status-pill" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-700 text-slate-300">Aguardando</span>
-          </div>
-          <div class="flex items-baseline space-x-2">
-            <span id="cache-latency" class="text-2xl font-black text-emerald-400">--</span>
-            <span class="text-xs text-slate-400">ms</span>
-          </div>
-          <div class="mt-2 text-[11px] text-slate-400 flex items-center justify-between">
-            <span id="cache-ttl-info">TTL Cache: --s</span>
-            <button onclick="invalidarCache()" class="text-amber-400 hover:text-amber-300 font-medium underline flex items-center space-x-1" title="Forçar Cache Miss para a próxima consulta">
-              <i class="fa-solid fa-rotate-right text-[10px]"></i>
-              <span>Invalidar</span>
+  <!-- Seletor de Etapas do Vídeo -->
+  <section class="bg-slate-900/60 border-b border-slate-800 py-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">Escolha a Etapa do Vídeo para Testar:</span>
+          <div class="flex flex-wrap gap-2" id="botoes-estrategia">
+            <button onclick="mudarEstrategia('sem_cache')" id="btn-sem_cache" class="px-3.5 py-2 rounded-lg text-xs font-bold border transition flex items-center space-x-2 bg-slate-800 border-slate-700 text-slate-300">
+              <span>1. Sem Cache (Direto no SQL)</span>
+            </button>
+            <button onclick="mudarEstrategia('set')" id="btn-set" class="px-3.5 py-2 rounded-lg text-xs font-bold border transition flex items-center space-x-2 bg-slate-800 border-slate-700 text-slate-300">
+              <span>2. Cache com SET (Sem TTL — Gera Inconsistência)</span>
+            </button>
+            <button onclick="mudarEstrategia('setex')" id="btn-setex" class="px-3.5 py-2 rounded-lg text-xs font-bold border transition flex items-center space-x-2 bg-emerald-600 border-emerald-500 text-white shadow-lg shadow-emerald-600/20">
+              <span>3. Cache com SETEX (TTL de 20s — Recomendado)</span>
             </button>
           </div>
         </div>
 
-        <!-- Cartão 2: Fila de Pedidos (Redis List) -->
-        <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700 flex flex-col justify-between">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Fila Assíncrona (LPUSH)</span>
-            <i class="fa-solid fa-list-ol text-blue-400"></i>
+        <!-- Status do Cache no Redis em Tempo Real -->
+        <div class="flex items-center space-x-4 bg-slate-900 px-4 py-2.5 rounded-xl border border-slate-800">
+          <div>
+            <span class="text-[11px] text-slate-400 block">Status no Redis</span>
+            <span id="redis-cache-badge" class="text-xs font-bold text-slate-300">Verificando...</span>
           </div>
-          <div class="flex items-baseline space-x-2">
-            <span id="queue-size" class="text-2xl font-black text-blue-400">0</span>
-            <span class="text-xs text-slate-400">pedidos aguardando worker</span>
-          </div>
-          <div class="mt-2 text-[11px] text-slate-400 truncate">
-            Chave: <code class="text-blue-300 font-mono">fila:pedidos</code> (List)
+          <div class="h-8 w-px bg-slate-800"></div>
+          <div>
+            <span class="text-[11px] text-slate-400 block">TTL Restante</span>
+            <span id="redis-ttl-counter" class="text-lg font-mono font-extrabold text-amber-400">--</span>
           </div>
         </div>
-
-        <!-- Cartão 3: Memória RAM do Redis -->
-        <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700 flex flex-col justify-between">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Memória In-Memory</span>
-            <i class="fa-solid fa-memory text-purple-400"></i>
-          </div>
-          <div class="flex items-baseline space-x-2">
-            <span id="redis-memory" class="text-2xl font-black text-purple-400">--</span>
-            <span class="text-xs text-slate-400">alocados</span>
-          </div>
-          <div class="mt-2 text-[11px] text-slate-400">
-            Total de chaves ativas: <span id="redis-keys-count" class="font-bold text-slate-200">--</span>
-          </div>
-        </div>
-
-        <!-- Cartão 4: Gancho Arquitetural para MongoDB -->
-        <div class="bg-gradient-to-br from-emerald-950/60 to-slate-800 p-4 rounded-xl border border-emerald-800/50 flex flex-col justify-between">
-          <div class="flex items-center justify-between mb-1">
-            <span class="text-xs font-extrabold text-emerald-400 uppercase tracking-wider">Persistência Poliglota</span>
-            <i class="fa-solid fa-leaf text-emerald-400"></i>
-          </div>
-          <p class="text-[11px] text-slate-300 leading-tight">
-            Hoje operamos em <strong>RAM com Redis</strong>. Na próxima aula (MongoDB), o catálogo e os pedidos da fila se tornarão <strong>documentos BSON persistentes</strong>!
-          </p>
-          <div class="mt-2 text-[10px] text-emerald-300 font-semibold flex items-center space-x-1">
-            <i class="fa-solid fa-arrow-right text-[9px]"></i>
-            <span>Aula 06: MongoDB Document Store</span>
-          </div>
-        </div>
-
       </div>
-
     </div>
   </section>
 
-  <!-- ========================================================================= -->
-  <!-- CONTEÚDO PRINCIPAL (CATÁLOGO DE PRODUTOS)                                  -->
-  <!-- ========================================================================= -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
-    
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-      <div>
-        <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center space-x-2">
-          <span>Catálogo de Produtos em Alta Velocidade</span>
-        </h1>
-        <p class="text-xs sm:text-sm text-slate-500 mt-1">
-          Demonstração do padrão <strong>Cache-Aside</strong>: se o catálogo estiver no Redis, a entrega é em microssegundos; se não, simula a busca em disco.
-        </p>
-      </div>
+  <!-- Conteúdo Principal em 2 Colunas: Front-end/Postman (Esquerda) vs Banco de Dados SQL (Direita) -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-      <button onclick="carregarProdutos()" class="px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs flex items-center space-x-2 transition-colors border border-slate-300">
-        <i class="fa-solid fa-arrows-rotate"></i>
-        <span>Recarregar Vitrine</span>
-      </button>
+    <!-- COLUNA ESQUERDA (7 cols): VITRINE DO FRONT-END / POSTMAN -->
+    <div class="lg:col-span-7 space-y-5 flex flex-col">
+      <div class="bg-slate-900 rounded-2xl border border-slate-800 p-5 space-y-4 shadow-lg">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
+          <div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400 block">Simulador do Front-end / Postman</span>
+            <h2 class="text-base sm:text-lg font-bold text-white flex items-center space-x-2">
+              <span>Categorias em Destaque</span>
+              <code class="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded">GET /categories/featured</code>
+            </h2>
+          </div>
+
+          <button onclick="consultarCategoriasDestaque()" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm flex items-center space-x-2 shadow-lg shadow-emerald-600/30 transition transform active:scale-95">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>Consultar API Agora</span>
+          </button>
+        </div>
+
+        <!-- Telemetria da Última Requisição -->
+        <div class="grid grid-cols-3 gap-3">
+          <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
+            <span class="text-[11px] text-slate-400 block">Origem dos Dados</span>
+            <span id="req-origem" class="text-xs sm:text-sm font-extrabold text-slate-200 mt-1 block">--</span>
+          </div>
+          <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
+            <span class="text-[11px] text-slate-400 block">Tempo de Resposta</span>
+            <span id="req-tempo" class="text-lg font-mono font-black text-emerald-400 mt-0.5 block">-- ms</span>
+          </div>
+          <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
+            <span class="text-[11px] text-slate-400 block">Categorias Retornadas</span>
+            <span id="req-total" class="text-lg font-mono font-black text-white mt-0.5 block">0</span>
+          </div>
+        </div>
+
+        <!-- Grade de Categorias em Destaque (Featured Categories) -->
+        <div>
+          <span class="text-xs font-semibold text-slate-400 block mb-2.5">Vitrine Renderizada no Front-end ShopGrids:</span>
+          <div id="grid-featured" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <!-- Preenchido via JS -->
+          </div>
+        </div>
+
+        <!-- JSON de Resposta estilo Postman -->
+        <div>
+          <span class="text-xs font-semibold text-slate-400 block mb-1.5">Resposta JSON Recebida pelo Cliente:</span>
+          <pre id="json-output" class="bg-slate-950 text-emerald-300 p-3.5 rounded-xl border border-slate-800 text-xs overflow-x-auto max-h-48">Clique em "Consultar API Agora"...</pre>
+        </div>
+      </div>
     </div>
 
-    <!-- Grid de Produtos -->
-    <div id="grid-produtos" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <!-- Inserido dinamicamente via JS -->
-      <div class="p-8 text-center text-slate-400 col-span-full">
-        <i class="fa-solid fa-spinner fa-spin text-2xl text-emerald-600 mb-2"></i>
-        <p class="text-sm">Carregando catálogo do Redis...</p>
+    <!-- COLUNA DIREITA (5 cols): BANCO DE DADOS RELACIONAL (TABELA CATEGORIES) -->
+    <div class="lg:col-span-5 space-y-5">
+      <div class="bg-slate-900 rounded-2xl border border-slate-800 p-5 space-y-4 shadow-lg">
+        <div class="border-b border-slate-800 pb-3">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400 block">Painel do Time de Produto / Banco SQL</span>
+          <h2 class="text-base sm:text-lg font-bold text-white">
+            Tabela <code class="text-amber-300">categories</code> no Banco de Dados
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">
+            Altere quais categorias estão com <code class="text-amber-300">is_featured = true</code> no banco. Observe que alterar no banco <strong>não altera o cache imediatamente</strong> até o TTL expirar!
+          </p>
+        </div>
+
+        <!-- Botões Rápidos de Cenário do Vídeo -->
+        <div>
+          <span class="text-[11px] font-semibold text-slate-400 block mb-2">Cenários Rápidos do Vídeo (1 Clique):</span>
+          <div class="grid grid-cols-3 gap-2">
+            <button onclick="aplicarPreset('inicial')" class="px-2.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 transition">
+              Padrão (4)
+            </button>
+            <button onclick="aplicarPreset('inverno')" class="px-2.5 py-2 rounded-lg bg-sky-950/80 hover:bg-sky-900 border border-sky-700/60 text-xs font-semibold text-sky-300 transition">
+              ❄️ Inverno (2)
+            </button>
+            <button onclick="aplicarPreset('blackfriday')" class="px-2.5 py-2 rounded-lg bg-amber-950/80 hover:bg-amber-900 border border-amber-700/60 text-xs font-semibold text-amber-300 transition">
+              🔥 Black Friday (6)
+            </button>
+          </div>
+        </div>
+
+        <!-- Lista de Categorias no Banco SQL -->
+        <div id="lista-banco" class="space-y-2">
+          <!-- Preenchido via JS -->
+        </div>
+
+        <!-- Alerta Pedagógico dos 3 Critérios -->
+        <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs space-y-1.5 text-slate-300">
+          <div class="font-bold text-red-400 flex items-center space-x-1.5">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>Os 3 Critérios para usar Cache (Renato Augusto):</span>
+          </div>
+          <ul class="list-disc list-inside space-y-1 text-[11px] text-slate-400">
+            <li><strong class="text-slate-200">1. Muito requisitado:</strong> Alta leitura na Home.</li>
+            <li><strong class="text-slate-200">2. Muda pouco:</strong> Atualizado semanalmente/mensalmente.</li>
+            <li><strong class="text-slate-200">3. Consistência eventual:</strong> Pode ter delay de 20s (nunca use em saldo de Pix/Banco!).</li>
+          </ul>
+        </div>
       </div>
     </div>
 
   </main>
 
-  <!-- ========================================================================= -->
-  <!-- DRAWER LATERAL DO CARRINHO (REDIS HASH: cart:<session_id>)                 -->
-  <!-- ========================================================================= -->
-  <div id="carrinho-drawer" class="fixed inset-y-0 right-0 w-full sm:w-96 bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col border-l border-slate-200">
-    
-    <!-- Cabeçalho do Carrinho -->
-    <div class="p-4 bg-slate-900 text-white flex items-center justify-between">
-      <div class="flex items-center space-x-2">
-        <i class="fa-solid fa-cart-shopping text-emerald-400"></i>
-        <h2 class="font-bold text-sm">Seu Carrinho (Redis Hash)</h2>
-      </div>
-      <button onclick="toggleCarrinho()" class="text-slate-400 hover:text-white p-1 text-sm">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-    </div>
-
-    <div class="px-4 py-2 bg-amber-50 border-b border-amber-200 text-[11px] text-amber-800 flex items-center space-x-1.5">
-      <i class="fa-solid fa-circle-info text-amber-600"></i>
-      <span>Armazenado atômico em: <code id="cart-redis-key" class="font-bold">cart:...</code></span>
-    </div>
-
-    <!-- Lista de Itens do Carrinho -->
-    <div id="carrinho-itens" class="p-4 flex-1 overflow-y-auto space-y-3 divide-y divide-slate-100">
-      <div class="p-6 text-center text-slate-400 text-xs">
-        Seu carrinho está vazio. Adicione produtos na vitrine!
-      </div>
-    </div>
-
-    <!-- Rodapé do Carrinho com Checkout -->
-    <div class="p-4 bg-slate-50 border-t border-slate-200 space-y-3">
-      <div class="flex items-center justify-between text-sm">
-        <span class="text-slate-600 font-medium">Subtotal:</span>
-        <span id="carrinho-subtotal" class="text-lg font-black text-slate-900">R$ 0,00</span>
-      </div>
-
-      <button id="btn-checkout" onclick="finalizarPedido()" class="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-2.5 rounded-xl shadow-lg shadow-emerald-600/20 flex items-center justify-center space-x-2 transition-all">
-        <i class="fa-solid fa-bolt"></i>
-        <span>Finalizar Pedido (LPUSH na Fila)</span>
-      </button>
-
-      <p class="text-[10px] text-center text-slate-400">
-        Ao finalizar, o pedido é inserido na fila <code class="text-emerald-700 font-mono">fila:pedidos</code> e aguardará o worker em background.
-      </p>
-    </div>
-  </div>
-
-  <!-- Fundo escurecido ao abrir carrinho -->
-  <div id="carrinho-backdrop" onclick="toggleCarrinho()" class="fixed inset-0 bg-slate-950/40 z-40 hidden transition-opacity"></div>
-
-  <!-- ========================================================================= -->
-  <!-- MODAL DE SUCESSO DE PEDIDO ENFILEIRADO                                     -->
-  <!-- ========================================================================= -->
-  <div id="modal-sucesso" class="fixed inset-0 bg-slate-950/60 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-4">
-      <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl mx-auto">
-        <i class="fa-solid fa-check"></i>
-      </div>
-      <div class="text-center">
-        <h3 class="text-lg font-bold text-slate-900">Pedido Enfileirado com Sucesso!</h3>
-        <p class="text-xs text-slate-500 mt-1" id="modal-pedido-id">ID: PED-...</p>
-      </div>
-
-      <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600 space-y-1.5">
-        <div class="flex justify-between">
-          <span class="font-medium">Destino no Redis:</span>
-          <code class="text-blue-600 font-bold font-mono">fila:pedidos (List)</code>
-        </div>
-        <div class="flex justify-between">
-          <span class="font-medium">Posição na Fila:</span>
-          <span id="modal-posicao-fila" class="font-bold text-slate-900">1</span>
-        </div>
-        <div class="flex justify-between">
-          <span class="font-medium">Status:</span>
-          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">Aguardando Worker</span>
-        </div>
-      </div>
-
-      <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl text-[11px] text-blue-900 leading-relaxed">
-        <strong class="block mb-1"><i class="fa-solid fa-terminal mr-1"></i> Instrução para o Laboratório:</strong>
-        Abra o terminal e execute o comando:
-        <pre class="bg-slate-900 text-emerald-400 p-2 rounded text-[10px] mt-1 overflow-x-auto">python worker_pedidos.py</pre>
-        O worker consumirá este pedido da lista em tempo real via <strong>BRPOP</strong>!
-      </div>
-
-      <button onclick="fecharModalSucesso()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 rounded-xl text-xs transition-colors">
-        Entendido, Continuar Navegando
-      </button>
-    </div>
-  </div>
-
-  <!-- ========================================================================= -->
-  <!-- JAVASCRIPT REATIVO DO FASTCOMMERCE                                        -->
-  <!-- ========================================================================= -->
   <script>
-    let carrinhoAberto = false;
+    let estrategiaAtual = 'setex';
 
-    function toggleCarrinho() {
-      carrinhoAberto = !carrinhoAberto;
-      const drawer = document.getElementById('carrinho-drawer');
-      const backdrop = document.getElementById('carrinho-backdrop');
+    function mudarEstrategia(nova) {
+      estrategiaAtual = nova;
+      ['sem_cache', 'set', 'setex'].forEach(est => {
+        const btn = document.getElementById('btn-' + est);
+        if (est === nova) {
+          btn.className = "px-3.5 py-2 rounded-lg text-xs font-bold border transition flex items-center space-x-2 bg-emerald-600 border-emerald-500 text-white shadow-lg shadow-emerald-600/20";
+        } else {
+          btn.className = "px-3.5 py-2 rounded-lg text-xs font-bold border transition flex items-center space-x-2 bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700";
+        }
+      });
+      consultarCategoriasDestaque();
+    }
 
-      if (carrinhoAberto) {
-        drawer.classList.remove('translate-x-full');
-        backdrop.classList.remove('hidden');
-        carregarCarrinho();
+    async function consultarCategoriasDestaque() {
+      const res = await fetch(`/categories/featured?estrategia=${estrategiaAtual}`);
+      const data = await res.json();
+
+      const origemEl = document.getElementById('req-origem');
+      const tempoEl = document.getElementById('req-tempo');
+      const totalEl = document.getElementById('req-total');
+
+      origemEl.textContent = data.origem;
+      if (data.origem.includes('CACHE_REDIS')) {
+        origemEl.className = "text-xs sm:text-sm font-extrabold text-emerald-400 mt-1 block";
+        tempoEl.className = "text-lg font-mono font-black text-emerald-400 mt-0.5 block";
       } else {
-        drawer.classList.add('translate-x-full');
-        backdrop.classList.add('hidden');
+        origemEl.className = "text-xs sm:text-sm font-extrabold text-amber-400 mt-1 block";
+        tempoEl.className = "text-lg font-mono font-black text-amber-400 mt-0.5 block";
       }
-    }
 
-    // Carrega dados da sessão ativa no Redis
-    async function carregarSessao() {
-      try {
-        const resp = await fetch('/api/session');
-        const data = await resp.json();
-        if (data.session_id) {
-          document.getElementById('session-badge').textContent = data.session_id.substring(0, 8) + '...';
-          document.getElementById('session-ttl').textContent = data.ttl_segundos + 's';
-          document.getElementById('cart-redis-key').textContent = `cart:${data.session_id.substring(0, 8)}...`;
-        }
-      } catch (e) {
-        console.error("Erro ao carregar sessão:", e);
-      }
-    }
+      tempoEl.textContent = `${data.tempo_ms} ms`;
+      totalEl.textContent = data.total;
 
-    // Carrega catálogo demonstrando Cache-Aside
-    async function carregarProdutos() {
-      const grid = document.getElementById('grid-produtos');
-      grid.innerHTML = `
-        <div class="p-8 text-center text-slate-400 col-span-full">
-          <i class="fa-solid fa-spinner fa-spin text-2xl text-emerald-600 mb-2"></i>
-          <p class="text-sm">Consultando catálogo...</p>
+      const grid = document.getElementById('grid-featured');
+      grid.innerHTML = data.dados.map(cat => `
+        <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400">
+            <i class="fa-solid ${cat.image}"></i>
+          </div>
+          <div>
+            <span class="text-xs font-bold text-white block">${cat.name}</span>
+            <span class="text-[10px] font-mono text-emerald-400">is_featured: true</span>
+          </div>
         </div>
-      `;
+      `).join('');
 
-      try {
-        const resp = await fetch('/api/produtos');
-        const data = await resp.json();
+      document.getElementById('json-output').textContent = JSON.stringify(data, null, 2);
+      carregarTabelaBanco();
+    }
 
-        // Atualiza telemetria de latência
-        const latencyEl = document.getElementById('cache-latency');
-        const pillEl = document.getElementById('cache-status-pill');
-        const ttlInfoEl = document.getElementById('cache-ttl-info');
+    async function carregarTabelaBanco() {
+      const res = await fetch('/categories');
+      const data = await res.json();
 
-        latencyEl.textContent = data.latencia_ms;
-        ttlInfoEl.textContent = `TTL Cache: ${data.ttl_cache_segundos}s`;
+      // Atualiza badge de TTL do Redis
+      const badge = document.getElementById('redis-cache-badge');
+      const ttlCounter = document.getElementById('redis-ttl-counter');
 
-        if (data.origem.includes("HIT")) {
-          latencyEl.className = "text-2xl font-black text-emerald-400";
-          pillEl.className = "text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
-          pillEl.textContent = "⚡ CACHE HIT (RAM Redis)";
-        } else {
-          latencyEl.className = "text-2xl font-black text-amber-400";
-          pillEl.className = "text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30";
-          pillEl.textContent = "CACHE MISS (Disco)";
-        }
+      if (!data.cache_ativo) {
+        badge.textContent = "VAZIO (Cache Miss)";
+        badge.className = "text-xs font-bold text-slate-400";
+        ttlCounter.textContent = "0s";
+      } else if (data.ttl_restante === -1) {
+        badge.textContent = "ATIVO (Sem Expiração!)";
+        badge.className = "text-xs font-bold text-red-400";
+        ttlCounter.textContent = "∞ (Infinito)";
+      } else {
+        badge.textContent = "ATIVO (Com TTL)";
+        badge.className = "text-xs font-bold text-emerald-400";
+        ttlCounter.textContent = `${data.ttl_restante}s`;
+      }
 
-        // Renderiza cards de produtos
-        grid.innerHTML = data.produtos.map(p => `
-          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all p-5 flex flex-col justify-between group">
-            <div>
-              <div class="w-12 h-12 rounded-xl bg-slate-100 group-hover:bg-emerald-50 text-slate-700 group-hover:text-emerald-600 flex items-center justify-center text-xl mb-4 transition-colors">
-                <i class="fa-solid ${p.imagem}"></i>
-              </div>
-              <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
-                ${p.categoria}
-              </span>
-              <h3 class="font-bold text-slate-900 text-base mt-2">${p.nome}</h3>
-              <p class="text-xs text-slate-500 mt-1 line-clamp-2">${p.descricao}</p>
-            </div>
-
-            <div class="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between">
+      const lista = document.getElementById('lista-banco');
+      lista.innerHTML = data.categorias.map(cat => {
+        const ativo = cat.is_featured === 1;
+        return `
+          <div class="flex items-center justify-between p-2.5 rounded-xl border ${ativo ? 'bg-slate-800/90 border-amber-500/40' : 'bg-slate-950/60 border-slate-800'}">
+            <div class="flex items-center space-x-2.5">
+              <i class="fa-solid ${cat.image} ${ativo ? 'text-amber-400' : 'text-slate-600'} w-5 text-center"></i>
               <div>
-                <span class="text-[10px] text-slate-400 block">Preço Unitário</span>
-                <span class="text-base font-black text-slate-900">R$ ${p.preco.toFixed(2).replace('.', ',')}</span>
+                <span class="text-xs font-semibold ${ativo ? 'text-white' : 'text-slate-400'}">${cat.id}. ${cat.name}</span>
               </div>
-              <button onclick="adicionarAoCarrinho('${p.id}')" class="px-3 py-2 rounded-xl bg-slate-900 hover:bg-emerald-600 text-white text-xs font-semibold flex items-center space-x-1.5 transition-colors shadow">
-                <i class="fa-solid fa-plus text-[10px]"></i>
-                <span>Adicionar</span>
-              </button>
             </div>
+            <button onclick="toggleCategoriaBanco(${cat.id})" class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold transition ${ativo ? 'bg-amber-500 text-slate-950 hover:bg-amber-400' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}">
+              is_featured: ${ativo ? 'true' : 'false'}
+            </button>
           </div>
-        `).join('');
-
-      } catch (err) {
-        grid.innerHTML = `<div class="p-6 text-red-500 text-center col-span-full">Erro ao carregar produtos: ${err}</div>`;
-      }
+        `;
+      }).join('');
     }
 
-    // Força invalidação do cache do catálogo
-    async function invalidarCache() {
-      try {
-        await fetch('/api/cache/invalidar', { method: 'POST' });
-        carregarProdutos(); // Imediatamente gera um cache miss visível!
-      } catch (e) {
-        alert("Erro ao invalidar cache.");
-      }
+    async function toggleCategoriaBanco(id) {
+      await fetch(`/categories/${id}/toggle`, { method: 'POST' });
+      carregarTabelaBanco();
     }
 
-    // Adiciona produto ao carrinho no Redis
-    async function adicionarAoCarrinho(prodId) {
-      try {
-        const resp = await fetch('/api/carrinho/adicionar', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ produto_id: prodId, quantidade: 1 })
-        });
-        const data = await resp.json();
-        carregarCarrinho();
-        atualizarTelemetria();
-      } catch (e) {
-        alert("Erro ao adicionar produto.");
-      }
+    async function aplicarPreset(preset) {
+      await fetch(`/categories/preset/${preset}`, { method: 'POST' });
+      carregarTabelaBanco();
     }
 
-    // Carrega itens do carrinho do Redis Hash
-    async function carregarCarrinho() {
-      try {
-        const resp = await fetch('/api/carrinho');
-        const data = await resp.json();
-
-        const container = document.getElementById('carrinho-itens');
-        const counter = document.getElementById('cart-counter');
-        const subtotalEl = document.getElementById('carrinho-subtotal');
-        const btnCheckout = document.getElementById('btn-checkout');
-
-        const totalItens = data.itens.reduce((acc, i) => acc + i.quantidade, 0);
-        counter.textContent = totalItens;
-        subtotalEl.textContent = `R$ ${data.subtotal.toFixed(2).replace('.', ',')}`;
-
-        if (data.itens.length === 0) {
-          container.innerHTML = `
-            <div class="p-8 text-center text-slate-400 text-xs">
-              <i class="fa-solid fa-basket-shopping text-3xl text-slate-200 mb-2"></i>
-              <p>Seu carrinho no Redis está vazio.</p>
-            </div>
-          `;
-          btnCheckout.disabled = true;
-          return;
-        }
-
-        btnCheckout.disabled = false;
-        container.innerHTML = data.itens.map(item => `
-          <div class="pt-3 first:pt-0 flex items-center justify-between text-xs">
-            <div class="flex-1 pr-2">
-              <span class="font-bold text-slate-800 block">${item.nome}</span>
-              <span class="text-slate-400 text-[11px]">
-                ${item.quantidade}x R$ ${item.preco_unitario.toFixed(2).replace('.', ',')}
-              </span>
-            </div>
-            <div class="text-right flex items-center space-x-2">
-              <span class="font-bold text-slate-900">R$ ${item.total_item.toFixed(2).replace('.', ',')}</span>
-              <button onclick="removerDoCarrinho('${item.id}')" class="text-red-400 hover:text-red-600 p-1" title="Remover via HDEL">
-                <i class="fa-solid fa-trash-can"></i>
-              </button>
-            </div>
-          </div>
-        `).join('');
-
-      } catch (e) {
-        console.error("Erro ao carregar carrinho:", e);
-      }
+    async function limparCacheRedis() {
+      await fetch('/cache/featured', { method: 'DELETE' });
+      carregarTabelaBanco();
     }
 
-    // Remove item do carrinho via HDEL
-    async function removerDoCarrinho(prodId) {
-      try {
-        await fetch('/api/carrinho/remover', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ produto_id: prodId })
-        });
-        carregarCarrinho();
-        atualizarTelemetria();
-      } catch (e) {
-        alert("Erro ao remover item.");
-      }
-    }
-
-    // Finaliza pedido enviando para a lista do Redis (LPUSH)
-    async function finalizarPedido() {
-      const btn = document.getElementById('btn-checkout');
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Enfileirando...</span>`;
-
-      try {
-        const resp = await fetch('/api/checkout', { method: 'POST' });
-        const data = await resp.json();
-
-        if (data.status === 'success') {
-          toggleCarrinho();
-          document.getElementById('modal-pedido-id').textContent = `ID: ${data.pedido.id_pedido}`;
-          document.getElementById('modal-posicao-fila').textContent = data.posicao_na_fila;
-          document.getElementById('modal-sucesso').classList.remove('hidden');
-          carregarCarrinho();
-          atualizarTelemetria();
-        } else {
-          alert("Erro: " + data.message);
-        }
-      } catch (e) {
-        alert("Erro ao finalizar checkout: " + e);
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-bolt"></i> <span>Finalizar Pedido (LPUSH na Fila)</span>`;
-      }
-    }
-
-    function fecharModalSucesso() {
-      document.getElementById('modal-sucesso').classList.add('hidden');
-    }
-
-    // Atualiza telemetria global do Redis
-    async function atualizarTelemetria() {
-      try {
-        const resp = await fetch('/api/telemetria');
-        const data = await resp.json();
-        if (data.status === 'online') {
-          document.getElementById('redis-memory').textContent = data.memoria_usada_humana;
-          document.getElementById('redis-keys-count').textContent = data.total_chaves;
-        }
-
-        const respFila = await fetch('/api/pedidos/fila');
-        const dataFila = await respFila.json();
-        document.getElementById('queue-size').textContent = dataFila.tamanho_fila;
-
-      } catch (e) {
-        console.error("Erro na telemetria:", e);
-      }
-    }
-
-    // Inicialização ao carregar a página
-    window.addEventListener('DOMContentLoaded', () => {
-      carregarSessao();
-      carregarProdutos();
-      carregarCarrinho();
-      atualizarTelemetria();
-      setInterval(atualizarTelemetria, 3000); // Polling a cada 3s para telemetria viva
-    });
+    // Atualiza contador de TTL a cada 1 segundo
+    setInterval(carregarTabelaBanco, 1000);
+    consultarCategoriasDestaque();
   </script>
 </body>
 </html>

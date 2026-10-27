@@ -1,0 +1,95 @@
+\changecolours{ScoutGreen}
+\section[Passo 3: Relacionamentos 1:1]{Passo 3: Mapeamento de Relacionamentos Binários $1:1$}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Passo 3: As 3 Estratégias Formais para Relacionamentos $1:1$}
+  \vspace{-0.15cm}
+  \footnotesize\alert{Como escolher a abordagem correta segundo a Participação (Total vs. Parcial):}\par
+  \vspace{0.12cm}
+  \renewcommand{\arraystretch}{1.42}
+  \resizebox{\textwidth}{!}{%
+    \begin{tabular}{@{}p{3.6cm}p{3.4cm}p{6.6cm}@{}}
+      \toprule
+      \textbf{Estratégia de Mapeamento} & \textbf{Quando Utilizar (Condição no DER)} & \textbf{Procedimento Formal no Esquema Lógico Relacional} \\
+      \midrule
+      \textbf{1. Abordagem da Chave Estrangeira} \newline \textit{(Mais comum na prática)} &
+      Um lado tem \textbf{Participação Total} $(1, 1)$ e o outro tem \textbf{Participação Parcial} $(0, 1)$ (ou ambos parciais). &
+      Escolhe-se a relação $S$ com \textbf{Participação Total $(1, 1)$} para receber a Chave Primária de $T$ como \textbf{Chave Estrangeira ($FK$)}, além dos atributos próprios do losango. A $FK$ também deve ser marcada como \textbf{Chave Alternativa ($AK$ / Única)} para garantir o $1:1$! \\
+      \textbf{2. Abordagem da Fusão em Relação Única} &
+      \textbf{Ambos os lados} possuem \textbf{Participação Total obrigatória} $(1, 1) \longleftrightarrow (1, 1)$. &
+      Como as duas entidades têm exatamente a mesma quantidade de tuplas e não existem separadamente, fundem-se $S$ e $T$ em uma \textbf{única relação $R_{ST}$}, escolhendo uma das PKs como PK principal e a outra como $AK$. \\
+      \textbf{3. Abordagem da Relação Própria de Referência Cruzada} &
+      \textbf{Ambos os lados} têm \textbf{Participação Parcial} $(0, 1) \longleftrightarrow (0, 1)$ e pouquíssimas tuplas se relacionam. &
+      Cria-se uma \textbf{terceira relação $R_{rel}$} contendo as duas chaves estrangeiras ($FK_S$ e $FK_T$, uma como PK e outra como AK) para evitar centenas de valores \texttt{NULL} nas tabelas principais. \\
+      \bottomrule
+    \end{tabular}%
+  }
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Transformação Visual do Passo 3: Relacionamento $1:1$}
+  \vspace{-0.2cm}
+  \begin{center}
+    \tikz[scale=0.66, transform shape]{
+      % DER 1:1
+      \node[font=\scriptsize\bfseries\sffamily, ScoutGreen] at (0, 1.95) {DER Conceitual: Todo Departamento DEVE ter 1 Diretor, mas nem todo Médico dirige um Departamento};
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.2cm, minimum height=0.6cm, font=\bfseries\sffamily\scriptsize] (med) at (-4.2, 0.9) {MEDICO};
+      \node[draw=ScoutNavy, fill=ScoutNavy!12, ellipse, font=\tiny\sffamily\bfseries, inner sep=1.2pt] (pkm) at (-6.5, 0.9) {\underline{matricula}};
+
+      \node[diamond, aspect=1.8, draw=ScoutNavy, fill=ScoutNavy!12, thick, inner sep=1.2pt, font=\bfseries\sffamily\tiny] (dir) at (0, 0.9) {DIRIGE};
+      \node[draw=black!80, fill=white, ellipse, font=\tiny\sffamily, inner sep=1.2pt] (dt) at (0, -0.05) {dt\_inicio};
+
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.6cm, minimum height=0.6cm, font=\bfseries\sffamily\scriptsize] (dep) at (4.4, 0.9) {DEPTO\_CLINICO};
+      \node[draw=ScoutNavy, fill=ScoutNavy!12, ellipse, font=\tiny\sffamily\bfseries, inner sep=1.2pt] (pkd) at (7.0, 0.9) {\underline{cod\_depto}};
+
+      \draw[semithick] (med) -- (pkm);
+      \draw[semithick] (dep) -- (pkd);
+      \draw[semithick] (dir) -- (dt);
+      \draw[semithick] (med) -- node[above, font=\scriptsize\bfseries, ScoutNavy] {1 \texttt{(0, 1)}} node[below, font=\tiny\sffamily] {Parcial} (dir);
+      \draw[semithick] ($(dir.east)+(0,0.04)$) -- node[above, font=\scriptsize\bfseries, ScoutGreen] {1 \texttt{(1, 1)}} ($(dep.west)+(0,0.04)$);
+      \draw[semithick] ($(dir.east)+(0,-0.04)$) -- node[below, font=\tiny\sffamily\bfseries, ScoutGreen] {Total!} ($(dep.west)+(0,-0.04)$);
+    }
+  \end{center}
+  \vspace{-0.15cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \footnotesize\alert{Escolha Errada (FK no Lado Parcial \texttt{MEDICO}):}\par
+      \vspace{0.08cm}
+      \renewcommand{\arraystretch}{1.2}
+      \resizebox{\linewidth}{!}{%
+        \begin{tabular}{@{}llll@{}}
+          \toprule
+          \textbf{\underline{matricula}} & \textbf{nome} & \textbf{\color{red!80!black}cod\_depto\_dir\_fk} & \textbf{\color{red!80!black}dt\_inicio} \\
+          \midrule
+          \texttt{1001} & \texttt{'Dra. Ana'} & \texttt{10} & \texttt{'2025-01-10'} \\
+          \texttt{1002} & \texttt{'Dr. Bruno'} & \textbf{\color{red!80!black}NULL} & \textbf{\color{red!80!black}NULL} \\
+          \texttt{1003} & \texttt{'Dra. Carla'} & \textbf{\color{red!80!black}NULL} & \textbf{\color{red!80!black}NULL} \\
+          \texttt{1004} & \texttt{'Dr. Diego'} & \textbf{\color{red!80!black}NULL} & \textbf{\color{red!80!black}NULL} \\
+          \bottomrule
+        \end{tabular}%
+      }
+      \vspace{0.08cm}
+      \scriptsize
+      $\bullet$ \textbf{Problema:} Como 90\% dos médicos não são diretores, a tabela \texttt{MEDICO} fica poluída de células \texttt{NULL}!
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \footnotesize\alert{Escolha Correta (FK no Lado Total \texttt{DEPTO\_CLINICO}):}\par
+      \vspace{0.08cm}
+      \renewcommand{\arraystretch}{1.2}
+      \resizebox{\linewidth}{!}{%
+        \begin{tabular}{@{}llll@{}}
+          \toprule
+          \textbf{\underline{cod\_depto}} & \textbf{nome\_depto} & \textbf{\color{ScoutGreen}mat\_diretor\_fk (AK)} & \textbf{\color{ScoutGreen}dt\_inicio\_dir} \\
+          \midrule
+          \texttt{10} & \texttt{'Cardiologia'} & \texttt{1001} (Não Nulo!) & \texttt{'2025-01-10'} \\
+          \texttt{20} & \texttt{'Pediatria'} & \texttt{1005} (Não Nulo!) & \texttt{'2024-08-01'} \\
+          \texttt{30} & \texttt{'Ortopedia'} & \texttt{1009} (Não Nulo!) & \texttt{'2026-02-15'} \\
+          \bottomrule
+        \end{tabular}%
+      }
+      \vspace{0.08cm}
+      \scriptsize
+      $\bullet$ \textbf{Solução Perfeita:} \textbf{Zero valores \texttt{NULL}}! E \texttt{mat\_diretor\_fk} recebe restrição de unicidade (\textbf{AK}) para impedir que um médico dirija 2 departamentos.
+    \end{column}
+  \end{columns}
+\end{frame}

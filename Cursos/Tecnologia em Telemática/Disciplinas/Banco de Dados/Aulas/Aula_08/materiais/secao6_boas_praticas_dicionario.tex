@@ -1,0 +1,68 @@
+\changecolours{ScoutGreen}
+\section[Boas Práticas e Dicionário]{Padrões de Qualidade Estética, Antipadrões e Dicionário de Dados}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Contraste Visual: Antipadrões Proibidos vs. Modelagem Correta}
+  \vspace{-0.15cm}
+  \begin{columns}[t]
+    \begin{column}{0.49\textwidth}
+      \alert{ERRADO: Antipadrões Comuns no DER}\par
+      \vspace{0.1cm}
+      \begin{center}
+        \tikz[scale=0.62, transform shape]{
+          % Erro 1: Ligar entidades sem losango e colocar FK como atributo
+          \node[draw=red!80!black, fill=red!10, thick, minimum width=1.9cm, minimum height=0.6cm, font=\bfseries\sffamily\tiny] (e1) at (-1.8, 0) {MEDICO};
+          \node[draw=red!80!black, fill=red!10, thick, minimum width=1.9cm, minimum height=0.6cm, font=\bfseries\sffamily\tiny] (e2) at (1.8, 0) {DEPTO};
+          \draw[very thick, red!80!black] (e1) -- node[above, font=\tiny\bfseries, red!80!black] {Sem Losango!} (e2);
+
+          \node[draw=red!80!black, fill=red!15, ellipse, thick, font=\tiny\sffamily\bfseries] (fk) at (-1.8, 1.1) {cod\_depto\_fk};
+          \draw[semithick, red!80!black] (e1) -- (fk);
+        }
+      \end{center}
+      \scriptsize
+      $\bullet$ \textbf{1. Atributo de Chave Estrangeira (\texttt{fk}):} Jamais crie atributos como \texttt{cod\_depto\_fk} no DER conceitual!\\
+      $\bullet$ \textbf{2. Retângulos Ligados Diretamente:} Duas entidades nunca se ligam sem um losango intermediário.\\
+      $\bullet$ \textbf{3. Mistura de Notações:} Nunca misture Pé de Galinha (\textit{Crow's Foot}) com elipses de Chen.
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \alert{CORRETO: Gramática Canônica Limpa}\par
+      \vspace{0.1cm}
+      \begin{center}
+        \tikz[scale=0.62, transform shape]{
+          \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=1.9cm, minimum height=0.6cm, font=\bfseries\sffamily\tiny] (c1) at (-2.4, 0) {MEDICO};
+          \node[diamond, aspect=1.8, draw=ScoutNavy, fill=ScoutNavy!12, thick, inner sep=1.2pt, font=\bfseries\sffamily\tiny] (rel) at (0, 0) {LOTADO};
+          \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=1.9cm, minimum height=0.6cm, font=\bfseries\sffamily\tiny] (c2) at (2.4, 0) {DEPTO};
+
+          \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily\bfseries] (pk1) at (-2.4, 1.1) {\underline{matricula}};
+          \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily\bfseries] (pk2) at (2.4, 1.1) {\underline{cod\_depto}};
+
+          \draw[semithick] (c1) -- (pk1);
+          \draw[semithick] (c2) -- (pk2);
+          \draw[thick, double, double distance=1.3pt] (c1) -- node[above, font=\tiny\bfseries] {N} (rel);
+          \draw[thick, double, double distance=1.3pt] (rel) -- node[above, font=\tiny\bfseries] {1} (c2);
+        }
+      \end{center}
+      \scriptsize
+      $\bullet$ \textbf{Nomenclatura Padronizada:} Entidades no singular em \texttt{CAIXA\_ALTA}, verbos ativos nos losangos e atributos em \texttt{snake\_case}.\\
+      $\bullet$ \textbf{Topologia Ortogonal:} Entidades alinhadas em grade sem cruzamento de linhas sobre caixas.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Dicionário de Dados Conceitual Complementar},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{O Que o Desenho Gráfico Não Mostra?}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Limitação Visual:} O diagrama DER/EER não detalha a semântica de negócio, o formato de domínio ou a fórmula exata de um atributo derivado.
+    \item \textbf{Papel do Dicionário de Dados:} Especificação descritiva e tabular que acompanha obrigatoriamente o DER no projeto da AVP1.
+  \end{itemize}
+}{%
+  \alert{Elementos Obrigatórios do Dicionário}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{1. Catálogo de Entidades:} Definição clara do papel de cada entidade forte, fraca e subclasse.
+    \item \textbf{2. Especificação de Atributos:} Classificação (PK, simples, composto, multivalorado, derivado), obrigatoriedade e regra de cálculo.
+    \item \textbf{3. Regras de Negócio Textuais:} Restrições semânticas (ex: ``um médico não supervisiona a si mesmo'').
+  \end{itemize}
+}

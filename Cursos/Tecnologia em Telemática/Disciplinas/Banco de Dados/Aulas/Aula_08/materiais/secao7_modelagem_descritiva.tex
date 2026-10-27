@@ -1,0 +1,49 @@
+\changecolours{ScoutGreen}
+\section[Modelagem Descritiva]{Modelagem Descritiva e Textual: O Dicionário de Dados da AVP1}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Dicionário de Dados: Quadro Descritivo de Atributos}
+  \vspace{-0.15cm}
+  \footnotesize\alert{Especificação Tabular de Atributos (Estudo de Caso Clínica ``VidaPlena''):}\par
+  \vspace{0.12cm}
+  \renewcommand{\arraystretch}{1.42}
+  \resizebox{\textwidth}{!}{%
+    \begin{tabular}{@{}lllp{3.6cm}p{4.8cm}@{}}
+      \toprule
+      \textbf{Entidade} & \textbf{Natureza} & \textbf{Atributo} & \textbf{Classificação (Chen / Heuser)} & \textbf{Descrição Semântica e Regra de Domínio} \\
+      \midrule
+      \texttt{COLABORADOR} & Superclasse & \underline{\texttt{matricula}} & Identificador (PK / Pino $\bullet$) & Código funcional inteiro positivo, único e obrigatório. \\
+      \texttt{COLABORADOR} & Superclasse & \texttt{endereco} & Composto (\texttt{rua, num, cep}) & Endereço residencial decomposto em subatributos atômicos. \\
+      \texttt{COLABORADOR} & Superclasse & \texttt{telefones} & Multivalorado -- \texttt{(1, n)} & Conjunto de números de telefone de contato (mínimo 1). \\
+      \texttt{COLABORADOR} & Superclasse & \texttt{tempo\_serv} & Derivado (Elipse Tracejada) & Calculado dinamicamente: $\text{Data Atual} - \text{data\_admissao}$. \\
+      \texttt{DEPENDENTE} & Ent. Fraca & \dashuline{\texttt{nome\_dep}} & Discriminador (Chave Parcial) & Identifica o dependente junto ao \underline{\texttt{id\_prontuario}} do paciente titular. \\
+      \bottomrule
+    \end{tabular}%
+  }
+  \vspace{0.18cm}
+  \scriptsize
+  $\bullet$ \textbf{Regra de Documentação da AVP1:} Todo atributo composto, multivalorado, derivado ou chave parcial desenhado na ferramenta CASE deve possuir sua regra de domínio detalhada no Quadro Descritivo acima.
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Dicionário de Dados: Matriz Textual de Relacionamentos}
+  \vspace{-0.15cm}
+  \footnotesize\alert{Especificação de Associações, Papéis e Cardinalidades (Clínica ``VidaPlena''):}\par
+  \vspace{0.12cm}
+  \renewcommand{\arraystretch}{1.45}
+  \resizebox{\textwidth}{!}{%
+    \begin{tabular}{@{}lcp{3.6cm}p{3.8cm}p{3.8cm}@{}}
+      \toprule
+      \textbf{Relacionamento} & \textbf{Razão} & \textbf{Entidade 1 [Papel] $(min, max)$} & \textbf{Entidade 2 [Papel] $(min, max)$} & \textbf{Atributos Próprios e Observações} \\
+      \midrule
+      \texttt{DIRIGE} & $1:1$ & \texttt{MEDICO} [diretor] \textbf{\texttt{(0, 1)}} & \texttt{DEPTO\_CLINICO} [dirigido] \textbf{\texttt{(1, 1)}} & \textit{Nenhum} (Participação Total do Departamento). \\
+      \texttt{SUPERVISIONA} & $1:N$ & \texttt{MEDICO} [preceptor] \textbf{\texttt{(0, n)}} & \texttt{MEDICO} [residente] \textbf{\texttt{(0, 1)}} & \textit{Nenhum} (Auto-relacionamento recursivo com papéis). \\
+      \texttt{POSSUI\_DEP} & $1:N$ & \texttt{PACIENTE} [titular] \textbf{\texttt{(0, n)}} & \texttt{DEPENDENTE} [dep.] \textbf{\texttt{(1, 1)}} & \textit{Nenhum} (Relacionamento Identificador de Entidade Fraca). \\
+      \texttt{REALIZA\_EXAME} & $N:M$ & \texttt{PACIENTE} [examinado] \textbf{\texttt{(0, n)}} & \texttt{EXAME} [prescrito] \textbf{\texttt{(0, n)}} & \texttt{data\_solicitacao}, \texttt{justificativa\_clinica}. \\
+      \bottomrule
+    \end{tabular}%
+  }
+  \vspace{0.18cm}
+  \scriptsize
+  $\bullet$ \textbf{Consistência Gráfica $\leftrightarrow$ Textual:} Os pares \texttt{(min, max)} e os papéis documentados nesta matriz devem coincidir exatamente com as linhas e rótulos desenhados no brModelo ou Draw.io.
+\end{frame}

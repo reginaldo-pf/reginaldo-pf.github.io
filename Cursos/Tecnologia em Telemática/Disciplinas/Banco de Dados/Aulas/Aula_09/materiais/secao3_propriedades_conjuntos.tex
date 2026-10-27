@@ -1,0 +1,22 @@
+\changecolours{ScoutGreen}
+\section[Propriedades e NULL]{Propriedades Matemáticas das Relações e o Valor Nulo}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={As 4 Propriedades Fundamentais das Relações e o Valor Nulo},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Consequências de $r(R)$ Ser um Conjunto}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{1. Atomicidade de Valores (1FN):} São proibidos atributos compostos ou multivalorados na mesma célula. Cada posição da tupla guarda um único valor indivisível.
+    \item \textbf{2. Inexistência de Ordem das Tuplas:} Um conjunto matemático não possui ordem ($\{t_1, t_2\} = \{t_2, t_1\}$).
+    \item \textbf{3. Proibição de Tuplas Duplicadas:} Em um conjunto não existem dois elementos idênticos. Toda relação deve possuir chave primária!
+  \end{itemize}
+}{%
+  \alert{A Semântica Formal do Valor Nulo (\textit{NULL})}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Conceito:} Não representa o número zero nem texto em branco; indica ausência ou desconhecimento de valor aplicável.
+    \item \textbf{1. Valor Desconhecido:} Existe no mundo real, mas não é sabido (ex: data de nascimento não informada).
+    \item \textbf{2. Valor Inaplicável:} O atributo não se aplica àquela tupla específica.
+    \item \textbf{3. Valor Indisponível:} Existe, mas ainda não foi coletado no momento do registro.
+  \end{itemize}
+}

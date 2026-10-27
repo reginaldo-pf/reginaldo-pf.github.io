@@ -1,0 +1,83 @@
+\changecolours{ScoutGreen}
+\section[Auditoria Tabular]{Estudo de Caso e Auditoria Tabular de Instâncias Relacionais}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Diagrama de Esquema Completo: Clínica Médica ``VidaPlena''}
+  \vspace{-0.22cm}
+  \begin{center}
+    \tikz[scale=0.71, transform shape]{
+      % 1. DEPARTAMENTO_CLINICO
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=6.1cm, minimum height=0.65cm, font=\sffamily\scriptsize] (depto) at (-4.3, 1.45) {
+        \textbf{DEPARTAMENTO\_CLINICO}(\underline{cod\_depto}, nome\_depto, bloco)
+      };
+
+      % 2. MEDICO
+      \node[draw=ScoutNavy, fill=ScoutNavy!12, thick, minimum width=8.1cm, minimum height=0.65cm, font=\sffamily\scriptsize] (med) at (4.1, 1.45) {
+        \textbf{MEDICO}(\underline{matricula}, cpf, nome, crm, \textbf{\color{ScoutNavy}cod\_depto\_fk}, \textbf{\color{ScoutGreen}mat\_superv\_fk})
+      };
+
+      % 3. PACIENTE
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=6.1cm, minimum height=0.65cm, font=\sffamily\scriptsize] (pac) at (-4.3, -0.50) {
+        \textbf{PACIENTE}(\underline{id\_prontuario}, cpf, nome\_paciente, data\_nasc)
+      };
+
+      % 4. DEPENDENTE (PK composta com FK)
+      \node[draw=ScoutNavy, fill=amber!15, thick, minimum width=7.6cm, minimum height=0.65cm, font=\sffamily\scriptsize] (dep) at (4.1, -0.50) {
+        \textbf{DEPENDENTE}(\underline{\textbf{\color{ScoutNavy}id\_prontuario\_fk}, \dashuline{nome\_dep}}, data\_nasc, parentesco)
+      };
+
+      % Arco 1: MEDICO.cod_depto_fk -> DEPARTAMENTO_CLINICO.cod_depto
+      \draw[-{Latex[length=2.2mm]}, very thick, ScoutNavy] (5.5, 1.12) -- (5.5, 0.60) -- (-5.1, 0.60) -- (-5.1, 1.12);
+      \node[font=\scriptsize\bfseries\sffamily, ScoutNavy] at (0.2, 0.36) {1. Arco Referencial Externo (\texttt{cod\_depto\_fk} $\longrightarrow$ \underline{\texttt{cod\_depto}})};
+
+      % Arco 2: Auto-referencia MEDICO.mat_superv_fk -> MEDICO.matricula
+      \draw[-{Latex[length=2.2mm]}, very thick, ScoutGreen] (7.3, 1.78) -- (7.3, 2.25) -- (1.3, 2.25) -- (1.3, 1.78);
+      \node[font=\scriptsize\bfseries\sffamily, ScoutGreen] at (4.3, 2.50) {2. Auto-Referência Recursiva (\texttt{mat\_superv\_fk} $\longrightarrow$ \underline{\texttt{matricula}})};
+
+      % Arco 3: DEPENDENTE.id_prontuario_fk -> PACIENTE.id_prontuario
+      \draw[-{Latex[length=2.2mm]}, very thick, ScoutNavy] (2.3, -0.83) -- (2.3, -1.32) -- (-5.2, -1.32) -- (-5.2, -0.83);
+      \node[font=\scriptsize\bfseries\sffamily, ScoutNavy] at (-1.45, -1.58) {3. Dependência de Identificação: \texttt{id\_prontuario\_fk} compõe a PK e é FK (Não aceita \texttt{NULL}!)};
+    }
+  \end{center}
+  \vspace{-0.05cm}
+  \scriptsize
+  $\bullet$ \textbf{1. FK Externa Opcional (\texttt{cod\_depto\_fk}):} Aponta para outra relação; admite \texttt{NULL} quando a lotação é opcional.\\
+  $\bullet$ \textbf{2. FK Auto-Referenciada (\texttt{mat\_superv\_fk}):} Aponta para a PK da \textbf{própria relação} (\texttt{MEDICO}), modelando hierarquia.\\
+  $\bullet$ \textbf{3. FK em Chave Primária Composta (\texttt{id\_prontuario\_fk}):} Originada de entidade fraca; por integrar a PK, \textbf{jamais aceita \texttt{NULL}}.
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Auditoria Tabular de Tuplas: Verificação Formal de Integridade}
+  \vspace{-0.15cm}
+  \footnotesize\alert{Avaliação de Operações sobre o Estado da Relação \texttt{MEDICO}:}\par
+  \vspace{0.12cm}
+  \renewcommand{\arraystretch}{1.42}
+  \resizebox{\textwidth}{!}{%
+    \begin{tabular}{@{}p{3.5cm}lcp{4.6cm}@{}}
+      \toprule
+      \textbf{Operação Proposta} & \textbf{Tupla Avaliada $t = \langle v_1, \dots, v_6 \rangle$} & \textbf{Resultado} & \textbf{Justificativa Formal (Codd, 1970)} \\
+      \midrule
+      1. Inserir médico sem matrícula definida &
+      $\langle \text{\textbf{NULL}}, \text{'111'}, \text{'Dr. Rui'}, \text{'CE-10'}, 10, \text{NULL} \rangle$ &
+      \textbf{\textcolor{red!80!black}{REJEITADA}} &
+      Viola a \textbf{Integridade de Entidade}: nenhum atributo da PK pode ser \texttt{NULL}. \\
+      2. Inserir lista de 2 CRMs na mesma célula &
+      $\langle 1004, \text{'222'}, \text{'Dr. Ivo'}, \{\text{'CE-1'}, \text{'SP-2'}\}, 10, \text{NULL} \rangle$ &
+      \textbf{\textcolor{red!80!black}{REJEITADA}} &
+      Viola a \textbf{Integridade de Domínio (1FN)}: exige valores atômicos indivisíveis. \\
+      3. Inserir CPF já existente em outra tupla &
+      $\langle 1005, \text{'111.222.333-44'}, \text{'Dra. Lia'}, \text{'CE-99'}, 20, \text{NULL} \rangle$ &
+      \textbf{\textcolor{red!80!black}{REJEITADA}} &
+      Viola a \textbf{Unicidade de Chave}: \texttt{cpf} é Chave Candidata Alternativa ($AK$). \\
+      4. Lotar médico no depto. $99$ (inexistente) &
+      $\langle 1006, \text{'333'}, \text{'Dr. Gil'}, \text{'CE-55'}, \mathbf{99}, 1001 \rangle$ &
+      \textbf{\textcolor{red!80!black}{REJEITADA}} &
+      Viola a \textbf{Integridade Referencial}: valor $99 \notin \text{DEPTO}[\underline{\text{cod\_depto}}]$. \\
+      5. Inserir médico sem depto. e sem preceptor &
+      $\langle 1007, \text{'444'}, \text{'Dra. Eva'}, \text{'CE-77'}, \text{\textbf{NULL}}, \text{\textbf{NULL}} \rangle$ &
+      \textbf{\textcolor{ScoutGreen}{ACEITA}} &
+      Ambas as Chaves Estrangeiras são opcionais e não integram a PK. \\
+      \bottomrule
+    \end{tabular}%
+  }
+\end{frame}

@@ -1,0 +1,45 @@
+\changecolours{ScoutGreen}
+\section[Guia brModelo]{Laboratório Passo a Passo no brModelo (Notação Heuser)}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Operando o brModelo Web / Desktop 3.x: Guia Visual de Formas}
+  \vspace{-0.15cm}
+  \begin{center}
+    \tikz[scale=0.68, transform shape]{
+      % Entidade Forte PACIENTE no brModelo
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.2cm, minimum height=1.2cm, font=\bfseries\sffamily\scriptsize] (pac) at (0, 0) {PACIENTE};
+      \draw[semithick] (-1.1, 0.35) -- (-1.6, 0.35);
+      \filldraw[black] (-1.6, 0.35) circle (2.2pt) node[left=2pt, font=\tiny\sffamily\bfseries] {id\_prontuario};
+      \draw[semithick] (-1.1, -0.25) -- (-1.6, -0.25);
+      \filldraw[draw=black, fill=white, semithick] (-1.6, -0.25) circle (2.2pt) node[left=2pt, font=\tiny\sffamily] {nome\_pac};
+
+      % Relacionamento Identificador POSSUI_DEP
+      \node[diamond, aspect=1.9, draw=ScoutNavy, double, double distance=1.2pt, fill=ScoutNavy!15, thick, inner sep=1.2pt, font=\bfseries\sffamily\tiny] (rel) at (3.4, 0) {POSSUI\_DEP};
+
+      % Entidade Fraca DEPENDENTE no brModelo
+      \node[draw=ScoutGreen, double, double distance=1.3pt, fill=ScoutGreen!15, thick, minimum width=2.3cm, minimum height=1.2cm, font=\bfseries\sffamily\scriptsize] (dep) at (6.9, 0) {DEPENDENTE};
+      \draw[semithick] (8.05, 0.35) -- (8.55, 0.35);
+      \filldraw[draw=black, fill=amber!80, semithick] (8.55, 0.35) circle (2.2pt) node[right=2pt, font=\tiny\sffamily\bfseries] {\dashuline{nome\_dep}};
+      \draw[semithick] (8.05, -0.25) -- (8.55, -0.25);
+      \filldraw[draw=black, fill=white, semithick] (8.55, -0.25) circle (2.2pt) node[right=2pt, font=\tiny\sffamily] {parentesco};
+
+      \draw[semithick] (pac) -- node[above, font=\tiny\bfseries] {(0, n)} (rel);
+      \draw[semithick] (rel) -- node[above, font=\tiny\bfseries] {(1, 1)} (dep);
+    }
+  \end{center}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \scriptsize
+      \alert{1. Entidades e Pinos de Atributos:}\par
+      $\bullet$ \textbf{Atributo Identificador ($\bullet$):} Clique na entidade e selecione o pino preto preenchido para a chave primária.\\
+      $\bullet$ \textbf{Composto e Multivalorado:} Adicione sub-pinos ao atributo composto ou ajuste a cardinalidade para \texttt{(1, n)}.
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \scriptsize
+      \alert{2. Auto-Relacionamento, Fraca e EER:}\par
+      $\bullet$ \textbf{Auto-Relacionamento:} Ligue a entidade a si mesma e preencha o campo \textit{Papel} nas duas arestas.\\
+      $\bullet$ \textbf{Especialização:} Use o \textbf{Triângulo} e defina no painel lateral \textit{Total/Parcial} (\texttt{t/p}) e \textit{Exclusiva/Compartilhada} (\texttt{e/c}).
+    \end{column}
+  \end{columns}
+\end{frame}

@@ -1,0 +1,75 @@
+\changecolours{ScoutGreen}
+\section[Algoritmo de 7 Passos]{Visão Geral do Algoritmo de Mapeamento MER $\to$ Relacional}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Pipeline de Transformação: Do Conceitual ao Lógico}
+  \vspace{-0.15cm}
+  \begin{center}
+    \tikz[scale=0.68, transform shape]{
+      % Box 1: MER/DER
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, very thick, rounded corners=4pt, minimum width=4.5cm, minimum height=2.2cm, align=center, font=\sffamily\scriptsize] (mer) at (-5.6, 0) {
+        \textbf{\color{ScoutGreen}NÍVEL CONCEITUAL (MER/DER)}\\[3pt]
+        $\bullet$ Retângulos (Entidades Fortes/Fracas)\\
+        $\bullet$ Losangos ($1:1$, $1:N$, $N:M$)\\
+        $\bullet$ Elipses (Compostos, Multival., Deriv.)\\
+        $\bullet$ Hierarquias EER ($d/o$, Total/Parcial)
+      };
+
+      % Box 2: Algoritmo
+      \node[draw=ScoutNavy, fill=ScoutNavy!12, very thick, rounded corners=4pt, minimum width=4.3cm, minimum height=2.2cm, align=center, font=\sffamily\scriptsize] (alg) at (0, 0) {
+        \textbf{\color{ScoutNavy}ALGORITMO DE MAPEAMENTO}\\[3pt]
+        \textbf{Elmasri \& Navathe (7 Passos)}\\
+        \textbf{+ Heuser (Regras de Fusão)}\\[2pt]
+        $\bullet$ \textbf{Aula 10:} Passos 1, 2, 3 e 4\\
+        $\bullet$ \textbf{Aula 11:} Passos 5, 6, 7 e EER
+      };
+
+      % Box 3: Modelo Relacional
+      \node[draw=ScoutGreen, fill=amber!15, very thick, rounded corners=4pt, minimum width=4.5cm, minimum height=2.2cm, align=center, font=\sffamily\scriptsize] (rel) at (5.6, 0) {
+        \textbf{\color{ScoutNavy}NÍVEL LÓGICO RELACIONAL}\\[3pt]
+        $\bullet$ Relações em 1FN (Atributos Atômicos)\\
+        $\bullet$ Chaves Primárias (\underline{PK}) e Candidatas\\
+        $\bullet$ Chaves Estrangeiras ($FK \longrightarrow PK$)\\
+        $\bullet$ Restrições de \texttt{NULL} e Unicidade
+      };
+
+      \draw[-{Latex[length=2.8mm]}, ultra thick, ScoutGreen] (mer) -- (alg);
+      \draw[-{Latex[length=2.8mm]}, ultra thick, ScoutNavy] (alg) -- (rel);
+    }
+  \end{center}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \footnotesize\alert{1. Preservação de Informação:}\par
+      \scriptsize
+      $\bullet$ Toda regra estrutural expressa no DER deve ter um equivalente exato no Esquema Relacional (relação, atributo atômico, chave primária, chave única ou chave estrangeira).
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \footnotesize\alert{2. Minimização de Valores \texttt{NULL}:}\par
+      \scriptsize
+      $\bullet$ Ao decidir onde posicionar uma Chave Estrangeira ($FK$), sempre priorizamos a relação que possui \textbf{Participação Total $(1, 1)$} para evitar colunas repletas de valores nulos!
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Panorama dos 7 Passos de Elmasri \& Navathe}
+  \vspace{-0.18cm}
+  \renewcommand{\arraystretch}{1.22}
+  \resizebox{\textwidth}{!}{%
+    \begin{tabular}{@{}ccp{4.8cm}p{6.8cm}c@{}}
+      \toprule
+      \textbf{Passo} & \textbf{Alvo no DER Conceitual} & \textbf{Construto Gráfico de Origem} & \textbf{Ação no Esquema Lógico Relacional} & \textbf{Aula} \\
+      \midrule
+      \textbf{Passo 1} & Entidades Regulares (Fortes) & Retângulo simples + Elipses simples, compostas e derivadas & Cria uma relação base; achata atributos compostos em subatributos atômicos e omite derivados. & \textbf{\color{ScoutGreen}Aula 10} \\
+      \textbf{Passo 2} & Entidades Fracas ($\diamond\diamond$) & Retângulo duplo + Losango duplo + Discriminador tracejado & Cria relação para a fraca; importa a PK da forte como FK; define PK Composta ($\underline{FK + \text{Discriminador}}$). & \textbf{\color{ScoutGreen}Aula 10} \\
+      \textbf{Passo 3} & Relacionamentos Binários $1:1$ & Losango $1:1$ (Parcial/Total ou Total/Total) & Propaga a PK para o lado de Participação Total (ou funde em relação única se ambos forem Totais). & \textbf{\color{ScoutGreen}Aula 10} \\
+      \textbf{Passo 4} & Relacionamentos Binários $1:N$ & Losango $1:N$ (Regular ou Auto-Relacionamento Recursivo) & Propaga a PK do \textbf{lado $1$} como Chave Estrangeira ($FK$) para dentro da relação do \textbf{lado $N$}. & \textbf{\color{ScoutGreen}Aula 10} \\
+      \midrule
+      \textbf{Passo 5} & Relacionamentos Binários $N:M$ & Losango $N:M$ com ou sem atributos próprios & Cria \textbf{nova Relação Associativa} cuja PK é composta pelas FKs de ambos os lados. & \textit{Aula 11} \\
+      \textbf{Passo 6} & Atributos Multivalorados & Elipse dupla ou pino $(0, n) / (1, n)$ & Cria \textbf{nova Relação Independente} contendo a FK da entidade proprietária + o valor do atributo. & \textit{Aula 11} \\
+      \textbf{Passo 7} & Rel. $n$-ários e Herança EER & Losango ternário e Círculo/Triângulo EER & Cria relação associativa para grau $\ge 3$ e aplica uma das 4 opções de mapeamento EER. & \textit{Aula 11} \\
+      \bottomrule
+    \end{tabular}%
+  }
+\end{frame}

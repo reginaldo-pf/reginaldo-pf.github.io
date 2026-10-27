@@ -1,0 +1,256 @@
+\changecolours{ScoutGreen}
+\section[Chen vs. Heuser]{O Duelo de Notações: Peter Chen (Draw.io) vs. Heuser (brModelo)}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Atributos: Peter Chen (Draw.io) vs. Heuser (brModelo)}
+  \vspace{-0.15cm}
+  \begin{columns}[t]
+    \begin{column}{0.49\textwidth}
+      \footnotesize\alert{1. Peter Chen Clássico (Draw.io)}\par
+      \vspace{0.12cm}
+      \begin{center}
+        \tikz[scale=0.64, transform shape]{
+          \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.3cm, minimum height=0.7cm, font=\bfseries\sffamily\scriptsize] (ent) at (0,0) {COLABORADOR};
+          \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, font=\tiny\sffamily\bfseries] (pk) at (-2.5, 1.0) {\underline{matricula}};
+          \node[draw=black!80, fill=white, ellipse, font=\tiny\sffamily] (nome) at (-2.5, -0.1) {nome};
+          \node[draw=black!80, fill=purple!10, dashed, ellipse, font=\tiny\sffamily] (tempo) at (-2.3, -1.1) {tempo\_serv};
+          \node[draw=black!80, fill=pink!15, double, ellipse, font=\tiny\sffamily] (tel) at (2.2, 1.0) {telefones};
+          \node[draw=black!80, fill=white, ellipse, font=\tiny\sffamily] (end) at (2.2, -0.4) {endereco};
+          \node[draw=black!80, fill=white, ellipse, font=\tiny\sffamily] (rua) at (3.8, 0.1) {rua};
+          \node[draw=black!80, fill=white, ellipse, font=\tiny\sffamily] (num) at (3.8, -0.9) {num};
+
+          \draw[semithick] (ent) -- (pk);
+          \draw[semithick] (ent) -- (nome);
+          \draw[semithick, dashed] (ent) -- (tempo);
+          \draw[semithick] (ent) -- (tel);
+          \draw[semithick] (ent) -- (end);
+          \draw[semithick] (end) -- (rua);
+          \draw[semithick] (end) -- (num);
+        }
+      \end{center}
+      \vspace{0.05cm}
+      \scriptsize
+      $\bullet$ \textbf{Identificador (PK):} Elipse com \underline{sublinhado contínuo}.\\
+      $\bullet$ \textbf{Simples:} Elipse de borda contínua simples.\\
+      $\bullet$ \textbf{Composto:} Elipse subdividida em elipses menores.\\
+      $\bullet$ \textbf{Multivalorado:} Elipse de \textbf{borda dupla} (\texttt{telefones}).\\
+      $\bullet$ \textbf{Derivado:} Elipse de \textbf{borda tracejada} (\texttt{tempo\_serv}).
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \footnotesize\alert{2. Carlos A. Heuser (brModelo)}\par
+      \vspace{0.12cm}
+      \begin{center}
+        \tikz[scale=0.66, transform shape]{
+          \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.4cm, minimum height=2.5cm, font=\bfseries\sffamily\scriptsize] (entb) at (0,0) {COLABORADOR};
+
+          % Pinos estilo brModelo
+          \draw[semithick] (1.2, 0.85) -- (1.8, 0.85);
+          \filldraw[black] (1.8, 0.85) circle (2.3pt) node[right=3pt, font=\tiny\sffamily\bfseries] {matricula};
+
+          \draw[semithick] (1.2, 0.30) -- (1.8, 0.30);
+          \filldraw[draw=black, fill=white, semithick] (1.8, 0.30) circle (2.3pt) node[right=3pt, font=\tiny\sffamily] {nome};
+
+          \draw[semithick] (1.2, -0.25) -- (1.8, -0.25);
+          \filldraw[draw=black, fill=white, semithick] (1.8, -0.25) circle (2.3pt) node[right=3pt, font=\tiny\sffamily] {telefones \textbf{(1, n)}};
+
+          \draw[semithick] (1.2, -0.80) -- (1.8, -0.80);
+          \filldraw[draw=black, fill=white, semithick] (1.8, -0.80) circle (2.3pt) node[right=3pt, font=\tiny\sffamily] (lblend) {endereco};
+
+          \draw[semithick] (lblend.east) -- ++(0.45, 0.25);
+          \filldraw[draw=black, fill=white, semithick] ($(lblend.east)+(0.45,0.25)$) circle (1.9pt) node[right=2pt, font=\tiny\sffamily] {rua};
+
+          \draw[semithick] (lblend.east) -- ++(0.45, -0.25);
+          \filldraw[draw=black, fill=white, semithick] ($(lblend.east)+(0.45,-0.25)$) circle (1.9pt) node[right=2pt, font=\tiny\sffamily] {num};
+        }
+      \end{center}
+      \vspace{0.05cm}
+      \scriptsize
+      $\bullet$ \textbf{Identificador (PK):} Pino com \textbf{círculo preto preenchido} ($\bullet$).\\
+      $\bullet$ \textbf{Simples:} Pino com \textbf{círculo branco vazio} ($\circ$).\\
+      $\bullet$ \textbf{Composto:} Pino branco ramificado em sub-pinos.\\
+      $\bullet$ \textbf{Multivalorado:} Pino branco + cardinalidade \textbf{(0, n)} ou \textbf{(1, n)}.\\
+      $\bullet$ \textbf{Derivado:} Especificado no Dicionário de Dados textual.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Cardinalidades e Participação: Chen vs. Heuser}
+  \vspace{-0.15cm}
+  \begin{columns}[t]
+    \begin{column}{0.47\textwidth}
+      \footnotesize\alert{1. Anatomia das Linhas e Pares $(min, max)$}\par
+      \vspace{0.15cm}
+      \begin{center}
+        \tikz[scale=0.72, transform shape]{
+          % Chen
+          \node[font=\scriptsize\bfseries\sffamily, ScoutNavy] at (0, 1.35) {Padrão Peter Chen / Elmasri (Draw.io):};
+          \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=1.9cm, minimum height=0.6cm, font=\bfseries\sffamily\tiny] (m1) at (-2.8, 0.45) {MEDICO};
+          \node[diamond, aspect=1.8, draw=ScoutNavy, fill=ScoutNavy!12, thick, inner sep=1.2pt, font=\bfseries\sffamily\tiny] (r1) at (0, 0.45) {DIRIGE};
+          \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=1.9cm, minimum height=0.6cm, font=\bfseries\sffamily\tiny] (d1) at (2.8, 0.45) {DEPTO};
+          \draw[semithick] (m1) -- node[above, font=\scriptsize\bfseries, ScoutNavy] {1} (r1);
+          \draw[semithick] ($(r1.east)+(0,0.05)$) -- node[above, font=\scriptsize\bfseries, ScoutNavy] {1} ($(d1.west)+(0,0.05)$);
+          \draw[semithick] ($(r1.east)+(0,-0.05)$) -- ($(d1.west)+(0,-0.05)$);
+
+          % Callouts Chen
+          \node[font=\tiny\sffamily, text=black!85, align=center] (c_simp) at (-1.4, -0.5) {\textbf{Linha Simples}\\Participação \textbf{Parcial}\\(Opcional $\equiv$ mín \textbf{0})};
+          \draw[-Stealth, thin, ScoutGreen] (c_simp.north) -- (-1.4, 0.40);
+
+          \node[font=\tiny\sffamily, text=black!85, align=center] (c_dup) at (1.4, -0.5) {\textbf{Linha Dupla}\\Participação \textbf{Total}\\(Obrigatória $\equiv$ mín \textbf{1})};
+          \draw[-Stealth, thin, ScoutGreen] (c_dup.north) -- (1.4, 0.38);
+
+          % Heuser / brModelo
+          \node[font=\scriptsize\bfseries\sffamily, ScoutNavy] at (0, -1.5) {Padrão Carlos A. Heuser (brModelo):};
+          \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=1.9cm, minimum height=0.6cm, font=\bfseries\sffamily\tiny] (m2) at (-2.8, -2.35) {MEDICO};
+          \node[diamond, aspect=1.8, draw=ScoutNavy, fill=ScoutNavy!12, thick, inner sep=1.2pt, font=\bfseries\sffamily\tiny] (r2) at (0, -2.35) {DIRIGE};
+          \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=1.9cm, minimum height=0.6cm, font=\bfseries\sffamily\tiny] (d2) at (2.8, -2.35) {DEPTO};
+          \draw[semithick] (m2) -- node[above, font=\scriptsize\bfseries, ScoutNavy] {(0, 1)} (r2);
+          \draw[semithick] (r2) -- node[above, font=\scriptsize\bfseries, ScoutNavy] {(1, 1)} (d2);
+
+          % Callouts Heuser
+          \node[font=\tiny\sffamily, text=black!85, align=center] (h_p1) at (-1.4, -3.25) {\textbf{mín = 0} (Opcional)\\ \textbf{máx = 1} (No máx. 1)};
+          \draw[-Stealth, thin, ScoutNavy] (h_p1.north) -- (-1.4, -2.40);
+
+          \node[font=\tiny\sffamily, text=black!85, align=center] (h_p2) at (1.4, -3.25) {\textbf{mín = 1} (Obrigatório)\\ \textbf{máx = 1} (No máx. 1)};
+          \draw[-Stealth, thin, ScoutNavy] (h_p2.north) -- (1.4, -2.40);
+        }
+      \end{center}
+    \end{column}
+    \begin{column}{0.51\textwidth}
+      \footnotesize\alert{2. Guia Completo dos 4 Pares $(min, max)$}\par
+      \vspace{0.12cm}
+      \renewcommand{\arraystretch}{1.28}
+      \resizebox{\linewidth}{!}{%
+        \begin{tabular}{@{}ccp{4.2cm}@{}}
+          \toprule
+          \textbf{brModelo} & \textbf{Draw.io (Chen)} & \textbf{Significado na Regra de Negócio} \\ \midrule
+          \textbf{\texttt{(0, 1)}} &
+          \tikz[baseline=-2pt]{
+            \draw[semithick, ScoutNavy] (0,0) -- node[above=0pt, font=\scriptsize\bfseries]{1} (1.4,0);
+          } &
+          \textbf{Parcial e Único:} Participa de \textbf{zero} (opcional) ou no máximo \textbf{1} ocorrência. \\
+          \textbf{\texttt{(1, 1)}} &
+          \tikz[baseline=-2pt]{
+            \draw[semithick, ScoutNavy] (0,0.04) -- node[above=0pt, font=\scriptsize\bfseries]{1} (1.4,0.04);
+            \draw[semithick, ScoutNavy] (0,-0.04) -- (1.4,-0.04);
+          } &
+          \textbf{Total e Único:} Participação obrigatória em \textbf{exatamente 1} ocorrência. \\
+          \textbf{\texttt{(0, n)}} &
+          \tikz[baseline=-2pt]{
+            \draw[semithick, ScoutNavy] (0,0) -- node[above=0pt, font=\scriptsize\bfseries]{N} (1.4,0);
+          } &
+          \textbf{Parcial e Múltiplo:} Participa de \textbf{zero} (opcional), 1 ou \textbf{várias ($N$)} ocorrências. \\
+          \textbf{\texttt{(1, n)}} &
+          \tikz[baseline=-2pt]{
+            \draw[semithick, ScoutNavy] (0,0.04) -- node[above=0pt, font=\scriptsize\bfseries]{N} (1.4,0.04);
+            \draw[semithick, ScoutNavy] (0,-0.04) -- (1.4,-0.04);
+          } &
+          \textbf{Total e Múltiplo:} Participação obrigatória em \textbf{pelo menos 1} ou \textbf{várias ($N$)}. \\ \bottomrule
+        \end{tabular}%
+      }
+      \vspace{0.15cm}
+      \scriptsize
+      $\bullet$ \textbf{Síntese:} Em Heuser, o 1º valor (\texttt{0} ou \texttt{1}) substitui a linha simples/dupla de Chen, e o 2º valor (\texttt{1} ou \texttt{n}) indica a razão máxima!
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Especialização EER: Círculo $(d/o)$ vs. Triângulo $(t/p, e/c)$}
+  \vspace{-0.15cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \footnotesize\alert{1. Anatomia dos Símbolos e Siglas}\par
+      \vspace{0.08cm}
+      \begin{center}
+        \tikz[scale=0.62, transform shape]{
+          % EER Chen
+          \node[font=\scriptsize\bfseries\sffamily, ScoutNavy] at (-2.1, 1.50) {Draw.io (Elmasri / Chen)};
+          \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.1cm, minimum height=0.52cm, font=\bfseries\sffamily\tiny] (s1) at (-2.1, 0.80) {COLABORADOR};
+          \node[draw=ScoutNavy, fill=amber!25, circle, thick, inner sep=1.8pt, font=\bfseries\sffamily\scriptsize] (c1) at (-2.1, -0.25) {d};
+          \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=1.4cm, minimum height=0.48cm, font=\bfseries\sffamily\tiny] (b1) at (-3.05, -1.25) {MEDICO};
+          \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=1.4cm, minimum height=0.48cm, font=\bfseries\sffamily\tiny] (b2) at (-1.15, -1.25) {ATEND};
+          \draw[semithick] ($(s1.south)+(-0.04,0)$) -- ($(c1.north)+(-0.04,0)$);
+          \draw[semithick] ($(s1.south)+(0.04,0)$) -- ($(c1.north)+(0.04,0)$);
+          \draw[semithick] (c1) -- (b1);
+          \draw[semithick] (c1) -- (b2);
+
+          % Callouts Chen EER
+          \node[font=\tiny\sffamily, align=right, text=black!85] (cl_dup) at (-4.15, 0.32) {\textbf{Linha Dupla} = Total\\(\textbf{Simples} = Parcial)};
+          \draw[-Stealth, thin, ScoutGreen] (cl_dup.east) -- (-2.2, 0.32);
+
+          \node[font=\tiny\sffamily, align=right, text=black!85] (cl_cir) at (-4.15, -0.35) {\textbf{Letra no Círculo:}\\\textbf{d} = Disjunta | \textbf{o} = Sobreposta};
+          \draw[-Stealth, thin, ScoutNavy] (cl_cir.east) -- (c1.west);
+
+          % EER brModelo
+          \node[font=\scriptsize\bfseries\sffamily, ScoutNavy] at (1.9, 1.50) {brModelo (Heuser)};
+          \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.1cm, minimum height=0.52cm, font=\bfseries\sffamily\tiny] (s2) at (1.9, 0.80) {COLABORADOR};
+          \node[regular polygon, regular polygon sides=3, draw=ScoutNavy, fill=amber!25, thick, inner sep=2.4pt] (t2) at (1.9, -0.25) {};
+          \node[font=\scriptsize\bfseries\sffamily, ScoutNavy, right=2pt of t2] (lblte) {(t, e)};
+          \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=1.4cm, minimum height=0.48cm, font=\bfseries\sffamily\tiny] (h1) at (0.95, -1.25) {MEDICO};
+          \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=1.4cm, minimum height=0.48cm, font=\bfseries\sffamily\tiny] (h2) at (2.85, -1.25) {ATEND};
+          \draw[semithick] (s2) -- (t2);
+          \draw[semithick] (t2) -- (h1);
+          \draw[semithick] (t2) -- (h2);
+        }
+      \end{center}
+      \vspace{-0.12cm}
+      \scriptsize
+      $\bullet$ \textbf{1ª Letra no brModelo (\texttt{t} ou \texttt{p} — Completude):}\\
+      \hspace{0.15cm}-- \textbf{\texttt{t} (Total):} Todo registro pertence a alguma subclasse.\\
+      \hspace{0.15cm}-- \textbf{\texttt{p} (Parcial):} Pode não pertencer a nenhuma subclasse.\\
+      $\bullet$ \textbf{2ª Letra no brModelo (\texttt{e} ou \texttt{c} — Disjunção):}\\
+      \hspace{0.15cm}-- \textbf{\texttt{e} (Exclusiva $\equiv$ \texttt{d} Disjunta):} Pertence a \textbf{uma única} subclasse.\\
+      \hspace{0.15cm}-- \textbf{\texttt{c} (Compartilhada $\equiv$ \texttt{o} Sobreposta):} Pode pertencer a \textbf{ambas}.
+    \end{column}
+    \begin{column}{0.50\textwidth}
+      \footnotesize\alert{2. As 4 Combinações de Herança EER}\par
+      \vspace{0.12cm}
+      \renewcommand{\arraystretch}{1.28}
+      \resizebox{\linewidth}{!}{%
+        \begin{tabular}{@{}ccp{4.1cm}@{}}
+          \toprule
+          \textbf{Draw.io (Chen)} & \textbf{brModelo (Heuser)} & \textbf{Significado Completo da Sigla} \\ \midrule
+          \tikz[baseline=-4pt]{
+            \draw[semithick] (-0.04,0.35) -- (-0.04,0.08);
+            \draw[semithick] (0.04,0.35) -- (0.04,0.08);
+            \node[draw=ScoutNavy, fill=amber!25, circle, inner sep=1.4pt, font=\scriptsize\bfseries] at (0,-0.12) {d};
+          } &
+          \tikz[baseline=-3pt]{
+            \node[regular polygon, regular polygon sides=3, draw=ScoutNavy, fill=amber!25, inner sep=2.0pt] (tr) at (0,0) {};
+            \node[font=\scriptsize\bfseries, ScoutNavy, right=2pt of tr] {(t, e)};
+          } &
+          \textbf{Total e Exclusiva (Disjunta):} Todo colaborador \textbf{deve} estar em uma subclasse, e em \textbf{apenas uma} (\texttt{d}). \\
+          \tikz[baseline=-4pt]{
+            \draw[semithick] (0,0.35) -- (0,0.08);
+            \node[draw=ScoutNavy, fill=amber!25, circle, inner sep=1.4pt, font=\scriptsize\bfseries] at (0,-0.12) {d};
+          } &
+          \tikz[baseline=-3pt]{
+            \node[regular polygon, regular polygon sides=3, draw=ScoutNavy, fill=amber!25, inner sep=2.0pt] (tr) at (0,0) {};
+            \node[font=\scriptsize\bfseries, ScoutNavy, right=2pt of tr] {(p, e)};
+          } &
+          \textbf{Parcial e Exclusiva (Disjunta):} Opcional; mas se pertencer a subclasse, será a \textbf{apenas uma} (\texttt{d}). \\
+          \tikz[baseline=-4pt]{
+            \draw[semithick] (-0.04,0.35) -- (-0.04,0.08);
+            \draw[semithick] (0.04,0.35) -- (0.04,0.08);
+            \node[draw=ScoutNavy, fill=amber!25, circle, inner sep=1.4pt, font=\scriptsize\bfseries] at (0,-0.12) {o};
+          } &
+          \tikz[baseline=-3pt]{
+            \node[regular polygon, regular polygon sides=3, draw=ScoutNavy, fill=amber!25, inner sep=2.0pt] (tr) at (0,0) {};
+            \node[font=\scriptsize\bfseries, ScoutNavy, right=2pt of tr] {(t, c)};
+          } &
+          \textbf{Total e Compartilhada (Sobreposta):} Obrigatório estar em pelo menos uma, podendo \textbf{acumular ambas} (\texttt{o}). \\
+          \tikz[baseline=-4pt]{
+            \draw[semithick] (0,0.35) -- (0,0.08);
+            \node[draw=ScoutNavy, fill=amber!25, circle, inner sep=1.4pt, font=\scriptsize\bfseries] at (0,-0.12) {o};
+          } &
+          \tikz[baseline=-3pt]{
+            \node[regular polygon, regular polygon sides=3, draw=ScoutNavy, fill=amber!25, inner sep=2.0pt] (tr) at (0,0) {};
+            \node[font=\scriptsize\bfseries, ScoutNavy, right=2pt of tr] {(p, c)};
+          } &
+          \textbf{Parcial e Compartilhada (Sobreposta):} Opcional, podendo pertencer a \textbf{múltiplas subclasses} (\texttt{o}). \\ \bottomrule
+        \end{tabular}%
+      }
+    \end{column}
+  \end{columns}
+\end{frame}

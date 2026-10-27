@@ -1,0 +1,79 @@
+\changecolours{ScoutGreen}
+\section[Estudo de Caso Integrado]{Estudo de Caso Integrado e Tabela de Decisão (Passos 1 a 4)}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Esquema Integrado (Passos 1 a 4): Clínica ``VidaPlena''}
+  \vspace{-0.15cm}
+  \begin{center}
+    \tikz[scale=0.68, transform shape]{
+      % 1. DEPARTAMENTO_CLINICO (Passo 1 + Passo 3 FK Diretor)
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=7.5cm, minimum height=0.65cm, font=\sffamily\scriptsize] (depto) at (-4.3, 1.35) {
+        \textbf{DEPTO\_CLINICO}(\underline{cod\_depto}, nome, \textbf{\color{ScoutGreen}mat\_diretor\_fk [AK]}, \textbf{\color{ScoutGreen}dt\_inicio})
+      };
+
+      % 2. MEDICO (Passo 1 + Passo 4 FK Lotacao + Passo 4 FK Preceptor)
+      \node[draw=ScoutNavy, fill=ScoutNavy!12, thick, minimum width=7.5cm, minimum height=0.65cm, font=\sffamily\scriptsize] (med) at (4.5, 1.35) {
+        \textbf{MEDICO}(\underline{matricula}, cpf [AK], nome, \textbf{\color{ScoutNavy}cod\_depto\_fk}, \textbf{\color{ScoutGreen}mat\_preceptor\_fk})
+      };
+
+      % 3. PACIENTE (Passo 1 com endereco achatado)
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=7.5cm, minimum height=0.65cm, font=\sffamily\scriptsize] (pac) at (-4.3, -0.75) {
+        \textbf{PACIENTE}(\underline{id\_prontuario}, cpf [AK], nome, end\_rua, end\_num, end\_cep)
+      };
+
+      % 4. DEPENDENTE (Passo 2 Entidade Fraca)
+      \node[draw=ScoutNavy, fill=amber!15, thick, minimum width=7.5cm, minimum height=0.65cm, font=\sffamily\scriptsize] (dep) at (4.5, -0.75) {
+        \textbf{DEPENDENTE}(\underline{\textbf{\color{ScoutNavy}id\_prontuario\_fk}, \dashuline{nome\_dep}}, data\_nasc, parentesco)
+      };
+
+      % Arco Passo 3: mat_diretor_fk -> MEDICO.matricula
+      \draw[-{Latex[length=2.1mm]}, very thick, ScoutGreen] (-2.9, 1.68) -- (-2.9, 2.08) -- (1.7, 2.08) -- (1.7, 1.68);
+      \node[font=\tiny\bfseries\sffamily, ScoutGreen] at (-0.6, 2.28) {Passo 3 ($1:1$ DIRIGE -- FK no Lado Total)};
+
+      % Arco Passo 4a: cod_depto_fk -> DEPTO_CLINICO.cod_depto
+      \draw[-{Latex[length=2.1mm]}, very thick, ScoutNavy] (5.3, 1.02) -- (5.3, 0.55) -- (-6.0, 0.55) -- (-6.0, 1.02);
+      \node[font=\tiny\bfseries\sffamily, ScoutNavy] at (-0.3, 0.34) {Passo 4 ($1:N$ LOTA -- FK no Lado $N$)};
+
+      % Arco Passo 4b: mat_preceptor_fk -> MEDICO.matricula
+      \draw[-{Latex[length=2.1mm]}, very thick, ScoutGreen] (7.4, 1.68) -- (7.4, 2.08) -- (2.1, 2.08) -- (2.1, 1.68);
+      \node[font=\tiny\bfseries\sffamily, ScoutGreen] at (4.8, 2.28) {Passo 4 ($1:N$ Recursivo)};
+
+      % Arco Passo 2: id_prontuario_fk -> PACIENTE.id_prontuario
+      \draw[-{Latex[length=2.1mm]}, very thick, ScoutNavy] (2.4, -1.08) -- (2.4, -1.52) -- (-5.8, -1.52) -- (-5.8, -1.08);
+      \node[font=\tiny\bfseries\sffamily, ScoutNavy] at (-1.7, -1.74) {Passo 2 (Entidade Fraca -- PK Composta = FK + Discriminador)};
+    }
+  \end{center}
+  \vspace{-0.05cm}
+  \scriptsize
+  $\bullet$ \textbf{Observe a Economia de Tabelas:} Tivemos \textbf{4 entidades} e \textbf{4 losangos de relacionamento} ($\diamond\diamond\text{POSSUI\_DEP}$, $\diamond\text{DIRIGE}$, $\diamond\text{LOTA}$, $\diamond\text{SUPERVISIONA}$), mas o Esquema Lógico gerou \textbf{apenas 4 relações}! Todos os 4 relacionamentos foram absorvidos por propagação de Chaves Estrangeiras!
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Quadro Resumo de Decisão para os Passos 1 a 4}
+  \vspace{-0.15cm}
+  \renewcommand{\arraystretch}{1.32}
+  \resizebox{\textwidth}{!}{%
+    \begin{tabular}{@{}p{4.0cm}p{4.2cm}p{5.5cm}p{4.2cm}@{}}
+      \toprule
+      \textbf{Construto no DER} & \textbf{Gera Nova Relação?} & \textbf{Onde Posicionar a Chave Estrangeira ($FK$)?} & \textbf{Restrições na $FK$} \\
+      \midrule
+      \textbf{Passo 1: Entidade Forte} \newline (Simples, compostos e derivados) &
+      \textbf{Sim} (1 relação base para cada entidade forte). &
+      Não gera FK própria no Passo 1 (achata compostos em subatributos e omite derivados). &
+      PK $\neq$ \texttt{NULL} e Única (Integridade de Entidade). \\
+      \textbf{Passo 2: Entidade Fraca} \newline + Rel. Identificador ($\diamond\diamond$) &
+      \textbf{Sim} (apenas para a entidade fraca; losango duplo absorvido). &
+      Na relação da \textbf{Entidade Fraca}, importando a PK da entidade forte proprietária. &
+      \textbf{NÃO aceita \texttt{NULL}} (integra a PK composta) + Cascata. \\
+      \textbf{Passo 3: Rel. Binário $1:1$} \newline Parcial $(0,1) \times$ Total $(1,1)$ &
+      \textbf{Não} (absorvido por FK, ou fusão se ambos forem $(1,1)$). &
+      Na relação do lado de \textbf{Participação Total $(1, 1)$} (junto aos atributos do losango). &
+      \textbf{NÃO aceita \texttt{NULL}} + Exige \textbf{Unicidade ($AK$)}. \\
+      \textbf{Passo 4: Rel. Binário $1:N$} \newline (Regular ou Recursivo) &
+      \textbf{Não} (exceto se o lado $N$ for opcional e raríssimo). &
+      Sempre na relação do \textbf{Lado $N$} (que possui cardinalidade máxima $1$ no par de Heuser). &
+      Aceita \texttt{NULL} se parcial $(0,1)$; \textbf{Não Nulo} se total $(1,1)$. \\
+      \bottomrule
+    \end{tabular}%
+  }
+\end{frame}

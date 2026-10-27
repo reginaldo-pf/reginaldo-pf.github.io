@@ -1,0 +1,20 @@
+\changecolours{ScoutGreen}
+\section[Domínio e Entidade]{Restrições de Domínio, Chave e Integridade de Entidade}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={As 3 Primeiras Restrições Formais do Modelo Relacional},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{1. Domínio e 2. Unicidade de Chave}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{1. Restrição de Domínio (e 1FN):} Em toda tupla $t$, o valor de cada atributo $t[A_i]$ deve pertencer ao domínio atômico $\text{dom}(A_i)$, proibindo valores multivalorados ou tipos incompatíveis.
+    \item \textbf{2. Restrição de Chave (Unicidade):} Duas tuplas distintas não podem ter valores idênticos na Chave Primária ($PK$) nem nas Chaves Candidatas Alternativas ($AK$).
+  \end{itemize}
+}{%
+  \alert{3. Regra da Integridade de Entidade (Codd)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Enunciado Formal:} \textit{``Nenhum atributo que participe da Chave Primária ($PK$) de uma relação base pode assumir valor nulo (\texttt{NULL}).''}
+      $$\forall t \in r(R), \quad t[PK] \neq \text{NULL}$$
+    \item \textbf{Justificativa Lógica:} A PK identifica cada tupla individualmente. Se $t[PK]$ fosse nulo, seria impossível distinguir tuplas ou referenciá-las a partir de outras relações!
+  \end{itemize}
+}

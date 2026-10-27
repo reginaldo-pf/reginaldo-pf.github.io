@@ -1,0 +1,42 @@
+\changecolours{ScoutGreen}
+\section[Revisão e Objetivos]{A Revolução de Codd (1970) e Objetivos da Aula}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Do DER Conceitual (Aula 08) ao Modelo Relacional (Aula 09)},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{A Revolução de Edgar Frank Codd (1970)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Artigo Histórico (IBM):} \textit{``A Relational Model of Data for Large Shared Data Banks''} (CACM, Junho de 1970).
+    \item \textbf{Ruptura com Ponteiros Físicos:} Antes de 1970, bancos hierárquicos e em rede exigiam navegar por endereços físicos de disco.
+    \item \textbf{Base Matemática Sólida:} Todos os dados são representados exclusivamente como \textbf{relações matemáticas} baseadas na teoria dos conjuntos.
+  \end{itemize}
+}{%
+  \alert{A Transição no Projeto de BD}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Nível Conceitual (Aulas 03 a 08):} Focado na semântica do negócio (Entidades, Losangos, Herança EER).
+    \item \textbf{Nível Lógico Relacional (Aula 09 em diante):} Focado na representação matemática e tabular de \textbf{Relações, Tuplas, Chaves e Restrições}.
+    \item \textbf{Meta da Aula 09:} Dominar os fundamentos formais antes de mapear o DER em esquemas relacionais (Aula 10).
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Objetivos de Aprendizagem da Aula 09},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Competências Teóricas e Matemáticas}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Anatomia da Relação:} Definir Domínio ($D_i$), Atributo ($A_i$), Esquema $R$, Tupla $t$ e Instância $r(R)$.
+    \item \textbf{Métricas Estruturais:} Diferenciar \textbf{Grau (Aridade)} de \textbf{Cardinalidade}.
+    \item \textbf{Propriedades de Conjuntos:} Atomicidade (1FN), ausência de ordem de tuplas e proibição de duplicatas.
+    \item \textbf{Teoria das Chaves:} Superchave ($SK$), Chave Candidata ($CK$), Primária ($PK$) e Alternativa ($AK$).
+  \end{itemize}
+}{%
+  \alert{Competências de Integridade e Modelagem}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{As 4 Restrições Formais:} Domínio, Chave, Entidade ($\text{PK} \neq \text{NULL}$) e Referencial ($FK$).
+    \item \textbf{Semântica do Valor Nulo:} Compreender quando a chave estrangeira aceita valor nulo e quando a PK o proíbe.
+    \item \textbf{Políticas Referenciais:} Avaliar Restrição, Propagação em Cascata e Anulação na exclusão de tuplas.
+    \item \textbf{Diagrama de Esquema:} Desenhar relações e arcos direcionados de integridade referencial.
+  \end{itemize}
+}

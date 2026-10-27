@@ -1,797 +1,715 @@
-# Tutorial de Construção Passo a Passo: FastCommerce NoSQL
-## Do Front-end à Persistência com Redis (Método "Construindo e Testando")
+# Guia Prático do Aluno (Passo a Passo Autônomo): Padrão Cache-Aside com Python, SQLite e Redis
+## Do Ambiente Virtual (`venv`) e `pip` até a Invalidação Automática com TTL (`SETEX`)
 
 * **Curso:** Tecnologia em Análise e Desenvolvimento de Sistemas (ADS)
 * **Disciplina:** Banco de Dados Não-Relacionais (ADS16) — Aula 05
 * **Instituição:** Instituto Federal do Ceará (IFCE) — Campus Tauá
 * **Docente:** Prof. Me. Reginaldo Fernandes
-* **Projeto:** FastCommerce NoSQL (Arquitetura Chave-Valor & Persistência Poliglota)
+* **Estudo de Caso:** E-Commerce **ShopGrids** (Categorias em Destaque com Cache-Aside e TTL)
 
 ---
 
-## 🧭 Metodologia Deste Guia
+## 🎯 O Que Você Vai Construir Neste Guia
 
-Este tutorial adota a metodologia de **Engenharia Incremental Guiada por Testes de Saída**:
-1. **Necessidade Técnica:** Antes de qualquer código, explicamos *qual problema real de negócio* estamos enfrentando (ex.: lentidão de banco em disco, concorrência no carrinho, travamento de requisição).
-2. **Código da Etapa:** Código enxuto, direto e funcional.
-3. **Por que de Cada Linha:** Detalhamento do propósito de cada instrução, biblioteca e parâmetro.
-4. **Histórico de Construção:** Registro explícito do que mudou em relação à etapa anterior e os motivos técnicos da evolução.
-5. **Teste Prático & Saída Esperada:** Comandos no terminal (`curl`, Python ou `redis-cli`) e como validar visualmente a resposta exata.
+Neste tutorial prático, você construirá **do zero** (a partir de uma pasta vazia) uma API em Python com Flask, banco de dados relacional SQLite e cache em memória RAM com **Redis**. O guia é totalmente autônomo: todas as linhas de código estão comentadas e explicadas detalhadamente para que você possa executar e compreender cada etapa por conta própria.
+
+### O Problema de Negócio (Cenário ShopGrids na Black Friday)
+1. Na página inicial do e-commerce **ShopGrids**, existe a seção **"Categorias em Destaque"** (`GET /categories/featured`).
+2. O banco de dados relacional possui a tabela `categories`, onde a equipe de Marketing marca com `is_featured = 1` apenas as categorias que devem aparecer na vitrine da semana.
+3. **O Gargalo:** Sem cache, cada usuário que abre a página inicial dispara um `SELECT` no banco de dados. Em um pico de tráfego como a Black Friday, milhares de requisições idênticas sobrecarregam o disco e as conexões do banco, gerando *Timeout* e derrubando o sistema.
+4. **A Solução:** Implementaremos o padrão **Cache-Aside** com **Redis** (que responde em $\approx 100\text{ nanossegundos}$ direto da memória RAM) e resolveremos o problema de dados desatualizados usando **TTL (*Time To Live*)** com o comando `SETEX`.
 
 ```mermaid
 flowchart LR
-    A["Etapa 1: Ambiente & Redis Ping"] --> B["Etapa 2: Servidor Web & Vitrine"]
-    B --> C["Etapa 3: Sessão com TTL (SETEX)"]
-    C --> D["Etapa 4: Cache-Aside (Speedup)"]
-    D --> E["Etapa 5: Carrinho Atômico (Hash)"]
-    E --> F["Etapa 6: Fila de Checkout (LPUSH)"]
-    F --> G["Etapa 7: Worker Assíncrono (BRPOP)"]
-    G --> H["Etapa 8: Telemetria & Ponte MongoDB"]
+    P1["Passo 1: Pasta, venv e pip"] --> P2["Passo 2: Servidor Redis"]
+    P2 --> P3["Passo 3: Banco SQL (criar_banco.py)"]
+    P3 --> P4["Passo 4: API v1 (Sem Cache)"]
+    P4 --> P5["Passo 5: API v2 (Cache GET/SET)"]
+    P5 --> P6["Passo 6: Teste de Inconsistência"]
+    P6 --> P7["Passo 7: API v3 (Solução com SETEX/TTL)"]
 ```
 
 ---
 
-## Etapa 1: Ambiente Mínimo e Teste de Conexão com o Redis
+## Passo 1: Preparando o Diretório, Ambiente Virtual (`venv`) e Pacotes via `pip`
 
-### 1.1 A Necessidade
-Antes de conectar qualquer interface web, precisamos garantir que o serviço de memória **Redis** esteja ativo na porta `6379` e que nossa aplicação Python possua a biblioteca `redis-py` instalada e configurada no ambiente virtual.
+### 1.1 Objetivo desta etapa
+Criar uma pasta limpa para o projeto, isolar as bibliotecas em um Ambiente Virtual Python (`.venv`) para não interferir no sistema operacional e instalar o microframework web `flask` e o driver `redis`.
 
-### 1.2 O Código Mínimo (`teste_conexao.py`)
-Crie um script temporário ou de teste para validar a conectividade:
-
-```python
-import redis
-
-# 1. Cria a conexão com o servidor local
-r = redis.Redis(host="localhost", port=6379, db=0, decode_responses=True)
-
-# 2. Envia o comando canônico PING
-resposta = r.ping()
-print(f"Status do Redis: {resposta}")
-```
-
-### 1.3 Por que de Cada Linha de Código
-* `import redis`: Importa o driver oficial `redis-py` para interagir com o socket do Redis.
-* `host="localhost"`: Aponta para o endereço IP local (`127.0.0.1`) onde o daemon do Redis está rodando.
-* `port=6379`: Porta padrão padronizada pela IANA para o protocolo RESP (*REdis Serialization Protocol*).
-* `db=0`: O Redis possui por padrão 16 bancos lógicos indexados de 0 a 15. Usamos o banco default `0`.
-* `decode_responses=True`: **Crucial em Python 3**. Sem este parâmetro, o Redis retorna `bytes` (`b'PONG'`). Com `True`, ele decodifica automaticamente para `str` UTF-8 (`'PONG'`).
-* `resposta = r.ping()`: Envia o comando de diagnóstico mais rápido do protocolo Redis. Se o servidor responder, retorna o booleano `True`. Se o servidor estiver fora do ar, lança uma exceção `ConnectionError`.
-
-### 1.4 Histórico de Construção
-* **Estado Anterior:** Nenhum ambiente configurado.
-* **Atualização:** Criação da camada de transporte entre Python e o motor em memória.
-* **Motivo:** Evitar que erros de rede ou de ambiente virtual interrompam a construção das rotas web.
-
-### 1.5 Teste Prático e Saída Esperada
-No terminal, execute:
+### 1.2 Comandos no Terminal
+Abra o seu terminal e execute os comandos abaixo, um por vez:
 
 ```bash
-.venv/bin/python -c "import redis; r = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True); print('PING ->', r.ping())"
+# 1. Cria a pasta do projeto chamada 'shopgrids-cache'
+mkdir shopgrids-cache
+
+# 2. Entra na pasta recém-criada
+cd shopgrids-cache
+
+# 3. Cria o ambiente virtual Python dentro da pasta oculta '.venv'
+python3 -m venv .venv
+
+# 4. Ativa o ambiente virtual no Linux / macOS
+# (Se estiver no Windows PowerShell, use: .venv\Scripts\Activate.ps1)
+source .venv/bin/activate
+
+# 5. Atualiza o gerenciador de pacotes pip para a versão mais recente
+pip install --upgrade pip
+
+# 6. Instala o Flask (servidor web/API) e o cliente oficial do Redis (redis-py)
+pip install flask redis
+
+# 7. Gera o arquivo requirements.txt registrando as versões exatas instaladas
+pip freeze > requirements.txt
 ```
 
-**Saída Esperada no Terminal:**
-```text
-PING -> True
-```
-*(Se retornar `ConnectionRefusedError`, execute `redis-server` ou `docker compose up -d`)*.
+### 1.3 Função de Cada Comando
+* `mkdir shopgrids-cache` e `cd shopgrids-cache`: Cria o diretório de trabalho e posiciona o terminal dentro dele.
+* `python3 -m venv .venv`: Executa o módulo nativo `venv` do Python para criar uma cópia isolada do interpretador Python e do `pip` dentro da subpasta `.venv`.
+* `source .venv/bin/activate`: Ativa o ambiente virtual na sessão atual do terminal. Você verá o prefixo `(.venv)` aparecer no início da linha de comando.
+* `pip install flask redis`: Baixa e instala dois pacotes essenciais:
+  * **`flask`**: Responsável por expor as rotas HTTP da nossa API na porta `5000`.
+  * **`redis`**: Biblioteca `redis-py` que se comunica com o servidor Redis através do protocolo binário **RESP** (*Redis Serialization Protocol*) via TCP.
+* `pip freeze > requirements.txt`: Lista todas as bibliotecas instaladas no ambiente virtual e salva no arquivo `requirements.txt`, permitindo que qualquer outro desenvolvedor recrie o ambiente com `pip install -r requirements.txt`.
 
 ---
 
-## Etapa 2: A Camada Web e a Vitrine Sem Cache (Linha de Base de Latência)
+## Passo 2: Verificando a Conexão com o Servidor Redis
 
-### 2.1 A Necessidade
-Para demonstrar o valor do Redis em uma empresa real, precisamos primeiro experimentar o **gargalo tradicional**. Criamos uma aplicação Flask simples com um catálogo de produtos simulando uma consulta ao disco ou banco relacional com latência deliberada de $\approx 120\text{ ms}$.
+### 2.1 Objetivo desta etapa
+Garantir que o servidor **Redis** está ativo na porta padrão `6379` e que o nosso ambiente virtual Python consegue se comunicar com ele.
 
-### 2.2 O Código da Etapa (`app_base.py`)
-```python
-import time
-from flask import Flask, jsonify
-
-app = Flask(__name__)
-
-# Simulação da tabela de produtos do banco relacional em disco
-CATALOGO = [
-    {"id": "prod_1", "nome": "Notebook Dell Inspiron 15", "preco": 3899.90},
-    {"id": "prod_2", "nome": "Monitor UltraWide LG 29\"", "preco": 1249.00},
-    {"id": "prod_3", "nome": "Teclado Mecânico Keychron K2", "preco": 620.00}
-]
-
-@app.route("/api/produtos", methods=["GET"])
-def get_produtos():
-    inicio = time.time()
-    
-    # Simula latência de I/O de disco / SGBD tradicional
-    time.sleep(0.12)
-    
-    latencia_ms = round((time.time() - inicio) * 1000, 2)
-    return jsonify({
-        "origem": "DISCO / BANCO_RELACIONAL",
-        "latencia_ms": latencia_ms,
-        "produtos": CATALOGO
-    })
-
-if __name__ == "__main__":
-    app.run(port=5000)
-```
-
-### 2.3 Por que de Cada Linha de Código
-* `app = Flask(__name__)`: Instancia o microframework Flask para responder requisições HTTP REST.
-* `CATALOGO = [...]`: Representa os registros que residem no armazenamento persistente lento (disco magnético ou SSD com overhead de junções relacionais).
-* `inicio = time.time()`: Registra o timestamp inicial em ponto flutuante com precisão de microssegundos.
-* `time.sleep(0.12)`: Bloqueia a thread por 120 milissegundos. É o tempo médio que uma consulta SQL com índices médios leva sob concorrência moderada.
-* `latencia_ms = round((time.time() - inicio) * 1000, 2)`: Calcula a diferença em milissegundos para apresentar métricas reais na resposta JSON.
-
-### 2.4 Histórico de Construção
-* **Estado Anterior:** Apenas teste isolado do Redis via terminal.
-* **Atualização:** Criação da API HTTP na porta `5000` servindo dados via JSON.
-* **Motivo:** Estabelecer uma medição de base (*baseline*) para que os estudantes possam comprovar o *speedup* após a inclusão do Redis.
-
-### 2.5 Teste Prático e Saída Esperada
-Abra um terminal e faça a requisição via `curl`:
+### 2.2 Comandos no Terminal
 
 ```bash
-curl -s http://localhost:5000/api/produtos | jq .
+# 1. Envia um comando PING para o servidor Redis via terminal
+redis-cli ping
 ```
 
-**Saída Esperada no Terminal:**
-```json
-{
-  "latencia_ms": 120.45,
-  "origem": "DISCO / BANCO_RELACIONAL",
-  "produtos": [
-    {
-      "id": "prod_1",
-      "nome": "Notebook Dell Inspiron 15",
-      "preco": 3899.9
-    },
-    ...
-  ]
-}
-```
-> [!NOTE]
-> Observe a latência de **$\approx 120\text{ ms}$**. Para um e-commerce com 10.000 requisições simultâneas, essa lentidão gera filas e derruba servidores web convencionais.
-
----
-
-## Etapa 3: Gestão de Sessão do Usuário com Expiração Deslizante (`SETEX` / `EXPIRE`)
-
-### 3.1 A Necessidade
-Em aplicações distribuídas, salvar sessões de login na memória da máquina servidora impede o balanceamento de carga entre múltiplos servidores (*Sticky Sessions*). Por outro lado, gravar cada clique no banco de dados em disco destrói a performance.
-**Solução:** Armazenar a sessão no Redis sob a chave `session:<token_uuid>` com TTL (tempo de vida) de 30 minutos, renovando o prazo a cada requisição (*Sliding Expiration*).
-
-### 3.2 O Código da Etapa
-Adicionamos ao nosso código o gerenciamento de cookies e a integração com o Redis:
-
-```python
-import uuid
-import json
-import redis
-from flask import Flask, request, jsonify, make_response
-
-app = Flask(__name__)
-r = redis.Redis(host="localhost", port=6379, db=0, decode_responses=True)
-
-def obter_ou_criar_sessao(req):
-    session_id = req.cookies.get("fastcommerce_session")
-    if not session_id:
-        session_id = str(uuid.uuid4())
-    
-    chave = f"session:{session_id}"
-    
-    # Se a sessão não existe no Redis, cria com dados iniciais e TTL de 1800s (30 min)
-    if not r.exists(chave):
-        dados_usuario = {
-            "usuario": "Estudante ADS",
-            "perfil": "Cliente VIP",
-            "criado_em": time.strftime("%Y-%m-%d %H:%M:%S")
-        }
-        r.setex(chave, 1800, json.dumps(dados_usuario))
-    else:
-        # Sliding Expiration: se o usuário continua navegando, renova o TTL para mais 30 min
-        r.expire(chave, 1800)
-        
-    return session_id
-
-@app.route("/api/session", methods=["GET"])
-def get_session():
-    session_id = obter_ou_criar_sessao(request)
-    chave = f"session:{session_id}"
-    
-    dados = json.loads(r.get(chave))
-    ttl_restante = r.ttl(chave)
-    
-    resp = make_response(jsonify({
-        "session_id": session_id,
-        "ttl_segundos": ttl_restante,
-        "usuario": dados
-    }))
-    resp.set_cookie("fastcommerce_session", session_id, max_age=1800)
-    return resp
-```
-
-### 3.3 Por que de Cada Linha de Código
-* `uuid.uuid4()`: Gera um identificador único universal de 128 bits criptograficamente seguro, impossibilitando que um usuário adivinhe a sessão de outro.
-* `f"session:{session_id}"`: **Namespace padronizado do Redis**. Separar entidades por dois pontos (`:`) organiza as chaves em árvores semânticas nas ferramentas de visualização.
-* `r.exists(chave)`: Executa checagem de existência em $O(1)$ na tabela hash de ponteiros da memória RAM.
-* `r.setex(chave, 1800, json.dumps(dados_usuario))`: **Comando Atômico**. Equivale a executar `SET` seguido de `EXPIRE`. Se fizéssemos `SET` e o servidor caísse antes de `EXPIRE`, a chave viraria um "zumbi" eterno na RAM. `SETEX` garante que a gravação e a definição do TTL ocorram na mesma operação de CPU.
-* `r.expire(chave, 1800)`: Renova o relógio regressivo. Se o usuário estiver ativo na loja, a sessão não expira na cara dele.
-* `r.ttl(chave)`: Retorna os segundos restantes antes da exclusão automática pelo coletor de lixo do Redis. Retorna `-2` se a chave expirou/não existe e `-1` se não tem TTL definido.
-
-### 3.4 Histórico de Construção
-* **Estado Anterior:** Aplicação não identificava os clientes nem guardava estado.
-* **Atualização:** Criação da rota `/api/session` vinculada a cookies e com persistência temporária no Redis.
-* **Motivo:** Garantir que carrinhos de compras futuros pertençam a um cliente específico e garantir a liberação automática da memória quando o usuário abandonar a navegação.
-
-### 3.5 Teste Prático e Saída Esperada
-Teste gerando uma sessão e conferindo os dados:
-
-```bash
-# 1. Faz a requisição e guarda os cookies
-curl -c cookies.txt -s http://localhost:5000/api/session | jq .
-```
-
-**Saída Esperada no Terminal:**
-```json
-{
-  "session_id": "8a31c510-fd11-4f18-b0a3-677a28e9cf94",
-  "ttl_segundos": 1800,
-  "usuario": {
-    "criado_em": "2026-10-20 10:15:30",
-    "perfil": "Cliente VIP",
-    "usuario": "Estudante ADS"
-  }
-}
-```
-
-Agora, verifique diretamente no **`redis-cli`**:
-```bash
-redis-cli TTL "session:$(tail -n1 cookies.txt | awk '{print $NF}')"
-```
 **Saída Esperada:**
 ```text
-(integer) 1795
+PONG
 ```
-*(O número decrece segundo a segundo, comprovando a expiração ativa na memória)*.
+
+> [!TIP]
+> **E se o comando acima retornar erro de conexão (`Could not connect to Redis`)?**  
+> Basta iniciar o serviço do Redis localmente ou subir um container Docker com um dos comandos abaixo:
+> ```bash
+> # Opção A — Iniciar serviço local no Linux:
+> redis-server --daemonize yes
+> 
+> # Opção B — Subir via Docker:
+> docker run -d --name redis-aula -p 6379:6379 redis:7.4-alpine
+> ```
+
+Agora, execute este comando para testar a comunicação entre o seu Python (`.venv`) e o Redis:
+
+```bash
+# 2. Testa a conexão usando a biblioteca 'redis' instalada no Passo 1
+python -c "import redis; r = redis.Redis(host='localhost', port=6379, decode_responses=True); print('Redis conectado:', r.ping())"
+```
+
+**Saída Esperada:**
+```text
+Redis conectado: True
+```
 
 ---
 
-## Etapa 4: Implementação do Catálogo com Cache-Aside e TTL (`SETEX` / `DEL`)
+## Passo 3: Criando o Banco de Dados Relacional (`criar_banco.py`)
 
-### 4.1 A Necessidade
-Na Etapa 2, vimos que a vitrine demorava 120 ms. O padrão **Cache-Aside (Lazy Loading)** funciona assim:
-1. A aplicação tenta ler a chave `cache:catalogo_produtos` no Redis.
-2. **Cache Hit:** Se existir, retorna os dados da RAM em menos de 1 ms.
-3. **Cache Miss:** Se não existir, vai ao banco lento (120 ms), armazena no Redis com TTL curto (ex: 45 segundos) e retorna.
-4. **Invalidação:** Se um produto for alterado ou o administrador desejar forçar a atualização, a chave de cache é excluída (`DEL`).
+### 3.1 Objetivo desta etapa
+Criar o banco de dados relacional `shopgrids.db` (usando o `sqlite3` nativo do Python) com a tabela `categories`. Vamos inserir 6 categorias no total: as **4 primeiras** estarão marcadas como destaque (`is_featured = 1`) e as **2 últimas** (categorias de inverno) estarão desmarcadas (`is_featured = 0`).
 
-### 4.2 O Código da Etapa
-Substituímos a rota `/api/produtos` pelo fluxo completo de Cache-Aside:
+### 3.2 Código Completo do Arquivo `criar_banco.py`
+Dentro da pasta `shopgrids-cache`, crie um arquivo chamado `criar_banco.py` com o código abaixo:
 
 ```python
-@app.route("/api/produtos", methods=["GET"])
-def get_produtos():
-    tempo_inicio = time.time()
-    chave_cache = "cache:catalogo_produtos"
-    
-    # 1. TENTA OBTER DO REDIS (CACHE HIT)
-    if r.exists(chave_cache):
-        produtos_json = r.get(chave_cache)
-        produtos = json.loads(produtos_json)
-        ttl = r.ttl(chave_cache)
-        latencia_ms = round((time.time() - tempo_inicio) * 1000, 2)
-        origem = "CACHE_HIT (Memória RAM Redis)"
-    else:
-        # 2. SE NÃO EXISTIR: BUSCA NA FONTE ORIGINAL (CACHE MISS)
-        time.sleep(0.12) # Simula 120 ms de gargalo de disco
-        produtos = CATALOGO
-        
-        # 3. GRAVA NO REDIS COM TTL DE SEGURANÇA (45 segundos)
-        r.setex(chave_cache, 45, json.dumps(produtos))
-        ttl = 45
-        latencia_ms = round((time.time() - tempo_inicio) * 1000, 2)
-        origem = "CACHE_MISS (Simulação de Disco/SGBD)"
-        
-    return jsonify({
-        "origem": origem,
-        "latencia_ms": latencia_ms,
-        "ttl_cache_segundos": ttl,
-        "total": len(produtos),
-        "produtos": produtos
-    })
+# Arquivo: criar_banco.py
+# Objetivo: Criar o banco de dados SQLite 'shopgrids.db' e popular a tabela 'categories'
 
-@app.route("/api/cache/invalidar", methods=["POST"])
-def invalidar_cache():
-    chave_cache = "cache:catalogo_produtos"
-    deletado = r.delete(chave_cache)
-    return jsonify({
-        "status": "success",
-        "invalidados": deletado,
-        "mensagem": "Chave invalidada! A próxima requisição gerará Cache Miss."
-    })
+# Importa a biblioteca nativa do Python para banco de dados relacional SQLite
+import sqlite3
+
+# Define a função que criará a estrutura da tabela e os registros iniciais
+def inicializar_banco():
+    # Conecta ao arquivo 'shopgrids.db' (cria o arquivo no disco caso ainda não exista)
+    conn = sqlite3.connect("shopgrids.db")
+    
+    # Cria o objeto cursor, responsável por enviar comandos SQL ao banco de dados
+    cursor = conn.cursor()
+
+    # Remove a tabela 'categories' se ela já existir, garantindo que o teste comece limpo
+    cursor.execute("DROP TABLE IF EXISTS categories")
+
+    # Cria a tabela 'categories' com 4 colunas (id, name, image, is_featured)
+    cursor.execute("""
+        CREATE TABLE categories (
+            id INTEGER PRIMARY KEY,                 -- Identificador único da categoria
+            name TEXT NOT NULL,                     -- Nome exibido no Front-end
+            image TEXT NOT NULL,                    -- Nome da imagem/ícone da categoria
+            is_featured INTEGER NOT NULL DEFAULT 0  -- 1 = Em destaque na Home | 0 = Não destacada
+        )
+    """)
+
+    # Lista de tuplas com as 6 categorias iniciais da loja ShopGrids:
+    # As 4 primeiras possuem is_featured = 1 (aparecem na Home)
+    # As 2 últimas possuem is_featured = 0 (ocultas inicialmente)
+    categorias = [
+        (1, "TV & Áudio", "tv-audio.png", 1),          # Destaque ativo (1)
+        (2, "Desktop & Laptop", "laptop.png", 1),      # Destaque ativo (1)
+        (3, "Smartphones", "smartphone.png", 1),       # Destaque ativo (1)
+        (4, "Acessórios Gamer", "gamer.png", 1),       # Destaque ativo (1)
+        (5, "Moda Inverno", "inverno.png", 0),         # Destaque inativo (0)
+        (6, "Aquecedores", "aquecedor.png", 0),        # Destaque inativo (0)
+    ]
+
+    # Insere todas as 6 categorias de uma só vez substituindo os '?' pelos dados de cada tupla
+    cursor.executemany(
+        "INSERT INTO categories (id, name, image, is_featured) VALUES (?, ?, ?, ?)",
+        categorias
+    )
+
+    # Grava (commita) as alterações permanentemente no arquivo 'shopgrids.db'
+    conn.commit()
+    
+    # Encerra a conexão com o arquivo do banco de dados
+    conn.close()
+    
+    # Informa no terminal que o banco foi preparado com sucesso
+    print("✓ Banco 'shopgrids.db' criado com sucesso com 6 categorias (4 em destaque)!")
+
+# Executa a função quando o arquivo é chamado diretamente pelo comando 'python criar_banco.py'
+if __name__ == "__main__":
+    inicializar_banco()
 ```
 
-### 4.3 Por que de Cada Linha de Código
-* `r.exists(chave_cache)`: Retorna `1` se os dados já foram cacheados previamente.
-* `r.get(chave_cache)`: Leitura instantânea direto dos barramentos da memória RAM ($O(1)$).
-* `r.setex(chave_cache, 45, ...)`: **Por que 45 segundos e não infinito?** Se o administrador alterar o preço de um produto no banco relacional, os clientes veriam o preço antigo para sempre se não houvesse TTL. O TTL garante a *consistência eventual* sem necessidade de sincronização complexa.
-* `r.delete(chave_cache)`: Remove a chave imediatamente. A próxima chamada será forçada a recarregar do banco e atualizar o cache com novos dados.
+### 3.3 Função de Cada Linha do Código
+* `import sqlite3`: Carrega o driver SQL embutido no Python (não requer instalação externa de SGBD).
+* `conn = sqlite3.connect("shopgrids.db")`: Abre ou cria o arquivo físico do banco relacional no diretório atual.
+* `cursor.execute("DROP TABLE IF EXISTS categories")`: Evita erros de chave duplicada caso você execute o script mais de uma vez.
+* `CREATE TABLE categories (...)`: Cria a estrutura relacional onde a coluna `is_featured` (`1` ou `0`) define quais categorias aparecem na vitrine.
+* `cursor.executemany(...)`: Executa múltiplos comandos `INSERT` em uma única transação segura contra *SQL Injection* (usando placeholders `?`).
+* `conn.commit()` e `conn.close()`: Salva os dados em disco e libera o arquivo.
 
-### 4.4 Histórico de Construção
-* **Estado Anterior:** A rota `/api/produtos` lia sempre do disco simulado e demorava 120 ms a cada F5.
-* **Atualização:** Interposição da camada de cache com medição dinâmica de tempo e rota de invalidação.
-* **Motivo:** Reduzir drasticamente o consumo de CPU/I/O do banco principal e entregar velocidade sub-milissegundo para os usuários.
-
-### 4.5 Teste Prático e Saída Esperada
-Execute duas requisições consecutivas para comparar os tempos:
+### 3.4 Executando e Testando no Terminal
+Execute o script:
 
 ```bash
-# 1ª Chamada (Cache Vazio -> MISS):
-curl -s http://localhost:5000/api/produtos | jq '{origem, latencia_ms, ttl: .ttl_cache_segundos}'
-
-# 2ª Chamada Imediata (Em Memória -> HIT):
-curl -s http://localhost:5000/api/produtos | jq '{origem, latencia_ms, ttl: .ttl_cache_segundos}'
+python criar_banco.py
 ```
 
-**Saída Esperada no Terminal:**
+**Saída Esperada:**
+```text
+✓ Banco 'shopgrids.db' criado com sucesso com 6 categorias (4 em destaque)!
+```
+
+---
+
+## Passo 4: Construindo a Versão 1 do `app.py` (Sem Cache — Consultando Direto no Banco SQL)
+
+### 4.1 Objetivo desta etapa
+Criar a primeira versão da nossa API (`app.py`) **sem Redis**. Toda requisição enviada para `GET /categories/featured` fará um `SELECT` diretamente no banco de dados `shopgrids.db`. Também criaremos duas rotas auxiliares (`/categories/inverno` e `/categories/blackfriday`) que simulam a equipe de Produto alterando as categorias em destaque diretamente no banco SQL.
+
+### 4.2 Código Completo do `app.py` (Versão 1 — Sem Cache)
+Crie o arquivo `app.py` na pasta `shopgrids-cache` com o seguinte conteúdo:
+
+```python
+# Arquivo: app.py (VERSÃO 1 — SEM CACHE: TODA REQUISIÇÃO BATE NO BANCO DE DADOS SQL)
+
+# Importa o driver SQLite para consultar o arquivo de banco de dados em disco
+import sqlite3
+# Importa o módulo time para medir o tempo de resposta e simular a lentidão do disco
+import time
+# Importa o Flask para criar o servidor web e jsonify para formatar a saída como JSON
+from flask import Flask, jsonify
+
+# Inicializa a aplicação web Flask
+app = Flask(__name__)
+
+
+# Função que acessa o banco de dados relacional e filtra as categorias em destaque
+def buscar_categorias_no_banco():
+    # Pausa por 80 milissegundos (0.08s) simulando a latência de leitura em disco e fila de conexões SQL
+    time.sleep(0.08)
+
+    # Abre conexão com o banco de dados relacional no disco
+    conn = sqlite3.connect("shopgrids.db")
+    
+    # Permite que as linhas retornadas pelo SQLite sejam acessadas pelo nome da coluna (como dicionários)
+    conn.row_factory = sqlite3.Row
+    
+    # Cria o cursor para execução da query SQL
+    cursor = conn.cursor()
+
+    # Consulta SQL que busca apenas as categorias marcadas como destaque (is_featured = 1)
+    cursor.execute("SELECT id, name, image, is_featured FROM categories WHERE is_featured = 1")
+    
+    # Converte cada registro retornado pelo banco em um dicionário Python padrão
+    categorias = [dict(row) for row in cursor.fetchall()]
+
+    # Fecha a conexão com o banco de dados
+    conn.close()
+    
+    # Devolve a lista de categorias encontradas
+    return categorias
+
+
+# Rota principal chamada pelo Front-end para exibir as Categorias em Destaque
+@app.route("/categories/featured", methods=["GET"])
+def get_featured_categories():
+    # Registra o instante exato de início do processamento da requisição
+    inicio = time.time()
+
+    # GARGALO: Executa a consulta no banco de dados SQL em 100% das requisições!
+    categorias = buscar_categorias_no_banco()
+
+    # Calcula o tempo total gasto em milissegundos (arredondado para 2 casas decimais)
+    tempo_ms = round((time.time() - inicio) * 1000, 2)
+
+    # Retorna o JSON com os dados e a telemetria da requisição
+    return jsonify({
+        "origem": "BANCO_DE_DADOS (SQL)",  # Mostra que veio direto do banco em disco
+        "tempo_ms": tempo_ms,              # Tempo gasto na consulta (~80 ms)
+        "total": len(categorias),          # Total de categorias retornadas
+        "dados": categorias                # Lista das categorias em destaque
+    })
+
+
+# Rota auxiliar (POST): Simula o time de Produto alterando o banco para o cenário de Inverno (2 categorias)
+@app.route("/categories/inverno", methods=["POST"])
+def ativar_categorias_inverno():
+    # Conecta ao banco de dados SQLite
+    conn = sqlite3.connect("shopgrids.db")
+    # Desmarca todas as categorias no banco (is_featured = 0)
+    conn.execute("UPDATE categories SET is_featured = 0")
+    # Marca apenas 'Moda Inverno' (id 5) e 'Aquecedores' (id 6) como destaque (is_featured = 1)
+    conn.execute("UPDATE categories SET is_featured = 1 WHERE id IN (5, 6)")
+    # Salva as alterações no banco de dados
+    conn.commit()
+    # Fecha a conexão
+    conn.close()
+    # Retorna mensagem confirmando a atualização no banco SQL
+    return jsonify({"mensagem": "Banco SQL atualizado: apenas 2 categorias de inverno em destaque!"})
+
+
+# Rota auxiliar (POST): Simula o time de Produto ativando todas as 6 categorias para a Black Friday
+@app.route("/categories/blackfriday", methods=["POST"])
+def ativar_todas_categorias():
+    # Conecta ao banco de dados SQLite
+    conn = sqlite3.connect("shopgrids.db")
+    # Marca todas as 6 categorias com is_featured = 1 no banco
+    conn.execute("UPDATE categories SET is_featured = 1")
+    # Salva as alterações no banco de dados
+    conn.commit()
+    # Fecha a conexão
+    conn.close()
+    # Retorna mensagem confirmando a atualização no banco SQL
+    return jsonify({"mensagem": "Banco SQL atualizado: todas as 6 categorias em destaque!"})
+
+
+# Inicia o servidor Flask na porta 5000 com recarregamento automático (debug=True)
+if __name__ == "__main__":
+    app.run(port=5000, debug=True)
+```
+
+### 4.3 Função de Cada Bloco do Código
+* `time.sleep(0.08)`: Simula o tempo real de resposta de um banco relacional sob carga moderada (leitura em disco + verificação de índices e transações).
+* `conn.row_factory = sqlite3.Row`: Sem esta linha, o SQLite retornaria tuplas simples `(1, 'TV & Áudio', ...)`. Com `sqlite3.Row`, conseguimos converter facilmente cada linha para um dicionário `{"id": 1, "name": "TV & Áudio", ...}` usando `dict(row)`.
+* `tempo_ms = round((time.time() - inicio) * 1000, 2)`: Mede o tempo decorrido desde o início da função e multiplica por `1000` para converter de segundos para milissegundos.
+* Rotas `/categories/inverno` e `/categories/blackfriday`: Alteram **exclusivamente o banco de dados SQLite**, exatamente como ocorreria se um administrador alterasse os registros em um painel administrativo externo.
+
+### 4.4 Executando e Testando a Versão 1
+No **Terminal 1** (com o `.venv` ativo), inicie o servidor:
+
+```bash
+python app.py
+```
+
+Abra uma **segunda janela de terminal (Terminal 2)** e faça a requisição para a API:
+
+```bash
+curl -s http://localhost:5000/categories/featured | jq .
+```
+*(Dica: Se não tiver o utilitário `jq` instalado para colorir o JSON, basta rodar `curl http://localhost:5000/categories/featured` ou abrir `http://localhost:5000/categories/featured` no navegador).*
+
+**Saída Esperada:**
+```json
+{
+  "dados": [
+    { "id": 1, "image": "tv-audio.png", "is_featured": 1, "name": "TV & Áudio" },
+    { "id": 2, "image": "laptop.png", "is_featured": 1, "name": "Desktop & Laptop" },
+    { "id": 3, "image": "smartphone.png", "is_featured": 1, "name": "Smartphones" },
+    { "id": 4, "image": "gamer.png", "is_featured": 1, "name": "Acessórios Gamer" }
+  ],
+  "origem": "BANCO_DE_DADOS (SQL)",
+  "tempo_ms": 81.52,
+  "total": 4
+}
+```
+Observe que todas as chamadas levam mais de **80 ms** e batem diretamente no banco de dados SQL.
+
+---
+
+## Passo 5: Evoluindo para a Versão 2 do `app.py` (Cache-Aside com `GET` e `SET`)
+
+### 5.1 Objetivo desta etapa
+Implementar o padrão **Cache-Aside**:
+1. Quando uma requisição chega em `/categories/featured`, a API consulta primeiro a chave `featured_categories` no **Redis** (`r.get()`).
+2. **Se existir no Redis (*Cache Hit*):** converte a String JSON de volta para lista (`json.loads()`) e retorna imediatamente da memória RAM sem tocar no banco SQL!
+3. **Se não existir no Redis (*Cache Miss*):** consulta o banco de dados SQL, salva uma cópia do resultado no Redis em formato texto JSON (`r.set()`) e retorna para o usuário.
+
+### 5.2 Código Completo do `app.py` (Versão 2 — Com `GET` e `SET`)
+Substitua o código do seu arquivo `app.py` pela versão abaixo (basta salvar o arquivo que o Flask reiniciará sozinho no Terminal 1):
+
+```python
+# Arquivo: app.py (VERSÃO 2 — PADRÃO CACHE-ASIDE COM GET E SET SEM EXPIRAÇÃO)
+
+# [NOVO] Importa o módulo json para converter listas Python em texto JSON (dumps) e vice-versa (loads)
+import json
+import sqlite3
+import time
+from flask import Flask, jsonify
+# [NOVO] Importa a biblioteca cliente do Redis
+import redis
+
+app = Flask(__name__)
+
+# [NOVO] Conecta ao servidor Redis local na porta 6379 (banco 0)
+# decode_responses=True faz o Redis retornar Strings normais do Python em vez de bytes (b'...')
+r = redis.Redis(host="localhost", port=6379, db=0, decode_responses=True)
+
+
+def buscar_categorias_no_banco():
+    # Simula 80ms de leitura em disco no banco relacional
+    time.sleep(0.08)
+    conn = sqlite3.connect("shopgrids.db")
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, name, image, is_featured FROM categories WHERE is_featured = 1")
+    categorias = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return categorias
+
+
+@app.route("/categories/featured", methods=["GET"])
+def get_featured_categories():
+    # Marca o instante inicial da requisição
+    inicio = time.time()
+
+    # [NOVO] Define a chave única que identificará as categorias em destaque dentro do Redis
+    cache_key = "featured_categories"
+
+    # [NOVO] 1. Tenta buscar os dados primeiro na memória RAM do Redis (comando GET)
+    cached_categories = r.get(cache_key)
+
+    # [NOVO] 2. Se 'cached_categories' não for vazio (CACHE HIT), retorna imediatamente da RAM!
+    if cached_categories:
+        # Converte o texto JSON armazenado no Redis de volta para uma lista Python
+        lista_categorias = json.loads(cached_categories)
+        # Calcula o tempo gasto (será inferior a 1 milissegundo!)
+        tempo_ms = round((time.time() - inicio) * 1000, 2)
+        # Devolve a resposta sem executar nenhuma linha de banco de dados SQL
+        return jsonify({
+            "origem": "CACHE_REDIS (Memória RAM)",
+            "tempo_ms": tempo_ms,
+            "total": len(lista_categorias),
+            "dados": lista_categorias
+        })
+
+    # 3. Se não encontrou no Redis (CACHE MISS), vai ao banco de dados SQL buscar os registros
+    categorias = buscar_categorias_no_banco()
+
+    # [NOVO] 4. Salva uma cópia do resultado no Redis usando json.dumps() para transformar a lista em String
+    r.set(cache_key, json.dumps(categorias))
+
+    # Calcula o tempo total desta requisição que precisou ir ao banco SQL
+    tempo_ms = round((time.time() - inicio) * 1000, 2)
+
+    # Retorna os dados buscados no banco
+    return jsonify({
+        "origem": "BANCO_DE_DADOS (SQL)",
+        "tempo_ms": tempo_ms,
+        "total": len(categorias),
+        "dados": categorias
+    })
+
+
+@app.route("/categories/inverno", methods=["POST"])
+def ativar_categorias_inverno():
+    conn = sqlite3.connect("shopgrids.db")
+    conn.execute("UPDATE categories SET is_featured = 0")
+    conn.execute("UPDATE categories SET is_featured = 1 WHERE id IN (5, 6)")
+    conn.commit()
+    conn.close()
+    return jsonify({"mensagem": "Banco SQL atualizado: apenas 2 categorias de inverno em destaque!"})
+
+
+@app.route("/categories/blackfriday", methods=["POST"])
+def ativar_todas_categorias():
+    conn = sqlite3.connect("shopgrids.db")
+    conn.execute("UPDATE categories SET is_featured = 1")
+    conn.commit()
+    conn.close()
+    return jsonify({"mensagem": "Banco SQL atualizado: todas as 6 categorias em destaque!"})
+
+
+if __name__ == "__main__":
+    app.run(port=5000, debug=True)
+```
+
+### 5.3 Função de Cada Linha Adicionada
+* `r = redis.Redis(host="localhost", port=6379, db=0, decode_responses=True)`: Abre o pool de conexão TCP com o Redis. O argumento `decode_responses=True` é indispensável em Python para que o retorno de `r.get()` já venha decodificado em UTF-8 (`str`).
+* `cached_categories = r.get(cache_key)`: Consulta em tempo $O(1)$ se a chave `"featured_categories"` existe na memória do Redis. Se não existir, retorna `None`.
+* `json.dumps(categorias)` e `json.loads(cached_categories)`: O comando `SET` do Redis armazena valores do tipo **String**. Por isso, serializamos a lista de dicionários para uma String JSON ao gravar (`dumps`) e desserializamos de volta para lista ao ler (`loads`).
+
+### 5.4 Testando na Prática (Cache Miss vs. Cache Hit)
+No **Terminal 2**, execute duas chamadas seguidas:
+
+```bash
+# 1ª Chamada (O Redis está vazio -> Vai ao Banco SQL e grava no Redis):
+curl -s http://localhost:5000/categories/featured | jq '{origem, tempo_ms, total}'
+
+# 2ª Chamada (Já está salvo no Redis -> Vem direto da Memória RAM!):
+curl -s http://localhost:5000/categories/featured | jq '{origem, tempo_ms, total}'
+```
+
+**Saída Esperada:**
 ```json
 // 1ª Chamada:
 {
-  "origem": "CACHE_MISS (Simulação de Disco/SGBD)",
-  "latencia_ms": 120.52,
-  "ttl": 45
+  "origem": "BANCO_DE_DADOS (SQL)",
+  "tempo_ms": 82.14,
+  "total": 4
 }
 
 // 2ª Chamada:
 {
-  "origem": "CACHE_HIT (Memória RAM Redis)",
-  "latencia_ms": 0.42,
-  "ttl": 44
+  "origem": "CACHE_REDIS (Memória RAM)",
+  "tempo_ms": 0.41,
+  "total": 4
 }
 ```
+> **Resultado:** O tempo de resposta caiu de **82,14 ms** para **0,41 ms** ($\approx 200\times$ mais rápido!) e o banco de dados SQL foi completamente aliviado.
 
-> [!IMPORTANT]
-> **Ganho Comprovado (Speedup):**  
-> $$\text{Speedup} = \frac{120.52\text{ ms}}{0.42\text{ ms}} \approx 286\times\text{ mais rápido!}$$
-
----
-
-## Etapa 5: Carrinho de Compras Atômico com Hashes (`HINCRBY` / `HDEL`)
-
-### 5.1 A Necessidade
-Por que **NÃO** salvar o carrinho como uma String JSON?
-Se salvássemos como `{"prod_1": 1}`, para adicionar mais 1 item o backend teria que:
-1. `GET cart:123`
-2. Deserializar o JSON no Python
-3. Incrementar `qtd = qtd + 1`
-4. Serializar para JSON
-5. `SET cart:123`
-
-Se o usuário der dois cliques rápidos ou tiver duas abas abertas, uma requisição sobrescreve a outra gerando **Condição de Corrida (*Race Condition*)**.  
-**Solução com Hashes do Redis:**  
-A estrutura **Hash** (`HINCRBY`) manipula campos individuais diretamente dentro do motor do Redis com garantia de **atomicidade em thread única**!
-
-```text
-Chave: cart:usr_8a31c510
-Campos (Field -> Value):
-  "prod_1" -> "2"
-  "prod_3" -> "1"
-```
-
-### 5.2 O Código da Etapa
-```python
-@app.route("/api/carrinho", methods=["GET"])
-def get_carrinho():
-    session_id = obter_ou_criar_sessao(request)
-    chave_cart = f"cart:{session_id}"
-    
-    # HGETALL retorna todos os campos e valores do Hash como um dict Python
-    itens_hash = r.hgetall(chave_cart)
-    ttl = r.ttl(chave_cart)
-    
-    itens = []
-    subtotal = 0.0
-    for prod_id, qtd_str in itens_hash.items():
-        qtd = int(qtd_str)
-        # Busca detalhes do produto
-        prod = next((p for p in CATALOGO if p["id"] == prod_id), None)
-        if prod:
-            tot = round(prod["preco"] * qtd, 2)
-            subtotal += tot
-            itens.append({
-                "produto_id": prod_id,
-                "nome": prod["nome"],
-                "quantidade": qtd,
-                "preco_unitario": prod["preco"],
-                "total": tot
-            })
-            
-    return jsonify({
-        "chave_redis": chave_cart,
-        "ttl_segundos": ttl,
-        "itens": itens,
-        "subtotal": round(subtotal, 2)
-    })
-
-@app.route("/api/carrinho/adicionar", methods=["POST"])
-def adicionar_ao_carrinho():
-    session_id = obter_ou_criar_sessao(request)
-    data = request.get_json() or {}
-    prod_id = data.get("produto_id")
-    qtd = int(data.get("quantidade", 1))
-    
-    chave_cart = f"cart:{session_id}"
-    
-    # HINCRBY: Incrementa o campo atômica e nativamente no Redis
-    nova_qtd = r.hincrby(chave_cart, prod_id, qtd)
-    
-    # Define TTL de 1 hora (3600s) para o carrinho
-    r.expire(chave_cart, 3600)
-    
-    return jsonify({
-        "status": "success",
-        "produto_id": prod_id,
-        "quantidade_atual": nova_qtd
-    })
-
-@app.route("/api/carrinho/remover", methods=["POST"])
-def remover_do_carrinho():
-    session_id = obter_ou_criar_sessao(request)
-    data = request.get_json() or {}
-    prod_id = data.get("produto_id")
-    
-    chave_cart = f"cart:{session_id}"
-    # HDEL: Remove o campo específico sem afetar os outros itens
-    r.hdel(chave_cart, prod_id)
-    
-    return jsonify({"status": "success", "removido": prod_id})
-```
-
-### 5.3 Por que de Cada Linha de Código
-* `chave_cart = f"cart:{session_id}"`: Namespace semântico isolando o carrinho de cada sessão.
-* `r.hgetall(chave_cart)`: Retorna um dicionário `{ 'prod_1': '2', 'prod_3': '1' }` com complexidade $O(N)$ onde $N$ é o número de itens no carrinho (número pequeno).
-* `r.hincrby(chave_cart, prod_id, qtd)`: Se o campo não existia, o Redis inicializa com `0` e soma `qtd`. Se já existia, soma diretamente em memória. Não há tráfego de rede desnecessário nem risco de *race conditions*.
-* `r.hdel(chave_cart, prod_id)`: Remove apenas a chave do produto dentro do Hash, sem necessidade de reescrever todo o estado do carrinho.
-* `r.expire(chave_cart, 3600)`: Carrinhos abandonados desaparecem automaticamente após 1 hora, liberando memória RAM sem necessidade de rotinas batch pesadas de limpeza em banco de dados.
-
-### 5.4 Histórico de Construção
-* **Estado Anterior:** Aplicação apenas exibia o catálogo em cache, sem capacidade de interação de compra.
-* **Atualização:** Introdução dos Hashes do Redis para manipulação atômica de pedidos em andamento.
-* **Motivo:** Evitar problemas de concorrência e economizar memória através da estrutura interna compacta de hashes do Redis (*ziplist/listpack*).
-
-### 5.5 Teste Prático e Saída Esperada
-Adicione produtos ao carrinho via terminal com o mesmo cookie de sessão:
-
+Você também pode inspecionar o valor salvo diretamente no Redis:
 ```bash
-# 1. Adicionar 2 unidades do prod_1:
-curl -b cookies.txt -s -X POST http://localhost:5000/api/carrinho/adicionar \
-  -H "Content-Type: application/json" \
-  -d '{"produto_id": "prod_1", "quantidade": 2}' | jq .
-
-# 2. Adicionar 1 unidade do prod_3:
-curl -b cookies.txt -s -X POST http://localhost:5000/api/carrinho/adicionar \
-  -H "Content-Type: application/json" \
-  -d '{"produto_id": "prod_3", "quantidade": 1}' | jq .
-```
-
-**Verificação no `redis-cli`:**
-```bash
-redis-cli HGETALL "cart:$(tail -n1 cookies.txt | awk '{print $NF}')"
-```
-**Saída Esperada no Terminal:**
-```text
-1) "prod_1"
-2) "2"
-3) "prod_3"
-4) "1"
+redis-cli GET featured_categories
 ```
 
 ---
 
-## Etapa 6: Checkout Desacoplado com Fila de Mensagens (`LPUSH` / `LLEN`)
+## Passo 6: Reproduzindo o Problema da Inconsistência de Dados
 
-### 6.1 A Necessidade
-Durante o fechamento de uma compra (Checkout), a aplicação web precisa:
-1. Validar antifraude no cartão de crédito ($\approx 2\text{ a }4\text{ s}$).
-2. Emitir nota fiscal eletrônica na SEFAZ ($\approx 1\text{ a }3\text{ s}$).
-3. Enviar e-mail de confirmação ($\approx 1\text{ s}$).
+### 6.1 Objetivo desta etapa
+Compreender o erro arquitetural de usar `r.set()` sem definir um tempo de expiração: quando os dados mudam no banco de dados relacional, o cache continua entregando dados antigos (defasados) para sempre.
 
-Se fizermos tudo isso na rota HTTP síncrona, a requisição levará mais de **7 segundos**. O cliente cancelará a operação ou o navegador dará *Timeout*.  
-**Solução com Fila Redis (Queue FIFO):**  
-A rota HTTP do checkout apenas:
-- Lê o carrinho
-- Gera o JSON do pedido
-- Dá um `LPUSH fila:pedidos` no Redis (leva **0.3 milissegundos**)
-- Apaga o carrinho com `DEL`
-- Retorna imediatamente HTTP 200: *"Seu pedido foi recebido e está sendo processado!"*
+### 6.2 Simulando uma Atualização no Banco de Dados
+Imagine que chegou o inverno e a equipe de Produto alterou o banco de dados para deixar **apenas 2 categorias** em destaque (*Moda Inverno* e *Aquecedores*).
 
-### 6.2 O Código da Etapa
-```python
-@app.route("/api/checkout", methods=["POST"])
-def checkout():
-    session_id = obter_ou_criar_sessao(request)
-    chave_cart = f"cart:{session_id}"
-    
-    itens_hash = r.hgetall(chave_cart)
-    if not itens_hash:
-        return jsonify({"status": "error", "message": "Carrinho vazio!"}), 400
-        
-    itens_pedido = []
-    total_pedido = 0.0
-    for pid, qtd_str in itens_hash.items():
-        qtd = int(qtd_str)
-        prod = next((p for p in CATALOGO if p["id"] == pid), None)
-        if prod:
-            sub = round(prod["preco"] * qtd, 2)
-            total_pedido += sub
-            itens_pedido.append({
-                "produto_id": pid,
-                "nome": prod["nome"],
-                "quantidade": qtd,
-                "preco": prod["preco"],
-                "subtotal": sub
-            })
-            
-    # Cria o documento do pedido
-    pedido = {
-        "id_pedido": f"PED-{int(time.time())}-{uuid.uuid4().hex[:6].upper()}",
-        "session_id": session_id,
-        "data_hora": time.strftime("%Y-%m-%d %H:%M:%S"),
-        "total": round(total_pedido, 2),
-        "itens": itens_pedido,
-        "status": "AGUARDANDO_PROCESSAMENTO"
-    }
-    
-    # 1. Enfileira o pedido no início da Lista do Redis (LPUSH)
-    chave_fila = "fila:pedidos"
-    tamanho_atual = r.lpush(chave_fila, json.dumps(pedido))
-    
-    # 2. Deleta o carrinho de compras do Redis pois a compra foi finalizada
-    r.delete(chave_cart)
-    
-    return jsonify({
-        "status": "success",
-        "pedido_id": pedido["id_pedido"],
-        "posicao_na_fila": tamanho_atual,
-        "total": pedido["total"],
-        "mensagem": "Pedido recebido com sucesso e enfileirado no Redis!"
-    })
-```
-
-### 6.3 Por que de Cada Linha de Código
-* `pedido = {...}`: Estrutura canônica de documento. Este exato formato será salvo como documento BSON no MongoDB na Aula 06!
-* `r.lpush(chave_fila, json.dumps(pedido))`: O comando `LPUSH` insere na cabeça (lado esquerdo) da lista em tempo $O(1)$. Retorna imediatamente o novo comprimento total da fila.
-* `r.delete(chave_cart)`: Libera a memória RAM do hash do carrinho instantaneamente, evitando compras duplicadas pelo mesmo usuário.
-
-### 6.4 Histórico de Construção
-* **Estado Anterior:** A aplicação mantinha o carrinho no Redis, mas não concluía a venda.
-* **Atualização:** Adição do padrão Produtor na rota de checkout via lista encadeada do Redis.
-* **Motivo:** Desacoplar a resposta da interface do usuário das rotinas demoradas de backend e garantir tolerância a picos de tráfego (*Traffic Shaving*).
-
-### 6.5 Teste Prático e Saída Esperada
-Finalize a compra via terminal:
+No **Terminal 2**, execute o comando abaixo para atualizar o banco SQLite:
 
 ```bash
-curl -b cookies.txt -s -X POST http://localhost:5000/api/checkout | jq .
+# 1. Atualiza o banco SQL para deixar apenas 2 categorias de inverno com is_featured = 1
+curl -s -X POST http://localhost:5000/categories/inverno | jq .
 ```
 
-**Saída Esperada no Terminal:**
+Agora, consulte novamente a rota de categorias em destaque da API:
+
+```bash
+# 2. Consulta a vitrine da API
+curl -s http://localhost:5000/categories/featured | jq '{origem, tempo_ms, total, dados}'
+```
+
+**Saída Obtida (Observe a Inconsistência!):**
 ```json
 {
-  "mensagem": "Pedido recebido com sucesso e enfileirado no Redis!",
-  "pedido_id": "PED-1729000000-A1B2C3",
-  "posicao_na_fila": 1,
-  "status": "success",
-  "total": 8419.8
+  "origem": "CACHE_REDIS (Memória RAM)",
+  "tempo_ms": 0.39,
+  "total": 4,
+  "dados": [
+    { "id": 1, "name": "TV & Áudio", ... },
+    { "id": 2, "name": "Desktop & Laptop", ... },
+    { "id": 3, "name": "Smartphones", ... },
+    { "id": 4, "name": "Acessórios Gamer", ... }
+  ]
 }
 ```
 
-**Verificação da Fila no `redis-cli`:**
+### 6.3 Por que o bug aconteceu?
+1. O banco SQLite foi atualizado e agora possui apenas **2 categorias** com `is_featured = 1`.
+2. Porém, como a chave `featured_categories` foi salva no Passo 5 com `r.set()` **sem prazo de validade**, o seu tempo de vida no Redis é infinito (`TTL = -1`).
+3. Toda requisição que chega na API entra no bloco `if cached_categories:` e retorna as **4 categorias antigas** da memória RAM, nunca mais consultando o banco SQL!
+
+Confirme no terminal que a chave não tem expiração (`-1`):
 ```bash
-redis-cli LLEN fila:pedidos
-redis-cli LRANGE fila:pedidos 0 -1
-```
-**Saída Esperada:**
-```text
-(integer) 1
-1) "{\"id_pedido\": \"PED-1729000000-A1B2C3\", \"total\": 8419.8, ...}"
+redis-cli TTL featured_categories
+# Saída: (integer) -1
 ```
 
 ---
 
-## Etapa 7: O Worker em Segundo Plano (`worker_pedidos.py` com `BRPOP`)
+## Passo 7: Versão 3 Final do `app.py` — Solução com Invalidação por Tempo (`SETEX` / TTL)
 
-### 7.1 A Necessidade
-Agora que o pedido está na fila `fila:pedidos`, precisamos de um processo autônomo (Worker) rodando em background para processá-lo.  
-**Por que não usar um loop simples com `RPOP` e `sleep`?**
-Se usarmos `r.rpop()` e um `while True`:
-- Se a fila estiver vazia, o loop executará milhões de vezes por segundo consumindo **100% da CPU**.
-- Se colocarmos `time.sleep(2)`, quando chegar um pedido ele terá um atraso forçado de até 2 segundos para ser processado.
+### 7.1 Objetivo desta etapa
+Resolver o problema da inconsistência substituindo `r.set()` por **`r.setex()`**, definindo um **TTL (*Time To Live* — Tempo de Vida)** de **20 segundos**. Assim, após 20 segundos, o próprio Redis apaga a chave automaticamente da memória RAM, fazendo com que a requisição seguinte busque os dados atualizados no banco SQL.
 
-**Solução com `BRPOP` (Blocking Right Pop):**  
-O comando `BRPOP` coloca o processo em repouso no kernel do sistema operacional com consumo **zero de CPU**. No momento exato em que um novo item entra na fila via `LPUSH`, o Redis acorda o worker instantaneamente!
+### 7.2 Código Completo do `app.py` (Versão 3 Final — Com `SETEX` e `TTL`)
+Atualize o arquivo `app.py` com o código final abaixo:
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Cliente as Front-end Web (Cliente)
-    participant Flask as API Web (Produtor)
-    participant Redis as Redis (fila:pedidos)
-    participant Worker as Worker Background (Consumidor)
-
-    Cliente->>Flask: POST /api/checkout
-    Flask->>Redis: LPUSH fila:pedidos [Pedido JSON]
-    Flask-->>Cliente: HTTP 200 OK (Enfileirado em 0.4ms)
-    Note over Worker,Redis: BRPOP bloqueado aguardando itens
-    Redis-->>Worker: Retorna item instantaneamente
-    Worker->>Worker: Valida cartão & Gera Nota Fiscal
-    Note over Worker: Aula 06: Salva documento no MongoDB!
-```
-
-### 7.2 O Código da Etapa (`worker_pedidos.py`)
 ```python
-import sys
-import time
+# Arquivo: app.py (VERSÃO 3 FINAL — CACHE-ASIDE COM SETEX E EXPIRAÇÃO AUTOMÁTICA TTL DE 20s)
+
+# Importa o módulo json para conversão entre listas Python e Strings JSON
 import json
+# Importa o módulo sqlite3 para acesso ao banco de dados relacional em disco
+import sqlite3
+# Importa o módulo time para medição de latência em milissegundos
+import time
+# Importa Flask e jsonify para criação da API HTTP
+from flask import Flask, jsonify
+# Importa o cliente oficial do Redis
 import redis
 
-def iniciar_worker():
-    print("=" * 70)
-    print("FASTCOMMERCE - WORKER DE PROCESSAMENTO DE PEDIDOS (REDIS QUEUE)")
-    print("=" * 70)
+# Instancia a aplicação Flask
+app = Flask(__name__)
+
+# Conecta ao servidor Redis local na porta 6379 com decodificação automática para String
+r = redis.Redis(host="localhost", port=6379, db=0, decode_responses=True)
+
+
+# Função que realiza o SELECT no banco de dados SQLite
+def buscar_categorias_no_banco():
+    # Simula 80ms de latência de banco de dados em disco
+    time.sleep(0.08)
+    conn = sqlite3.connect("shopgrids.db")
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, name, image, is_featured FROM categories WHERE is_featured = 1")
+    categorias = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return categorias
+
+
+# Endpoint principal com Cache-Aside e expiração automática (TTL)
+@app.route("/categories/featured", methods=["GET"])
+def get_featured_categories():
+    # Registra o instante de início da requisição
+    inicio = time.time()
     
-    r = redis.Redis(host="localhost", port=6379, db=0, decode_responses=True)
-    chave_fila = "fila:pedidos"
-    
-    print(f"[*] Aguardando pedidos na fila '{chave_fila}' via BRPOP...")
-    
-    while True:
-        try:
-            # BRPOP: Bloqueia o processo por até 5 segundos aguardando um novo item no final da lista
-            resultado = r.brpop(chave_fila, timeout=5)
-            
-            if resultado is None:
-                sys.stdout.write(f"\r[IDLE] Aguardando novos pedidos... (Fila atual: {r.llen(chave_fila)})")
-                sys.stdout.flush()
-                continue
-                
-            # resultado é uma tupla: (nome_da_chave, conteudo_do_item)
-            _, pedido_json = resultado
-            pedido = json.loads(pedido_json)
-            
-            print(f"\n\n[NOVO PEDIDO RETIRADO DA FILA]")
-            print(f" ID: {pedido['id_pedido']}")
-            print(f" Total: R$ {pedido['total']:.2f}")
-            print(f" Itens: {len(pedido['itens'])} produto(s)")
-            
-            # Simula processamento pesado em segundo plano
-            print(" -> Validando antifraude e transação bancária...")
-            time.sleep(1.2)
-            print(" -> Emitindo Nota Fiscal Eletrônica (NFe)...")
-            time.sleep(0.8)
-            
-            print(f" [✓] Pedido {pedido['id_pedido']} APROVADO COM SUCESSO!")
-            print(" [AULA 06]: Aqui este pedido será gravado no MongoDB (coleção 'pedidos').")
-            print("-" * 70)
-            
-        except KeyboardInterrupt:
-            print("\nWorker finalizado pelo operador.")
-            break
+    # Nome da chave armazenada no Redis
+    cache_key = "featured_categories"
+
+    # 1. Consulta o Redis primeiro (Memória RAM)
+    cached_categories = r.get(cache_key)
+
+    # 2. Se a chave existir no Redis (CACHE HIT), retorna imediatamente da RAM
+    if cached_categories:
+        # Converte a String JSON de volta para lista Python
+        lista_categorias = json.loads(cached_categories)
+        # Calcula o tempo de resposta em milissegundos
+        tempo_ms = round((time.time() - inicio) * 1000, 2)
+        # Retorna os dados do cache junto com o TTL restante (quantos segundos faltam para expirar)
+        return jsonify({
+            "origem": "CACHE_REDIS (Memória RAM)",
+            "tempo_ms": tempo_ms,
+            "ttl_segundos": r.ttl(cache_key),  # Consulta no Redis o tempo de vida restante da chave
+            "total": len(lista_categorias),
+            "dados": lista_categorias
+        })
+
+    # 3. Se a chave não existir ou já tiver expirado (CACHE MISS), busca no banco SQL
+    categorias = buscar_categorias_no_banco()
+
+    # [SOLUÇÃO COM TTL] 4. Grava no Redis usando SETEX com tempo de vida de 20 segundos!
+    # Parâmetros: r.setex(nome_da_chave, tempo_em_segundos, valor_json)
+    # Após 20 segundos, a chave desaparece sozinha da memória RAM.
+    r.setex(cache_key, 20, json.dumps(categorias))
+
+    # Calcula o tempo total gasto
+    tempo_ms = round((time.time() - inicio) * 1000, 2)
+
+    # Retorna os dados recém-buscados do banco SQL
+    return jsonify({
+        "origem": "BANCO_DE_DADOS (SQL)",
+        "tempo_ms": tempo_ms,
+        "ttl_segundos": 20,
+        "total": len(categorias),
+        "dados": categorias
+    })
+
+
+# Rota auxiliar para ativar apenas as 2 categorias de inverno no banco SQL
+@app.route("/categories/inverno", methods=["POST"])
+def ativar_categorias_inverno():
+    conn = sqlite3.connect("shopgrids.db")
+    conn.execute("UPDATE categories SET is_featured = 0")
+    conn.execute("UPDATE categories SET is_featured = 1 WHERE id IN (5, 6)")
+    conn.commit()
+    conn.close()
+    return jsonify({"mensagem": "Banco SQL atualizado: apenas 2 categorias de inverno em destaque!"})
+
+
+# Rota auxiliar para ativar todas as 6 categorias no banco SQL (Black Friday)
+@app.route("/categories/blackfriday", methods=["POST"])
+def ativar_todas_categorias():
+    conn = sqlite3.connect("shopgrids.db")
+    conn.execute("UPDATE categories SET is_featured = 1")
+    conn.commit()
+    conn.close()
+    return jsonify({"mensagem": "Banco SQL atualizado: todas as 6 categorias em destaque!"})
+
 
 if __name__ == "__main__":
-    iniciar_worker()
+    app.run(port=5000, debug=True)
 ```
 
-### 7.3 Por que de Cada Linha de Código
-* `resultado = r.brpop(chave_fila, timeout=5)`: Bloqueio inteligente. O parâmetro `timeout=5` evita travamento perpétuo caso o servidor Redis seja reiniciado.
-* `_, pedido_json = resultado`: Como o `BRPOP` pode escutar múltiplas filas simultâneas, ele retorna uma tupla `(chave, valor)`. Descartamos o primeiro elemento com `_`.
-* `time.sleep(1.2)`: Simula tarefas de I/O em segundo plano sem impactar a resposta do usuário no navegador.
+### 7.3 Função das Novas Instruções
+* `r.setex(cache_key, 20, json.dumps(categorias))`: Executa de forma atômica a gravação da chave e a definição do seu cronômetro de expiração (**TTL**) para **20 segundos**.
+* `r.ttl(cache_key)`: Retorna um número inteiro indicando quantos segundos restam antes que o Redis delete a chave automaticamente da memória RAM.
 
-### 7.4 Histórico de Construção
-* **Estado Anterior:** Os pedidos se acumulavam na fila do Redis sem consumo.
-* **Atualização:** Criação de um serviço daemon/worker totalmente desacoplado da API web.
-* **Motivo:** Implementar o padrão canônico de mensageria assíncrona corporativa com balanceamento de carga (vários workers podem rodar em paralelo escutando a mesma lista).
+### 7.4 Teste Prático Completo da Expiração Automática (TTL)
+Siga a sequência abaixo no **Terminal 2**:
 
-### 7.5 Teste Prático e Saída Esperada
-Abra um terminal exclusivo para o worker e execute:
-
+**1º) Remova a chave antiga (que estava sem TTL do Passo 5):**
 ```bash
-.venv/bin/python worker_pedidos.py
+redis-cli DEL featured_categories
 ```
 
-Em outro terminal, envie um checkout:
+**2º) Faça uma consulta na API (ela buscará as 2 categorias de inverno no banco e iniciará o TTL de 20s):**
 ```bash
-curl -b cookies.txt -s -X POST http://localhost:5000/api/checkout | jq .
+curl -s http://localhost:5000/categories/featured | jq '{origem, tempo_ms, ttl_segundos, total}'
 ```
-
-**Saída Esperada no Terminal do Worker:**
-```text
-[NOVO PEDIDO RETIRADO DA FILA]
- ID: PED-1729000000-A1B2C3
- Total: R$ 8419.80
- Itens: 2 produto(s)
- -> Validando antifraude e transação bancária...
- -> Emitindo Nota Fiscal Eletrônica (NFe)...
- [✓] Pedido PED-1729000000-A1B2C3 APROVADO COM SUCESSO!
- [AULA 06]: Aqui este pedido será gravado no MongoDB (coleção 'pedidos').
-----------------------------------------------------------------------
-```
-
----
-
-## Etapa 8: Monitoramento e Telemetria em Tempo Real do Redis
-
-### 8.1 A Necessidade
-Como o Redis é um banco em memória RAM, em produção os engenheiros precisam monitorar continuamente:
-- Consumo de memória RAM (`used_memory_human`).
-- Número de conexões ativas (`connected_clients`).
-- Total de comandos executados por segundo.
-- Chaves ativas na base de dados.
-
-### 8.2 O Código da Rota de Telemetria
-```python
-@app.route("/api/telemetria", methods=["GET"])
-def telemetria():
-    info_mem = r.info("memory")
-    info_stats = r.info("stats")
-    info_clients = r.info("clients")
-    chaves = r.keys("*")
-    
-    return jsonify({
-        "status": "online",
-        "memoria_usada": info_mem.get("used_memory_human"),
-        "memoria_pico": info_mem.get("used_memory_peak_human"),
-        "conexoes_ativas": info_clients.get("connected_clients"),
-        "comandos_processados": info_stats.get("total_commands_processed"),
-        "total_chaves": len(chaves),
-        "chaves": chaves
-    })
-```
-
-### 8.3 Por que de Cada Linha de Código
-* `r.info("memory")`: Executa o comando de baixo custo `INFO memory` que consulta a métrica do alocador `jemalloc` interno do Redis.
-* `r.info("stats")`: Retorna estatísticas acumuladas de operações desde o boot.
-* `r.keys("*")`: Retorna todas as chaves existentes (adequado para laboratório didático; em produção com milhões de chaves usa-se `SCAN`).
-
-### 8.4 Teste Prático e Saída Esperada
-```bash
-curl -s http://localhost:5000/api/telemetria | jq .
-```
-
-**Saída Esperada:**
+Saída:
 ```json
 {
-  "chaves": [
-    "session:8a31c510-fd11-4f18-b0a3-677a28e9cf94",
-    "cache:catalogo_produtos"
-  ],
-  "comandos_processados": 142,
-  "conexoes_ativas": 2,
-  "memoria_pico": "1.12M",
-  "memoria_usada": "1012.45K",
-  "status": "online",
-  "total_chaves": 2
+  "origem": "BANCO_DE_DADOS (SQL)",
+  "tempo_ms": 81.90,
+  "ttl_segundos": 20,
+  "total": 2
 }
 ```
 
+**3º) Antes de passarem os 20 segundos, atualize o banco SQL para ter 6 categorias (Black Friday):**
+```bash
+curl -s -X POST http://localhost:5000/categories/blackfriday | jq .
+```
+
+**4º) Consulte a API repetidamente a cada 3 segundos e observe o `ttl_segundos`:**
+```bash
+curl -s http://localhost:5000/categories/featured | jq '{origem, tempo_ms, ttl_segundos, total}'
+```
+* **Enquanto os 20 segundos não terminam (`ttl_segundos: 14, 11, 7...`):** A API responde em `~0.4 ms` (`CACHE_REDIS`) retornando `total: 2`.
+* **Assim que os 20 segundos expiram:** A chave some da RAM automaticamente! Na chamada seguinte, a API vai ao `BANCO_DE_DADOS (SQL)`, busca as **6 categorias novas** (`total: 6`) e já inicia um novo ciclo de 20 segundos de cache!
+
 ---
 
-## Etapa 9: Síntese e a Transição para a Aula 06 (MongoDB)
+## Passo 8: Resumo de Arquitetura — Os 3 Critérios Obrigatórios para Usar Cache
 
-Com a conclusão deste guia, consolidamos a arquitetura completa em memória:
+A memória RAM do servidor é limitada e compartilhada. Antes de colocar qualquer consulta em cache no Redis, verifique se o dado atende simultaneamente a estas **3 regras**:
 
-| Recurso | Estrutura no Redis | Comandos Chave | Motivo Técnico |
-| :--- | :--- | :--- | :--- |
-| **Sessão** | String com TTL | `SETEX`, `EXPIRE`, `TTL` | Descentralização e *Sliding Expiration* sem sobrecarga de disco. |
-| **Catálogo** | String JSON em Cache | `GET`, `SETEX`, `DEL` | Aceleração de leitura ($>250\times$), proteção da base relacional. |
-| **Carrinho** | Hash | `HINCRBY`, `HGETALL`, `HDEL` | Atomicidade nativa, sem *race conditions*, expiração de abandono. |
-| **Checkout** | Lista (Queue) | `LPUSH`, `BRPOP`, `LLEN` | Desacoplamento assíncrono e proteção contra picos de tráfego. |
-
-### 🚀 Onde o Redis Termina e o MongoDB Começa?
-Observe que o Redis atua brilhantemente como **camada de altíssima frequência e dados voláteis**. Porém:
-1. A memória RAM é cara e finita.
-2. Não podemos guardar o histórico de 10 anos de notas fiscais e relatórios contábeis na RAM do Redis.
-3. Precisamos de consultas complexas por data, cliente, itens e agregações analíticas.
-
-👉 **Na Aula 06 (27/10/2026):**  
-Conectaremos o **MongoDB** nesta mesma aplicação! O catálogo deixará de ser um mock fixo e passará a ser uma coleção dinâmica de documentos BSON, e o nosso `worker_pedidos.py` gravará os pedidos consumidos da fila diretamente no MongoDB com índices e persistência definitiva em disco.
+| Critério | Quando USAR Cache (Ex.: Categorias em Destaque) | Quando NÃO USAR Cache (Ex.: Saldo Bancário / Pix) |
+| :--- | :--- | :--- |
+| **1. Frequência de Leitura** | **Muito requisitado:** Milhares de clientes acessam a Home a cada minuto buscando exatamente a mesma lista. | Dados raramente consultados (ex.: extrato de 5 anos atrás) só desperdiçam memória RAM. |
+| **2. Frequência de Escrita** | **Muda pouco:** O time de Marketing altera as categorias em destaque apenas uma vez por semana ou mês. | Dados que mudam a cada segundo invalidam o cache o tempo todo, tornando-o inútil. |
+| **3. Consistência** | **Tolera Consistência Eventual:** Um atraso de 20 segundos (TTL) para exibir uma nova categoria na vitrine não causa prejuízo. | **Exige Consistência Forte (Quente):** Se um cliente tem R$ 1.000 e faz um Pix de R$ 1.000, o saldo **não pode** continuar mostrando R$ 1.000 por 20 segundos até o cache expirar! |

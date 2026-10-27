@@ -1,0 +1,21 @@
+\changecolours{ScoutGreen}
+\section[Teoria das Chaves]{Superchave, Chave Candidata, Primária e Alternativa}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Hierarquia Matemática de Chaves: $SK \supset CK \supset PK$},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Superchave ($SK$) vs. Chave Candidata ($CK$)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Superchave (\textit{Superkey} -- $SK$):} Qualquer subconjunto de atributos $SK \subseteq R$ que garante unicidade: para quaisquer duas tuplas distintas $t_1 \neq t_2$, vale $t_1[SK] \neq t_2[SK]$.
+    \item \textbf{Exemplos em \texttt{MEDICO}:} $\{\text{matricula}\}$, $\{\text{matricula}, \text{nome}\}$ e $\{\text{cpf}, \text{nome}\}$ são todas superchaves!
+    \item \textbf{Chave Candidata ($CK$ -- Minimalidade):} É uma \textbf{superchave mínima (irredutível)} --- se removermos qualquer atributo dela, ela deixa de ser única!
+  \end{itemize}
+}{%
+  \alert{Chave Primária ($PK$) e Alternativa ($AK$)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Minimalidade em \texttt{MEDICO}:} $\{\text{matricula}\}$, $\{\text{cpf}\}$ e $\{\text{crm}\}$ são Chaves Candidatas ($CK$). Já $\{\text{matricula}, \text{nome}\}$ é apenas Superchave (pois \texttt{nome} é supérfluo para unicidade).
+    \item \textbf{Chave Primária ($PK$):} A chave candidata eleita pelo projetista como identificador principal ($\underline{\text{matricula}}$).
+    \item \textbf{Chaves Alternativas ($AK$):} As demais chaves candidatas não escolhidas como PK (\texttt{cpf}, \texttt{crm}).
+  \end{itemize}
+}

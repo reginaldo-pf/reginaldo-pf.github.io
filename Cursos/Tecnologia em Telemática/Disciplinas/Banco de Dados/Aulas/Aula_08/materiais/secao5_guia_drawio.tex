@@ -1,0 +1,51 @@
+\changecolours{ScoutGreen}
+\section[Guia Draw.io]{Laboratório Passo a Passo no Draw.io (Notação Peter Chen)}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Paleta Visual \textit{Entity Relation} de Peter Chen no Draw.io}
+  \vspace{-0.15cm}
+  \begin{center}
+    \tikz[scale=0.66, transform shape]{
+      % Linha 1 de formas geometricas reais de Chen
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.3cm, minimum height=0.68cm, font=\bfseries\sffamily\tiny] (f1) at (0, 1.0) {ENTIDADE FORTE};
+      \node[font=\tiny\sffamily, below=1pt of f1] {\textit{Entity}};
+
+      \node[draw=ScoutGreen, double, double distance=1.5pt, fill=ScoutGreen!15, thick, minimum width=2.3cm, minimum height=0.68cm, font=\bfseries\sffamily\tiny] (f2) at (3.5, 1.0) {ENTIDADE FRACA};
+      \node[font=\tiny\sffamily, below=1pt of f2] {\textit{Weak Entity}};
+
+      \node[diamond, aspect=2.1, draw=ScoutNavy, fill=ScoutNavy!12, thick, inner sep=3.5pt, font=\bfseries\sffamily\tiny] (f3) at (7.0, 1.0) {RELACIONA};
+      \node[font=\tiny\sffamily, below=1pt of f3] {\textit{Relationship}};
+
+      \node[diamond, aspect=2.1, draw=ScoutNavy, double, double distance=1.5pt, fill=ScoutNavy!15, thick, inner sep=3.5pt, font=\bfseries\sffamily\tiny] (f4) at (10.6, 1.0) {IDENTIFICA};
+      \node[font=\tiny\sffamily, below=1pt of f4] {\textit{Identifying Rel.}};
+
+      % Linha 2 de elipses reais de Chen
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, ellipse, thick, minimum width=2.1cm, minimum height=0.58cm, font=\tiny\sffamily\bfseries] (a1) at (0, -0.65) {\underline{atributo\_pk}};
+      \node[font=\tiny\sffamily, below=1pt of a1] {\textit{Key Attribute}};
+
+      \node[draw=ScoutNavy, fill=amber!15, ellipse, thick, minimum width=2.1cm, minimum height=0.58cm, font=\tiny\sffamily\bfseries] (a2) at (3.5, -0.65) {\dashuline{discriminador}};
+      \node[font=\tiny\sffamily, below=1pt of a2] {\textit{Weak Key}};
+
+      \node[draw=black!80, fill=pink!15, double, double distance=1.4pt, ellipse, thick, minimum width=2.1cm, minimum height=0.58cm, font=\tiny\sffamily] (a3) at (7.0, -0.65) {multivalorado};
+      \node[font=\tiny\sffamily, below=1pt of a3] {\textit{Multivalued}};
+
+      \node[draw=black!80, fill=purple!10, dashed, ellipse, thick, minimum width=2.1cm, minimum height=0.58cm, font=\tiny\sffamily] (a4) at (10.6, -0.65) {derivado};
+      \node[font=\tiny\sffamily, below=1pt of a4] {\textit{Derived Attribute}};
+    }
+  \end{center}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \scriptsize
+      \alert{1. Ativando a Biblioteca no Draw.io:}\par
+      $\bullet$ Em \texttt{app.diagrams.net}, clique em \textit{+ Mais Formas} e habilite \textbf{Entity Relation}.\\
+      $\bullet$ Arraste diretamente as formas geométricas acima para a página em grade (\textit{Grid}).
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \scriptsize
+      \alert{2. Participação Total e Exportação:}\par
+      $\bullet$ \textbf{Linha Dupla:} Selecione a linha entre a entidade e o losango e mude o estilo do traço para \textbf{Double Line}.\\
+      $\bullet$ \textbf{Exportação Nitidez Máxima:} Use \textit{Arquivo $\to$ Exportar como $\to$ PDF (Cortar)} ou \textit{PNG (300 DPI)}.
+    \end{column}
+  \end{columns}
+\end{frame}

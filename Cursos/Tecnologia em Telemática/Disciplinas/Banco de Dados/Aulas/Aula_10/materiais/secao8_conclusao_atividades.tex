@@ -1,0 +1,39 @@
+\changecolours{ScoutGreen}
+\section[Conclusão e Exercícios]{Checklist de Validação e Exercícios de Fixação}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Checklist de Validação do Mapeamento (Passos 1 a 4)},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Auditoria Antes de Avançar para a Aula 11}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item[\textcolor{ScoutGreen}{$\boxtimes$}] Todos os atributos compostos foram substituídos pelos seus subatributos atômicos folhas (1FN)?
+    \item[\textcolor{ScoutGreen}{$\boxtimes$}] Os atributos derivados foram removidos das relações base e registrados no Dicionário Lógico?
+    \item[\textcolor{ScoutGreen}{$\boxtimes$}] Toda entidade fraca possui PK composta pela FK da entidade forte + o seu discriminador?
+    \item[\textcolor{ScoutGreen}{$\boxtimes$}] Nos relacionamentos $1:1$, a FK foi colocada no lado de Participação Total $(1, 1)$ e marcada como $AK$?
+    \item[\textcolor{ScoutGreen}{$\boxtimes$}] Nos relacionamentos $1:N$, a FK do lado $1$ foi posicionada dentro da relação do lado $N$?
+  \end{itemize}
+}{%
+  \alert{Ponte Pedagógica: O Que Vem na Aula 11?}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{E os relacionamentos $N:M$ e atributos multivalorados?} Eles \textbf{não podem} ser mapeados apenas adicionando uma coluna de FK em uma tabela existente!
+    \item \textbf{Aula 11 (03/11/2026) -- Mapeamento Lógico Relacional (Parte 2):}\\
+      -- \textbf{Passo 5:} Relacionamentos $N:M$ (Tabelas Associativas com PK Composta).\\
+      -- \textbf{Passo 6:} Atributos Multivalorados (Relação Independente).\\
+      -- \textbf{Passo 7:} Relacionamentos Ternários e Herança EER!
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Exercícios Práticos de Fixação -- Aula 10}
+  \vspace{-0.18cm}
+  \scriptsize
+  \itemseps[topsepi=0.5mm,itemsepi=0.8mm,labelsep=2mm,leftmargini=4mm]
+  \begin{enumerate}
+    \item \textbf{Passo 1 (Compostos e Derivados):} A entidade forte \texttt{CLIENTE} possui \underline{\texttt{id\_cliente}}, \texttt{cpf} (único), \texttt{nome\_completo} (composto por \texttt{nome} e \texttt{sobrenome}), \texttt{dt\_cadastro} e \texttt{tempo\_fidelidade} (derivado). Escreva o esquema relacional resultante indicando PK e AK.
+    \item \textbf{Passo 2 (Entidade Fraca):} A entidade forte \texttt{INTERNACAO} (\underline{\texttt{num\_int}}, \texttt{dt\_entrada}) identifica a entidade fraca \texttt{EVOLUCAO\_DIARIA} (discriminador \dashuline{\texttt{seq\_dia}}, \texttt{parecer}) pelo relacionamento identificador \texttt{REGISTRA}. Construa os esquemas relacionais e desenhe o arco de FK.
+    \item \textbf{Passo 3 (Relacionamento $1:1$):} Considere \texttt{TECNICO} $(0, 1)$ --- $\langle\text{UTILIZA}\rangle$ (com atributo \texttt{km\_atual}) --- $(1, 1)$ \texttt{VIATURA}. Explique em qual relação a FK deve ser posicionada para evitar valores \texttt{NULL} e escreva os esquemas resultantes.
+    \item \textbf{Passo 4 ($1:N$ Regular e Recursivo):} Um \texttt{POP\_REGIONAL} (\underline{\texttt{id\_pop}}, \texttt{cidade}) concentra vários \texttt{ROTEADORES} (\underline{\texttt{id\_router}}, \texttt{ip}, \texttt{modelo}) em $1:N$. Além disso, \texttt{ROTEADOR} possui auto-relacionamento $1:N$ \texttt{UPLINK} (1 \textit{gateway} $\to N$ \textit{downstream}). Escreva os esquemas relacionais.
+    \item \textbf{Aplicação ao Projeto AVP1:} Aplique os Passos 1, 2, 3 e 4 sobre o DER que você desenhou na Aula 08.
+  \end{enumerate}
+\end{frame}

@@ -1,0 +1,78 @@
+\changecolours{ScoutGreen}
+\section[Passo 1: Entidades Fortes]{Passo 1: Mapeamento de Entidades Fortes e Seus Atributos}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Passo 1: Regras para Entidades Fortes e Atributos},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Como Mapear a Entidade Regular (Forte)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Criação da Relação Base:} Para cada entidade regular (forte) $E$ do DER, cria-se um esquema de relação $R$ contendo todos os seus atributos simples.
+    \item \textbf{Eleição da Chave Primária ($PK$):} Se a entidade possuir mais de um atributo identificador (chaves candidatas no DER, ex: \texttt{id\_paciente} e \texttt{cpf}), escolhe-se um como \textbf{Chave Primária (\underline{PK})} e documentam-se os demais como \textbf{Chaves Alternativas ($AK$ / Únicas)}.
+  \end{itemize}
+}{%
+  \alert{Tratamento de Atributos Especiais no Passo 1}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Atributos Compostos (Achatamento / \textit{Flattening}):} Para respeitar a atomicidade da \textbf{1FN}, o nome do atributo tronco (ex: \texttt{endereco}) \textbf{não entra na relação}; incluímos apenas seus componentes atômicos folhas (\texttt{end\_rua}, \texttt{end\_num}, \texttt{end\_cep}).
+    \item \textbf{Atributos Derivados (Omissão Física):} Atributos tracejados (ex: \texttt{idade}) \textbf{não viram colunas} na relação base para evitar redundância e anomalias de atualização.
+    \item \textbf{Atributos Multivalorados:} \textbf{Ignorados no Passo 1} (serão tratados exclusivamente no Passo 6, na Aula 11!).
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Transformação Visual do Passo 1: Entidade Forte}
+  \vspace{-0.2cm}
+  \begin{center}
+    \tikz[scale=0.66, transform shape]{
+      % Lado Esquerdo: DER Conceitual
+      \node[font=\scriptsize\bfseries\sffamily, ScoutGreen] at (-4.9, 2.05) {ANTES: Modelo Conceitual (DER)};
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.1cm, minimum height=0.65cm, font=\bfseries\sffamily\scriptsize] (pac) at (-5.0, 0.35) {PACIENTE};
+
+      \node[draw=ScoutNavy, fill=ScoutNavy!12, ellipse, font=\tiny\sffamily\bfseries, inner sep=1.4pt] (pk) at (-7.4, 1.35) {\underline{id\_prontuario}};
+      \node[draw=black!80, fill=white, ellipse, font=\tiny\sffamily, inner sep=1.4pt] (cpf) at (-7.5, 0.35) {cpf};
+      \node[draw=black!80, fill=white, ellipse, font=\tiny\sffamily, inner sep=1.4pt] (dt) at (-7.3, -0.65) {data\_nasc};
+      \node[draw=purple!80!black, fill=purple!10, dashed, ellipse, font=\tiny\sffamily, inner sep=1.4pt] (id) at (-5.0, -0.85) {idade};
+
+      \node[draw=black!80, fill=amber!20, ellipse, font=\tiny\sffamily\bfseries, inner sep=1.4pt] (end) at (-2.8, 0.65) {endereco};
+      \node[draw=black!80, fill=white, ellipse, font=\tiny\sffamily, inner sep=1.2pt] (rua) at (-1.4, 1.45) {rua};
+      \node[draw=black!80, fill=white, ellipse, font=\tiny\sffamily, inner sep=1.2pt] (num) at (-1.2, 0.65) {numero};
+      \node[draw=black!80, fill=white, ellipse, font=\tiny\sffamily, inner sep=1.2pt] (cep) at (-1.4, -0.15) {cep};
+
+      \draw[semithick] (pac) -- (pk);
+      \draw[semithick] (pac) -- (cpf);
+      \draw[semithick] (pac) -- (dt);
+      \draw[semithick, dashed, purple!80!black] (pac) -- (id);
+      \draw[semithick] (pac) -- (end);
+      \draw[semithick] (end) -- (rua);
+      \draw[semithick] (end) -- (num);
+      \draw[semithick] (end) -- (cep);
+
+      % Seta de Transformacao
+      \draw[-{Latex[length=3mm]}, ultra thick, ScoutNavy] (-0.3, 0.45) -- node[above, font=\tiny\bfseries\sffamily, ScoutNavy] {Passo 1} (0.9, 0.45);
+
+      % Lado Direito: Esquema Relacional
+      \node[font=\scriptsize\bfseries\sffamily, ScoutNavy] at (5.3, 2.05) {DEPOIS: Esquema de Relação (1FN)};
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, thick, minimum width=6.8cm, minimum height=0.70cm, font=\sffamily\scriptsize] (relpac) at (5.3, 0.95) {
+        \textbf{PACIENTE}(\underline{id\_prontuario}, cpf, data\_nasc, \textbf{\color{ScoutGreen}end\_rua}, \textbf{\color{ScoutGreen}end\_num}, \textbf{\color{ScoutGreen}end\_cep})
+      };
+
+      \node[draw=amber!80!black, fill=amber!12, rounded corners=3pt, text width=6.8cm, inner sep=4pt, font=\tiny\sffamily] at (5.3, -0.35) {
+        $\bullet$ \textbf{O que aconteceu com \texttt{endereco}?} Foi \textbf{achatado} nos 3 atributos atômicos (\texttt{end\_rua}, \texttt{end\_num}, \texttt{end\_cep}).\\
+        $\bullet$ \textbf{O que aconteceu com \texttt{idade}?} Foi \textbf{omitido} da relação base (calculado a partir de \texttt{data\_nasc}).\\
+        $\bullet$ \textbf{Chaves:} \underline{\texttt{id\_prontuario}} é a \textbf{PK} e \texttt{cpf} é Chave Alternativa (\textbf{AK}).
+      };
+    }
+  \end{center}
+  \vspace{-0.15cm}
+  \renewcommand{\arraystretch}{1.28}
+  \resizebox{\textwidth}{!}{%
+    \begin{tabular}{@{}llllll@{}}
+      \toprule
+      \textbf{\underline{id\_prontuario} (PK)} & \textbf{cpf (AK)} & \textbf{data\_nasc} & \textbf{\color{ScoutGreen}end\_rua (Atômico)} & \textbf{\color{ScoutGreen}end\_numero (Atômico)} & \textbf{\color{ScoutGreen}end\_cep (Atômico)} \\
+      \midrule
+      \texttt{501} & \texttt{'123.456.789-00'} & \texttt{'1990-04-15'} & \texttt{'Av. Chermont Alves'} & \texttt{'410'} & \texttt{'63660-000'} \\
+      \texttt{502} & \texttt{'987.654.321-11'} & \texttt{'1985-11-22'} & \texttt{'Rua Abigail Cidrão'} & \texttt{'85'} & \texttt{'63660-000'} \\
+      \bottomrule
+    \end{tabular}%
+  }
+\end{frame}

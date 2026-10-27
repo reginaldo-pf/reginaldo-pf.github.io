@@ -1,0 +1,44 @@
+\changecolours{ScoutGreen}
+\section[Integridade Referencial]{Chave Estrangeira (FK) e Integridade Referencial}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{4. Restrição de Integridade Referencial e Chave Estrangeira (FK)}
+  \vspace{-0.1cm}
+  \begin{center}
+    \tikz[scale=0.72, transform shape]{
+      % Relacao Referenciada (Destino)
+      \node[font=\bfseries\sffamily\scriptsize, ScoutGreen] at (-4.2, 1.15) {Relação Referenciada ($R_2$ -- Pai):};
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=5.2cm, minimum height=0.65cm, font=\sffamily\scriptsize] (r2) at (-4.2, 0.35) {
+        \textbf{DEPARTAMENTO\_CLINICO}(\underline{cod\_depto}, nome\_depto, bloco)
+      };
+
+      % Relacao Referenciadora (Origem)
+      \node[font=\bfseries\sffamily\scriptsize, ScoutNavy] at (3.6, 1.15) {Relação Referenciadora ($R_1$ -- Filha):};
+      \node[draw=ScoutNavy, fill=ScoutNavy!12, thick, minimum width=6.6cm, minimum height=0.65cm, font=\sffamily\scriptsize] (r1) at (3.6, 0.35) {
+        \textbf{MEDICO}(\underline{matricula}, cpf, nome, crm, \textbf{\color{ScoutNavy}cod\_depto\_fk})
+      };
+
+      % Arco Direcionado da FK para a PK
+      \draw[-{Latex[length=2.8mm]}, very thick, ScoutNavy] (5.9, 0.0) -- (5.9, -0.65) -- (-4.7, -0.65) -- (-4.7, 0.0);
+      \node[font=\tiny\bfseries\sffamily, ScoutNavy] at (0.6, -0.95) {Arco de Integridade Referencial: $\text{MEDICO}[\text{cod\_depto\_fk}] \longrightarrow \text{DEPARTAMENTO\_CLINICO}[\underline{\text{cod\_depto}}]$};
+    }
+  \end{center}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.49\textwidth}
+      \footnotesize
+      \alert{Regra Matemática da FK (Codd):}\par
+      Uma tupla $t_1 \in r(R_1)$ satisfaz a integridade referencial se, e somente se:\par
+      \vspace{0.1cm}
+      \textbf{(a)} $\exists t_2 \in r(R_2)$ tal que $t_1[FK] = t_2[PK]$, \textbf{OU}\\
+      \textbf{(b)} $t_1[FK] = \text{NULL}$ (quando a participação for parcial/opcional e a FK não compuser a PK de $R_1$).
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \footnotesize
+      \alert{Políticas de Manutenção na Exclusão de $R_2$:}\par
+      $\bullet$ \textbf{Restrição (\textit{Restrict}):} Proíbe excluir o departamento se houver médicos vinculados a ele.\\
+      $\bullet$ \textbf{Anulação (\textit{Set Null}):} Exclui o departamento e define a FK dos médicos como \texttt{NULL}.\\
+      $\bullet$ \textbf{Cascata (\textit{Cascade}):} Propaga a exclusão para as tuplas dependentes (usado em entidades fracas).
+    \end{column}
+  \end{columns}
+\end{frame}

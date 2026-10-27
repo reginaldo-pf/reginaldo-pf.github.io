@@ -1,0 +1,86 @@
+\changecolours{ScoutGreen}
+\section[Anatomia da Relação]{Domínios, Atributos, Tuplas, Grau e Cardinalidade}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Dicionário de Equivalência Terminológica e Anatomia da Relação}
+  \vspace{-0.1cm}
+  \begin{columns}[t]
+    \begin{column}{0.46\textwidth}
+      \alert{Três Vocabulários Equivalentes}\par
+      \vspace{0.1cm}
+      \scriptsize
+      \begin{tabular}{lll}
+        \toprule
+        \textbf{Formal (Codd)} & \textbf{Tabular / Lógico} & \textbf{Arquivos} \\
+        \midrule
+        Relação ($R$) & Tabela & Arquivo \\
+        Tupla ($t$) & Linha & Registro \\
+        Atributo ($A_i$) & Coluna & Campo \\
+        Domínio ($D_i$) & Tipo / Formato & Máscara \\
+        Grau ($n$) & Nº de Colunas & Nº Campos \\
+        Cardinalidade ($m$) & Nº de Linhas & Nº Registros \\
+        \bottomrule
+      \end{tabular}
+      \vspace{0.15cm}\par
+      $\bullet$ \textbf{Grau (Aridade):} Propriedade \textbf{estática} do esquema $R$.\\
+      $\bullet$ \textbf{Cardinalidade:} Propriedade \textbf{dinâmica} do estado $r(R)$ (varia conforme novas tuplas entram ou saem).
+    \end{column}
+    \begin{column}{0.51\textwidth}
+      \alert{Visualização Formal: Relação \texttt{MEDICO}}\par
+      \vspace{0.1cm}
+      \begin{center}
+        \tikz[scale=0.68, transform shape]{
+          \node[font=\bfseries\sffamily\scriptsize, ScoutNavy] at (2.7, 2.1) {Esquema $R$: \texttt{MEDICO}(\underline{matricula}, nome, crm, cod\_depto)};
+
+          % Cabecalho (Atributos)
+          \draw[fill=ScoutGreen!20, draw=ScoutGreen, thick] (0, 1.1) rectangle (5.4, 1.7);
+          \node[font=\bfseries\sffamily\tiny] at (0.65, 1.4) {\underline{matricula}};
+          \node[font=\bfseries\sffamily\tiny] at (2.05, 1.4) {nome};
+          \node[font=\bfseries\sffamily\tiny] at (3.45, 1.4) {crm};
+          \node[font=\bfseries\sffamily\tiny] at (4.75, 1.4) {cod\_depto};
+
+          % Tuplas
+          \draw[fill=white, draw=black!50] (0, 0.5) rectangle (5.4, 1.1);
+          \node[font=\sffamily\tiny] at (0.65, 0.8) {1001};
+          \node[font=\sffamily\tiny] at (2.05, 0.8) {Dra. Ana};
+          \node[font=\sffamily\tiny] at (3.45, 0.8) {CE-1234};
+          \node[font=\sffamily\tiny] at (4.75, 0.8) {10};
+
+          \draw[fill=black!3, draw=black!50] (0, -0.1) rectangle (5.4, 0.5);
+          \node[font=\sffamily\tiny] at (0.65, 0.2) {1002};
+          \node[font=\sffamily\tiny] at (2.05, 0.2) {Dr. Bruno};
+          \node[font=\sffamily\tiny] at (3.45, 0.2) {CE-5678};
+          \node[font=\sffamily\tiny] at (4.75, 0.2) {10};
+
+          \draw[fill=white, draw=black!50] (0, -0.7) rectangle (5.4, -0.1);
+          \node[font=\sffamily\tiny] at (0.65, -0.4) {1003};
+          \node[font=\sffamily\tiny] at (2.05, -0.4) {Dra. Carla};
+          \node[font=\sffamily\tiny] at (3.45, -0.4) {CE-9012};
+          \node[font=\sffamily\tiny\itshape, gray] at (4.75, -0.4) {NULO};
+
+          % Cotas Grau e Cardinalidade
+          \draw[<->, thick, ScoutNavy] (0, -1.1) -- node[below, font=\tiny\bfseries] {Grau (Aridade) $n = 4$ atributos} (5.4, -1.1);
+          \draw[<->, thick, ScoutGreen] (5.7, -0.7) -- node[right, font=\tiny\bfseries, align=left] {Cardinalidade\\$m = 3$ tuplas} (5.7, 1.1);
+        }
+      \end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Definição Matemática de Esquema ($R$) e Instância ($r(R)$)},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Domínio Atômico e Esquema Intensional}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Domínio ($D_i$):} Conjunto de valores \textbf{atômicos} (indivisíveis) permitidos para um atributo, associado a uma definição semântica e formato.
+    \item \textbf{Esquema de Relação ($R$):} Denotado por $R(A_1, A_2, \dots, A_n)$, define a estrutura intensional (cabeçalho invariante) composta por $n$ atributos onde $\text{dom}(A_i) = D_i$.
+  \end{itemize}
+}{%
+  \alert{Estado/Instância como Subconjunto Cartesiano}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Instância Extensional $r(R)$:} É um conjunto finito de $m$ tuplas $\{t_1, t_2, \dots, t_m\}$ que reflete o estado dos dados em dado instante:
+      $$r(R) \subseteq \text{dom}(A_1) \times \text{dom}(A_2) \times \dots \times \text{dom}(A_n)$$
+    \item \textbf{Cada Tupla $t$:} É uma lista ordenada de $n$ valores $t = \langle v_1, v_2, \dots, v_n \rangle$, onde cada $v_i \in \text{dom}(A_i)$ ou é um valor nulo especial (\textit{NULL}).
+  \end{itemize}
+}

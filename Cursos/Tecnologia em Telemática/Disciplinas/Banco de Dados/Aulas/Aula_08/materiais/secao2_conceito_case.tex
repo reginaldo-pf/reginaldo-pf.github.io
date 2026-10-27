@@ -1,0 +1,62 @@
+\changecolours{ScoutGreen}
+\section[Ferramentas CASE]{O Conceito de Ferramentas CASE em Banco de Dados}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Engenharia de Software Assistida por Computador (CASE)},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{O Que é uma Ferramenta CASE?}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Sigla Clássica:} \textit{Computer-Aided Software Engineering}.
+    \item \textbf{Além do Desenho:} Enquanto um editor comum enxerga apenas formas soltas, uma ferramenta CASE mantém um \textbf{Metamodelo Semântico} subjacente.
+    \item \textbf{Funções Essenciais:} Padronização visual (Chen e Heuser), repositório de metadados (Dicionário de Dados) e apoio à transição Conceitual $\to$ Lógico.
+  \end{itemize}
+}{%
+  \alert{Ferramentas Adotadas no Laboratório}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{1. brModelo (Web / Desktop 3.x):} Criado por Carlos H. Candido seguindo o livro de \textbf{Carlos Alberto Heuser} (UFRGS), com motor CASE nativo para esquemas conceituais e lógicos.
+    \item \textbf{2. Draw.io (diagrams.net):} Ferramenta vetorial aberta com a biblioteca \textit{Entity Relation}, ideal para desenhar a \textbf{notação original de Peter Chen (1976)} e \textbf{Elmasri \& Navathe}.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Fluxo de Modelagem de Dados com Ferramentas CASE}
+  \vspace{0.15cm}
+  \begin{center}
+    \tikz[scale=0.68, transform shape]{
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, rounded corners=4pt, thick, minimum width=3.1cm, minimum height=1.4cm, align=center, font=\sffamily\scriptsize] (req) at (0,0) {
+        \textbf{1. Minimundo (Aula 07)}\\
+        Narrativa Descritiva\\e Regras de Negócio
+      };
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, rounded corners=4pt, very thick, minimum width=3.4cm, minimum height=1.4cm, align=center, font=\sffamily\scriptsize] (case) at (4.5,0) {
+        \textbf{2. Conceitual (Aula 08)}\\
+        DER / EER no \textbf{brModelo}\\ou \textbf{Draw.io} + Dicionário
+      };
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, rounded corners=4pt, thick, minimum width=3.2cm, minimum height=1.4cm, align=center, font=\sffamily\scriptsize] (log) at (9.0,0) {
+        \textbf{3. Lógico (Aulas 09-11)}\\
+        Esquema Relacional\\Formal e Chaves (PK/FK)
+      };
+      \node[draw=amber!90!black, fill=amber!15, rounded corners=4pt, thick, minimum width=3.0cm, minimum height=1.4cm, align=center, font=\sffamily\scriptsize] (norm) at (13.3,0) {
+        \textbf{4. Refinamento (Aulas 16-18)}\\
+        Dependências Funcionais\\e Normalização (3FN)
+      };
+
+      \draw[-{Latex[length=2.3mm]}, very thick, ScoutNavy] (req) -- (case);
+      \draw[-{Latex[length=2.3mm]}, very thick, ScoutGreen] (case) -- (log);
+      \draw[-{Latex[length=2.3mm]}, very thick, ScoutNavy] (log) -- (norm);
+    }
+  \end{center}
+  \vspace{0.2cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \footnotesize
+      \alert{Por Que Modelar Antes de Implementar?}\par
+      A modelagem conceitual isola as regras de negócio da complexidade técnica, evitando perda de restrições de participação e ambiguidades estruturais.
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \footnotesize
+      \alert{Qual Ferramenta Escolher na AVP1?}\par
+      O aluno pode entregar o DER da AVP1 tanto no \textbf{Draw.io} (notação Peter Chen) quanto no \textbf{brModelo} (notação Heuser), mantendo consistência visual!
+    \end{column}
+  \end{columns}
+\end{frame}
