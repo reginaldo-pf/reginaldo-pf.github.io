@@ -1,0 +1,117 @@
+% !TeX root = main.tex
+\changecolours{ScoutGreen}
+\section[Fundamentos: RDBMS, Documentos e BSON]{Fundamentos Teóricos: Do RDBMS ao Modelo de Documentos e BSON}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Do RDBMS ao Modelo Orientado a Documentos},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Por que Normalizamos no SQL (1NF a 5NF)?}\par
+  \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+  \scriptsize
+  \begin{itemize}
+    \item Em bancos relacionais, se guardarmos dados do aluno e matrículas na mesma tabela, surgem \textbf{redundâncias} e \textbf{anomalias de atualização} (\textit{Update Anomalies}): alterar o endereço do aluno exige atualizar várias linhas.
+    \item As \textbf{Formas Normais (1NF--5NF)} resolvem isso fragmentando os dados em dezenas de tabelas ligadas por chaves estrangeiras.
+    \item \textbf{O Custo:} Para montar uma única tela da aplicação, o banco precisa executar múltiplos \texttt{JOINs} pesados em disco!
+  \end{itemize}
+}{%
+  \alert{A Filosofia do Modelo de Documentos}\par
+  \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+  \scriptsize
+  \begin{itemize}
+    \item No MongoDB, a unidade básica não é uma linha plana, mas um \textbf{Documento BSON} rico que suporta até \textbf{100 níveis de aninhamento} e \textbf{16 MB}.
+    \item \textbf{Modelagem Guiada pela Aplicação:} Em vez de fragmentar uma entidade em 5 tabelas, agrupamos os dados que pertencem ao mesmo objeto em subdocumentos e arrays.
+    \item \textbf{Ganho Direto:} Leitura de objetos complexos em \textbf{1 única operação de I/O} e atomicidade nativa no documento!
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Terminologia SQL vs. MongoDB e Ecossistema de Ferramentas}
+  \vspace{0.05cm}
+  \makebox[\textwidth][c]{%
+    \scriptsize
+    \renewcommand{\arraystretch}{1.22}
+    \begin{tabular}{p{2.2cm} p{3.4cm} p{6.4cm}}
+      \toprule
+      \textbf{Conceito SQL} & \textbf{MongoDB} & \textbf{Definição Técnica} \\
+      \midrule
+      \texttt{Database} & \texttt{Database} & Agrupador lógico (\texttt{mongodb\_books}, \texttt{ecommerce\_shopgrids}). \\
+      \texttt{Table} & \texttt{Collection} & Conjunto de documentos com esquema dinâmico/flexível. \\
+      \texttt{Row / Tuple} & \texttt{Document} (BSON) & Objeto serializado (até \textbf{16 MB} e \textbf{100 níveis}). \\
+      \texttt{Column} & \texttt{Field} (Campo) & Par \texttt{chave: valor} (escalares, objetos e arrays). \\
+      \texttt{Primary Key} & Campo \texttt{\_id} & Chave obrigatória e única (\texttt{ObjectId} de 12 bytes). \\
+      \texttt{JOIN} & \textbf{Embedding} / \texttt{\$lookup} & Aninhamento direto ou agregação entre coleções. \\
+      \bottomrule
+    \end{tabular}%
+  }
+  \vspace{0.08cm}
+  \centering{\scriptsize \textbf{Ferramentas Oficiais:} \textbf{1. MongoDB Compass} (GUI visual) $\bullet$ \textbf{2. \texttt{mongosh}} (Shell JS/Node.js) $\bullet$ \textbf{3. Drivers} (\texttt{PyMongo}).}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={JSON vs. BSON (\textit{Binary JSON}): Os 3 Pilares de Projeto},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Por que o MongoDB Usa BSON no Motor?}\par
+  \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+  \scriptsize
+  \begin{itemize}
+    \item O JSON puro é texto: exige \textit{parsing} lento caractere por caractere e só possui um tipo numérico (\texttt{number} IEEE 754 float, onde $0.1 + 0.2 = 0.30000000000000004$).
+    \item O formato \textbf{BSON} foi projetado sobre \textbf{3 características fundamentais}:
+      \begin{enumerate}\scriptsize
+        \item \textbf{\textit{Lightweight} (Leve):} Baixa sobrecarga espacial para tráfego de rede.
+        \item \textbf{\textit{Traversable} (Percorrível):} Cabeçalhos com tamanho em bytes permitem saltar campos em $\mathcal{O}(1)$!
+        \item \textbf{\textit{Efficient} (Eficiente):} Codificação e decodificação rápidas em tipos nativos de máquina (C/C++).
+      \end{enumerate}
+  \end{itemize}
+}{%
+  \alert{Principais Tipos de Dados BSON}\par
+  \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+  \scriptsize
+  \begin{itemize}
+    \item \textbf{\texttt{ObjectId}:} Identificador binário de 12 bytes rápido de gerar e ordenado no tempo.
+    \item \textbf{\texttt{String}:} Cadeia de caracteres UTF-8.
+    \item \textbf{\texttt{Object} e \texttt{Array}:} Subdocumentos embutidos e listas de valores.
+    \item \textbf{\texttt{Int32} e \texttt{Int64 (Long)}:} Inteiros exatos de 32 e 64 bits.
+    \item \textbf{\texttt{Double}:} Ponto flutuante de 64 bits.
+    \item \textbf{\texttt{Decimal128}:} Decimal de 128 bits com precisão exata para valores monetários e fiscais!
+    \item \textbf{\texttt{Date} (\texttt{ISODate}):} Inteiro de 64 bits (ms desde a Unix Epoch).
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Anatomia do \texttt{ObjectId} (12 Bytes) e Sintaxe no Compass (EJSON)}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{1. Estrutura dos 12 Bytes do \texttt{ObjectId}}\par
+      \vspace{0.08cm}
+      \begin{center}
+        \tikz[scale=0.68, transform shape]{
+          \node[draw=ScoutNavy, fill=ScoutNavy!15, thick, minimum width=2.1cm, minimum height=0.95cm, align=center, font=\scriptsize\bfseries] (b1) at (0,0) {4 Bytes\\Timestamp\\{\tiny\ttfamily 671ec880}};
+          \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.4cm, minimum height=0.95cm, align=center, font=\scriptsize\bfseries, right=0.06cm of b1] (b2) {5 Bytes\\Aleatório (Host)\\{\tiny\ttfamily a1b2c3d4e5}};
+          \node[draw=red!80!black, fill=red!10, thick, minimum width=2.0cm, minimum height=0.95cm, align=center, font=\scriptsize\bfseries, right=0.06cm of b2] (b3) {3 Bytes\\Contador\\{\tiny\ttfamily f60001}};
+        }
+      \end{center}
+      \vspace{0.05cm}
+      \scriptsize
+      \begin{itemize}
+        \item Dispensa \texttt{AUTO\_INCREMENT} centralizado: pode ser gerado pelo próprio cliente Python!
+        \item Como os 4 primeiros bytes são o \textit{timestamp} Unix, ordenar por \texttt{\_id} já ordena por ordem de criação!
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{2. Como Inserir no Compass (\textit{Extended JSON})}\par
+      \begin{lstlisting}[language=mongosh]
+// Na janela Insert Document do Compass, todas
+// as chaves exigem aspas duplas ("..."):
+{
+  "_id": { "$oid": "671ec880a1b2c3d4e5f60001" },
+  "sku": "NOTE-ACER-15",
+  "nome": "Notebook Gamer Nitro V15",
+  "preco": { "$numberDecimal": "4599.90" },
+  "estoque": 15,
+  "ativo": true
+}
+      \end{lstlisting}
+      \scriptsize
+      $\bullet$ \texttt{"\$oid"} $\to$ \texttt{ObjectId}; \texttt{"\$numberDecimal"} $\to$ \texttt{Decimal128}.
+    \end{column}
+  \end{columns}
+\end{frame}

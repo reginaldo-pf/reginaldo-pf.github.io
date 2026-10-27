@@ -1,0 +1,106 @@
+% !TeX root = main.tex
+\changecolours{ScoutNavy}
+\section[Modelagem: Embedding vs. Referencing]{Teoria de Schema Design: \textit{Embedding}, \textit{Referencing} e Padrões}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Princípios de Schema Design no MongoDB},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Três Estratégias Fundamentais}\par
+  \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+  \scriptsize
+  \begin{enumerate}
+    \item \textbf{\textit{Embedded Data} (Dados Incorporados):} Aninhar objetos relacionados dentro do mesmo documento (ex.: um livro com o subdocumento \texttt{author}, ou uma cliente com a lista de \texttt{enderecos}).
+    \item \textbf{\textit{References} (Referências):} Guardar o \texttt{ObjectId} de um documento em outra coleção (ex.: coleção \texttt{courses} apontando para \texttt{professor: ObjectId(...)}).
+    \item \textbf{\textit{Denormalization} (Desnormalização):} Copiar campos específicos (como \texttt{authorName}) para evitar \texttt{\$lookup} em leituras críticas.
+  \end{enumerate}
+}{%
+  \alert{A Métrica-Chave: \textit{Read-Write Ratio}}\par
+  \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+  \scriptsize
+  \begin{itemize}
+    \item \textbf{Proporção Leitura vs. Escrita (\textit{Read-Write Ratio}):}
+      \begin{itemize}\scriptsize
+        \item \textbf{Cargas Intensivas em Leitura (\textit{Read-Heavy}):} Catálogos de produtos e vitrines têm muito mais leituras que escritas $\to$ favorecem \textbf{\textit{Embedding}} e \textbf{Desnormalização} (1 única busca traz tudo).
+        \item \textbf{Cargas Intensivas em Escrita (\textit{Write-Heavy}):} Eventos frequentes ou entidades compartilhadas que mudam o tempo todo $\to$ favorecem \textbf{\textit{Referencing}}.
+      \end{itemize}
+    \item \textbf{Regra de Ouro:} \textit{``Dados lidos juntos pela aplicação devem ser armazenados juntos!''}
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Visualizando as Duas Estratégias de Modelagem}
+  \vspace{0.15cm}
+  \makebox[\textwidth][c]{%
+    \begin{tikzpicture}
+      % Bloco 1: Embedding (Esquerda)
+      \node[draw=ScoutGreen, fill=ScoutGreen!10, very thick, rounded corners=6pt, minimum width=6.8cm, minimum height=5.0cm] (emb) at (0,0) {};
+      \node[font=\bfseries\sffamily\footnotesize, text=ScoutGreen] at (0, 2.1) {1. Incorporação (\textit{Embedding} / Desnormalizado)};
+      \node[draw=ScoutGreen!80!black, fill=white, thick, rounded corners=4pt, text width=6.1cm, inner sep=6pt, align=left, font=\ttfamily\fontsize{6.2pt}{7.8pt}\selectfont] at (0, -0.25) {%
+        \textbf{\sffamily\color{ScoutGreen}Coleção: clientes (1 Único Documento)}\\[2pt]
+        \{\\
+        \hspace*{2mm}"\_id": \{ "\$oid": "671ec880...0010" \},\\
+        \hspace*{2mm}"nome": "Ana Costa",\\
+        \hspace*{2mm}"cpf": "123.456.789-00",\\
+        \hspace*{2mm}\textbf{"enderecos": [} \textcolor{ScoutGreen}{// Subdocumentos!}\\
+        \hspace*{4mm}\{ "apelido": "Casa", "rua": "Av. Chermont" \},\\
+        \hspace*{4mm}\{ "apelido": "IFCE", "rua": "CE-187, Taua" \}\\
+        \hspace*{2mm}\textbf{]}\\
+        \}%
+      };
+
+      % Bloco 2: Referencing (Direita)
+      \node[draw=ScoutNavy, fill=ScoutNavy!10, very thick, rounded corners=6pt, minimum width=6.8cm, minimum height=5.0cm] (ref) at (7.3,0) {};
+      \node[font=\bfseries\sffamily\footnotesize, text=ScoutNavy] at (7.3, 2.1) {2. Referenciamento (\textit{Referencing} / Normalizado)};
+
+      \node[draw=ScoutNavy!80!black, fill=white, thick, rounded corners=4pt, text width=6.1cm, inner sep=5.5pt, align=left, font=\ttfamily\fontsize{6.2pt}{7.6pt}\selectfont] (docA) at (7.3, 0.85) {%
+        \textbf{\sffamily\color{ScoutNavy}Coleção: avaliacoes}\\[2pt]
+        \{\\
+        \hspace*{2mm}"\_id": \{ "\$oid": "671ec990...0999" \},\\
+        \hspace*{2mm}\textbf{\color{red!80!black}"produto\_id": \{ "\$oid": "671ec880...0001" \}},\\
+        \hspace*{2mm}"autor": "Lucas", "nota": 5\\
+        \}%
+      };
+
+      \node[draw=ScoutNavy!80!black, fill=white, thick, rounded corners=4pt, text width=6.1cm, inner sep=5.5pt, align=left, font=\ttfamily\fontsize{6.2pt}{7.6pt}\selectfont] (docB) at (7.3, -1.55) {%
+        \textbf{\sffamily\color{ScoutNavy}Coleção: produtos}\\[2pt]
+        \{\\
+        \hspace*{2mm}\textbf{\color{red!80!black}"\_id": \{ "\$oid": "671ec880...0001" \}},\\
+        \hspace*{2mm}"sku": "NOTE-ACER-15", "preco": 4599.90\\
+        \}%
+      };
+
+      \draw[->, ultra thick, red!80!black] ([xshift=-1.4cm]docA.south) -- node[right=4pt, font=\bfseries\sffamily\scriptsize, text=red!80!black] {Referência por \texttt{ObjectId}} ([xshift=-1.4cm]docB.north);
+    \end{tikzpicture}%
+  }
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{O Anti-Padrão \textit{Unbounded Arrays} e os Padrões de Projeto}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.46\textwidth}
+      \alert{Por que Evitar Arrays Ilimitados?}\par
+      \itemseps[topsepi=0.2mm,itemsepi=0.4mm,labelsep=1.5mm,leftmargini=2.5mm]
+      \scriptsize
+      \begin{itemize}
+        \item Embutir listas sem fim (ex.: 50.000 avaliações no produto) estoura o limite de \textbf{16 MB} (\texttt{BSONObjectTooLarge}) e degrada o \textit{WiredTiger}.
+        \item \textbf{Cardinalidade:} \textbf{1:1 / 1:Few ($<50$)} $\to$ \textit{Embedding}; \textbf{1:Many} $\to$ \textit{Referencing} / \textit{Subset}; \textbf{1:Milhões} $\to$ Ref. no filho.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.50\textwidth}
+      \alert{Padrões de Modelagem (\textit{Design Patterns})}\par
+      \vspace{0.03cm}
+      \scriptsize
+      \renewcommand{\arraystretch}{1.08}
+      \begin{tabular}{p{1.65cm} p{2.65cm}}
+        \toprule
+        \textbf{Padrão} & \textbf{Aplicação Prática} \\
+        \midrule
+        \textbf{Polymorphic} & Categorias distintas na mesma coleção. \\
+        \textbf{Subset} & Últimas avaliações no produto. \\
+        \textbf{Extended Ref} & Campos do cliente/item no pedido. \\
+        \textbf{Computed} & Média e total pré-calculados. \\
+        \bottomrule
+      \end{tabular}
+    \end{column}
+  \end{columns}
+\end{frame}

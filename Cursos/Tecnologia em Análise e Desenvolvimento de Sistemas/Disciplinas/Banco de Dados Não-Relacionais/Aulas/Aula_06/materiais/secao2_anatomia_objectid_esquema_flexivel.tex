@@ -1,0 +1,158 @@
+% !TeX root = main.tex
+\changecolours{ScoutNavy}
+\section[CRUD do Zero: Compass e mongosh]{Aprendendo do Zero: CRUD Passo a Passo no Compass e \texttt{mongosh}}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Passo 1: Criando o Banco e Consultando Coleções}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{1. Pela Interface Gráfica (MongoDB Compass)}\par
+      \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+      \scriptsize
+      \begin{enumerate}
+        \item Conecte em \texttt{mongodb://localhost:27017}.
+        \item No menu esquerdo (\textit{Databases}), clique em \textbf{\texttt{+} (Create database)}.
+        \item Preencha \textbf{Database Name:} \texttt{mongodb\_books} e \textbf{Collection Name:} \texttt{books}.
+        \item \textbf{Consulte a lista de coleções:} Clique sobre \texttt{mongodb\_books} no menu lateral e verifique a coleção \texttt{books} na aba \textbf{Collections}.
+      \end{enumerate}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{2. Pelo Terminal Interativo (\texttt{mongosh})}\par
+      \begin{lstlisting}[language=mongosh]
+// Listar todos os bancos existentes:
+show dbs
+
+// Selecionar/criar o banco mongodb_books:
+use mongodb_books
+
+// Criar explicitamente a colecao books:
+db.createCollection("books")
+
+// Consultar a lista de colecoes do banco:
+show collections
+// Equivalente em JavaScript:
+db.getCollectionNames()
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Passo 2: Inserindo (\textit{Create}) e Consultando (\textit{Read}) o 1.º Documento}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{1. Inserção Manual no MongoDB Compass}\par
+      \scriptsize
+      Em \texttt{books}, clique em \textbf{Add Data $\to$ Insert Document}, cole o JSON e clique em \textbf{Insert}:
+      \begin{lstlisting}[language=mongosh]
+{
+  "isbn": "101",
+  "name": "MongoDB 7.0 Guia Pratico",
+  "price": 30
+}
+      \end{lstlisting}
+      \scriptsize
+      $\bullet$ \textbf{Consultar a lista de documentos:} Na aba \textbf{Documents}, veja que o MongoDB gerou o campo \texttt{\_id} (\texttt{ObjectId}) automaticamente! Alterne entre as visões \textbf{List}, \textbf{JSON} e \textbf{Table}.
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{2. Equivalente no \texttt{mongosh} (\texttt{insertOne} e \texttt{find})}\par
+      \begin{lstlisting}[language=mongosh]
+// Inserir 1 documento:
+db.books.insertOne({
+  isbn: "101",
+  name: "MongoDB 7.0 Guia Pratico",
+  price: 30
+})
+// Retorno:
+// { acknowledged: true,
+//   insertedId: ObjectId("671ec880...") }
+
+// Consultar todos os documentos da colecao:
+db.books.find()
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Passo 3: Subdocumentos Aninhados e Busca com \textit{Dot Notation}}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{1. Inserindo Documento com Objeto \texttt{meta}}\par
+      \scriptsize
+      Em \textbf{Add Data $\to$ Insert Document} no Compass (após inserir, consulte a lista de documentos e expanda \texttt{meta}):
+      \begin{lstlisting}[language=mongosh]
+{
+  "isbn": "201",
+  "name": "Modelagem de Documentos NoSQL",
+  "meta": {
+    "version": "MongoDB 6.0"
+  },
+  "price": 50
+}
+      \end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{2. Filtrando no Compass e no \texttt{mongosh}}\par
+      \scriptsize
+      Na barra \textbf{Filter} do Compass (ou dentro de \texttt{db.books.find(...)}):
+      \begin{lstlisting}[language=mongosh]
+// 1. Busca exata por atributo de topo:
+{ "isbn": "101" }
+
+// 2. Dot Notation em subdocumento:
+{ "meta.version": "MongoDB 6.0" }
+
+// 3. Operador de comparacao ($gt = maior que):
+{ "price": { "$gt": 35 } }
+
+// 4. Expressao Regular case-insensitive:
+{ "name": { "$regex": "mongo", "$options": "i" } }
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Passo 4: Atualizando (\textit{Update}) e Removendo (\textit{Delete}) Documentos}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{1. Atualizando com \texttt{updateOne} e \texttt{\$set}}\par
+      \begin{lstlisting}[language=mongosh]
+// Atualizar o preco do livro de ISBN "101":
+db.books.updateOne(
+  { "isbn": "101" },          // Filtro de busca
+  { "$set": { "price": 45 } } // Operador atomico
+)
+// Retorno:
+// { acknowledged: true,
+//   matchedCount: 1, modifiedCount: 1 }
+      \end{lstlisting}
+      \scriptsize
+      $\bullet$ \textbf{No Compass:} Passe o mouse sobre o documento, clique no lápis (\textbf{Edit Document}), altere \texttt{price} para \texttt{45}, clique em \textbf{Update} e consulte a lista de documentos!
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{2. Removendo com \texttt{deleteOne} e Lote (\texttt{bulkWrite})}\par
+      \begin{lstlisting}[language=mongosh]
+// Remover 1 documento especifico:
+db.books.deleteOne({ "isbn": "201" })
+// Retorno: { acknowledged: true, deletedCount: 1 }
+
+// Operacao em Lote (Batch):
+db.books.bulkWrite([
+  { insertOne: { document: {
+      isbn: "202", name: "MongoDB Guide", price: 40
+  }}},
+  { updateOne: {
+      filter: { isbn: "101" },
+      update: { "$set": { price: 49 } }
+  }}
+])
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}

@@ -1,0 +1,97 @@
+% !TeX program = pdflatex
+\documentclass[aspectratio=169,utf8,t]{beamer}
+
+% Idioma e Codificacao
+\usepackage[brazilian]{babel}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning,calc}
+
+% Carrega o Tema Modelo dos Scouts (Widescreen 16:9, Nunito Sans)
+\usetheme{scouts}
+
+% Definicao de linguagem JavaScript/JSON/MongoSH para o listings
+\lstdefinelanguage{mongosh}{
+  keywords={use, show, db, dbs, collections, insertOne, insertMany, find, findOne, updateOne, updateMany, deleteOne, deleteMany, bulkWrite, createCollection, runCommand, collMod, ObjectId, ISODate, NumberDecimal, Decimal128, true, false, null},
+  sensitive=true,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]",
+  morestring=[b]'
+}
+
+% Configuracao para Codigo-Fonte (MongoSH / Python / JSON)
+\lstset{
+    basicstyle=\fontsize{5.0pt}{6.1pt}\selectfont\ttfamily,
+    keywordstyle=\bfseries\color{ScoutNavy},
+    stringstyle=\color{ScoutGreen},
+    commentstyle=\itshape\color{gray},
+    backgroundcolor=\color{black!3},
+    frame=single,
+    rulecolor=\color{black!15},
+    breaklines=true,
+    breakatwhitespace=true,
+    showstringspaces=false,
+    tabsize=2,
+    aboveskip=2pt,
+    belowskip=1pt,
+    literate={á}{{\'a}}1 {ã}{{\~a}}1 {â}{{\^a}}1 {à}{{\`a}}1
+             {é}{{\'e}}1 {ê}{{\^e}}1 {í}{{\'i}}1 {ó}{{\'o}}1
+             {õ}{{\~o}}1 {ô}{{\^o}}1 {ú}{{\'u}}1 {ç}{{\c{c}}}1
+             {Á}{{\'A}}1 {Ã}{{\~A}}1 {É}{{\'E}}1 {Í}{{\'I}}1
+             {Ó}{{\'O}}1 {Õ}{{\~O}}1 {Ú}{{\'U}}1 {Ç}{{\c{C}}}1
+}
+
+% Metadados Institucionais
+\author{Prof. Me. Reginaldo Fernandes}
+\institute{Instituto Federal do Ceará -- Campus Tauá \\ Tecnologia em Análise e Desenvolvimento de Sistemas}
+\title{Bancos de Dados Não-Relacionais}
+\subtitle{Aula 06: Do CRUD Básico e Python (\texttt{PyMongo}) à Modelagem de Documentos BSON}
+\date{27 de Outubro de 2026}
+
+\begin{document}
+
+% ------------------------------------------------------------------------------
+% Capa da Apresentacao
+% ------------------------------------------------------------------------------
+\changecolours[inverse]{ScoutGreen}
+\frame[plain]{\titlepage}
+
+% ------------------------------------------------------------------------------
+% Sumario Executivo da Aula
+% ------------------------------------------------------------------------------
+\changecolours{ScoutGreen}
+\begin{frame}{Agenda do Encontro}
+  \vspace{0.3cm}
+  \tableofcontents
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% Modulos da Aula
+% ------------------------------------------------------------------------------
+\input{secao1_modelo_documentos_json_bson}
+\input{secao2_anatomia_objectid_esquema_flexivel}
+\input{secao3_embedding_vs_referencing}
+\input{secao4_padroes_avancados_ecommerce}
+\input{secao5_laboratorio_pratico_conclusao}
+
+% ------------------------------------------------------------------------------
+% Encerramento
+% ------------------------------------------------------------------------------
+\changecolours[inverse]{ScoutGreen}
+\begin{frame}[plain]
+  \vspace{2cm}
+  \centering
+  {\Huge \textbf{Dúvidas \& Prática em Laboratório}}\par
+  \vspace{0.8cm}
+  {\large IFCE Campus Tauá -- ADS16 (Modelo Orientado a Documentos)}\par
+  \vspace{0.3cm}
+  {\normalsize Do CRUD Básico ao Python (\texttt{PyMongo}) e Modelagem BSON no MongoDB}
+\end{frame}
+
+\end{document}

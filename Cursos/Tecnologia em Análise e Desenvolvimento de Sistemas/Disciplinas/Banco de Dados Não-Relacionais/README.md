@@ -27,6 +27,7 @@ A disciplina capacita os discentes no ecossistema moderno de persistência polig
 - [Aula 03 - Prática de Banco de Dados: MongoDB e Redis (Sábado Letivo)](Aulas/Aula_03/): Laboratório prático autônomo em casa, terminais CLI (mongosh, redis-cli), interfaces gráficas (MongoDB Atlas/Compass e Redis Insight), integração Python e padrão Cache-Aside.
 - [Aula 04 - Modelo Chave-Valor com Redis](Aulas/Aula_04/): Arquitetura em memória, volatilidade e persistência (RDB e AOF), variações avançadas de SET e GET, estratégias de cache expirável (TTL), estruturas nativas e LangCache para IA.
 - [Aula 05 - Redis na Prática: Estratégias de Cache (TTL), Controle de Sessão e Filas](Aulas/Aula_05/): Aplicação web FastCommerce NoSQL com Cache-Aside, gerenciamento de sessões, carrinhos em hashes e filas assíncronas de checkout (LPUSH/BRPOP) com conexão direta para o MongoDB.
+- [Aula 06 - Modelo de Documentos: JSON/BSON e Decisões de Modelagem no MongoDB (Embedding vs Referencing)](Aulas/Aula_06/): Serialização binária BSON (`ObjectId` de 12 bytes e `Decimal128`), catálogo polimórfico do ShopGrids com `$jsonSchema`, *Embedding vs. Referencing*, *Subset Pattern* e *Snapshot Pattern*.
 
 ### 📝 [Avaliacoes](Avaliacoes/)
 - Repositório de AVP1, AVT1, AVP2, AVT2 e listas de acompanhamento contínuo.

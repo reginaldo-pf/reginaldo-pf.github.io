@@ -1,0 +1,144 @@
+% !TeX root = main.tex
+\changecolours{ScoutGreen}
+\section[CRUD com Python (PyMongo)]{Programando com o Driver Oficial Python (\texttt{PyMongo})}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Conectando o Python ao MongoDB e Inserindo Documentos}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{1. Instalação e Teste de Conexão (\texttt{ping})}\par
+      \begin{lstlisting}[language=Python]
+# No terminal: pip install pymongo
+from pymongo import MongoClient
+from pprint import pprint
+
+# Conectar ao servidor local na porta 27017:
+uri = "mongodb://localhost:27017/"
+client = MongoClient(uri)
+
+# Confirmar conexao com o comando ping:
+client.admin.command("ping")
+print("Conectado ao MongoDB com sucesso!")
+
+# Selecionar banco 'mongodb_books' e colecao 'books'
+books = client.mongodb_books.books
+      \end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{2. Inserindo com \texttt{insert\_one} e \texttt{insert\_many}}\par
+      \begin{lstlisting}[language=Python]
+# Inserir 1 documento (dicionario Python):
+book = {
+    "isbn": "301",
+    "name": "Python and MongoDB",
+    "meta": {"version": "MongoDB 7.0"},
+    "price": 60
+}
+res = books.insert_one(book)
+print("ID gerado:", res.inserted_id)
+
+# Inserir multiplos documentos em lote:
+books.insert_many([
+    {"isbn": "302", "name": "Python and MongoDB",
+     "meta": {"version": "MongoDB 7.0"}, "price": 60},
+    {"isbn": "303", "name": "Advanced MongoDB Techniques",
+     "price": 70}
+])
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Consultando Documentos no Python: \texttt{find}, \textit{Dot Notation}, \texttt{\$gt} e \texttt{\$or}}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{1. Busca Simples, \textit{Dot Notation} e \texttt{\$regex}}\par
+      \begin{lstlisting}[language=Python]
+# 1. Buscar pelo nome do livro:
+for doc in books.find({"name": "Python and MongoDB"}):
+    pprint(doc)
+
+# 2. Buscar dentro do subdocumento 'meta' usando
+# Dot Notation e Expressao Regular:
+query_regex = {
+    "meta.version": {
+        "$regex": r".*?g.*?7\.0$",
+        "$options": "i"
+    }
+}
+for doc in books.find(query_regex):
+    pprint(doc)
+      \end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{2. Comparação (\texttt{\$gt}) e Operadores Lógicos}\par
+      \begin{lstlisting}[language=Python]
+# 3. Livros com preco maior que 50 ($gt):
+for doc in books.find({"price": {"$gt": 50}}):
+    pprint(doc)
+
+# 4. Condicao logica AND (multiplas chaves):
+q_and = {"name": "Advanced MongoDB Techniques",
+         "price": 70}
+pprint(books.find_one(q_and))
+
+# 5. Condicao logica OR ($or):
+q_or = {
+    "$or": [
+        {"name": "Advanced MongoDB Techniques"},
+        {"isbn": "301"}
+    ]
+}
+for doc in books.find(q_or):
+    pprint(doc)
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Atualizando (\texttt{update\_one}) e Removendo (\texttt{delete\_one}) no Python}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{1. Atualizando com \texttt{update\_one} e \texttt{\$set}}\par
+      \begin{lstlisting}[language=Python]
+# Atualizar o preco do livro "Advanced MongoDB
+# Techniques" para 75:
+update_result = books.update_one(
+    {"name": "Advanced MongoDB Techniques"},
+    {"$set": {"price": 75}}
+)
+
+print("Encontrados:", update_result.matched_count)
+print("Modificados:", update_result.modified_count)
+
+# Buscar o documento atualizado para confirmar:
+updated_doc = books.find_one(
+    {"name": "Advanced MongoDB Techniques"}
+)
+pprint(updated_doc)
+      \end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{2. Removendo com \texttt{delete\_one}}\par
+      \begin{lstlisting}[language=Python]
+# Remover o livro de ISBN '303':
+isbn_to_delete = "303"
+delete_result = books.delete_one(
+    {"isbn": isbn_to_delete}
+)
+print("Removidos:", delete_result.deleted_count)
+
+# Listando colecoes do banco via Python:
+db = client.mongodb_books
+print("Colecoes:", db.list_collection_names())
+      \end{lstlisting}
+      \scriptsize
+      $\bullet$ \textbf{Sincronia com o Compass:} Clique em \textbf{Refresh} na aba \textbf{Documents} do Compass para ver as alterações!
+    \end{column}
+  \end{columns}
+\end{frame}

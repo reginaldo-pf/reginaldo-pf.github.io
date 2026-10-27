@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 06: Modelo de Documentos — JSON/BSON e Modelagem no MongoDB | BDNR - IFCE Tauá</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome & Prism.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- ========================================== -->
+  <!-- CABEÇALHO INSTITUCIONAL                    -->
+  <!-- ========================================== -->
+  <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 shadow-sm backdrop-blur-md bg-white/90 dark:bg-slate-800/90">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="../../index.html" class="flex items-center space-x-3 group">
+          <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+            <i class="fa-solid fa-leaf text-lg"></i>
+          </div>
+          <div>
+            <span class="text-xs uppercase tracking-wider font-bold text-emerald-600 dark:text-emerald-400 block leading-tight">IFCE Campus Tauá • ADS</span>
+            <span class="text-base font-bold text-slate-900 dark:text-white leading-tight">Banco de Dados Não-Relacionais — Aula 06</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <a href="../../index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center space-x-1.5">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span class="hidden sm:inline">Portal da Disciplina</span>
+        </a>
+        <button id="theme-toggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-emerald-600 transition-colors" title="Alternar Modo Escuro/Claro">
+          <i class="fa-solid fa-moon dark:hidden"></i>
+          <i class="fa-solid fa-sun hidden dark:inline"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- BANNER DA AULA                             -->
+  <!-- ========================================== -->
+  <section class="bg-gradient-to-r from-emerald-950 via-slate-900 to-slate-950 text-white py-10 border-b border-emerald-950/40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold mb-3">
+        <i class="fa-solid fa-file-code"></i>
+        <span>Unidade I (N1) — O Modelo Orientado a Documentos (MongoDB)</span>
+      </div>
+      <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
+        Modelo de Documentos: JSON/BSON e Modelagem no MongoDB (<span class="text-emerald-400">Embedding vs. Referencing</span>)
+      </h1>
+      <p class="text-slate-300 text-sm sm:text-base mt-2 max-w-3xl leading-relaxed">
+        Serialização binária <strong>BSON</strong> (<code class="text-emerald-300 font-mono">ObjectId</code> de 12 bytes e <code class="text-emerald-300 font-mono">Decimal128</code>), criação passo a passo das coleções no <strong>MongoDB Compass (GUI)</strong> e decisões de modelagem com <strong>Embedding</strong>, <strong>Referencing</strong>, <strong>Subset Pattern</strong> e <strong>Snapshot Pattern</strong>.
+      </p>
+
+      <div class="flex flex-wrap gap-4 mt-6 text-xs text-slate-300">
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-regular fa-calendar text-emerald-400"></i>
+          <span>27/10/2026 (Terça-feira)</span>
+        </div>
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-regular fa-clock text-emerald-400"></i>
+          <span>2 h/a (120 min)</span>
+        </div>
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-solid fa-chalkboard-user text-emerald-400"></i>
+          <span>Prof. Me. Reginaldo Fernandes</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- NAVEGAÇÃO DE ABAS                          -->
+  <!-- ========================================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+    <div class="flex border-b border-slate-200 dark:border-slate-700 mb-6 space-x-2 overflow-x-auto pb-1">
+      <button onclick="switchTab('tab-guia')" id="btn-tab-guia" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 border-emerald-600 text-emerald-600 dark:text-emerald-400 whitespace-nowrap flex items-center space-x-2 transition-all">
+        <i class="fa-solid fa-compass"></i>
+        <span>1. Guia Passo a Passo (MongoDB Compass)</span>
+      </button>
+      <button onclick="switchTab('tab-visao')" id="btn-tab-visao" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 whitespace-nowrap flex items-center space-x-2 transition-all">
+        <i class="fa-solid fa-microchip"></i>
+        <span>2. JSON vs. BSON & ObjectId</span>
+      </button>
+      <button onclick="switchTab('tab-slides')" id="btn-tab-slides" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 whitespace-nowrap flex items-center space-x-2 transition-all">
+        <i class="fa-solid fa-file-pdf"></i>
+        <span>3. Slides (PDF)</span>
+      </button>
+      <button onclick="switchTab('tab-exercicios')" id="btn-tab-exercicios" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 whitespace-nowrap flex items-center space-x-2 transition-all">
+        <i class="fa-solid fa-list-check"></i>
+        <span>4. Exercícios & Povoamento</span>
+      </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 1: GUIA PASSO A PASSO NO COMPASS       -->
+    <!-- ========================================== -->
+    <div id="tab-guia" class="tab-content space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 dark:text-white">
+              Construção Passo a Passo no MongoDB Compass (GUI)
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+              Criação das coleções e inserção manual do primeiro registro de cada coleção acompanhando os slides, consultando sempre a lista de coleções e a lista de documentos no Compass.
+            </p>
+          </div>
+          <a href="tutorial_construcao_passo_a_passo.md" download="tutorial_construcao_passo_a_passo.md" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors inline-flex items-center space-x-1.5">
+            <i class="fa-solid fa-download"></i>
+            <span>Baixar Guia (.md)</span>
+          </a>
+        </div>
+
+        <div class="space-y-8">
+          <!-- Etapa 0: CRUD do Zero -->
+          <div class="p-5 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800">
+            <h3 class="text-sm sm:text-base font-bold text-emerald-700 dark:text-emerald-300 mb-2">
+              0. Aprendendo do Zero: CRUD Passo a Passo em <code class="font-mono">mongodb_books.books</code>
+            </h3>
+            <ol class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 space-y-1.5 list-decimal list-inside mb-3">
+              <li>No <strong>MongoDB Compass</strong>, clique em <strong><code>+</code> (<em>Create database</em>)</strong>, informe <strong>Database Name:</strong> <code>mongodb_books</code> e <strong>Collection Name:</strong> <code>books</code> e clique em <strong>Create Database</strong>.</li>
+              <li><strong>Consultar a lista de coleções:</strong> Clique sobre <code>mongodb_books</code> no menu lateral e verifique a coleção <code>books</code> na aba <strong>Collections</strong>.</li>
+              <li><strong>Create (<code>insertOne</code>):</strong> Em <code>books</code> $\to$ <strong>Add Data $\to$ Insert Document</strong>, insira manualmente o 1.º livro e depois consulte a lista de documentos nas visões <strong>List</strong>, <strong>JSON</strong> e <strong>Table</strong>:</li>
+            </ol>
+            <pre class="rounded-xl text-xs mb-3"><code class="language-json">{
+  "isbn": "101",
+  "name": "MongoDB 7.0 Guia Pratico",
+  "price": 30
+}</code></pre>
+            <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 mb-2">
+              <strong>Subdocumento (<code>meta</code>) e Busca com <em>Dot Notation</em>:</strong> Insira o 2.º livro com o subdocumento <code>meta</code> e filtre na barra <strong>Filter</strong> do Compass usando <code>{ "meta.version": "MongoDB 7.0" }</code>, <code>{ "price": { "$gt": 35 } }</code> e <code>{ "name": { "$regex": "nosql", "$options": "i" } }</code>:
+            </p>
+            <pre class="rounded-xl text-xs mb-3"><code class="language-json">{
+  "isbn": "202",
+  "name": "Arquitetura de Bancos NoSQL",
+  "meta": {
+    "version": "MongoDB 7.0"
+  },
+  "price": 60
+}</code></pre>
+            <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 mb-2">
+              <strong>CRUD com Python (<code>PyMongo</code>):</strong> Em seguida, execute os mesmos passos (<code>insert_one</code>, <code>find</code> com <em>dot notation</em>, <code>$gt</code>, <code>$or</code>, <code>update_one</code> com <code>$set</code> e <code>delete_one</code>) via Python (<a href="codigo/crud_pymongo.py" download class="text-emerald-600 dark:text-emerald-400 underline font-semibold">baixar crud_pymongo.py</a>) e clique em <strong>Refresh</strong> no Compass para consultar os documentos!
+            </p>
+          </div>
+
+          <!-- Passo 1 -->
+          <div class="p-5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <h3 class="text-sm sm:text-base font-bold text-emerald-600 dark:text-emerald-400 mb-2">
+              1. Criando o Banco <code class="font-mono">ecommerce_shopgrids</code> e a Coleção <code class="font-mono">produtos</code> no Compass
+            </h3>
+            <ol class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 space-y-1.5 list-decimal list-inside mb-3">
+              <li>Abra o <strong>MongoDB Compass</strong> e conecte em <code>mongodb://localhost:27017</code>.</li>
+              <li>No painel lateral esquerdo (<em>Databases</em>), clique no botão <strong><code>+</code> (<em>Create database</em>)</strong>.</li>
+              <li>Informe <strong>Database Name:</strong> <code>ecommerce_shopgrids</code> e <strong>Collection Name:</strong> <code>produtos</code>, clicando em <strong>Create Database</strong>.</li>
+              <li><strong>Consultar a lista de coleções:</strong> Clique sobre o banco <code>ecommerce_shopgrids</code> no menu lateral e verifique na aba <strong>Collections</strong> que a coleção <code>produtos</code> foi criada (<code>0 documents</code>).</li>
+            </ol>
+          </div>
+
+          <!-- Passo 2 -->
+          <div class="p-5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <h3 class="text-sm sm:text-base font-bold text-emerald-600 dark:text-emerald-400 mb-2">
+              2. Coleção <code class="font-mono">produtos</code>: Inserção Manual e Polimorfismo
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-2">
+              <strong>Exemplo 1 (Categoria Eletrônicos):</strong> Clique na coleção <code>produtos</code> $\to$ <strong>Add Data $\to$ Insert Document</strong>, apague o conteúdo padrão, cole o JSON abaixo e clique em <strong>Insert</strong>:
+            </p>
+            <pre class="rounded-xl text-xs mb-3"><code class="language-json">{
+  "_id": { "$oid": "671ec880a1b2c3d4e5f60001" },
+  "sku": "NOTE-ACER-15",
+  "nome": "Notebook Gamer Nitro V15",
+  "categoria": "Eletronicos",
+  "preco": { "$numberDecimal": "4599.90" },
+  "estoque": 15,
+  "especificacoes": {
+    "cpu": "Intel Core i7-13620H",
+    "ram_gb": 16,
+    "gpu": "RTX 4050 6GB"
+  },
+  "garantia_meses": 12
+}</code></pre>
+            <p class="text-xs text-emerald-700 dark:text-emerald-300 font-semibold mb-4">
+              <i class="fa-solid fa-magnifying-glass mr-1"></i> Consultar a lista de documentos: Na aba <strong>Documents</strong> da coleção <code>produtos</code>, expanda o subdocumento <code>especificacoes</code> e alterne entre as visões <strong>List</strong>, <strong>JSON</strong> e <strong>Table</strong>.
+            </p>
+
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-2">
+              <strong>Exemplo 2 (Categoria Vestuário):</strong> Clique novamente em <strong>Add Data $\to$ Insert Document</strong> na coleção <code>produtos</code>, cole o segundo documento e clique em <strong>Insert</strong>:
+            </p>
+            <pre class="rounded-xl text-xs mb-3"><code class="language-json">{
+  "_id": { "$oid": "671ec880a1b2c3d4e5f60002" },
+  "sku": "CAM-TECH-ADS",
+  "nome": "Camiseta Dev NoSQL IFCE",
+  "categoria": "Vestuario",
+  "preco": { "$numberDecimal": "69.90" },
+  "estoque": 80,
+  "especificacoes": {
+    "tecido": "100% Algodao Egipcio",
+    "cor": "Preta",
+    "tamanhos": ["P", "M", "G", "GG"]
+  },
+  "lavagem": ["Nao usar alvejante"]
+}</code></pre>
+            <p class="text-xs text-emerald-700 dark:text-emerald-300 font-semibold mb-4">
+              <i class="fa-solid fa-magnifying-glass mr-1"></i> Consultar a lista de documentos: Confira os 2 produtos na aba <strong>Documents</strong> e compare os campos de <code>especificacoes</code>.
+            </p>
+
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-2">
+              <strong>Exemplo 3 (Validação <code class="font-mono">$jsonSchema</code>):</strong> Abra a aba <strong>Validation</strong> da coleção <code>produtos</code>, cole a regra abaixo e clique em <strong>Update</strong>:
+            </p>
+            <pre class="rounded-xl text-xs"><code class="language-json">{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "required": ["sku", "nome", "preco"],
+    "properties": {
+      "sku": { "bsonType": "string" },
+      "nome": { "bsonType": "string" },
+      "preco": { "bsonType": ["decimal", "double"], "minimum": 0.01 },
+      "especificacoes": { "bsonType": "object" }
+    }
+  }
+}</code></pre>
+          </div>
+
+          <!-- Passo 3 -->
+          <div class="p-5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <h3 class="text-sm sm:text-base font-bold text-emerald-600 dark:text-emerald-400 mb-2">
+              3. Coleção <code class="font-mono">clientes</code>: Incorporação de Endereços (<em>Embedding 1:Few</em>)
+            </h3>
+            <ol class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 space-y-1.5 list-decimal list-inside mb-3">
+              <li>Clique no botão <strong><code>+</code> (<em>Create collection</em>)</strong> ao lado de <code>ecommerce_shopgrids</code>, digite <code>clientes</code> e clique em <strong>Create Collection</strong>.</li>
+              <li><strong>Consultar a lista de coleções:</strong> Clique no banco <code>ecommerce_shopgrids</code> e verifique na aba <strong>Collections</strong> as coleções <code>produtos</code> e <code>clientes</code>.</li>
+              <li><strong>Exemplo:</strong> Abra a coleção <code>clientes</code> $\to$ <strong>Add Data $\to$ Insert Document</strong>, cole o primeiro cliente e clique em <strong>Insert</strong>:</li>
+            </ol>
+            <pre class="rounded-xl text-xs mb-3"><code class="language-json">{
+  "_id": { "$oid": "671ec880a1b2c3d4e5f60010" },
+  "nome": "Ana Costa",
+  "email": "ana.costa@aluno.ifce.edu.br",
+  "cpf": "123.456.789-00",
+  "enderecos": [
+    {
+      "apelido": "Casa",
+      "rua": "Av. Chermont, 100",
+      "cidade": "Taua-CE"
+    },
+    {
+      "apelido": "IFCE",
+      "rua": "CE-187, Taua-CE",
+      "cidade": "Taua-CE"
+    }
+  ]
+}</code></pre>
+            <p class="text-xs text-emerald-700 dark:text-emerald-300 font-semibold">
+              <i class="fa-solid fa-magnifying-glass mr-1"></i> Consultar a lista de documentos: Na aba <strong>Documents</strong> de <code>clientes</code>, expanda o array <code>enderecos: Array (2)</code>.
+            </p>
+          </div>
+
+          <!-- Passo 4 -->
+          <div class="p-5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <h3 class="text-sm sm:text-base font-bold text-emerald-600 dark:text-emerald-400 mb-2">
+              4. Coleção <code class="font-mono">avaliacoes</code>: <em>Subset Pattern</em> e <em>Referencing (1:Many)</em>
+            </h3>
+            <ol class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 space-y-1.5 list-decimal list-inside mb-3">
+              <li>Clique no botão <strong><code>+</code> (<em>Create collection</em>)</strong> em <code>ecommerce_shopgrids</code>, digite <code>avaliacoes</code> e clique em <strong>Create Collection</strong>.</li>
+              <li><strong>Consultar a lista de coleções:</strong> Clique em <code>ecommerce_shopgrids</code> e confira que agora existem <code>produtos</code>, <code>clientes</code> e <code>avaliacoes</code>.</li>
+              <li><strong>Exemplo:</strong> Abra <code>avaliacoes</code> $\to$ <strong>Add Data $\to$ Insert Document</strong>, cole a primeira avaliação referenciando o <code>_id</code> do Notebook e clique em <strong>Insert</strong>:</li>
+            </ol>
+            <pre class="rounded-xl text-xs mb-3"><code class="language-json">{
+  "_id": { "$oid": "671ec990a1b2c3d4e5f60999" },
+  "produto_id": { "$oid": "671ec880a1b2c3d4e5f60001" },
+  "autor": "Lucas",
+  "nota": 5,
+  "txt": "Otimo!"
+}</code></pre>
+            <p class="text-xs text-emerald-700 dark:text-emerald-300 font-semibold">
+              <i class="fa-solid fa-magnifying-glass mr-1"></i> Consultar a lista de documentos: Confira o registro em <code>avaliacoes</code> no Compass.
+            </p>
+          </div>
+
+          <!-- Passo 5 -->
+          <div class="p-5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <h3 class="text-sm sm:text-base font-bold text-emerald-600 dark:text-emerald-400 mb-2">
+              5. Coleção <code class="font-mono">pedidos</code>: <em>Extended Reference</em> e <em>Snapshot Pattern</em>
+            </h3>
+            <ol class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 space-y-1.5 list-decimal list-inside mb-3">
+              <li>Clique no botão <strong><code>+</code> (<em>Create collection</em>)</strong> em <code>ecommerce_shopgrids</code>, digite <code>pedidos</code> e clique em <strong>Create Collection</strong>.</li>
+              <li><strong>Consultar a lista de coleções:</strong> Clique em <code>ecommerce_shopgrids</code> e confirme as 4 coleções: <code>produtos</code>, <code>clientes</code>, <code>avaliacoes</code> e <code>pedidos</code>.</li>
+              <li><strong>Exemplo:</strong> Abra <code>pedidos</code> $\to$ <strong>Add Data $\to$ Insert Document</strong>, cole o primeiro pedido e clique em <strong>Insert</strong>:</li>
+            </ol>
+            <pre class="rounded-xl text-xs mb-3"><code class="language-json">{
+  "_id": { "$oid": "671eca00a1b2c3d4e5f60777" },
+  "codigo_pedido": "PED-2026-0001",
+  "cliente": {
+    "cliente_id": { "$oid": "671ec880a1b2c3d4e5f60010" },
+    "nome": "Ana Costa",
+    "cpf": "123.456.789-00"
+  },
+  "itens": [
+    {
+      "produto_id": { "$oid": "671ec880a1b2c3d4e5f60001" },
+      "sku": "NOTE-ACER-15",
+      "nome": "Notebook Gamer Nitro V15",
+      "preco_unit": { "$numberDecimal": "4599.90" },
+      "quantidade": 1
+    }
+  ],
+  "valor_total": { "$numberDecimal": "4599.90" },
+  "status": "PAGO"
+}</code></pre>
+            <p class="text-xs text-emerald-700 dark:text-emerald-300 font-semibold">
+              <i class="fa-solid fa-magnifying-glass mr-1"></i> Consultar a lista de documentos: Expanda os campos <code>cliente</code> e <code>itens</code> na aba <strong>Documents</strong> da coleção <code>pedidos</code>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 2: JSON vs. BSON & OBJECTID            -->
+    <!-- ========================================== -->
+    <div id="tab-visao" class="tab-content hidden space-y-8">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
+        <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center space-x-2 mb-4">
+          <i class="fa-solid fa-layer-group text-emerald-500"></i>
+          <span>JSON vs. BSON (Binary JSON) e Anatomia do <code class="font-mono">ObjectId</code></span>
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div class="p-5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50">
+            <h3 class="font-bold text-amber-800 dark:text-amber-300 text-sm mb-2">Limitações do JSON Puro em Disco</h3>
+            <ul class="text-xs text-slate-700 dark:text-slate-300 space-y-2">
+              <li>• <strong>Travessia Lenta:</strong> Exige ler caractere por caractere para localizar um campo interno.</li>
+              <li>• <strong>Erro Financeiro (IEEE 754):</strong> Em float binário comum, <code>0.1 + 0.2 = 0.30000000000000004</code>.</li>
+              <li>• <strong>Pobreza de Tipos:</strong> Sem distinção nativa para inteiros de 32/64 bits, datas UTC ou decimais exatos.</li>
+            </ul>
+          </div>
+
+          <div class="p-5 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50">
+            <h3 class="font-bold text-emerald-800 dark:text-emerald-300 text-sm mb-2">Vantagens do BSON no Motor WiredTiger</h3>
+            <ul class="text-xs text-slate-700 dark:text-slate-300 space-y-2">
+              <li>• <strong>Prefixos de Tamanho:</strong> Cada campo inclui seu tamanho em bytes no cabeçalho, permitindo salto direto $\mathcal{O}(1)$.</li>
+              <li>• <strong><code class="font-mono">Decimal128</code> (<code class="font-mono">NumberDecimal</code>):</strong> Precisão decimal exata para valores monetários.</li>
+              <li>• <strong>Limite Físico:</strong> Até <strong>16 MB</strong> por documento BSON e <strong>100 níveis</strong> de aninhamento.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+          <div class="p-4 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800">
+            <span class="text-xs font-bold uppercase text-blue-600 dark:text-blue-400">4 Bytes (Timestamp)</span>
+            <p class="font-mono text-lg font-extrabold text-slate-900 dark:text-white my-1">671ec880</p>
+            <p class="text-xs text-slate-600 dark:text-slate-300">Segundos desde 01/01/1970. Ordenar por <code>_id</code> já ordena por data de criação.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800">
+            <span class="text-xs font-bold uppercase text-emerald-600 dark:text-emerald-400">5 Bytes (Host/Processo)</span>
+            <p class="font-mono text-lg font-extrabold text-slate-900 dark:text-white my-1">a1b2c3d4e5</p>
+            <p class="text-xs text-slate-600 dark:text-slate-300">Identificador aleatório único por máquina/processo, evitando colisão.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800">
+            <span class="text-xs font-bold uppercase text-rose-600 dark:text-rose-400">3 Bytes (Contador)</span>
+            <p class="font-mono text-lg font-extrabold text-slate-900 dark:text-white my-1">f60001</p>
+            <p class="text-xs text-slate-600 dark:text-slate-300">Contador incremental atômico para documentos gerados no mesmo segundo.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 3: SLIDES (PDF)                        -->
+    <!-- ========================================== -->
+    <div id="tab-slides" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white">Apresentação — Aula 06 (Beamer 16:9 • 24 Páginas)</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">JSON vs. BSON, ObjectId, Polimorfismo com $jsonSchema, Embedding vs. Referencing, Subset e Snapshot Pattern.</p>
+          </div>
+          <a href="materiais/main.pdf" target="_blank" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors inline-flex items-center space-x-2">
+            <i class="fa-solid fa-up-right-from-square"></i>
+            <span>Abrir PDF em Nova Aba</span>
+          </a>
+        </div>
+        <div class="w-full h-[650px] rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
+          <iframe src="materiais/main.pdf" class="w-full h-full" title="Slides Aula 06"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 4: EXERCÍCIOS & POVOAMENTO             -->
+    <!-- ========================================== -->
+    <div id="tab-exercicios" class="tab-content hidden space-y-8">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">
+          Exercício de Povoamento do Banco no MongoDB Compass
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-4">
+          Após criar as 4 coleções e inserir manualmente o primeiro registro de cada uma no Compass, baixe os 4 arquivos JSON abaixo e importe cada um na respectiva coleção usando <strong>Add Data $\to$ Import JSON or CSV file</strong>, consultando a lista de documentos do Compass ao final de cada importação:
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <a href="codigo/produtos_lote.json" download="produtos_lote.json" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all flex flex-col justify-between bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-1.5">
+              <i class="fa-solid fa-box-open text-emerald-500 text-xl"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">1. produtos_lote.json</h3>
+              <p class="text-[11px] text-slate-500">Mais 3 produtos polimórficos (Livro, Monitor e Teclado).</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">Baixar JSON <i class="fa-solid fa-download ml-1 text-[10px]"></i></span>
+          </a>
+
+          <a href="codigo/clientes_lote.json" download="clientes_lote.json" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all flex flex-col justify-between bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-1.5">
+              <i class="fa-solid fa-users text-blue-500 text-xl"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">2. clientes_lote.json</h3>
+              <p class="text-[11px] text-slate-500">Mais 2 clientes com arrays de endereços embutidos.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">Baixar JSON <i class="fa-solid fa-download ml-1 text-[10px]"></i></span>
+          </a>
+
+          <a href="codigo/avaliacoes_lote.json" download="avaliacoes_lote.json" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all flex flex-col justify-between bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-1.5">
+              <i class="fa-solid fa-star text-amber-500 text-xl"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">3. avaliacoes_lote.json</h3>
+              <p class="text-[11px] text-slate-500">Mais 3 avaliações referenciadas por <code>produto_id</code>.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">Baixar JSON <i class="fa-solid fa-download ml-1 text-[10px]"></i></span>
+          </a>
+
+          <a href="codigo/pedidos_lote.json" download="pedidos_lote.json" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all flex flex-col justify-between bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-1.5">
+              <i class="fa-solid fa-file-invoice-dollar text-rose-500 text-xl"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">4. pedidos_lote.json</h3>
+              <p class="text-[11px] text-slate-500">Novo pedido com Snapshot de preços e referência ao cliente.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">Baixar JSON <i class="fa-solid fa-download ml-1 text-[10px]"></i></span>
+          </a>
+        </div>
+
+        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-3">Questões de Revisão</h3>
+        <div class="space-y-3 text-xs sm:text-sm">
+          <details class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <summary class="font-bold cursor-pointer text-slate-900 dark:text-white">1. Por que o MongoDB utiliza BSON em vez de JSON puro e por que devemos usar Decimal128 para preços?</summary>
+            <p class="mt-2 text-slate-600 dark:text-slate-300">O BSON adiciona prefixos de tamanho binários que permitem ao motor WiredTiger saltar campos sem precisar fazer parsing de texto, além de fornecer tipos nativos como <code>ObjectId</code>, <code>ISODate</code> e <code>Decimal128</code>. O tipo <code>Decimal128</code> evita erros de arredondamento de ponto flutuante binário IEEE 754 (<code>0.1 + 0.2 = 0.30000000000000004</code>).</p>
+          </details>
+
+          <details class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <summary class="font-bold cursor-pointer text-slate-900 dark:text-white">2. Qual é o risco de usar um Unbounded Array (Array Ilimitado) e como o Subset Pattern resolve isso?</summary>
+            <p class="mt-2 text-slate-600 dark:text-slate-300">Um array que cresce sem limite degrada a escrita no WiredTiger (realocação em disco) e pode estourar o limite físico de <strong>16 MB</strong> por documento BSON. O <em>Subset Pattern</em> mantém apenas os itens mais recentes embutidos no documento principal e salva o histórico completo em uma coleção separada referenciada.</p>
+          </details>
+
+          <details class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <summary class="font-bold cursor-pointer text-slate-900 dark:text-white">3. Por que a coleção de pedidos aplica o Snapshot Pattern nos itens comprados?</summary>
+            <p class="mt-2 text-slate-600 dark:text-slate-300">Se o pedido guardar apenas a referência <code>produto_id</code>, qualquer reajuste futuro no preço do produto na coleção <code>produtos</code> alterará retroativamente o valor de pedidos passados. Congelar <code>sku</code>, <code>nome</code> e <code>preco_unit</code> dentro do pedido preserva a integridade histórica.</p>
+          </details>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- RODAPÉ INSTITUCIONAL                       -->
+  <!-- ========================================== -->
+  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div>
+        <span>Instituto Federal de Educação, Ciência e Tecnologia do Ceará — Campus Tauá</span>
+      </div>
+      <div>
+        <span>Banco de Dados Não-Relacionais (2026.2) • Prof. Me. Reginaldo Fernandes</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-b-2', 'border-emerald-600', 'text-emerald-600', 'dark:text-emerald-400');
+        btn.classList.add('text-slate-500', 'dark:text-slate-400');
+      });
+
+      const selectedTab = document.getElementById(tabId);
+      const selectedBtn = document.getElementById('btn-' + tabId);
+
+      if (selectedTab) selectedTab.classList.remove('hidden');
+      if (selectedBtn) {
+        selectedBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
+        selectedBtn.classList.add('border-b-2', 'border-emerald-600', 'text-emerald-600', 'dark:text-emerald-400');
+      }
+    }
+
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        localStorage.theme = 'light';
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.theme = 'dark';
+      }
+    });
+  </script>
+</body>
+
+</html>

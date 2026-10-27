@@ -1,0 +1,21 @@
+[
+  {
+    "_id": { "$oid": "671ec880a1b2c3d4e5f60011" },
+    "nome": "Lucas Mendes",
+    "email": "lucas.mendes@aluno.ifce.edu.br",
+    "cpf": "234.567.890-11",
+    "enderecos": [
+      { "apelido": "Casa", "rua": "Rua Abigail Cidrão, 250", "cidade": "Tauá-CE" }
+    ]
+  },
+  {
+    "_id": { "$oid": "671ec880a1b2c3d4e5f60012" },
+    "nome": "Marina Rocha",
+    "email": "marina.rocha@aluno.ifce.edu.br",
+    "cpf": "345.678.901-22",
+    "enderecos": [
+      { "apelido": "Apartamento", "rua": "Av. Odilon Aguiar, 410", "cidade": "Tauá-CE" },
+      { "apelido": "Trabalho", "rua": "Centro Comercial, Sala 04", "cidade": "Tauá-CE" }
+    ]
+  }
+]

@@ -1,0 +1,52 @@
+[
+  {
+    "_id": { "$oid": "671ec880a1b2c3d4e5f60003" },
+    "sku": "LIV-NOSQL-FOWLER",
+    "nome": "Livro NoSQL Essencial (Sadalage & Fowler)",
+    "categoria": "Livros",
+    "preco": { "$numberDecimal": "94.50" },
+    "estoque": 35,
+    "especificacoes": {
+      "autores": ["Pramod J. Sadalage", "Martin Fowler"],
+      "editora": "Novatec",
+      "paginas": 216,
+      "isbn": "978-8575223383"
+    },
+    "resumo_avaliacoes": { "media": 4.9, "total": 1 },
+    "ultimas_avaliacoes": [
+      { "autor": "Carlos Eduardo", "nota": 5, "txt": "Leitura fundamental sobre agregados!" }
+    ]
+  },
+  {
+    "_id": { "$oid": "671ec880a1b2c3d4e5f60004" },
+    "sku": "MON-LG-29UW",
+    "nome": "Monitor LG UltraWide 29 Polegadas IPS",
+    "categoria": "Eletronicos",
+    "preco": { "$numberDecimal": "1199.00" },
+    "estoque": 22,
+    "especificacoes": {
+      "resolucao": "2560x1080",
+      "taxa_atualizacao_hz": 100,
+      "conexoes": ["HDMI", "DisplayPort", "USB-C"]
+    },
+    "resumo_avaliacoes": { "media": 4.8, "total": 1 },
+    "ultimas_avaliacoes": [
+      { "autor": "Fernanda Lima", "nota": 5, "txt": "Excelente espaço horizontal para programar!" }
+    ]
+  },
+  {
+    "_id": { "$oid": "671ec880a1b2c3d4e5f60005" },
+    "sku": "TEC-KEYCHRON-K2",
+    "nome": "Teclado Mecânico Sem Fio Keychron K2",
+    "categoria": "Perifericos",
+    "preco": { "$numberDecimal": "649.90" },
+    "estoque": 18,
+    "especificacoes": {
+      "switch": "Brown Tátil",
+      "layout": "ANSI 75%",
+      "conectividade": ["Bluetooth 5.1", "Cabo USB-C"]
+    },
+    "resumo_avaliacoes": { "media": 5.0, "total": 0 },
+    "ultimas_avaliacoes": []
+  }
+]

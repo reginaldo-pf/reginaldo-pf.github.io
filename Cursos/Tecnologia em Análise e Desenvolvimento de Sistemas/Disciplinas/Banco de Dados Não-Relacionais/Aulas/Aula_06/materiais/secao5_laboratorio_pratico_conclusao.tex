@@ -1,0 +1,166 @@
+% !TeX root = main.tex
+\changecolours{ScoutGreen}
+\section[Prática no ShopGrids: Compass e Python]{Modelando o E-Commerce ShopGrids no Compass e no Python}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Coleção \texttt{produtos}: \textit{Polymorphic Pattern} e Validação}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{1. Documento 1: Eletrônicos (Compass)}\par
+      \begin{lstlisting}[language=mongosh]
+{
+  "_id": { "$oid": "671ec880a1b2c3d4e5f60001" },
+  "sku": "NOTE-ACER-15",
+  "nome": "Notebook Gamer Nitro V15",
+  "categoria": "Eletronicos",
+  "preco": { "$numberDecimal": "4599.90" },
+  "estoque": 15,
+  "especificacoes": {
+    "cpu": "Intel Core i7-13620H",
+    "ram_gb": 16,
+    "gpu": "RTX 4050 6GB"
+  },
+  "garantia_meses": 12
+}
+      \end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{2. Documento 2: Vestuário + Validação}\par
+      \begin{lstlisting}[language=mongosh]
+{
+  "_id": { "$oid": "671ec880a1b2c3d4e5f60002" },
+  "sku": "CAM-TECH-ADS",
+  "nome": "Camiseta Dev NoSQL IFCE",
+  "categoria": "Vestuario",
+  "preco": { "$numberDecimal": "69.90" },
+  "estoque": 80,
+  "especificacoes": {
+    "tecido": "100% Algodao Egipcio",
+    "cor": "Preta",
+    "tamanhos": ["P", "M", "G", "GG"]
+  }
+}
+      \end{lstlisting}
+      \scriptsize
+      $\bullet$ \textbf{Governança (\texttt{\$jsonSchema} / Aba Validation):} Exige \texttt{sku}, \texttt{nome} e \texttt{preco > 0}, deixando \texttt{especificacoes} livre!
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Coleções \texttt{avaliacoes} e \texttt{pedidos}: \textit{Subset}, \textit{Computed} e \textit{Extended Reference}}
+  \vspace{0.02cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{1. \textit{Subset} + \textit{Computed} (\texttt{avaliacoes})}\par
+      \begin{lstlisting}[language=mongosh]
+// Em produtos (Vitrine em 1 Query!):
+{
+  "_id": { "$oid": "671ec880a1b2c3d4e5f60001" },
+  "sku": "NOTE-ACER-15",
+  "resumo_avaliacoes": { "media": 5.0, "total": 2 },
+  "ultimas_avaliacoes": [
+    { "autor": "Lucas", "nota": 5, "txt": "Otimo!" }
+  ]
+}
+// Em avaliacoes (Historico Referenciado):
+{
+  "_id": { "$oid": "671ec990a1b2c3d4e5f60999" },
+  "produto_id": { "$oid": "671ec880a1b2c3d4e5f60001" },
+  "autor": "Lucas", "nota": 5, "txt": "Otimo!"
+}
+      \end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{2. \textit{Extended Ref.} + \textit{Snapshot} (\texttt{pedidos})}\par
+      \begin{lstlisting}[language=mongosh]
+{
+  "_id": { "$oid": "671eca00a1b2c3d4e5f60777" },
+  "codigo_pedido": "PED-2026-0001",
+  "cliente": {
+    "cliente_id": { "$oid": "671ec880...0010" },
+    "nome": "Ana Costa", "cpf": "123.456.789-00"
+  },
+  "itens": [{
+    "produto_id": { "$oid": "671ec880...0001" },
+    "sku": "NOTE-ACER-15",
+    "preco_unit": { "$numberDecimal": "4599.90" },
+    "quantidade": 1
+  }],
+  "valor_total": { "$numberDecimal": "4599.90" },
+  "status": "PAGO"
+}
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Arquitetura Completa das 4 Coleções do E-Commerce ShopGrids}
+  \vspace{0.15cm}
+  \makebox[\textwidth][c]{%
+    \begin{tikzpicture}
+      % Colecao Produtos
+      \node[draw=ScoutGreen, fill=ScoutGreen!12, very thick, rounded corners=5pt, text width=5.4cm, minimum height=2.1cm, inner sep=6pt, align=left, font=\sffamily\scriptsize] (prod) at (0, 1.45) {%
+        \textbf{\color{ScoutGreen}\footnotesize Coleção: \texttt{produtos}}\\[2pt]
+        $\bullet$ \texttt{\_id: ObjectId(...)}\\
+        $\bullet$ \texttt{sku, nome, preco (Decimal128)}\\
+        $\bullet$ \textbf{Polymorphic 1:1:} \texttt{especificacoes: \{...\}}\\
+        $\bullet$ \textbf{Subset + Computed:} \texttt{ultimas\_avaliacoes}%
+      };
+
+      % Colecao Avaliacoes
+      \node[draw=ScoutNavy, fill=ScoutNavy!12, very thick, rounded corners=5pt, text width=5.4cm, minimum height=1.7cm, inner sep=6pt, align=left, font=\sffamily\scriptsize] (aval) at (0, -1.45) {%
+        \textbf{\color{ScoutNavy}\footnotesize Coleção: \texttt{avaliacoes}}\\[2pt]
+        $\bullet$ \texttt{\_id: ObjectId(...)}\\
+        $\bullet$ \textbf{Ref 1:Many:} \texttt{produto\_id: ObjectId(...)}\\
+        $\bullet$ \texttt{autor, nota, txt}%
+      };
+
+      % Colecao Clientes
+      \node[draw=ScoutGreen, fill=ScoutGreen!12, very thick, rounded corners=5pt, text width=5.6cm, minimum height=2.1cm, inner sep=6pt, align=left, font=\sffamily\scriptsize] (cli) at (8.0, 1.45) {%
+        \textbf{\color{ScoutGreen}\footnotesize Coleção: \texttt{clientes}}\\[2pt]
+        $\bullet$ \texttt{\_id: ObjectId(...)}\\
+        $\bullet$ \texttt{nome, email, cpf}\\
+        $\bullet$ \textbf{Embedded 1:Few:}\\
+        \hspace*{3mm}\texttt{enderecos: [ \{Casa\}, \{IFCE\} ]}%
+      };
+
+      % Colecao Pedidos
+      \node[draw=red!80!black, fill=red!10, very thick, rounded corners=5pt, text width=5.6cm, minimum height=1.7cm, inner sep=6pt, align=left, font=\sffamily\scriptsize] (ped) at (8.0, -1.45) {%
+        \textbf{\color{red!80!black}\footnotesize Coleção: \texttt{pedidos}}\\[2pt]
+        $\bullet$ \texttt{\_id: ObjectId(...), status}\\
+        $\bullet$ \textbf{Extended Ref:} \texttt{cliente: \{cliente\_id, nome\}}\\
+        $\bullet$ \textbf{Snapshot:} \texttt{itens: [ \{produto\_id, preco\_unit\} ]}%
+      };
+
+      \draw[->, ultra thick, ScoutNavy] (aval.north) -- node[right=2pt, font=\scriptsize\bfseries\sffamily] {\texttt{produto\_id}} (prod.south);
+      \draw[->, ultra thick, red!80!black] (ped.north) -- node[right=2pt, font=\scriptsize\bfseries\sffamily] {\texttt{cliente\_id}} (cli.south);
+      \draw[->, ultra thick, red!80!black] (ped.west) -- node[above, sloped, font=\scriptsize\bfseries\sffamily] {\texttt{itens.produto\_id}} (prod.east);
+    \end{tikzpicture}%
+  }
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Checklist de Decisão e Roteiro Passo a Passo (Compass + Python)}
+  \vspace{0.1cm}
+  \makebox[\textwidth][c]{%
+    \scriptsize
+    \renewcommand{\arraystretch}{1.35}
+    \begin{tabular}{p{5.4cm} p{3.2cm} p{3.2cm}}
+      \toprule
+      \textbf{Pergunta de Projeto} & \textbf{\textit{Embedding}} & \textbf{\textit{Referencing}} \\
+      \midrule
+      1. Dados lidos juntos na mesma tela? & \textbf{Sim} (1 única query) & Não (telas separadas) \\
+      2. Qual a cardinalidade máxima? & \textbf{1:1} ou \textbf{1:Few} ($<50$) & \textbf{1:Many} / \textbf{1:Milhões} \\
+      3. Array pode crescer sem limite? & Não (tamanho fixo) & \textbf{Sim} (risco de 16 MB) \\
+      4. Dado filho consultado isoladamente? & Raramente & \textbf{Sim, sempre} \\
+      5. Qual o \textit{Read-Write Ratio}? & \textbf{Alta Leitura} (\textit{Read-Heavy}) & \textbf{Alta Escrita} (\textit{Write-Heavy}) \\
+      6. Congelar valor fiscal histórico? & \textbf{Sim (\textit{Snapshot})} & Não (aponta para atual) \\
+      \bottomrule
+    \end{tabular}%
+  }
+  \vspace{0.15cm}
+  \centering{\scriptsize \textbf{Sequência da Prática:} \textbf{Etapa 1:} CRUD do Zero em \texttt{mongodb\_books} (Compass + \texttt{mongosh}) $\to$ \textbf{Etapa 2:} CRUD com Python (\texttt{PyMongo}) $\to$ \textbf{Etapa 3:} Modelagem manual do 1.º registro de cada coleção em \texttt{ecommerce\_shopgrids} no Compass $\to$ \textbf{Etapa 4:} Povoamento em lote via Compass/Python.}
+\end{frame}
