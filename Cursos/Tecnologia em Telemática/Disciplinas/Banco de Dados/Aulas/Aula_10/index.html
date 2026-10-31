@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 10: Mapeamento Lógico Relacional (Parte 1) | Banco de Dados - IFCE Tauá</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- ========================================== -->
+  <!-- CABEÇALHO INSTITUCIONAL                    -->
+  <!-- ========================================== -->
+  <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 shadow-sm backdrop-blur-md bg-white/90 dark:bg-slate-800/90">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="../../index.html" class="flex items-center space-x-3 group">
+          <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+            <i class="fa-solid fa-diagram-project text-lg"></i>
+          </div>
+          <div>
+            <span class="text-xs uppercase tracking-wider font-bold text-emerald-600 dark:text-emerald-400 block leading-tight">IFCE Campus Tauá • Telemática</span>
+            <span class="text-base font-bold text-slate-900 dark:text-white leading-tight">Banco de Dados — Aula 10</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <a href="../Aula_09/index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 transition-colors flex items-center space-x-1.5">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span class="hidden sm:inline">Aula 09</span>
+        </a>
+        <a href="../../index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center space-x-1.5">
+          <i class="fa-solid fa-house"></i>
+          <span class="hidden sm:inline">Portal da Disciplina</span>
+        </a>
+        <button id="theme-toggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-emerald-600 transition-colors" title="Alternar Modo Escuro/Claro">
+          <i class="fa-solid fa-moon dark:hidden"></i>
+          <i class="fa-solid fa-sun hidden dark:inline"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- BANNER DA AULA                             -->
+  <!-- ========================================== -->
+  <section class="bg-gradient-to-r from-emerald-900 via-slate-900 to-slate-950 text-white py-10 border-b border-emerald-950/40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold mb-3">
+        <i class="fa-solid fa-sitemap"></i>
+        <span>Unidade IV (N1) — Projeto Lógico de Banco de Dados Relacional (Passos 1 a 4)</span>
+      </div>
+      <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
+        Mapeamento Lógico Relacional (Parte 1): Entidades Fortes, Fracas e Relacionamentos 1:1 e 1:N
+      </h1>
+      <p class="text-slate-300 text-sm sm:text-base mt-2 max-w-3xl leading-relaxed">
+        Compreenda a conversão determinística e formal de um Diagrama Entidade-Relacionamento (DER) para o Esquema Lógico Relacional fundamentado nas regras de <strong>Elmasri & Navathe</strong> e <strong>Heuser</strong>: Primeira Forma Normal (1FN), achatamento de atributos compostos, omissão de derivados, chave primária composta em entidades fracas, as 3 abordagens de mapeamento 1:1 e a regra fundamental do 1:N com integridade referencial.
+      </p>
+
+      <div class="flex flex-wrap gap-4 mt-6 text-xs text-slate-300">
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-regular fa-calendar text-emerald-400"></i>
+          <span>27/10/2026 (Terça-feira)</span>
+        </div>
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-regular fa-clock text-emerald-400"></i>
+          <span>2 h/a (100 min)</span>
+        </div>
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-solid fa-chalkboard-user text-emerald-400"></i>
+          <span>Prof. Me. Reginaldo Fernandes</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- NAVEGAÇÃO DE ABAS                          -->
+  <!-- ========================================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+    <div class="flex border-b border-slate-200 dark:border-slate-700 mb-6 space-x-2 overflow-x-auto pb-1">
+      <button onclick="switchTab('tab-algoritmo')" id="btn-tab-algoritmo" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm border-b-2 border-emerald-600 text-emerald-600 dark:text-emerald-400 flex items-center space-x-2">
+        <i class="fa-solid fa-diagram-project"></i>
+        <span>Algoritmo de Mapeamento (Passos 1 a 4)</span>
+      </button>
+      <button onclick="switchTab('tab-slides')" id="btn-tab-slides" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-regular fa-file-pdf"></i>
+        <span>Slides da Aula (PDF)</span>
+      </button>
+      <button onclick="switchTab('tab-plano')" id="btn-tab-plano" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Plano Pedagógico</span>
+      </button>
+      <button onclick="switchTab('tab-exercicios')" id="btn-tab-exercicios" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-solid fa-pen-to-square"></i>
+        <span>Exercícios de Fixação</span>
+      </button>
+      <button onclick="switchTab('tab-arquivos')" id="btn-tab-arquivos" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-solid fa-download"></i>
+        <span>Central de Arquivos</span>
+      </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 1: ALGORITMO DE MAPEAMENTO             -->
+    <!-- ========================================== -->
+    <div id="tab-algoritmo" class="tab-content space-y-6">
+
+      <!-- Visão Geral -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-circle-nodes text-emerald-600 dark:text-emerald-400"></i>
+          <span>Visão Geral: Onde Estamos no Projeto de Banco de Dados?</span>
+        </h2>
+        <p class="text-slate-700 dark:text-slate-300 mb-4">
+          Após validarmos o minimundo no <strong>Modelo Conceitual (DER de Peter Chen e Heuser)</strong> nas Aulas 04 a 08 e estabelecermos o rigor formal do <strong>Modelo Relacional de Codd</strong> na Aula 09, entramos na fase de <strong>Mapeamento Lógico</strong>. O Algoritmo de 7 Passos de Elmasri & Navathe assegura uma conversão determinística e sem perda de semântica.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-emerald-500/30">
+            <span class="text-xs font-bold uppercase text-emerald-600 dark:text-emerald-400">Passo 1</span>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white mt-1">Entidades Fortes</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Criação de relações base, achatamento de compostos e omissão de derivados.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-emerald-500/30">
+            <span class="text-xs font-bold uppercase text-emerald-600 dark:text-emerald-400">Passo 2</span>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white mt-1">Entidades Fracas</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Propagação da PK proprietária e chave primária composta (PK = FK + Parcial).</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-emerald-500/30">
+            <span class="text-xs font-bold uppercase text-emerald-600 dark:text-emerald-400">Passo 3</span>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white mt-1">Relacionamentos 1:1</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">3 abordagens técnicas: FK no lado total com AK, Fusão ou Referência Cruzada.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-emerald-500/30">
+            <span class="text-xs font-bold uppercase text-emerald-600 dark:text-emerald-400">Passo 4</span>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white mt-1">Relacionamentos 1:N</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Regra de ouro: PK do lado 1 migra como FK para o lado N (e recursivos).</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Passo 1 -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <span class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-extrabold text-xs">1</span>
+          <span>Passo 1: Mapeamento de Entidades Regulares (Fortes)</span>
+        </h2>
+        <p class="text-slate-700 dark:text-slate-300 mb-3">
+          Para cada tipo de entidade regular (forte) $E$ no DER, cria-se uma relação $R$ que contém todos os atributos simples de $E$. Escolhe-se uma das chaves de $E$ como <strong>Chave Primária ($\underline{PK}$)</strong> de $R$.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+          <div class="p-4 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800">
+            <h3 class="font-bold text-sm text-emerald-800 dark:text-emerald-300 mb-1">Achatamento (Flattening) de Compostos</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300">
+              Para preservar a <strong>Primeira Forma Normal (1FN)</strong>, atributos compostos (ex: <code>endereco</code>) são desmembrados em seus subatributos atômicos simples (<code>logradouro</code>, <code>numero</code>, <code>bairro</code>, <code>cep</code>). O nome agrupador não vira coluna.
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800">
+            <h3 class="font-bold text-sm text-amber-800 dark:text-amber-300 mb-1">Omissão de Atributos Derivados</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300">
+              Atributos derivados (ex: <code>idade</code> calculada a partir de <code>data_nasc</code>) são <strong>omitidos do esquema lógico armazenado</strong> para evitar redundância e inconsistência por atualização temporal.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-4 bg-slate-900 rounded-xl text-emerald-300 font-mono text-xs overflow-x-auto">
+          <div class="text-slate-400">// DER: PACIENTE(id_paciente, cpf, nome_completo(prim_nome, sobrenome), data_nasc, /idade)</div>
+          <div class="mt-1 font-bold text-white">PACIENTE ( <span class="underline">id_paciente</span>, cpf [AK], prim_nome, sobrenome, data_nasc )</div>
+        </div>
+      </div>
+
+      <!-- Passo 2 -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <span class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-extrabold text-xs">2</span>
+          <span>Passo 2: Mapeamento de Entidades Fracas e Relacionamentos Identificadores</span>
+        </h2>
+        <p class="text-slate-700 dark:text-slate-300 mb-3">
+          Para cada entidade fraca $W$ associada a uma proprietária forte $E$, cria-se uma relação $R_W$. Incluem-se todos os atributos simples de $W$, propaga-se a $\underline{PK_E}$ como <strong>Chave Estrangeira ($FK$)</strong> em $R_W$, e forma-se a <strong>Chave Primária Composta</strong>:
+        </p>
+
+        <div class="p-3 bg-slate-100 dark:bg-slate-900 rounded-lg text-center font-mono text-xs sm:text-sm text-emerald-700 dark:text-emerald-400 mb-4 font-bold">
+          PK(R_W) = { FK(PK_E) ∪ Discriminador_Parcial(W) }
+        </div>
+
+        <div class="p-4 bg-slate-900 rounded-xl text-emerald-300 font-mono text-xs overflow-x-auto">
+          <div class="text-slate-400">// OLT (Forte) e PORTA_PON (Fraca com discriminador num_porta)</div>
+          <div class="mt-1">OLT ( <span class="underline">id_olt</span>, nome_olt, ip_gerencia )</div>
+          <div class="mt-1 font-bold text-white">PORTA_PON ( <span class="underline">id_olt_fk</span>, <span class="underline">num_porta</span>, potencia_dbm, status )</div>
+          <div class="text-slate-400 mt-1">PORTA_PON.id_olt_fk REFERENCES OLT.id_olt [NOT NULL]</div>
+        </div>
+      </div>
+
+      <!-- Passo 3 -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <span class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-extrabold text-xs">3</span>
+          <span>Passo 3: As 3 Estratégias Técnicas para Relacionamentos Binários 1:1</span>
+        </h2>
+        <p class="text-slate-700 dark:text-slate-300 mb-4">
+          A escolha da estratégia depende estritamente das restrições de participação $(min, max)$ para evitar proliferação de valores <code class="text-emerald-600 font-bold">NULL</code>:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+            <span class="px-2 py-0.5 text-xs font-bold rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 mb-2 inline-block">Abordagem A: FK no Lado Total</span>
+            <h3 class="font-bold text-slate-900 dark:text-white text-sm mb-1">Participação (0,1) : (1,1)</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mb-2">
+              Propaga-se a PK do lado parcial para a relação do lado total como <strong>FK com restrição de unicidade (AK)</strong>.
+            </p>
+            <p class="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">Garante 0% de NULL na coluna FK.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+            <span class="px-2 py-0.5 text-xs font-bold rounded bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 mb-2 inline-block">Abordagem B: Fusão em Relação Única</span>
+            <h3 class="font-bold text-slate-900 dark:text-white text-sm mb-1">Participação (1,1) : (1,1)</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mb-2">
+              Funde-se as duas entidades em uma única relação com todos os atributos.
+            </p>
+            <p class="text-[11px] text-blue-600 dark:text-blue-400 font-semibold">Elimina a necessidade de JOINs frequentes.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+            <span class="px-2 py-0.5 text-xs font-bold rounded bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 mb-2 inline-block">Abordagem C: Relação Cruzada</span>
+            <h3 class="font-bold text-slate-900 dark:text-white text-sm mb-1">Participação (0,1) : (0,1) Esparsa</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mb-2">
+              Cria-se uma relação intermediária com as PKs de ambas as entidades quando o vínculo ocorre raramente.
+            </p>
+            <p class="text-[11px] text-amber-600 dark:text-amber-400 font-semibold">Evita tabelas com 90%+ de NULL.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Passo 4 -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <span class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-extrabold text-xs">4</span>
+          <span>Passo 4: Relacionamentos Binários 1:N e Auto-Relacionamentos Recursivos</span>
+        </h2>
+        <p class="text-slate-700 dark:text-slate-300 mb-3">
+          <strong>A Regra de Ouro do 1:N:</strong> Propaga-se sempre a Chave Primária ($\underline{PK}$) do <strong>lado 1</strong> como <strong>Chave Estrangeira ($FK$)</strong> na relação do <strong>lado N</strong> ($FK_{\text{lado } N} \longrightarrow PK_{\text{lado } 1}$).
+        </p>
+
+        <div class="p-4 rounded-xl bg-red-50/50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 text-xs text-slate-700 dark:text-slate-300 my-3">
+          <strong class="text-red-700 dark:text-red-400 block mb-1 font-bold">Por que o sentido inverso é proibido?</strong>
+          Se colocássemos a chave do lado $N$ dentro do lado $1$, uma única tupla do lado $1$ precisaria armazenar múltiplos identificadores (ex: array de chaves), o que <strong>viola formalmente a Primeira Forma Normal (1FN)</strong> que exige atributos atômicos!
+        </div>
+
+        <div class="p-4 bg-slate-900 rounded-xl text-emerald-300 font-mono text-xs overflow-x-auto space-y-1">
+          <div class="text-slate-400">// Relacionamento 1:N Regular: POP_REGIONAL (1) ---> (N) ROTEADOR_BORDA</div>
+          <div>POP_REGIONAL ( <span class="underline">cod_pop</span>, nome_cidade, capacidade_gbps )</div>
+          <div class="font-bold text-white">ROTEADOR_BORDA ( <span class="underline">id_roteador</span>, modelo, ip_loopback, cod_pop_fk )</div>
+          <div class="text-slate-400 pt-2">// Auto-Relacionamento 1:N: TECNICO supervisiona outros TECNICOS</div>
+          <div class="font-bold text-white">TECNICO ( <span class="underline">matricula</span>, nome_tecnico, especialidade, mat_supervisor_fk )</div>
+          <div class="text-slate-400">TECNICO.mat_supervisor_fk REFERENCES TECNICO.matricula [NULLABLE]</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 2: SLIDES DA AULA (PDF)                -->
+    <!-- ========================================== -->
+    <div id="tab-slides" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700/60 shadow-sm flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h2 class="font-bold text-slate-900 dark:text-white text-base">Apresentação Oficial em Slides (Beamer 16:9)</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">28 slides técnicos com diagramas TikZ ilustrando todas as transformações de modelo conceitual para relacional.</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <a href="materiais/main.pdf" target="_blank" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center space-x-1.5 transition-colors">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            <span>Abrir em Nova Aba</span>
+          </a>
+          <a href="materiais/main.pdf" download="Aula_10_Mapeamento_Logico_Relacional.pdf" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center space-x-1.5 transition-colors">
+            <i class="fa-solid fa-download"></i>
+            <span>Baixar PDF</span>
+          </a>
+        </div>
+      </div>
+      <div class="w-full h-[650px] rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 shadow-inner">
+        <iframe src="materiais/main.pdf" class="w-full h-full border-0" title="Slides da Aula 10"></iframe>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 3: PLANO PEDAGÓGICO                    -->
+    <!-- ========================================== -->
+    <div id="tab-plano" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Cronograma Pedagógico da Aula 10 (100 Minutos)</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
+                <th class="py-2.5 px-3">Bloco</th>
+                <th class="py-2.5 px-3">Tempo</th>
+                <th class="py-2.5 px-3">Etapa Didática</th>
+                <th class="py-2.5 px-4">Tópicos e Atividades</th>
+                <th class="py-2.5 px-3">Recursos</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50 text-slate-700 dark:text-slate-300">
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">1</td>
+                <td class="py-3 px-3 whitespace-nowrap">15 min</td>
+                <td class="py-3 px-3 font-semibold">Ponte Conceitual &rarr; Lógico</td>
+                <td class="py-3 px-4">Revisão da anatomia formal do Modelo Relacional e apresentação do Algoritmo de 7 Passos de Elmasri & Navathe (Passos 1 a 4).</td>
+                <td class="py-3 px-3">Slides 1 a 7</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">2</td>
+                <td class="py-3 px-3 whitespace-nowrap">25 min</td>
+                <td class="py-3 px-3 font-semibold">Passos 1 e 2: Entidades Fortes e Fracas</td>
+                <td class="py-3 px-4">Transformação visual ANTES (DER) &rArr; DEPOIS (Relacional): achatamento de compostos, omissão de derivados e chave primária composta em entidades fracas.</td>
+                <td class="py-3 px-3">Slides 8 a 14</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">3</td>
+                <td class="py-3 px-3 whitespace-nowrap">25 min</td>
+                <td class="py-3 px-3 font-semibold">Passo 3: Relacionamentos 1:1</td>
+                <td class="py-3 px-4">Análise comparativa das 3 abordagens (FK no lado total com AK, Fusão em relação única e Relação de referência cruzada) com auditoria de NULL.</td>
+                <td class="py-3 px-3">Slides 15 a 18</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">4</td>
+                <td class="py-3 px-3 whitespace-nowrap">20 min</td>
+                <td class="py-3 px-3 font-semibold">Passo 4: Relacionamentos 1:N e Recursivos</td>
+                <td class="py-3 px-4">Regra de ouro do 1:N (PK do lado 1 migra como FK para lado N), prova visual da violação da 1FN no sentido inverso e auto-relacionamento 1:N.</td>
+                <td class="py-3 px-3">Slides 19 a 23</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">5</td>
+                <td class="py-3 px-3 whitespace-nowrap">15 min</td>
+                <td class="py-3 px-3 font-semibold">Estudo de Caso & Desafios</td>
+                <td class="py-3 px-4">Transformação ponta a ponta do DER da Operadora TeleTauá com matriz de rastreabilidade e resolução guiada de desafios em sala.</td>
+                <td class="py-3 px-3">Slides 24 a 28</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 4: EXERCÍCIOS DE FIXAÇÃO               -->
+    <!-- ========================================== -->
+    <div id="tab-exercicios" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Exercícios de Fixação e Modelagem Lógica</h2>
+
+        <div class="space-y-4">
+          <!-- Exercício 1 -->
+          <details class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+            <summary class="font-bold cursor-pointer text-slate-900 dark:text-white">
+              Exercício 1 — Passo 1: Entidade Forte, Achatamento e Derivados (ASSINANTE)
+            </summary>
+            <div class="mt-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-2">
+              <p><strong>Enunciado:</strong> A entidade regular <code>ASSINANTE</code> possui <code>id_assinante</code> (PK), <code>cpf</code> (identificador alternativo único), <code>nome_completo</code> (composto por <code>primeiro_nome</code> e <code>sobrenome</code>), <code>endereco_instalacao</code> (composto por <code>logradouro</code>, <code>numero</code>, <code>bairro</code>, <code>cep</code>), <code>data_adesao</code> e <code>tempo_fidelidade_meses</code> (derivado).</p>
+              <div class="p-3 bg-slate-900 rounded font-mono text-emerald-400 text-xs">
+                ASSINANTE ( <span class="underline">id_assinante</span>, cpf [AK], primeiro_nome, sobrenome, logradouro, numero, bairro, cep, data_adesao )
+              </div>
+              <p><strong>Justificativa Formal:</strong> O achatamento decompõe atributos compostos em atômicos, atendendo à <strong>Primeira Forma Normal (1FN)</strong>. O atributo derivado <code>tempo_fidelidade_meses</code> é omitido do esquema armazenado para evitar anomalias de atualização temporal (calculado via consulta SQL).</p>
+            </div>
+          </details>
+
+          <!-- Exercício 2 -->
+          <details class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+            <summary class="font-bold cursor-pointer text-slate-900 dark:text-white">
+              Exercício 2 — Passo 2: Cadeia de Entidades Fracas (2 Níveis: PREDIO &rarr; SALA &rarr; RACK)
+            </summary>
+            <div class="mt-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-2">
+              <p><strong>Esquemas Resultantes:</strong></p>
+              <div class="p-3 bg-slate-900 rounded font-mono text-emerald-400 text-xs space-y-1">
+                <div>PREDIO ( <span class="underline">cod_predio</span>, nome_predio )</div>
+                <div>SALA_TECNICA ( <span class="underline">cod_predio_fk</span>, <span class="underline">num_sala</span>, area_m2 )</div>
+                <div>RACK ( <span class="underline">cod_predio_fk</span>, <span class="underline">num_sala_fk</span>, <span class="underline">num_rack</span>, altura_u )</div>
+              </div>
+              <p>A Chave Primária de <code>RACK</code> é composta por <strong>3 atributos</strong>: as chaves estrangeiras acumuladas da hierarquia proprietária mais o seu discriminador local.</p>
+            </div>
+          </details>
+
+          <!-- Exercício 3 -->
+          <details class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+            <summary class="font-bold cursor-pointer text-slate-900 dark:text-white">
+              Exercício 3 — Passo 3: Decisão Técnica em Relacionamentos 1:1
+            </summary>
+            <div class="mt-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-2">
+              <ul class="list-disc list-inside space-y-1">
+                <li><strong>Caso 1: TECNICO (0,1) : (1,1) VEICULO:</strong> Aplica-se a <strong>Abordagem A</strong> inserindo <code>mat_tecnico_fk</code> na relação <code>VEICULO</code> com restrição <code>UNIQUE (AK)</code> e <code>NOT NULL</code>. Evita 75% de valores NULL que ocorreriam se a FK fosse em TECNICO.</li>
+                <li><strong>Caso 2: ORDEM_SERVICO (1,1) : (1,1) LAUDO:</strong> Aplica-se a <strong>Abordagem B (Fusão)</strong> em uma única relação <code>ORDEM_SERVICO_COMPLETA</code>, eliminando overhead de JOINs obrigatórios síncronos.</li>
+                <li><strong>Caso 3: FUNCIONARIO (0,1) : (0,1) VAGA_VIP (Esparsa):</strong> Aplica-se a <strong>Abordagem C (Relação Cruzada)</strong> criando <code>OCUPACAO_VAGA_VIP(id_func_fk [AK], num_vaga_fk [AK], andar)</code> para evitar 98% de NULL nas tabelas principais.</li>
+              </ul>
+            </div>
+          </details>
+
+          <!-- Exercício 4 -->
+          <details class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+            <summary class="font-bold cursor-pointer text-slate-900 dark:text-white">
+              Exercício 4 — Passo 4: Relacionamento 1:N Regular vs. Recursivo
+            </summary>
+            <div class="mt-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-2">
+              <p>São criadas exatamente <strong>2 relações</strong>:</p>
+              <div class="p-3 bg-slate-900 rounded font-mono text-emerald-400 text-xs space-y-1">
+                <div>EQUIPE_MANUTENCAO ( <span class="underline">cod_equipe</span>, nome_equipe, turno )</div>
+                <div>AGENTE_SUPORTE ( <span class="underline">matricula</span>, nome_agente, nivel_certificacao, data_lotacao, cod_equipe_fk, mat_coordenador_fk )</div>
+              </div>
+              <p>Propagar a chave de <code>AGENTE_SUPORTE</code> para <code>EQUIPE_MANUTENCAO</code> violaria a 1FN, pois exigiria armazenar um vetor/lista de agentes em uma única célula.</p>
+            </div>
+          </details>
+
+          <!-- Exercício 5 -->
+          <details class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+            <summary class="font-bold cursor-pointer text-slate-900 dark:text-white">
+              Exercício 5 — Desafio Integrador: Monitoramento de Enlaces de Rádio Micro-ondas
+            </summary>
+            <div class="mt-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-2">
+              <p><strong>Esquema Relacional Completo:</strong></p>
+              <div class="p-3 bg-slate-900 rounded font-mono text-emerald-400 text-xs space-y-1">
+                <div>TORRE ( <span class="underline">id_torre</span>, nome_torre, latitude, longitude, altitude_m )</div>
+                <div>LICENCA_ANATEL ( <span class="underline">num_licenca</span>, data_vencimento, orgao_emissor, id_torre_fk [AK, NOT NULL] )</div>
+                <div>ANTENA_PARABOLICA ( <span class="underline">id_torre_fk</span>, <span class="underline">num_sequencial_antena</span>, diametro_m, frequencia_ghz, azimute_graus )</div>
+              </div>
+              <p>Combina Passo 1 (achatamento de coordenadas em TORRE), Passo 3 Abordagem A (FK em LICENCA com AK e NOT NULL) e Passos 2/4 (ANTENA como entidade fraca identificada por TORRE).</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 5: CENTRAL DE ARQUIVOS                 -->
+    <!-- ========================================== -->
+    <div id="tab-arquivos" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Repositório de Arquivos Didáticos da Aula 10</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <a href="materiais/main.pdf" download="Aula_10_Slides.pdf" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-solid fa-file-pdf text-red-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Slides Oficiais (PDF)</h3>
+              <p class="text-[11px] text-slate-500">28 slides Beamer com diagramas conceituais e lógicos.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">
+              Download <i class="fa-solid fa-download ml-1 text-[10px]"></i>
+            </span>
+          </a>
+
+          <a href="plano_de_aula.md" download="Aula_10_Plano_de_Aula.md" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-solid fa-file-lines text-blue-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Plano de Aula (.md)</h3>
+              <p class="text-[11px] text-slate-500">Roteiro pedagógico completo dos 100 minutos de aula.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">
+              Download <i class="fa-solid fa-download ml-1 text-[10px]"></i>
+            </span>
+          </a>
+
+          <a href="README.md" download="Aula_10_README.md" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-solid fa-book text-amber-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Guia da Aula (README.md)</h3>
+              <p class="text-[11px] text-slate-500">Competências, bibliografia e diretrizes conceituais.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">
+              Download <i class="fa-solid fa-download ml-1 text-[10px]"></i>
+            </span>
+          </a>
+
+          <a href="materiais/main.tex" download="Aula_10_Beamer_LaTeX.tex" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-solid fa-code text-purple-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Código LaTeX Beamer</h3>
+              <p class="text-[11px] text-slate-500">Código-fonte TeX dos slides com figuras TikZ.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">
+              Download <i class="fa-solid fa-download ml-1 text-[10px]"></i>
+            </span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- RODAPÉ INSTITUCIONAL                       -->
+  <!-- ========================================== -->
+  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center space-x-2">
+        <span>Instituto Federal de Educação, Ciência e Tecnologia do Ceará — Campus Tauá</span>
+      </div>
+      <div>
+        <span>Banco de Dados (2026.2) • Prof. Me. Reginaldo Fernandes</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script de Controle de Abas e Modo Escuro -->
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-emerald-600', 'text-emerald-600', 'dark:text-emerald-400');
+        btn.classList.add('text-slate-500', 'dark:text-slate-400');
+      });
+
+      const selectedTab = document.getElementById(tabId);
+      const selectedBtn = document.getElementById('btn-' + tabId);
+
+      if (selectedTab) selectedTab.classList.remove('hidden');
+      if (selectedBtn) {
+        selectedBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
+        selectedBtn.classList.add('border-b-2', 'border-emerald-600', 'text-emerald-600', 'dark:text-emerald-400');
+      }
+    }
+
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        localStorage.theme = 'light';
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.theme = 'dark';
+      }
+    });
+  </script>
+</body>
+
+</html>

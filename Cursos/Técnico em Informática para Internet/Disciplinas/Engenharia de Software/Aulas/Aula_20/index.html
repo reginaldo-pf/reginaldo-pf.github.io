@@ -50,12 +50,16 @@
       </div>
 
       <div class="flex items-center space-x-3">
+        <a href="../Aula_01/index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 transition-colors flex items-center space-x-1.5">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span class="hidden sm:inline">Aula 01</span>
+        </a>
         <a href="../Aula_21/index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 hover:bg-emerald-100 transition-colors flex items-center space-x-1.5">
           <span>Ir para Aula 21</span>
           <i class="fa-solid fa-arrow-right"></i>
         </a>
         <a href="../../index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center space-x-1.5">
-          <i class="fa-solid fa-arrow-left"></i>
+          <i class="fa-solid fa-house"></i>
           <span class="hidden sm:inline">Portal da Disciplina</span>
         </a>
         <button id="theme-toggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-emerald-600 transition-colors" title="Alternar Modo Escuro/Claro">
@@ -111,6 +115,10 @@
       <button onclick="switchTab('tab-atividade')" id="btn-tab-atividade" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
         <i class="fa-solid fa-pen-to-square"></i>
         <span>Atividade Prática (TauáDelivery)</span>
+      </button>
+      <button onclick="switchTab('tab-plano')" id="btn-tab-plano" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Plano de Aula</span>
       </button>
       <button onclick="switchTab('tab-arquivos')" id="btn-tab-arquivos" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
         <i class="fa-solid fa-download"></i>
@@ -221,7 +229,58 @@ class ContaEspecial(ContaComum):
       </div>
     </div>
 
-    <!-- ABA 4: CENTRAL DE ARQUIVOS -->
+    <!-- ABA 4: PLANO DE AULA -->
+    <div id="tab-plano" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Cronograma Pedagógico da Aula 20 (100 Minutos)</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
+                <th class="py-2.5 px-3">Bloco</th>
+                <th class="py-2.5 px-3">Tempo</th>
+                <th class="py-2.5 px-4">Conteúdo e Atividades</th>
+                <th class="py-2.5 px-3">Recursos & Figuras</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50 text-slate-700 dark:text-slate-300">
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">1</td>
+                <td class="py-3 px-3 whitespace-nowrap">00 - 15 min</td>
+                <td class="py-3 px-4"><strong>Contextualização e Introdução à UML (Cap. 1):</strong> Por que modelar software (analogia da construção civil), requisitos funcionais e não funcionais, prototipação rápida.</td>
+                <td class="py-3 px-3">Slides 1 a 4</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">2</td>
+                <td class="py-3 px-3 whitespace-nowrap">15 - 30 min</td>
+                <td class="py-3 px-4"><strong>Taxonomia UML e Revisão de OO (Caps. 1 e 2):</strong> Three Amigos, os 14 diagramas da UML 2, revisão de OO (Classes, Atributos, Métodos, Visibilidade, Herança e Polimorfismo com <code>exemplo_poo.py</code>).</td>
+                <td class="py-3 px-3">Slides 5 a 9 + <code>exemplo_poo.py</code></td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">3</td>
+                <td class="py-3 px-3 whitespace-nowrap">30 - 65 min</td>
+                <td class="py-3 px-4"><strong>Diagrama de Casos de Uso (Cap. 3):</strong> Atores humanos e sistemas externos, fronteira de sistema, associações, inclusão (<code>&lt;&lt;include&gt;&gt;</code>) e extensão (<code>&lt;&lt;extend&gt;&gt;</code>) com pontos de extensão e especificação textual.</td>
+                <td class="py-3 px-3">Slides 10 a 20</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">4</td>
+                <td class="py-3 px-3 whitespace-nowrap">65 - 90 min</td>
+                <td class="py-3 px-4"><strong>Atividade Prática (TauáDelivery Web):</strong> Modelagem de Casos de Uso com base nos requisitos RF01 a RF13, diagrama completo e especificação textual de <em>UC03 - Finalizar Pedido</em>.</td>
+                <td class="py-3 px-3">Guia <code>atividade_pratica.md</code></td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">5</td>
+                <td class="py-3 px-3 whitespace-nowrap">90 - 100 min</td>
+                <td class="py-3 px-4"><strong>Fechamento e Próximos Passos:</strong> Síntese coletiva e gancho para a Aula 21 (Diagrama de Classes e Diagrama de Atividades).</td>
+                <td class="py-3 px-3">Slides 21 e 22</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA 5: CENTRAL DE ARQUIVOS -->
     <div id="tab-arquivos" class="tab-content hidden space-y-4">
       <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm">
         <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Repositório de Arquivos da Aula 20</h2>

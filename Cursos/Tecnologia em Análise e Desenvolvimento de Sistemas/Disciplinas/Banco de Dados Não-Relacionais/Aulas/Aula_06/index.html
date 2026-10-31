@@ -59,8 +59,12 @@
       </div>
 
       <div class="flex items-center space-x-3">
-        <a href="../../index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center space-x-1.5">
+        <a href="../Aula_05/index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 transition-colors flex items-center space-x-1.5">
           <i class="fa-solid fa-arrow-left"></i>
+          <span class="hidden sm:inline">Aula 05</span>
+        </a>
+        <a href="../../index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center space-x-1.5">
+          <i class="fa-solid fa-house"></i>
           <span class="hidden sm:inline">Portal da Disciplina</span>
         </a>
         <button id="theme-toggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-emerald-600 transition-colors" title="Alternar Modo Escuro/Claro">
@@ -121,9 +125,17 @@
         <i class="fa-solid fa-file-pdf"></i>
         <span>3. Slides (PDF)</span>
       </button>
-      <button onclick="switchTab('tab-exercicios')" id="btn-tab-exercicios" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 whitespace-nowrap flex items-center space-x-2 transition-all">
+      <button onclick="switchTab('tab-plano')" id="btn-tab-plano" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 whitespace-nowrap flex items-center space-x-2 transition-all">
         <i class="fa-solid fa-list-check"></i>
-        <span>4. Exercícios & Povoamento</span>
+        <span>4. Plano de Aula</span>
+      </button>
+      <button onclick="switchTab('tab-exercicios')" id="btn-tab-exercicios" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 whitespace-nowrap flex items-center space-x-2 transition-all">
+        <i class="fa-solid fa-pen-to-square"></i>
+        <span>5. Exercícios & Povoamento</span>
+      </button>
+      <button onclick="switchTab('tab-arquivos')" id="btn-tab-arquivos" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 whitespace-nowrap flex items-center space-x-2 transition-all">
+        <i class="fa-solid fa-download"></i>
+        <span>6. Central de Arquivos</span>
       </button>
     </div>
 
@@ -421,6 +433,56 @@
     </div>
 
     <!-- ========================================== -->
+    <!-- ABA 4: PLANO DE AULA                       -->
+    <!-- ========================================== -->
+    <div id="tab-plano" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center space-x-2">
+          <i class="fa-solid fa-list-check text-emerald-600 dark:text-emerald-400"></i>
+          <span>Cronograma Pedagógico da Aula 06 (120 Minutos)</span>
+        </h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
+                <th class="py-2.5 px-3">Bloco</th>
+                <th class="py-2.5 px-3">Duração</th>
+                <th class="py-2.5 px-4">Descrição das Atividades</th>
+                <th class="py-2.5 px-3">Metodologia & Recursos</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50 text-slate-700 dark:text-slate-300">
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">1. Teoria & BSON</td>
+                <td class="py-3 px-3 whitespace-nowrap">00 – 25 min</td>
+                <td class="py-3 px-4"><strong>RDBMS vs. Modelo de Documentos e BSON:</strong> Anomalias relacionais (1NF–5NF) vs. documentos BSON (16 MB / 100 níveis); os 3 pilares do BSON (<em>Lightweight, Traversable, Efficient</em>); <code>ObjectId</code> (12 bytes) e <code>Decimal128</code>.</td>
+                <td class="py-3 px-3">Slides Beamer (main.pdf)</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">2. CRUD do Zero</td>
+                <td class="py-3 px-3 whitespace-nowrap">25 – 55 min</td>
+                <td class="py-3 px-4"><strong>CRUD Passo a Passo no Compass e mongosh:</strong> Criação do banco <code>mongodb_books</code> e coleção <code>books</code>; consulta de coleções; inserção manual do 1.º livro; subdocumento <code>meta</code> e busca com dot notation, <code>$gt</code> e <code>$regex</code>; <code>updateOne</code> (<code>$set</code>) e <code>deleteOne</code>.</td>
+                <td class="py-3 px-3">Prática guiada no Compass & mongosh</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">3. CRUD Python</td>
+                <td class="py-3 px-3 whitespace-nowrap">55 – 80 min</td>
+                <td class="py-3 px-4"><strong>Programando com o Driver PyMongo:</strong> Conexão com <code>MongoClient</code> e <code>ping</code>; execução passo a passo de <code>insert_one</code>, <code>insert_many</code>, <code>find</code> (dot notation, <code>$regex</code>, <code>$gt</code>, <code>$or</code>), <code>update_one</code> e <code>delete_one</code>.</td>
+                <td class="py-3 px-3">Execução ao vivo de <code>crud_pymongo.py</code></td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">4. Schema Design</td>
+                <td class="py-3 px-3 whitespace-nowrap">80 – 120 min</td>
+                <td class="py-3 px-4"><strong>Modelagem no E-Commerce ShopGrids:</strong> <em>Embedded Data</em> vs. <em>References</em> vs. <em>Denormalization</em>; <em>Read-Write Ratio</em>; construção manual do 1.º registro de <code>produtos</code>, <code>clientes</code>, <code>avaliacoes</code> e <code>pedidos</code> no Compass e povoamento final em lote.</td>
+                <td class="py-3 px-3">Prática guiada e scripts Python</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
     <!-- ABA 4: EXERCÍCIOS & POVOAMENTO             -->
     <!-- ========================================== -->
     <div id="tab-exercicios" class="tab-content hidden space-y-8">
@@ -486,6 +548,55 @@
             <summary class="font-bold cursor-pointer text-slate-900 dark:text-white">3. Por que a coleção de pedidos aplica o Snapshot Pattern nos itens comprados?</summary>
             <p class="mt-2 text-slate-600 dark:text-slate-300">Se o pedido guardar apenas a referência <code>produto_id</code>, qualquer reajuste futuro no preço do produto na coleção <code>produtos</code> alterará retroativamente o valor de pedidos passados. Congelar <code>sku</code>, <code>nome</code> e <code>preco_unit</code> dentro do pedido preserva a integridade histórica.</p>
           </details>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 6: CENTRAL DE ARQUIVOS                 -->
+    <!-- ========================================== -->
+    <div id="tab-arquivos" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center space-x-2">
+          <i class="fa-solid fa-download text-emerald-600 dark:text-emerald-400"></i>
+          <span>Repositório de Arquivos Didáticos da Aula 06</span>
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <a href="materiais/main.pdf" download="Aula_06_Slides.pdf" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-solid fa-file-pdf text-red-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Slides Oficiais (PDF)</h3>
+              <p class="text-[11px] text-slate-500">24 páginas Beamer (Widescreen 16:9) sobre BSON e Modelagem.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">Download <i class="fa-solid fa-download ml-1 text-[10px]"></i></span>
+          </a>
+
+          <a href="plano_de_aula.md" download="Aula_06_Plano_de_Aula.md" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-solid fa-file-lines text-blue-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Plano de Aula (.md)</h3>
+              <p class="text-[11px] text-slate-500">Planejamento pedagógico detalhado dos 120 minutos.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">Download <i class="fa-solid fa-download ml-1 text-[10px]"></i></span>
+          </a>
+
+          <a href="tutorial_construcao_passo_a_passo.md" download="Aula_06_Guia_Passo_a_Passo.md" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-solid fa-book-open text-purple-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Guia Prático Passo a Passo</h3>
+              <p class="text-[11px] text-slate-500">Tutorial de construção com MongoDB Compass e PyMongo.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">Download <i class="fa-solid fa-download ml-1 text-[10px]"></i></span>
+          </a>
+
+          <a href="codigo/crud_pymongo.py" download="crud_pymongo.py" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-brands fa-python text-emerald-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Script PyMongo (crud_pymongo.py)</h3>
+              <p class="text-[11px] text-slate-500">Operações CRUD completas do zero com driver oficial.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">Download <i class="fa-solid fa-download ml-1 text-[10px]"></i></span>
+          </a>
         </div>
       </div>
     </div>
