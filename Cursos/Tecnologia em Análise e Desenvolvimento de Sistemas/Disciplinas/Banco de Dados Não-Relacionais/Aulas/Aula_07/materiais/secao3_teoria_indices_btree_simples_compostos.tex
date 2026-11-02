@@ -1,0 +1,121 @@
+% !TeX root = main.tex
+\changecolours{ScoutGreen}
+\section[Índices Simples, Compostos e Otimizações]{Teoria de Índices: Índices Simples, Compostos e Otimizações de Memória}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Gestão e Anatomia de Índices no MongoDB}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{Comandos Essenciais no Terminal}\par
+      \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+      \scriptsize
+      \begin{itemize}
+        \item O MongoDB cria automaticamente o índice único no campo \texttt{\_id}.
+        \item Todo índice adicional consome espaço em disco e memória RAM no cache do WiredTiger.
+      \end{itemize}
+      \begin{lstlisting}[language=mongosh]
+// Listar indices existentes:
+db.produtos.getIndexes()
+
+// Remover um indice pelo nome:
+db.produtos.dropIndex("idx_sku_1")
+      \end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{Índice Simples (\textit{Single Field Index})}\par
+      \scriptsize
+      \begin{lstlisting}[language=mongosh]
+db.produtos.createIndex(
+  { sku: 1 },
+  { unique: true, name: "idx_sku_unico" }
+)
+      \end{lstlisting}
+      \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+      \begin{itemize}
+        \item \textbf{Direção (1 vs -1):} Em índices simples, a direção é irrelevante para a performance, pois o motor pode percorrer a $B\text{-Tree}$ bidirecionalmente com o mesmo custo.
+        \item \textbf{\texttt{unique: true}:} Garante unicidade e integridade no banco.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Índices Compostos e a Regra dos Prefixos}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{O que é um Índice Composto?}\par
+      \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+      \scriptsize
+      \begin{itemize}
+        \item Índice construído sobre dois ou mais campos da coleção.
+        \item A ordenação é hierárquica: os nós são ordenados pelo primeiro campo; em caso de empate, pelo segundo, e assim por diante.
+      \end{itemize}
+      \begin{lstlisting}[language=mongosh]
+db.produtos.createIndex({
+  categoria: 1,
+  preco: -1
+})
+      \end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{Correspondência de Prefixos (\textit{Index Prefixes})}\par
+      \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+      \scriptsize
+      Considere o índice composto em \texttt{\{ A: 1, B: 1, C: 1 \}}:
+      \begin{itemize}
+        \item \textbf{Prefixos Válidos (Acelerados):}
+          \begin{itemize}\scriptsize
+            \item Consulta sobre \texttt{\{ A \}}
+            \item Consulta sobre \texttt{\{ A, B \}}
+            \item Consulta sobre \texttt{\{ A, B, C \}}
+          \end{itemize}
+        \item \textbf{Consultas NÃO Aceleradas:}
+          \begin{itemize}\scriptsize
+            \item Consulta sobre \texttt{\{ B \}} ou \texttt{\{ C \}}
+            \item Consulta sobre \texttt{\{ B, C \}} sem o campo \texttt{A}
+          \end{itemize}
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Otimizações de Memória RAM: Índices Parciais, Esparsos e TTL}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{Índices Parciais (\textit{Partial Indexes})}\par
+      \scriptsize
+      Indexam apenas documentos que atendem a um filtro, economizando dezenas de megabytes no cache da RAM:
+      \begin{lstlisting}[language=mongosh]
+// Indexa apenas pedidos PENDENTES:
+db.pedidos.createIndex(
+  { cliente_id: 1, data_criacao: -1 },
+  { partialFilterExpression: { status: "PENDENTE" } }
+)
+      \end{lstlisting}
+      \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+      \begin{itemize}
+        \item Pedidos já entregues ou cancelados não ocupam espaço na árvore balanceada!
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{Índices TTL (\textit{Time-To-Live})}\par
+      \scriptsize
+      Excluem automaticamente documentos expirados do banco sem necessidade de rotinas de \textit{cron job}:
+      \begin{lstlisting}[language=mongosh]
+// Exclui o carrinho apos 3600 segundos:
+db.carrinhos.createIndex(
+  { data_expiracao: 1 },
+  { expireAfterSeconds: 0 }
+)
+      \end{lstlisting}
+      \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+      \begin{itemize}
+        \item O motor WiredTiger roda uma thread em segundo plano a cada 60s para limpeza automática.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}

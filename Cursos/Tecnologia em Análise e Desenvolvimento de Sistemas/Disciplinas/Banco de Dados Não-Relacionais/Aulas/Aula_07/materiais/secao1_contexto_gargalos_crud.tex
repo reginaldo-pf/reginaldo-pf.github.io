@@ -1,0 +1,186 @@
+% !TeX root = main.tex
+\changecolours{ScoutGreen}
+\section[Gargalos de Escala e a Teoria da $B\text{-Tree}$]{Contextualização Prática: Gargalos de Escala e a Teoria da $B\text{-Tree}$}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Problema de Escala no E-commerce ShopGrids},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{O Cenário sob Concorrência Real}\par
+  \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+  \scriptsize
+  \begin{itemize}
+    \item Na Aula 06, estruturamos os esquemas BSON do \textbf{ShopGrids} com documentos ricos.
+    \item Em ambiente de desenvolvimento com 50 itens, qualquer consulta parece instantânea ($\le 1\text{ ms}$).
+    \item \textbf{O Ponto de Ruptura:} Ao carregar $50.000$ produtos e $10.000$ pedidos sob tráfego concorrente, consultas sem índice geram colapso de I/O e CPU em $100\%$!
+  \end{itemize}
+}{%
+  \alert{A Anatomia do \texttt{COLLSCAN} (\textit{Collection Scan})}\par
+  \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+  \scriptsize
+  \begin{itemize}
+    \item Sem índice, o motor WiredTiger realiza uma varredura completa da coleção: \textbf{\texttt{COLLSCAN}}.
+    \item \textbf{Complexidade Temporal:} $\mathcal{O}(N)$, onde $N$ é o \textbf{Tamanho da Coleção}.
+    \item Cada documento BSON precisa ser carregado do disco, descompactado na memória RAM e inspecionado campo por campo.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={A Estrutura de Árvore Balanceada ($B\text{-Tree}$) no WiredTiger},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Como o MongoDB Organiza os Índices}\par
+  \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+  \scriptsize
+  \begin{itemize}
+    \item Os índices no MongoDB são estruturados como \textbf{Árvores Balanceadas ($B\text{-Tree}$)}.
+    \item \textbf{Nó Raiz (\textit{Root}):} Ponto de entrada com chaves ordenadas e ponteiros.
+    \item \textbf{Nós Internos:} Direcionam a busca em profundidade através de bifurcações.
+    \item \textbf{Nós Folha (\textit{Leaves}):} Contêm os valores indexados e o ponteiro físico direto para o documento (\textit{RecordId}).
+  \end{itemize}
+}{%
+  \alert{Fator de Ramificação e Complexidade}\par
+  \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+  \scriptsize
+  \begin{itemize}
+    \item \textbf{Fator de Ramificação ($b$):} Número de filhos por nó (típico de 50 a 200 entradas em páginas de 4 KB).
+    \item \textbf{Complexidade Logarítmica:} $\mathcal{O}(\log_{b} N)$, onde $h \approx \lceil \log_{b}(N) \rceil$ denota a \textbf{Altura da Árvore}.
+    \item Em vez de ler $N$ documentos, a busca descende por apenas $h$ nós balanceados na memória RAM!
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Fundamentos da Árvore Balanceada ($B\text{-Tree}$)},leftcol=6.8cm,rightcol=7.4cm]{%
+  \alert{O Que É uma Árvore $B\text{-Tree}$?}\par
+  \itemseps[topsepi=0.1mm,itemsepi=0.3mm,labelsep=1.3mm,leftmargini=2.2mm]
+  \scriptsize
+  \begin{itemize}
+    \item \textbf{Conceito:} Estrutura de busca auto-balanceada multidirecional ($m$-vias), projetada para operações eficientes em blocos de disco/SSD e memória RAM.
+    \item \textbf{Nós com Múltiplas Chaves:} Ao contrário de árvores binárias (1 chave, 2 filhos), nós de $B\text{-Tree}$ contêm dezenas a centenas de chaves ordenadas ($k_1 < k_2 < \dots < k_n$) e direcionam múltiplos filhos ($n+1$).
+    \item \textbf{Balanceamento Perfeito:} Todas as folhas residem rigorosamente na \textbf{mesma profundidade} ($h$). Divisões de nós ocorrem para cima, garantindo busca sempre em $\mathcal{O}(\log N)$.
+    \item \textbf{Roteamento por Faixas:} As chaves funcionam como balizas ordenadas, saltando diretamente ao bloco alvo sem varredura sequencial.
+  \end{itemize}
+}{%
+  \alert{Anatomia Visual e Mecanismo de Busca}\par
+  \vspace{0.1cm}
+  \centering
+  \begin{tikzpicture}[
+    scale=0.74, transform shape,
+    rootnode/.style={
+      rectangle split, rectangle split parts=2, rectangle split horizontal,
+      draw=ScoutNavy, fill=ScoutNavy!12, line width=1pt, rounded corners=2pt,
+      inner sep=3.5pt, font=\ttfamily\scriptsize\bfseries, text centered
+    },
+    leafnode/.style={
+      rectangle split, rectangle split parts=3, rectangle split horizontal,
+      draw=ScoutGreen, fill=ScoutGreen!10, line width=0.9pt, rounded corners=2pt,
+      inner sep=3pt, font=\ttfamily\scriptsize\bfseries, text centered
+    },
+    leafnodetwo/.style={
+      rectangle split, rectangle split parts=2, rectangle split horizontal,
+      draw=ScoutGreen, fill=ScoutGreen!10, line width=0.9pt, rounded corners=2pt,
+      inner sep=3pt, font=\ttfamily\scriptsize\bfseries, text centered
+    },
+    docbox/.style={
+      draw=ScoutPurple, fill=ScoutPurple!8, line width=0.8pt, rounded corners=3pt,
+      font=\ttfamily\tiny, inner sep=3.5pt, align=center
+    },
+    searchbadge/.style={
+      draw=ScoutRed!90, fill=ScoutRed!6, line width=0.7pt, rounded corners=2pt,
+      font=\tiny, align=left, inner sep=2.5pt
+    },
+    ptr/.style={->, >=stealth, line width=0.7pt, ScoutNavy!70},
+    searchptr/.style={->, >=stealth, line width=1.3pt, ScoutRed}
+  ]
+    % Nó Raiz
+    \node[rootnode] (root) at (2.4, 3.4) {20 \nodepart{two} 50};
+    \node[above=1pt of root, font=\scriptsize\bfseries\color{ScoutNavy}] {Nó Raiz (\textit{Root})};
+
+    % Badge no canto superior direito
+    \node[searchbadge] (badge) at (5.7, 3.4) {%
+      \textbf{\color{ScoutRed}Busca por \texttt{preco: 45}}\\[1pt]
+      1. Raiz: $20 \le 45 < 50$\\[1pt]
+      2. Folha: acha 45 $\to$ \textbf{RecordId}\\[1pt]
+      \textbf{Apenas 2 saltos!} $\mathcal{O}(\log N)$%
+    };
+
+    % Nós Folha
+    \node[leafnodetwo] (leaf1) at (0.8, 1.8) {5 \nodepart{two} 12};
+    \node[leafnode] (leaf2) at (3.2, 1.8) {25 \nodepart{two} 32 \nodepart{three} \textbf{\underline{45}}};
+    \node[leafnodetwo] (leaf3) at (5.6, 1.8) {60 \nodepart{two} 80};
+    
+    \node[below=1pt of leaf1, font=\tiny\bfseries\color{ScoutGreen!70!black}] {Folha ($< 20$)};
+    \node[below=1pt of leaf3, font=\tiny\bfseries\color{ScoutGreen!70!black}] {Folha ($\ge 50$)};
+
+    % Conexões Raiz -> Folhas
+    \draw[ptr] (root.south west) -- (leaf1.north) node[midway, left=1pt, font=\tiny\color{gray}] {$< 20$};
+    \draw[searchptr] (root.south) -- (leaf2.north) node[midway, right=1pt, font=\tiny\bfseries\color{ScoutRed}] {$[20, 50)$};
+    \draw[ptr] (root.south east) -- (leaf3.north) node[midway, right=1pt, font=\tiny\color{gray}] {$\ge 50$};
+
+    % Documento no disco
+    \node[docbox] (doc) at (3.5, 0.45) {%
+      \textbf{RecordId \#1042} (Ponteiro Físico no Disco/RAM)\\%
+      \color{darkgray}\{\_id: 1042, nome: "SSD NVMe 1TB", preco: 45\}%
+    };
+    \draw[searchptr] (leaf2.three south) -- (doc.north -| leaf2.three south)
+      node[midway, right=1pt, font=\tiny\bfseries\color{ScoutRed}] {\textit{RecordId}};
+  \end{tikzpicture}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Exemplo Matemático Pareado: $\mathcal{O}(N)$ vs $\mathcal{O}(\log_{b} N)$}
+  \vspace{-0.1cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{1. Cálculo Analítico Passo a Passo}\par
+      \itemseps[topsepi=0.1mm,itemsepi=0.3mm,labelsep=1.2mm,leftmargini=2.0mm]
+      \tiny
+      Considere a coleção com $N = 100.000$ produtos e fator $b = 100$:
+      \begin{itemize}
+        \item \textbf{Sem Índice (\texttt{COLLSCAN}):}
+          $$\text{Acessos}_{\text{scan}} = N = 100.000 \text{ documentos lidos}$$
+        \item \textbf{Com Índice $B\text{-Tree}$ (\texttt{IXSCAN}):}
+          $$h \approx \left\lceil \log_{100}(100.000) \right\rceil = \lceil 2.5 \rceil = 3$$
+        \item \textbf{Acessos necessários:} Apenas \textbf{3 nós} inspecionados!
+        \item \textbf{Redução de I/O:}
+          $$\left( 1 - \frac{3}{100.000} \right) \times 100\% = \mathbf{99.997\%}$$
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{2. Interpretação em Hardware}\par
+      \itemseps[topsepi=0.1mm,itemsepi=0.3mm,labelsep=1.2mm,leftmargini=2.0mm]
+      \tiny
+      \begin{itemize}
+        \item A busca sequencial exige ler megabytes de dados brutos e satura a banda do barramento PCIe/SATA.
+        \item A $B\text{-Tree}$ realiza saltos diretos em blocos ordenados.
+        \item Como a raiz e os nós intermediários residem no cache WiredTiger na RAM, o acesso a um registro é quase instantâneo ($\le 0.5\text{ ms}$).
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Demonstração Computacional Pareada em Python}
+  \vspace{0.05cm}
+  \scriptsize
+  Implementação em Python medindo a diferença prática entre busca linear e busca em árvore:
+  \begin{lstlisting}[language=Python]
+import time, bisect
+
+N = 100_000
+dados_lineares = list(range(N))
+dados_ordenados = sorted(dados_lineares) # Estrutura do Indice B-Tree
+alvo = 99_999 # Pior caso (elemento final)
+
+# 1. Busca Linear O(N) -> Simulacao de COLLSCAN
+t0 = time.perf_counter()
+for item in dados_lineares:
+    if item == alvo: break
+tempo_scan = (time.perf_counter() - t0) * 1000
+
+# 2. Busca em Arvore O(log N) -> Simulacao de IXSCAN
+t0 = time.perf_counter()
+pos = bisect.bisect_left(dados_ordenados, alvo)
+tempo_indice = (time.perf_counter() - t0) * 1000
+
+print(f"COLLSCAN (Linear): {tempo_scan:.4f} ms")
+print(f"IXSCAN (Indice)  : {tempo_indice:.4f} ms")
+# Resultado: IXSCAN eh mais de 800x mais rapido com N = 100.000!
+  \end{lstlisting}
+\end{frame}

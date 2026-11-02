@@ -1,0 +1,88 @@
+[
+  {
+    "sku": "SKU-INF-000101",
+    "titulo": "Teclado Mecânico RGB Gamer Pro",
+    "descricao": "Switches mecânicos táteis de alta durabilidade com iluminação RGB individual e descanso de punho magnético.",
+    "categoria": "Informática",
+    "preco": 349.90,
+    "estoque": {
+      "atual": 18,
+      "minimo": 10
+    },
+    "status": "ATIVO",
+    "tags": ["gamer", "mecanico", "rgb", "usb-c"],
+    "data_cadastro": {"$date": "2026-02-15T10:30:00Z"},
+    "ultimas_avaliacoes": [
+      {"nota": 5, "autor": "Lucas Farias", "comentario": "Excelente resposta e construção sólida."},
+      {"nota": 4, "autor": "Mariana Sales", "comentario": "Muito bom, cabo resistente."}
+    ]
+  },
+  {
+    "sku": "SKU-INF-000102",
+    "titulo": "Mouse Óptico Ergonômico Sem Fio 16000 DPI",
+    "descricao": "Design vertical anatômico para redução da tensão muscular no punho, bateria recarregável e sensor óptico de alta precisão.",
+    "categoria": "Periféricos",
+    "preco": 229.00,
+    "estoque": {
+      "atual": 4,
+      "minimo": 8
+    },
+    "status": "ATIVO",
+    "tags": ["ergonomico", "sem fio", "bluetooth", "promocao"],
+    "data_cadastro": {"$date": "2026-03-01T14:20:00Z"},
+    "ultimas_avaliacoes": [
+      {"nota": 5, "autor": "Carlos Eduardo", "comentario": "Minhas dores no pulso sumiram em uma semana!"}
+    ]
+  },
+  {
+    "sku": "SKU-INF-000103",
+    "titulo": "Monitor UltraWide 34 Pol 144Hz 1ms IPS",
+    "descricao": "Painel IPS curvo com suporte a HDR400, taxa de atualização de 144Hz e tempo de resposta de 1ms ideal para multitasking e simulações.",
+    "categoria": "Monitores",
+    "preco": 2899.99,
+    "estoque": {
+      "atual": 12,
+      "minimo": 5
+    },
+    "status": "ATIVO",
+    "tags": ["ultrawide", "144hz", "ips", "gamer", "4k"],
+    "data_cadastro": {"$date": "2026-01-10T09:15:00Z"},
+    "ultimas_avaliacoes": [
+      {"nota": 5, "autor": "Ana Beatriz", "comentario": "Produtividade triplicada ao programar."}
+    ]
+  },
+  {
+    "sku": "SKU-INF-000104",
+    "titulo": "Headset Sem Fio com Cancelamento Ativo de Ruído",
+    "descricao": "Drivers de neodímio de 50mm, microfone retrátil com IA para supressão de ruídos externos e almofadas com espuma viscoelástica.",
+    "categoria": "Áudio",
+    "preco": 599.00,
+    "estoque": {
+      "atual": 2,
+      "minimo": 5
+    },
+    "status": "ATIVO",
+    "tags": ["sem fio", "bluetooth", "audio", "gamer"],
+    "data_cadastro": {"$date": "2026-04-12T16:45:00Z"},
+    "ultimas_avaliacoes": [
+      {"nota": 4, "autor": "Rodrigo Silva", "comentario": "Isolamento acústico impressionante."}
+    ]
+  },
+  {
+    "sku": "SKU-INF-000105",
+    "titulo": "SSD NVMe M.2 2TB Leitura 7400MB/s",
+    "descricao": "Armazenamento em estado sólido de ultra velocidade PCIe 4.0 com dissipador térmico em grafeno.",
+    "categoria": "Armazenamento",
+    "preco": 849.50,
+    "estoque": {
+      "atual": 25,
+      "minimo": 10
+    },
+    "status": "ATIVO",
+    "tags": ["alta performance", "ssd", "nvme"],
+    "data_cadastro": {"$date": "2026-03-25T11:00:00Z"},
+    "ultimas_avaliacoes": [
+      {"nota": 5, "autor": "Felipe Mendes", "comentario": "Carrega qualquer sistema ou jogo em 3 segundos."}
+    ]
+  }
+]

@@ -1,0 +1,156 @@
+% !TeX root = main.tex
+\changecolours{ScoutNavy}
+\section[CRUD Avançado: Filtros e Atualizações Atômicas]{CRUD Avançado: Filtros Complexos e Atualizações Atômicas}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{O Operador \texttt{\$elemMatch} e o Problema dos Falsos Positivos}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{A Armadilha do Filtro Ingênuo em Arrays}\par
+      \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+      \scriptsize
+      Considere o pedido com dois itens:
+      \begin{itemize}
+        \item Item A: \texttt{preco = 250}, \texttt{qtd = 1}
+        \item Item B: \texttt{preco = 20}, \texttt{qtd = 8}
+      \end{itemize}
+      Se consultarmos:
+      \begin{lstlisting}[language=mongosh]
+db.pedidos.find({
+  "itens.preco": { $gt: 100 },
+  "itens.qtd": { $gte: 5 }
+})
+      \end{lstlisting}
+      \textbf{Resultado:} O documento é retornado! O Item A atendeu ao preço e o Item B à quantidade. O filtro avaliou itens \textbf{diferentes}!
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{A Solução Estrita com \texttt{\$elemMatch}}\par
+      \scriptsize
+      O operador \texttt{\$elemMatch} força o motor a exigir que \textbf{todas as condições sejam atendidas no mesmo elemento}:
+      \begin{lstlisting}[language=mongosh]
+db.pedidos.find({
+  itens: {
+    $elemMatch: {
+      preco: { $gt: 100 },
+      qtd: { $gte: 5 }
+    }
+  }
+})
+      \end{lstlisting}
+      \textbf{Resultado:} Nenhum documento é retornado, eliminando com precisão o falso positivo!
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Operador \texttt{\$expr}: Comparação de Campos Internos}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{Quando Usar o \texttt{\$expr}?}\par
+      \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+      \scriptsize
+      \begin{itemize}
+        \item Filtros comuns comparam um campo com um valor estático (\texttt{preco > 100}).
+        \item Para comparar \textbf{dois campos do mesmo documento}, usamos \texttt{\$expr}.
+        \item O prefixo \texttt{\$} indica que o valor daquele campo deve ser resolvido em tempo de execução.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{Exemplos Práticos no E-Commerce}\par
+      \begin{lstlisting}[language=mongosh]
+// 1. Produtos com estoque atual abaixo do estoque minimo:
+db.produtos.find({
+  $expr: {
+    $lt: ["$estoque.atual", "$estoque.minimo"]
+  }
+})
+
+// 2. Pedidos em que total pago foi menor que o subtotal:
+db.pedidos.find({
+  $expr: {
+    $lt: ["$pagamento.total_pago", "$pagamento.subtotal"]
+  }
+})
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Atualizações Atômicas Concorrentes: \texttt{\$inc}, \texttt{\$min} e \texttt{\$max}}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{Por que Evitar \texttt{\$set} para Contadores?}\par
+      \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+      \scriptsize
+      \begin{itemize}
+        \item Ler o estoque para a memória da aplicação, subtrair $1$ e salvar com \texttt{\$set} causa \textbf{Condições de Corrida (\textit{Race Conditions})}.
+        \item Se duas requisições concorrentes lerem estoque $10$, ambas gravarão $9$, perdendo uma venda!
+        \item O operador \textbf{\texttt{\$inc}} opera diretamente no bloco de memória do WiredTiger com garantia de atomicidade.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{Sintaxe de Operadores Atômicos}\par
+      \begin{lstlisting}[language=mongosh]
+// Decrementar estoque de forma atomica:
+db.produtos.updateOne(
+  { sku: "SKU-INF-000101" },
+  { $inc: { "estoque.atual": -2 } }
+)
+
+// Atualizar apenas se for o menor preco historico:
+db.produtos.updateOne(
+  { sku: "SKU-INF-000101" },
+  { $min: { "historico.menor_preco": 299.90 } }
+)
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Manipulação de Arrays: \texttt{\$push}, \texttt{\$slice} e \texttt{arrayFilters}}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{Manutenção do \textit{Subset Pattern}}\par
+      \scriptsize
+      Ao inserir avaliações ou logs, usamos \texttt{\$push} com o modificador \texttt{\$slice: -5} para manter o array limitado aos últimos 5 itens:
+      \begin{lstlisting}[language=mongosh]
+db.produtos.updateOne(
+  { sku: "SKU-INF-000101" },
+  {
+    $push: {
+      ultimas_avaliacoes: {
+        $each: [{ nota: 5, autor: "Maria" }],
+        $slice: -5 // Mantem apenas os 5 mais recentes
+      }
+    }
+  }
+)
+      \end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{Modificação Seletiva com \texttt{arrayFilters}}\par
+      \scriptsize
+      Atualiza um subdocumento específico de um array usando o identificador \texttt{\$[alvo]}:
+      \begin{lstlisting}[language=mongosh]
+db.pedidos.updateOne(
+  { codigo: "PED-2026-001" },
+  {
+    $set: {
+      "itens.$[alvo].status_entrega": "SEPARADO",
+      "itens.$[alvo].data": new Date()
+    }
+  },
+  {
+    arrayFilters: [ { "alvo.sku": "ITEM-A" } ]
+  }
+)
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}

@@ -1,0 +1,115 @@
+% !TeX root = main.tex
+\changecolours{ScoutNavy}
+\section[A Regra de Ouro ESR, Multikey e Texto]{A Regra de Ouro ESR, Índices Multikey e Busca Textual}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{A Regra de Ouro ESR (\textit{Equality, Sort, Range})}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{A Ordem Mandatória dos Campos}\par
+      \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+      \scriptsize
+      Ao desenhar índices compostos que misturam filtros, ordenação e faixas, siga sempre a ordem:
+      \begin{enumerate}
+        \item \textbf{[E] Equality (Igualdade):} Campos filtrados por igualdade exata (\texttt{status: 'ATIVO'}).
+        \item \textbf{[S] Sort (Ordenação):} Campos da cláusula \texttt{sort} (\texttt{data\_cadastro: -1}).
+        \item \textbf{[R] Range (Faixa):} Campos com operadores de desigualdade (\texttt{preco: \{ \$gte: 100 \}}).
+      \end{enumerate}
+      \begin{lstlisting}[language=mongosh]
+// Indice Composto Ideal (E-S-R):
+db.produtos.createIndex({
+  status: 1,         // [E]
+  data_cadastro: -1, // [S]
+  preco: 1           // [R]
+})
+      \end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{O Perigo Fatal de Quebrar a Regra ESR}\par
+      \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+      \scriptsize
+      \begin{itemize}
+        \item Se colocarmos a Faixa antes do Sort (\textbf{E-R-S}): o motor varre os nós da faixa de preço, mas perde a ordenação temporal contígua da $B\text{-Tree}$!
+        \item O banco é obrigado a executar uma etapa custosa de \textbf{\texttt{SORT} em memória RAM}.
+        \item \textbf{Erro Fatal:} Se o volume de dados para ordenação em memória ultrapassar \textbf{100 MB}, o MongoDB aborta a consulta com erro de execução:
+          \textit{Sort exceeded memory limit of 104857600 bytes}!
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Índices Multikey (Indexando Listas e Arrays)}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{Como Funciona o Índice Multikey?}\par
+      \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+      \scriptsize
+      \begin{itemize}
+        \item Quando um campo armazena um array (ex: \texttt{tags: ['gamer', 'rgb', 'usb-c']}), o MongoDB cria um índice \textbf{Multikey}.
+        \item O WiredTiger gera uma entrada individual na árvore para cada elemento do array.
+      \end{itemize}
+      \begin{lstlisting}[language=mongosh]
+db.produtos.createIndex({ tags: 1 })
+
+// Consulta acelerada pelo Multikey:
+db.produtos.find({ tags: "sem fio" })
+      \end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{[Atenção] A Restrição de Arrays Paralelos}\par
+      \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
+      \scriptsize
+      \begin{itemize}
+        \item Em um índice composto, \textbf{no máximo um dos campos indexados pode ser array}!
+        \item Tentar criar índice em \texttt{\{ tags: 1, cores: 1 \}} onde ambos sejam listas causa o erro fatal:
+          \textit{cannot index parallel arrays}!
+        \item \textbf{Razão Matemática:} Evitar a explosão combinatória cartesiana ($M \times N$ entradas no índice por documento).
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Índices Textuais Ponderados (\textit{Full-Text Search})}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \alert{Criação com Pesos (\textit{Weights})}\par
+      \scriptsize
+      Atribui prioridade matemática ao título em relação à descrição e ativa o analisador de língua portuguesa:
+      \begin{lstlisting}[language=mongosh]
+db.produtos.createIndex(
+  {
+    titulo: "text",
+    tags: "text",
+    descricao: "text"
+  },
+  {
+    weights: { titulo: 10, tags: 5, descricao: 1 },
+    default_language: "portuguese",
+    name: "idx_busca_textual"
+  }
+)
+      \end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{Busca e Ranqueamento por Escore}\par
+      \scriptsize
+      Executa a busca com radicalização (\textit{stemming}) e ordena os resultados por relevância métrica:
+      \begin{lstlisting}[language=mongosh]
+db.produtos.find(
+  { $text: { $search: "ergonomico sem fio" } },
+  {
+    titulo: 1,
+    preco: 1,
+    score: { $meta: "textScore" },
+    _id: 0
+  }
+).sort({ score: { $meta: "textScore" } })
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
