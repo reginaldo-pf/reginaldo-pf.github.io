@@ -1,11 +1,12 @@
 % !TeX root = main.tex
 \changecolours{ScoutNavy}
+\shorthandoff{"}
 \section[A Regra de Ouro ESR, Multikey e Texto]{A Regra de Ouro ESR, Índices Multikey e Busca Textual}
 
 % ------------------------------------------------------------------------------
 \begin{frame}[fragile]{A Regra de Ouro ESR (\textit{Equality, Sort, Range})}
   \vspace{0.05cm}
-  \begin{columns}[t]
+  \begin{columns}[t,onlytextwidth]
     \begin{column}{0.48\textwidth}
       \alert{A Ordem Mandatória dos Campos}\par
       \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
@@ -40,9 +41,85 @@ db.produtos.createIndex({
 \end{frame}
 
 % ------------------------------------------------------------------------------
+\begin{frame}{Diagrama Arquitetural: Fluxo de Execução da Regra ESR}
+  \vspace{-0.1cm}
+  \begin{columns}[t,onlytextwidth]
+    % Coluna 1: Regra ESR Respeitada (Streaming)
+    \begin{column}{0.48\textwidth}
+      \centering
+      \alert{\textbf{Padrão Correto: ESR}}\par
+      \vspace{1pt}
+      {\scriptsize\color{ScoutNavy}\textbf{\texttt{\{ status: 1, data: -1, preco: 1 \}}}}\par
+      \vspace{0.15cm}
+      \begin{tikzpicture}[
+        scale=0.74, transform shape,
+        box/.style={rectangle, draw=ScoutNavy, fill=ScoutNavy!10, rounded corners=3pt, line width=0.8pt, font=\ttfamily\scriptsize, align=center, inner sep=4pt},
+        stepE/.style={rectangle, draw=ScoutNavy!80, fill=ScoutNavy!15, rounded corners=2pt, font=\scriptsize\bfseries, inner sep=3pt, align=center},
+        stepS/.style={rectangle, draw=ScoutGreen!80, fill=ScoutGreen!15, rounded corners=2pt, font=\scriptsize\bfseries, inner sep=3pt, align=center},
+        stepR/.style={rectangle, draw=ScoutTeal!80, fill=ScoutTeal!15, rounded corners=2pt, font=\scriptsize\bfseries, inner sep=3pt, align=center},
+        badgeOK/.style={rectangle, draw=ScoutGreen!90, fill=ScoutGreen!12, rounded corners=3pt, line width=0.8pt, font=\scriptsize\bfseries\color{ScoutGreen!80!black}, align=center, inner sep=4pt},
+        flow/.style={->, >=stealth, line width=1.1pt, ScoutNavy!80}
+      ]
+        % Fluxo ESR
+        \node[box] (query1) at (0, 3.9) {\textbf{find}(\{ status: 'ATIVO', preco: \dots \})\\\textbf{.sort}(\{ data: -1 \})};
+        
+        \node[stepE] (e1) at (0, 2.7) {[E] \texttt{status: 'ATIVO'}\\\tiny Salto direto ao ramo da árvore};
+        \node[stepS] (s1) at (0, 1.5) {[S] \texttt{sort(data: -1)}\\\tiny Folhas contíguas já ordenadas na B-Tree};
+        \node[stepR] (r1) at (0, 0.3) {[R] \texttt{preco >= 100}\\\tiny Filtro aplicado durante varredura contínua};
+
+        \node[badgeOK] (res1) at (0, -0.9) {%
+          \textbf{Pipeline Streaming (\texttt{IXSCAN} $\to$ \texttt{FETCH})}\\%
+          \tiny\color{black!80}Zero memória para SORT | Primeiro doc entregue em $< 1$ ms%
+        };
+
+        \draw[flow] (query1) -- (e1);
+        \draw[flow] (e1) -- (s1);
+        \draw[flow] (s1) -- (r1);
+        \draw[flow] (r1) -- (res1);
+      \end{tikzpicture}
+    \end{column}
+
+    % Coluna 2: Regra ESR Quebrada (Bloqueio em RAM)
+    \begin{column}{0.48\textwidth}
+      \centering
+      \alert{\textbf{Violação da Regra: E-R-S}}\par
+      \vspace{1pt}
+      {\scriptsize\color{ScoutRed}\textbf{\texttt{\{ status: 1, preco: 1, data: -1 \}}}}\par
+      \vspace{0.15cm}
+      \begin{tikzpicture}[
+        scale=0.74, transform shape,
+        box/.style={rectangle, draw=ScoutNavy, fill=ScoutNavy!10, rounded corners=3pt, line width=0.8pt, font=\ttfamily\scriptsize, align=center, inner sep=4pt},
+        stepE/.style={rectangle, draw=ScoutNavy!80, fill=ScoutNavy!15, rounded corners=2pt, font=\scriptsize\bfseries, inner sep=3pt, align=center},
+        stepR/.style={rectangle, draw=ScoutTeal!80, fill=ScoutTeal!15, rounded corners=2pt, font=\scriptsize\bfseries, inner sep=3pt, align=center},
+        stepS/.style={rectangle, draw=ScoutRed!80, fill=ScoutRed!15, rounded corners=2pt, font=\scriptsize\bfseries, inner sep=3pt, align=center},
+        badgeFail/.style={rectangle, draw=ScoutRed!90, fill=ScoutRed!12, rounded corners=3pt, line width=0.8pt, font=\scriptsize\bfseries\color{ScoutRed!90!black}, align=center, inner sep=4pt},
+        flowRed/.style={->, >=stealth, line width=1.1pt, ScoutRed!90}
+      ]
+        % Fluxo Quebrado
+        \node[box] (query2) at (0, 3.9) {\textbf{find}(\{ status: 'ATIVO', preco: \dots \})\\\textbf{.sort}(\{ data: -1 \})};
+        
+        \node[stepE] (e2) at (0, 2.7) {[E] \texttt{status: 'ATIVO'}\\\tiny Salto direto ao ramo da árvore};
+        \node[stepR] (r2) at (0, 1.5) {[R] \texttt{preco >= 100}\\\tiny Varre múltiplos nós de faixa de preço};
+        \node[stepS] (s2) at (0, 0.3) {[S] \texttt{data: -1} (Perdido!)\\\tiny Ordem temporal fragmentada entre nós};
+
+        \node[badgeFail] (res2) at (0, -0.9) {%
+          \textbf{Estágio Bloqueante: \texttt{SORT} em RAM}\\%
+          \tiny\color{black!80}Carrega tudo na RAM | Aborta se buffer ultrapassar 100 MB!%
+        };
+
+        \draw[flowRed] (query2) -- (e2);
+        \draw[flowRed] (e2) -- (r2);
+        \draw[flowRed] (r2) -- (s2);
+        \draw[flowRed] (s2) -- (res2);
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
 \begin{frame}[fragile]{Índices Multikey (Indexando Listas e Arrays)}
   \vspace{0.05cm}
-  \begin{columns}[t]
+  \begin{columns}[t,onlytextwidth]
     \begin{column}{0.48\textwidth}
       \alert{Como Funciona o Índice Multikey?}\par
       \itemseps[topsepi=0.2mm,itemsepi=0.5mm,labelsep=1.5mm,leftmargini=2.5mm]
@@ -73,9 +150,86 @@ db.produtos.find({ tags: "sem fio" })
 \end{frame}
 
 % ------------------------------------------------------------------------------
+\begin{frame}{Diagrama Arquitetural: Mecanismo Interno do Índice Multikey}
+  \vspace{-0.1cm}
+  \begin{columns}[t,onlytextwidth]
+    % Coluna 1: Fan-Out de Arrays no B-Tree
+    \begin{column}{0.48\textwidth}
+      \centering
+      \alert{\textbf{Indexação de Arrays (Desmembramento 1:$N$)}}\par
+      \vspace{0.15cm}
+      \begin{tikzpicture}[
+        scale=0.69, transform shape,
+        docbox/.style={rectangle, draw=ScoutNavy, fill=ScoutNavy!10, rounded corners=3pt, line width=0.9pt, font=\ttfamily\scriptsize, align=center, inner sep=3.5pt},
+        keynode/.style={rectangle, draw=ScoutGreen!90, fill=ScoutGreen!15, rounded corners=2pt, line width=0.8pt, font=\ttfamily\scriptsize\bfseries, align=center, inner sep=3pt},
+        flow/.style={->, >=stealth, line width=0.9pt, ScoutNavy!80}
+      ]
+        % Documento BSON
+        \node[docbox] (doc) at (2.2, 3.8) {%
+          \textbf{Documento BSON (Disco/RAM)}\\%
+          \{\_id: 101, nome: 'Mouse',\\
+          \textbf{\color{ScoutPurple}tags: ['gamer', 'rgb', 'usb-c']}\}%
+        };
+
+        % Chaves na B-Tree
+        \node[keynode] (k1) at (0.4, 1.8) {'gamer'\\$\to$ Rec\#101};
+        \node[keynode] (k2) at (2.2, 1.8) {'rgb'\\$\to$ Rec\#101};
+        \node[keynode] (k3) at (4.0, 1.8) {'usb-c'\\$\to$ Rec\#101};
+
+        % Conexoes Documento -> Chaves
+        \draw[flow] (doc.south -| k1.north) -- (k1.north) node[midway, left, font=\tiny\color{ScoutNavy}] {Chave 1};
+        \draw[flow] (doc.south) -- (k2.north) node[midway, left, font=\tiny\color{ScoutNavy}] {Chave 2};
+        \draw[flow] (doc.south -| k3.north) -- (k3.north) node[midway, right, font=\tiny\color{ScoutNavy}] {Chave 3};
+
+        % Explicacao abaixo
+        \node[rectangle, draw=black!20, fill=black!3, rounded corners=3pt, font=\scriptsize, align=left, inner sep=3pt] (note) at (2.2, 0.35) {%
+          \textbf{Propriedades do Multikey:}\\[1pt]
+          $\bullet$ Cada elemento gera uma chave na $B\text{-Tree}$.\\[1pt]
+          $\bullet$ Busca \texttt{find(\{ tags: 'rgb' \})} em $\mathcal{O}(\log N)$.\\[1pt]
+          $\bullet$ Deduplicação automática na entrega.%
+        };
+      \end{tikzpicture}
+    \end{column}
+
+    % Coluna 2: Proibicao de Arrays Paralelos
+    \begin{column}{0.48\textwidth}
+      \centering
+      \alert{\textbf{Por Que Arrays Paralelos São Proibidos?}}\par
+      \vspace{0.15cm}
+      \begin{tikzpicture}[
+        scale=0.69, transform shape,
+        docbox/.style={rectangle, draw=ScoutRed, fill=ScoutRed!8, rounded corners=3pt, line width=0.9pt, font=\ttfamily\scriptsize, align=center, inner sep=3.5pt},
+        cartbox/.style={rectangle, draw=ScoutRed!80, fill=ScoutRed!15, rounded corners=2pt, font=\ttfamily\tiny, align=center, inner sep=2.5pt},
+        badgebomb/.style={rectangle, draw=ScoutRed!90, fill=ScoutRed!12, rounded corners=3pt, line width=0.8pt, font=\scriptsize\bfseries\color{ScoutRed!90!black}, align=center, inner sep=3.5pt}
+      ]
+        % Documento proibido
+        \node[docbox] (pdoc) at (2.0, 3.8) {%
+          \textbf{Índice Composto: \texttt{\{ tags: 1, cores: 1 \}}}\\%
+          tags: ['gamer', 'rgb'] ($M=2$)\\%
+          cores: ['preto', 'azul', 'branco'] ($N=3$)%
+        };
+
+        % Produto cartesiano
+        \node[cartbox] (c1) at (0.6, 2.2) {('gamer', 'preto')\\('gamer', 'azul')\\('gamer', 'branco')};
+        \node[cartbox] (c2) at (3.4, 2.2) {('rgb', 'preto')\\('rgb', 'azul')\\('rgb', 'branco')};
+
+        \draw[->, >=stealth, line width=0.9pt, ScoutRed] (pdoc.south west) -- (c1.north);
+        \draw[->, >=stealth, line width=0.9pt, ScoutRed] (pdoc.south east) -- (c2.north);
+
+        \node[badgebomb] (bomb) at (2.0, 0.45) {%
+          \textbf{Explosão Combinatória: $M \times N = 6$ nós/doc!}\\[2pt]
+          \scriptsize Com 10 tags e 10 cores $\implies \mathbf{100}$ nós por doc!\\[1pt]
+          \textbf{\color{ScoutRed}Bloqueio: \textit{cannot index parallel arrays}}%
+        };
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
 \begin{frame}[fragile]{Índices Textuais Ponderados (\textit{Full-Text Search})}
   \vspace{0.05cm}
-  \begin{columns}[t]
+  \begin{columns}[t,onlytextwidth]
     \begin{column}{0.48\textwidth}
       \alert{Criação com Pesos (\textit{Weights})}\par
       \scriptsize
@@ -113,3 +267,133 @@ db.produtos.find(
     \end{column}
   \end{columns}
 \end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Diagrama Arquitetural: Pipeline do Índice Invertido Textual}
+  \vspace{-0.15cm}
+  \centering
+  \begin{tikzpicture}[
+    scale=0.78, transform shape,
+    docbox/.style={
+      rectangle, draw=ScoutNavy, fill=ScoutNavy!8, rounded corners=3pt, line width=0.8pt,
+      font=\scriptsize, text width=4.35cm, align=left, inner sep=4.5pt
+    },
+    nlpbox/.style={
+      rectangle, draw=ScoutPurple!90, fill=ScoutPurple!8, rounded corners=3pt, line width=0.8pt,
+      font=\scriptsize, text width=4.35cm, align=left, inner sep=4.5pt
+    },
+    indexbox/.style={
+      rectangle, draw=ScoutGreen!80!black, fill=ScoutGreen!8, rounded corners=3pt, line width=0.9pt,
+      font=\scriptsize, text width=4.35cm, align=left, inner sep=4.5pt
+    },
+    querybox/.style={
+      rectangle, draw=ScoutNavy!80, fill=ScoutNavy!6, rounded corners=3pt, line width=0.8pt,
+      font=\scriptsize, text width=4.35cm, align=left, inner sep=4.5pt
+    },
+    termsbox/.style={
+      rectangle, draw=ScoutPurple!80, fill=ScoutPurple!6, rounded corners=3pt, line width=0.8pt,
+      font=\scriptsize, text width=4.35cm, align=left, inner sep=4.5pt
+    },
+    scorebox/.style={
+      rectangle, draw=ScoutGreen!90!black, fill=ScoutGreen!12, rounded corners=3pt, line width=0.9pt,
+      font=\scriptsize, text width=4.35cm, align=left, inner sep=4.5pt
+    },
+    flow/.style={->, >=stealth, line width=1.1pt, ScoutNavy!80},
+    matchflow/.style={->, >=stealth, dashed, line width=1.2pt, ScoutGreen!80!black}
+  ]
+
+    % --- TRILHA 1: INGESTÃO E CONSTRUÇÃO DO ÍNDICE ---
+    \node[anchor=south west, font=\tiny\bfseries\color{ScoutNavy}] at (-7.2, 3.25) {%
+      \scalebox{0.95}{$\blacktriangleright$} FLUXO DE INGESTÃO (TEMPO DE ESCRITA NO BANCO):%
+    };
+
+    % 1. Documento BSON
+    \node[docbox] (doc) at (-5.0, 1.85) {%
+      \textbf{\color{ScoutNavy}1. Documento BSON (\#101)}\\[2.5pt]
+      {\ttfamily\tiny
+      \begin{tabular}{@{}ll@{}}
+        \textbf{\color{ScoutNavy}titulo} \textrm{[p.\,10]:} & 'Mouse Gamer' \\
+        \textbf{\color{ScoutNavy}tags} \textrm{[p.\,5]:}    & ['sem fio', 'usb'] \\
+        \textbf{\color{ScoutNavy}desc} \textrm{[p.\,1]:}    & 'Mouse ergonomico'
+      \end{tabular}}\\[2pt]
+      {\tiny\color{black!70}* Pesos definidos no índice textual}%
+    };
+
+    % 2. Pipeline NLP
+    \node[nlpbox] (nlp) at (0.0, 1.85) {%
+      \textbf{\color{ScoutPurple}2. Pipeline NLP (Português)}\\[2pt]
+      $\bullet$ \textbf{Tokenização:} divide em termos\\[1.5pt]
+      $\bullet$ \textbf{Normalização:} minúsculas\\[1.5pt]
+      $\bullet$ \textbf{Stopwords:} remove \textit{'sem', 'de'}\\[1.5pt]
+      $\bullet$ \textbf{Radicais (Stemming):}\\
+      \ \ \textit{'ergonomico'} $\to$ \texttt{\textbf{'ergonom'}}\\
+      \ \ \textit{'mouse'} $\to$ \texttt{\textbf{'mous'}}%
+    };
+
+    % 3. Índice Invertido
+    \node[indexbox] (inv) at (5.0, 1.85) {%
+      \textbf{\color{ScoutGreen!80!black}3. Índice Invertido Ponderado}\\[2pt]
+      {\ttfamily\tiny
+      \begin{tabular}{@{}llr@{}}
+        \textbf{'ergonom'} & $\to$ Doc\#101 & \textbf{[p.\,1]} \\
+        \textbf{'fio'}     & $\to$ Doc\#101 & \textbf{[p.\,5]} \\
+        \textbf{'gamer'}   & $\to$ Doc\#101 & \textbf{[p.\,10]} \\
+        \textbf{'mous'}    & $\to$ Doc\#101 & \textbf{[p.\,11]} \\
+        \textbf{'usb'}     & $\to$ Doc\#101 & \textbf{[p.\,5]}
+      \end{tabular}}\\[2pt]
+      {\tiny\color{black!70}* 'mous': 10 (título) + 1 (desc) = 11}%
+    };
+
+    % Setas Trilha 1
+    \draw[flow] (doc.east) -- (nlp.west);
+    \draw[flow] (nlp.east) -- (inv.west);
+
+    % --- TRILHA 2: CONSULTA E RANQUEAMENTO ---
+    \node[anchor=south west, font=\tiny\bfseries\color{ScoutGreen!70!black}] at (-7.2, -0.25) {%
+      \scalebox{0.95}{$\blacktriangleright$} FLUXO DE CONSULTA (TEMPO DE LEITURA E RANQUEAMENTO):%
+    };
+
+    % 4. Consulta $text
+    \node[querybox] (query) at (-5.0, -1.65) {%
+      \textbf{\color{ScoutNavy}4. Consulta \texttt{\$text}}\\[2pt]
+      {\ttfamily\tiny
+      db.produtos.find(\{\\
+      \ \ \$text: \{\\
+      \ \ \ \ \$search: 'gamer ergonomico'\\
+      \ \ \}\\
+      \}).sort(\{\\
+      \ \ score: \{ \$meta: 'textScore' \}\\
+      \})}%
+    };
+
+    % 5. Radicais da Busca
+    \node[termsbox] (terms) at (0.0, -1.65) {%
+      \textbf{\color{ScoutPurple}5. Processamento da Busca}\\[2pt]
+      $\bullet$ \textbf{Termos digitados:}\\
+      \ \ \texttt{'gamer'}, \texttt{'ergonomico'}\\[2pt]
+      $\bullet$ \textbf{Radicais gerados:}\\
+      \ \ \textit{'gamer'} $\to$ \texttt{\textbf{'gamer'}}\\
+      \ \ \textit{'ergonomico'} $\to$ \texttt{\textbf{'ergonom'}}\\[2pt]
+      $\bullet$ \textbf{Lookup:} busca radicais no índice%
+    };
+
+    % 6. Relevância (textScore)
+    \node[scorebox] (score) at (5.0, -1.65) {%
+      \textbf{\color{ScoutGreen!80!black}6. Relevância (\textit{textScore})}\\[2pt]
+      $\bullet$ \textbf{'gamer'}: peso 10 (título)\\[2pt]
+      $\bullet$ \textbf{'ergonom'}: peso 1 (descrição)\\[3pt]
+      \textbf{\color{ScoutGreen!90!black}textScore = 10 + 1 = 11.0}\\[2.5pt]
+      {\scriptsize $\implies$ \textbf{Doc\#101 em 1\textsuperscript{o} lugar!}}%
+    };
+
+    % Setas Trilha 2
+    \draw[flow] (query.east) -- (terms.west);
+    \draw[flow] (terms.east) -- (score.west);
+
+    % Conexão Vertical Trilha 1 -> Trilha 2
+    \draw[matchflow] (inv.south) -- (score.north)
+      node[midway, right=2pt, font=\tiny\bfseries\color{ScoutGreen!80!black}] {Lookup de Pesos};
+
+  \end{tikzpicture}
+\end{frame}
+\shorthandon{"}
