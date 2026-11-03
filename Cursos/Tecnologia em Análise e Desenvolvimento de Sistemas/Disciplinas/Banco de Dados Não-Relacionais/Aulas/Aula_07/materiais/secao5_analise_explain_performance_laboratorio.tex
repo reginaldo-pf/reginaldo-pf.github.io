@@ -39,7 +39,7 @@ db.produtos.find(
   \makebox[\textwidth][c]{%
     \scriptsize
     \renewcommand{\arraystretch}{1.22}
-    \begin{tabular}{p{2.6cm} p{3.2cm} p{6.0cm}}
+    \begin{tabular}{p{2.8cm} p{3.2cm} p{6.0cm}}
       \toprule
       \textbf{Métrica no JSON} & \textbf{Conceito Técnico} & \textbf{Alvo de Otimização} \\
       \midrule
@@ -92,12 +92,12 @@ db.produtos.find(
 \end{frame}
 
 % ------------------------------------------------------------------------------
-\begin{frame}{Resultados Visuais do Benchmark no Laboratório (50.000 Documentos)}
+\begin{frame}{Resultados do Benchmark no Laboratório (50.000 Documentos)}
   \vspace{-0.1cm}
   \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.90\textwidth,height=0.68\textheight,keepaspectratio]{benchmark_performance_indices.png}
   \end{figure}
   \vspace{-0.3cm}
-  \centering{\tiny \textbf{Conclusão Visual:} Adoção de índices compostos (ESR) e consultas cobertas reduz a latência em mais de $99.7\%$ e zera leituras físicas de documentos.}
+  \centering{\tiny \textbf{Conclusão:} Adoção de índices compostos (ESR) e consultas cobertas reduz a latência em mais de $99.7\%$ e zera leituras físicas de documentos.}
 \end{frame}
