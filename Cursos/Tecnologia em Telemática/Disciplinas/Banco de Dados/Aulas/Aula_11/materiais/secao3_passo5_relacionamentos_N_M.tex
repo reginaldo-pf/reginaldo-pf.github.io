@@ -1,0 +1,159 @@
+\changecolours{ScoutGreen}
+\section[Passo 5: Relacionamentos N:M]{Passo 5: Mapeamento de Relacionamentos Binarios N:M}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Passo 5: A Regra da Tabela Associativa para N:M},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Por que uma Nova Tabela é Obrigatória?}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Em um relacionamento $N:M$, cada ocorrência da entidade $S$ associa-se a múltiplas ocorrências de $T$, e vice-versa.
+    \item \textbf{Criação da Tabela Associativa:} Cria-se obrigatoriamente uma nova relação $R_{ST}$ (tabela de ligação ou junção).
+    \item \textbf{Propagação de Chaves:} Incluem-se as Chaves Primárias $\underline{PK_S}$ e $\underline{PK_T}$ como \textbf{Chaves Estrangeiras ($FK_1$ e $FK_2$)} em $R_{ST}$.
+    \item \textbf{Chave Primária Composta:} A Chave Primária de $R_{ST}$ é a \textbf{composição obrigatória das duas FKs}:
+      $$\underline{PK(R_{ST})} = \underline{\{FK_S, FK_T\}}$$
+  \end{itemize}
+}{%
+  \alert{Migração de Atributos do Losango}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Destino dos Atributos de Vínculo:} Todos os atributos simples pertencentes ao relacionamento no DER (ex: datas, notas, quantidade) \textbf{migram diretamente para a tabela associativa}.
+    \item Eles descrevem o \textbf{fato da associação}, não pertencendo isoladamente a $S$ nem a $T$.
+    \item \textbf{Nulidade das Chaves:} Nenhuma coluna de $FK$ que compõe a $PK$ associativa aceita valores \texttt{NULL} (Regra de Integridade de Entidade).
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Transformação Visual do Passo 5: Relacionamento Binário $N:M$}
+  \vspace{-0.18cm}
+  \begin{center}
+    \tikz[scale=0.66, transform shape]{
+      % ANTES: DER N:M Comum (ALUNO e DISCIPLINA)
+      \node[font=\scriptsize\bfseries\sffamily, ScoutGreen] at (-4.5, 2.05) {ANTES: Modelo Conceitual (DER $N:M$)};
+
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.1cm, minimum height=0.6cm, font=\bfseries\sffamily\scriptsize] (alu) at (-7.0, 0.75) {ALUNO};
+      \node[diamond, aspect=1.6, draw=ScoutNavy, fill=ScoutNavy!12, thick, inner sep=1.2pt, font=\bfseries\sffamily\tiny] (mat) at (-4.2, 0.75) {MATRICULA};
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.4cm, minimum height=0.6cm, font=\bfseries\sffamily\scriptsize] (disc) at (-1.4, 0.75) {DISCIPLINA};
+
+      \node[draw=black!80, fill=white, ellipse, font=\tiny\sffamily, inner sep=1.2pt] (sem) at (-4.2, 1.65) {semestre};
+      \node[draw=black!80, fill=white, ellipse, font=\tiny\sffamily, inner sep=1.2pt] (not) at (-4.2, -0.15) {nota\_final};
+
+      \draw[semithick] (alu) -- node[above, font=\scriptsize\bfseries, ScoutNavy] {N} node[below, font=\tiny\sffamily] {(0, n)} (mat);
+      \draw[semithick] (mat) -- node[above, font=\scriptsize\bfseries, ScoutGreen] {M} node[below, font=\tiny\sffamily] {(1, n)} (disc);
+      \draw[semithick] (mat) -- (sem);
+      \draw[semithick] (mat) -- (not);
+
+      % Seta de Transformacao
+      \draw[-{Latex[length=3mm]}, ultra thick, ScoutNavy] (0.2, 0.45) -- node[above, font=\tiny\bfseries\sffamily, ScoutNavy] {Passo 5} (1.4, 0.45);
+
+      % DEPOIS: 3 Relacoes
+      \node[font=\scriptsize\bfseries\sffamily, ScoutNavy] at (5.5, 2.05) {DEPOIS: Esquema Relacional (Tabela Associativa)};
+
+      \node[draw=ScoutGreen, fill=ScoutGreen!12, thick, minimum width=6.6cm, minimum height=0.55cm, font=\sffamily\tiny] (ralu) at (5.5, 1.45) {
+        \textbf{ALUNO}(\underline{matricula}, nome\_aluno, curso)
+      };
+
+      \node[draw=amber!90!black, fill=amber!15, thick, minimum width=6.8cm, minimum height=0.58cm, font=\sffamily\tiny] (rmat) at (5.5, 0.35) {
+        \textbf{HISTORICO\_MATRICULA}(\underline{\textbf{matricula\_fk}}, \underline{\textbf{cod\_disc\_fk}}, semestre, nota\_final)
+      };
+
+      \node[draw=ScoutGreen, fill=ScoutGreen!12, thick, minimum width=6.6cm, minimum height=0.55cm, font=\sffamily\tiny] (rdisc) at (5.5, -0.75) {
+        \textbf{DISCIPLINA}(\underline{cod\_disc}, nome\_disciplina, carga\_horaria)
+      };
+
+      % Arcos de FK
+      \draw[-{Latex[length=2.1mm]}, very thick, ScoutNavy] (4.0, 0.64) -- (4.0, 1.17);
+      \node[font=\tiny\bfseries\sffamily, ScoutNavy, left] at (4.0, 0.90) {FK 1};
+
+      \draw[-{Latex[length=2.1mm]}, very thick, ScoutNavy] (4.8, 0.06) -- (4.8, -0.47);
+      \node[font=\tiny\bfseries\sffamily, ScoutNavy, right] at (4.8, -0.20) {FK 2};
+    }
+  \end{center}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \footnotesize\alert{Chave Primária Composta:}\par
+      \scriptsize
+      $\bullet$ $\underline{PK} = \underline{\{\text{matricula\_fk}, \text{cod\_disc\_fk}\}}$. Cada par identifica de forma unívoca a matrícula de um aluno em determinada matéria.
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \footnotesize\alert{Integridade e Escalabilidade:}\par
+      \scriptsize
+      $\bullet$ Um aluno pode cursar dezenas de disciplinas e uma disciplina ter centenas de alunos sem criar novas colunas nem gerar valores nulos (1FN plena).
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Passo 5 Especial: Auto-Relacionamento Recursivo N:M},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Estruturas em Grafo no Cotidiano}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Ocorre quando elementos da mesma entidade relacionam-se mutuamente entre si em $N:M$.
+    \item \textbf{Exemplo Acadêmico Típico:} Uma \texttt{DISCIPLINA} pode exigir várias outras disciplinas como pré-requisito, e uma disciplina pode ser pré-requisito de várias matérias avançadas.
+    \item \textbf{Como mapear?} A própria tabela associativa receberá \textbf{duas Chaves Estrangeiras apontando para a mesma Chave Primária da mesma relação base!}
+  \end{itemize}
+}{%
+  \alert{Renomeação Semântica dos Papéis}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Como as duas FKs apontam para a mesma entidade, elas devem ter nomes distintos para evitar ambiguidades.
+    \item Adotam-se nomes de papéis claros (ex: \texttt{cod\_disc\_fk} e \texttt{cod\_prereq\_fk}).
+    \item \textbf{Chave Primária Composta:} Formada pelas duas FKs ($\underline{PK} = \underline{\{cod\_disc\_fk, cod\_prereq\_fk\}}$).
+    \item Atributos do vínculo (ex: \texttt{tipo\_exigencia}, como obrigatório ou recomendado) residem na tabela associativa.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Transformação Visual do Auto-Relacionamento Recursivo $N:M$}
+  \vspace{-0.18cm}
+  \begin{center}
+    \tikz[scale=0.66, transform shape]{
+      % ANTES: DER Recursivo N:M (DISCIPLINA e PRE-REQUISITO)
+      \node[font=\scriptsize\bfseries\sffamily, ScoutGreen] at (-4.2, 2.05) {ANTES: DER com Auto-Relacionamento Recursivo $N:M$};
+
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.4cm, minimum height=0.7cm, font=\bfseries\sffamily\scriptsize] (disc) at (-4.2, 0.45) {DISCIPLINA};
+
+      \node[diamond, aspect=1.8, draw=ScoutNavy, fill=amber!20, thick, inner sep=1pt, font=\bfseries\sffamily\tiny] (prereq) at (-4.2, -1.05) {EXIGE\_PRE\_REQ};
+
+      \draw[semithick] (disc.south west) -- (-6.0, 0.45) -- (-6.0, -1.05) node[midway, left, font=\tiny\sffamily] {materia \textbf{N} (0,n)} -- (prereq.west);
+      \draw[semithick] (disc.south east) -- (-2.4, 0.45) -- (-2.4, -1.05) node[midway, right, font=\tiny\sffamily] {\textbf{M} (0,n) pre-requisito} -- (prereq.east);
+
+      \node[draw=black!80, fill=white, ellipse, font=\tiny\sffamily, inner sep=1.1pt] (tipo) at (-4.2, -1.95) {tipo\_exigencia};
+      \draw[semithick] (prereq) -- (tipo);
+
+      % Seta
+      \draw[-{Latex[length=3mm]}, ultra thick, ScoutNavy] (0.0, 0.45) -- node[above, font=\tiny\bfseries\sffamily, ScoutNavy] {Passo 5} (1.2, 0.45);
+
+      % DEPOIS
+      \node[font=\scriptsize\bfseries\sffamily, ScoutNavy] at (5.5, 2.05) {DEPOIS: Relação Base + Tabela de Associação};
+
+      \node[draw=ScoutGreen, fill=ScoutGreen!12, thick, minimum width=6.8cm, minimum height=0.60cm, font=\sffamily\tiny] (rdisc) at (5.5, 1.25) {
+        \textbf{DISCIPLINA}(\underline{cod\_disc}, nome\_disciplina, carga\_horaria)
+      };
+
+      \node[draw=amber!90!black, fill=amber!15, thick, minimum width=7.2cm, minimum height=0.62cm, font=\sffamily\tiny] (rprereq) at (5.5, -0.45) {
+        \textbf{PRE\_REQUISITO}(\underline{\textbf{cod\_disc\_fk}}, \underline{\textbf{cod\_prereq\_fk}}, tipo\_exigencia)
+      };
+
+      % Arcos dirigidos para a mesma tabela
+      \draw[-{Latex[length=2.1mm]}, very thick, ScoutNavy] (3.8, -0.14) -- (3.8, 0.55) -- (3.0, 0.55) -- (3.0, 0.95);
+      \node[font=\tiny\bfseries\sffamily, ScoutNavy, left] at (3.5, 0.35) {FK Disciplina};
+
+      \draw[-{Latex[length=2.1mm]}, very thick, ScoutGreen] (5.6, -0.14) -- (5.6, 0.55) -- (6.4, 0.55) -- (6.4, 0.95);
+      \node[font=\tiny\bfseries\sffamily, ScoutGreen, right] at (5.9, 0.35) {FK Exigida};
+    }
+  \end{center}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \footnotesize\alert{Dupla Integridade Referencial:}\par
+      \scriptsize
+      $\bullet$ Ambos os campos \texttt{cod\_disc\_fk} e \texttt{cod\_prereq\_fk} referenciam a chave primária \texttt{DISCIPLINA(cod\_disc)}.
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \footnotesize\alert{Grafo de Dependências:}\par
+      \scriptsize
+      $\bullet$ A tabela associativa armazena diretamente as arestas da grade curricular, permitindo consultar pré-requisitos diretos e indiretos no SGBD.
+    \end{column}
+  \end{columns}
+\end{frame}

@@ -1,0 +1,105 @@
+\changecolours{ScoutGreen}
+\section[Passo 6: Multivalorados]{Passo 6: Mapeamento de Atributos Multivalorados}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Passo 6: A Regra para Atributos Multivalorados},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{O Problema dos Múltiplos Valores}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Representados por \textbf{elipses duplas} no DER de Peter Chen ou notação $\{atributo\}$.
+    \item Uma entidade pode possuir de 0 a vários valores válidos simultâneos (ex: múltiplos telefones de contato ou e-mails de um cliente).
+    \item \textbf{Anti-Padrão Comum:} Criar colunas fixas \texttt{fone1}, \texttt{fone2}, \texttt{fone3} gera desperdício de espaço com \texttt{NULL}s e impõe um teto rígido artificial.
+  \end{itemize}
+}{%
+  \alert{A Regra Algorítmica Canônica}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Para cada atributo multivalorado $A$ da entidade $E$, cria-se uma \textbf{nova relação independente $R_A$}.
+    \item Inclui-se a Chave Primária $\underline{PK_E}$ como \textbf{Chave Estrangeira ($FK$)} dentro de $R_A$.
+    \item Inclui-se o próprio atributo $A$ em $R_A$.
+    \item \textbf{Chave Primária Composta:} A Chave Primária de $R_A$ é a combinação da FK com o valor do atributo:
+      $$\underline{PK(R_A)} = \underline{\{FK_E, A\}}$$
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Transformação Visual do Passo 6: Atributos Multivalorados}
+  \vspace{-0.18cm}
+  \begin{center}
+    \tikz[scale=0.66, transform shape]{
+      % ANTES: DER com Atributo Multivalorado (CLIENTE)
+      \node[font=\scriptsize\bfseries\sffamily, ScoutGreen] at (-4.4, 2.05) {ANTES: DER com Atributos Multivalorados};
+
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.4cm, minimum height=0.65cm, font=\bfseries\sffamily\scriptsize] (cli) at (-4.4, 0.45) {CLIENTE};
+
+      \node[draw=ScoutNavy, fill=ScoutNavy!12, ellipse, font=\tiny\sffamily\bfseries, inner sep=1.2pt] (pk) at (-7.0, 1.25) {\underline{id\_cliente}};
+      \node[draw=black!80, fill=white, ellipse, font=\tiny\sffamily, inner sep=1.2pt] (nome) at (-7.0, -0.35) {nome\_completo};
+
+      % Multivalorados (dupla elipse)
+      \node[draw=purple!80!black, double, double distance=0.8pt, fill=purple!10, ellipse, font=\tiny\sffamily\bfseries, inner sep=1.2pt] (fone) at (-1.8, 1.25) {telefone};
+      \node[draw=purple!80!black, double, double distance=0.8pt, fill=purple!10, ellipse, font=\tiny\sffamily\bfseries, inner sep=1.2pt] (email) at (-1.8, -0.35) {email};
+
+      \draw[semithick] (cli) -- (pk);
+      \draw[semithick] (cli) -- (nome);
+      \draw[semithick] (cli) -- (fone);
+      \draw[semithick] (cli) -- (email);
+
+      % Seta
+      \draw[-{Latex[length=3mm]}, ultra thick, ScoutNavy] (0.2, 0.45) -- node[above, font=\tiny\bfseries\sffamily, ScoutNavy] {Passo 6} (1.4, 0.45);
+
+      % DEPOIS: 3 Relacoes bem espacadas
+      \node[font=\scriptsize\bfseries\sffamily, ScoutNavy] at (5.5, 2.05) {DEPOIS: Relação Principal + Tabelas Satélites};
+
+      \node[draw=ScoutGreen, fill=ScoutGreen!12, thick, minimum width=6.6cm, minimum height=0.55cm, font=\sffamily\tiny] (rcli) at (5.5, 1.55) {
+        \textbf{CLIENTE}(\underline{id\_cliente}, nome\_completo, cpf [AK])
+      };
+
+      \node[draw=purple!80!black, fill=purple!12, thick, minimum width=6.6cm, minimum height=0.55cm, font=\sffamily\tiny] (rfone) at (5.5, 0.35) {
+        \textbf{CLIENTE\_TELEFONE}(\underline{\textbf{id\_cliente\_fk}}, \underline{\textbf{num\_telefone}}, tipo\_contato)
+      };
+
+      \node[draw=purple!80!black, fill=purple!12, thick, minimum width=6.6cm, minimum height=0.55cm, font=\sffamily\tiny] (remail) at (5.5, -0.85) {
+        \textbf{CLIENTE\_EMAIL}(\underline{\textbf{id\_cliente\_fk}}, \underline{\textbf{endereco\_email}})
+      };
+
+      % Arcos de FK dirigidos para CLIENTE sem colisao
+      \draw[-{Latex[length=2.1mm]}, very thick, ScoutNavy] (3.6, 0.63) -- (3.6, 1.27);
+      \node[font=\tiny\bfseries\sffamily, ScoutNavy, left=1mm] at (3.6, 0.95) {FK};
+
+      \draw[-{Latex[length=2.1mm]}, very thick, ScoutNavy] (2.4, -0.57) -- (2.4, 1.27);
+      \node[font=\tiny\bfseries\sffamily, ScoutNavy, left=1mm] at (2.4, 0.35) {FK};
+    }
+  \end{center}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \footnotesize\alert{Primeira Forma Normal (1FN):}\par
+      \scriptsize
+      $\bullet$ Cada célula das tabelas contém rigorosamente um único valor atômico, eliminando listas ou colunas com separadores (ex: vírgulas).
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \footnotesize\alert{Unicidade e Semântica:}\par
+      \scriptsize
+      $\bullet$ A chave primária composta impede que o mesmo número de telefone ou e-mail seja cadastrado repetidamente para o mesmo cliente.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Ciclo de Vida e Ação Referencial ON DELETE CASCADE},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Dependência Existencial Absoluta}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Ao contrário de entidades fortes conectadas por relacionamentos $N:M$, um atributo multivalorado \textbf{não tem significado sem sua entidade proprietária}.
+    \item Um telefone ou e-mail não faz sentido solto no banco caso o cliente cancele o cadastro.
+    \item A relação filha existe puramente para representar uma coleção de valores da entidade-mãe.
+  \end{itemize}
+}{%
+  \alert{Configuração da Integridade Referencial}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item A chave estrangeira deve ser declarada como:
+      \texttt{FOREIGN KEY (id\_cliente\_fk) REFERENCES CLIENTE(id\_cliente) ON DELETE CASCADE}.
+    \item \textbf{Efeito Prático:} A exclusão de um registro na tabela principal propaga a exclusão automática de todos os seus telefones e e-mails, eliminando registros órfãos.
+  \end{itemize}
+}

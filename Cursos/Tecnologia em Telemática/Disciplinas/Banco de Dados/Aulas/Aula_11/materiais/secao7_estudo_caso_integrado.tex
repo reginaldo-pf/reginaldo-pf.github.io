@@ -1,0 +1,117 @@
+\changecolours{ScoutGreen}
+\section[Estudo de Caso Integrado]{Estudo de Caso Integrado: Sistema Escolar}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Esquema Lógico Integrado (Passos 5 a 8): Sistema Escolar ``EducaPlus''}
+  \vspace{-0.25cm}
+  \begin{center}
+    \tikz[scale=0.62, transform shape]{
+      % 1. PESSOA (Superclasse EER - Passo 8A)
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=6.6cm, minimum height=0.52cm, font=\sffamily\tiny] (pes) at (-4.2, 1.45) {
+        \textbf{PESSOA}(\underline{id\_pessoa}, cpf [AK], nome, data\_nasc)
+      };
+
+      % 2. ALUNO (Subclasse EER - Passo 8A)
+      \node[draw=ScoutNavy, fill=ScoutNavy!12, thick, minimum width=6.6cm, minimum height=0.52cm, font=\sffamily\tiny] (alu) at (4.4, 1.45) {
+        \textbf{ALUNO}(\underline{\textbf{id\_pessoa\_fk}}, matricula [AK], data\_ingresso)
+      };
+
+      % 3. PESSOA_TELEFONE (Multivalorado - Passo 6)
+      \node[draw=purple!80!black, fill=purple!12, thick, minimum width=6.6cm, minimum height=0.52cm, font=\sffamily\tiny] (fone) at (-4.2, 0.25) {
+        \textbf{PESSOA\_TELEFONE}(\underline{\textbf{id\_pessoa\_fk}}, \underline{\textbf{num\_telefone}}, tipo\_uso)
+      };
+
+      % 4. HISTORICO_MATRICULA (Associativa N:M - Passo 5)
+      \node[draw=amber!90!black, fill=amber!15, thick, minimum width=6.8cm, minimum height=0.52cm, font=\sffamily\tiny] (mat) at (4.4, 0.25) {
+        \textbf{HISTORICO\_MATRICULA}(\underline{\textbf{id\_aluno\_fk}}, \underline{\textbf{cod\_disc\_fk}}, semestre, media\_final)
+      };
+
+      % 5. DISCIPLINA (Entidade Forte)
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=6.6cm, minimum height=0.52cm, font=\sffamily\tiny] (disc) at (-4.2, -1.05) {
+        \textbf{DISCIPLINA}(\underline{cod\_disc}, nome\_disciplina, carga\_horaria)
+      };
+
+      % 6. PRE_REQUISITO (Recursivo N:M - Passo 5)
+      \node[draw=amber!90!black, fill=amber!15, thick, minimum width=6.8cm, minimum height=0.52cm, font=\sffamily\tiny] (prereq) at (4.4, -1.05) {
+        \textbf{PRE\_REQUISITO}(\underline{\textbf{cod\_disc\_fk}}, \underline{\textbf{cod\_prereq\_fk}}, tipo\_exigencia)
+      };
+
+      % Arcos dirigidos com espacamento limpo
+      % ALUNO.id_pessoa_fk -> PESSOA.id_pessoa
+      \draw[-{Latex[length=2.0mm]}, very thick, ScoutNavy] (alu.west) -- (pes.east);
+      \node[font=\tiny\bfseries\sffamily, ScoutNavy, above=1mm] at ($(alu.west)!0.5!(pes.east)$) {Passo 8A (PK/FK)};
+
+      % PESSOA_TELEFONE -> PESSOA
+      \draw[-{Latex[length=2.0mm]}, very thick, purple!80!black] (fone.north) -- (pes.south);
+      \node[font=\tiny\bfseries\sffamily, purple!80!black, left=1mm] at ($(fone.north)!0.5!(pes.south)$) {Passo 6};
+
+      % HISTORICO_MATRICULA -> ALUNO
+      \draw[-{Latex[length=2.0mm]}, very thick, ScoutNavy] (mat.north) -- (alu.south);
+      \node[font=\tiny\bfseries\sffamily, ScoutNavy, right=1mm] at ($(mat.north)!0.5!(alu.south)$) {FK Aluno};
+
+      % HISTORICO_MATRICULA -> DISCIPLINA (entra pela parte superior de disc.east)
+      \draw[-{Latex[length=2.0mm]}, very thick, ScoutNavy] (mat.west) -- ++(-0.6, 0) |- ([yshift=2.5mm]disc.east);
+      \node[font=\tiny\bfseries\sffamily, ScoutNavy, above=1mm] at ($(mat.west)+(-0.3, 0)$) {FK Disc};
+
+      % PRE_REQUISITO -> DISCIPLINA (entra pela parte inferior de disc.east com rotulo abaixo)
+      \draw[-{Latex[length=2.0mm]}, very thick, amber!90!black] ([yshift=-2mm]prereq.west) -- ([yshift=-2mm]disc.east);
+      \node[font=\tiny\bfseries\sffamily, amber!90!black, below=1.2mm] at ($([yshift=-2mm]prereq.west)!0.5!([yshift=-2mm]disc.east)$) {Passo 5 (Recursivo)};
+    }
+  \end{center}
+  \vspace{-0.15cm}
+  \scriptsize
+  $\bullet$ \textbf{Integração Estrutural:} As relações associativas (\texttt{HISTORICO\_MATRICULA} e \texttt{PRE\_REQUISITO}) conectam as relações base sem qualquer perda de semântica, enquanto os atributos multivalorados e heranças foram perfeitamente normalizados na 1FN com zero colunas de valores nulos!
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[plain]{Quadro Sinóptico de Decisão para os Passos 5 a 8}
+  \vspace{0.15cm}
+  \centering
+  \centerline{%
+    \resizebox{15.0cm}{!}{%
+      \renewcommand{\arraystretch}{1.22}%
+      \begin{tabular}{@{}>{\raggedright\arraybackslash}p{6.0cm}>{\raggedright\arraybackslash}p{2.1cm}>{\raggedright\arraybackslash}p{3.7cm}>{\raggedright\arraybackslash}p{3.2cm}@{}}
+        \toprule
+        \textbf{Construto no DER} & \textbf{Gera Relação?} & \textbf{Composição da Chave Primária ($\underline{PK}$)} & \textbf{Destino dos Atributos} \\
+        \midrule
+        \textbf{Passo 5: Relacionamento $N:M$} \par \scriptsize(Binário regular ou recursivo) &
+        \textbf{SIM} \par \scriptsize(Tabela Associativa) &
+        \scriptsize Composta pela união das FKs: \par \normalsize $\underline{PK} = \underline{\{FK_1, FK_2\}}$ &
+        \scriptsize Atributos do losango vão para a tabela associativa. \\
+        \midrule
+        \textbf{Passo 6: Atributo Multivalorado} \par \scriptsize(Elipse dupla ou coleção) &
+        \textbf{SIM} \par \scriptsize(Relação Satélite) &
+        \scriptsize Composta pela FK + o próprio atributo: \par \normalsize $\underline{PK} = \underline{\{FK_E, \text{Atributo}\}}$ &
+        \scriptsize O próprio atributo compõe a chave; outros dados migram junto. \\
+        \midrule
+        \textbf{Passo 7: Ternário ($n$-ário)} \par \scriptsize(Vínculo de grau superior) &
+        \textbf{SIM} \par \scriptsize(Relação de Junção) &
+        \scriptsize Se $N:M:P$: $\underline{PK} = \underline{\{FK_1, FK_2, FK_3\}}$. \par Se $1:N:M$: $\underline{PK} = \underline{\{FK_{\text{lados } N}\}}$. &
+        \scriptsize Atributos próprios do losango vão para a relação de junção. \\
+        \midrule
+        \textbf{Passo 8: Especialização EER} \par \scriptsize(Hierarquia de subclasses) &
+        \textbf{SIM} \par \scriptsize(Opção 8A recomendada) &
+        \scriptsize Chave da superclasse compartilhada: \par \normalsize $\underline{PK/FK}$ \scriptsize em cada subclasse &
+        \scriptsize Atributos comuns na superclasse; específicos nas subclasses. \\
+        \bottomrule
+      \end{tabular}%
+    }%
+  }
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Matriz de Auditoria e Integridade Referencial},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Políticas de Integridade Referencial}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Tabela Associativa ($N:M$):} Recomenda-se \texttt{ON DELETE RESTRICT} para o aluno (não permitir excluir aluno com histórico de matrículas ativas) e \texttt{ON DELETE RESTRICT} para disciplinas do currículo.
+    \item \textbf{Atributos Multivalorados (Passo 6):} Obrigatoriamente \texttt{ON DELETE CASCADE} (excluir o cadastro de uma pessoa remove automaticamente todos os seus telefones).
+  \end{itemize}
+}{%
+  \alert{Eliminação Completa de Anomalias}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Zero \texttt{NULL}s Estruturais:} Ao optar pela Opção 8A na especialização, evitamos que alunos tenham colunas com \texttt{NULL} para propriedades de outros perfis.
+    \item \textbf{Atomicidade e Flexibilidade:} A instituição pode cadastrar múltiplos telefones por pessoa e múltiplos pré-requisitos entre matérias sem limites fixos de colunas.
+  \end{itemize}
+}

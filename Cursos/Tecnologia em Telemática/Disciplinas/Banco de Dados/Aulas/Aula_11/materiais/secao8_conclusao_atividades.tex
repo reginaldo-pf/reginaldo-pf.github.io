@@ -1,0 +1,41 @@
+\changecolours{ScoutGreen}
+\section[Conclusao e Exercicios]{Checklist de Validacao e Exercicios de Fixacao}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Checklist de Validação do Esquema Lógico Completo},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Auditoria dos Passos 5 a 8}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item[\textcolor{ScoutGreen}{$\boxtimes$}] Todo relacionamento $N:M$ gerou uma tabela associativa com PK composta pelas duas FKs?
+    \item[\textcolor{ScoutGreen}{$\boxtimes$}] Todos os atributos do losango $N:M$ migraram para a tabela associativa?
+    \item[\textcolor{ScoutGreen}{$\boxtimes$}] Não restou nenhum atributo multivalorado na tabela principal (todos foram isolados com $\underline{PK} = \underline{\{FK_E, Atrib\}}$)?
+    \item[\textcolor{ScoutGreen}{$\boxtimes$}] As cardinalidades máximas do ternário foram analisadas para definir o tamanho da PK associativa?
+    \item[\textcolor{ScoutGreen}{$\boxtimes$}] A herança EER foi mapeada pela Opção 8A garantindo $\underline{PK/FK}$ nas subclasses?
+  \end{itemize}
+}{%
+  \alert{Ponte Pedagógica: O Que Vem na Aula 12?}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Agora temos tabelas normalizadas e interligadas por FKs!}
+    \item Mas como consultar, cruzar e filtrar dados entre essas relações de forma matematicamente rigorosa?
+    \item \textbf{Aula 12 (04/11/2026) -- Álgebra Relacional (Parte 1):}\\
+      -- Operadores fundamentais de Codd.\\
+      -- Seleção ($\sigma$) e Projeção ($\pi$).\\
+      -- União ($\cup$), Diferença ($-$), Produto Cartesiano ($\times$) e Renomeação ($\rho$).
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Exercícios Práticos de Fixação -- Aula 11}
+  \vspace{-0.18cm}
+  \scriptsize
+  \itemseps[topsepi=0.5mm,itemsepi=0.8mm,labelsep=2mm,leftmargini=4mm]
+  \begin{enumerate}
+    \item \textbf{Passo 5 (Tabela Associativa $N:M$):} Em uma universidade, \texttt{ALUNO} matricula-se em \texttt{DISCIPLINA} em $N:M$ com atributos próprios \texttt{semestre} e \texttt{nota\_final}. Escreva o esquema formal da relação associativa gerada, indicando PK composta e FKs.
+    \item \textbf{Passo 5 Especial (Auto-Relacionamento $N:M$):} Em uma grade curricular, uma \texttt{DISCIPLINA} possui como pré-requisitos outras matérias em $N:M$ através do relacionamento \texttt{PRE\_REQUISITO} com atributo \texttt{tipo\_exigencia}. Escreva os esquemas relacionais com duas FKs semânticas.
+    \item \textbf{Passo 6 (Multivalorados):} Um \texttt{CLIENTE} possui múltiplos telefones de contato e múltiplos endereços de e-mail adicionais. Mapeie esses atributos isolando-os em tabelas satélites e justifique o uso de \texttt{ON DELETE CASCADE}.
+    \item \textbf{Passo 7 (Relacionamento Ternário):} Um \texttt{PROFESSOR} leciona para uma \texttt{TURMA} em determinada \texttt{SALA}. Sabendo que cada par (professor, turma) utiliza no máximo 1 sala ($1:N:M$), deduza a chave primária da relação associativa.
+    \item \textbf{Passo 8 (Especialização EER):} Mapeie a hierarquia de \texttt{VEICULO} especializada em \texttt{CARRO} e \texttt{CAMINHAO} utilizando a Opção 8A ($\underline{PK/FK}$).
+    \item \textbf{Consolidação do Projeto AVP1:} Aplique os Passos 5 a 8 sobre o DER completo do seu projeto prático de banco de dados.
+  \end{enumerate}
+\end{frame}

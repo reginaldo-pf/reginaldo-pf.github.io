@@ -1,0 +1,105 @@
+\changecolours{ScoutGreen}
+\section[Passo 8: Especializacao EER]{Passo 8: Mapeamento de Especializacao e Generalizacao (EER)}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Herança no Modelo EER: Conceitos Fundamentais},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Superclasses e Subclasses no EER}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item A especialização agrupa entidades com propriedades comuns na \textbf{Superclasse} e propriedades exclusivas nas \textbf{Subclasses}.
+    \item \textbf{Exemplo do Cotidiano:} Todo veículo automotor possui placa, marca e ano, mas apenas carros possuem quantidade de portas, e apenas caminhões possuem número de eixos e capacidade de carga em toneladas.
+    \item \textbf{Herança de Atributos:} A subclasse herda automaticamente todos os atributos e relacionamentos da superclasse.
+  \end{itemize}
+}{%
+  \alert{Restrições do Modelo EER}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Restrição de Disjunção ($d / o$):}\\
+      -- \textbf{Disjunta ($d$):} Uma entidade pode ser membro de no máximo uma subclasse.\\
+      -- \textbf{Sobreposta ($o$):} Uma entidade pode pertencer a múltiplas subclasses simultaneamente.
+    \item \textbf{Restrição de Participação:}\\
+      -- \textbf{Total (linha dupla):} Toda ocorrência da superclasse pertence obrigatoriamente a uma subclasse.\\
+      -- \textbf{Parcial (linha simples):} Algumas entidades da superclasse não pertencem a nenhuma subclasse.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={As 4 Opções Canônicas de Elmasri \& Navathe},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Opção 8A: Múltiplas Relações (Padrão PK/FK)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Relação para superclasse $C$ + relações para cada subclasse $S_i$.
+    \item A chave primária de $C$ torna-se simultaneamente \textbf{Chave Primária e Chave Estrangeira} nas subclasses ($\underline{PK/FK}$).
+    \item \textbf{Universal:} Funciona para qualquer combinação de $d/o$ e Total/Parcial.
+    \item \textbf{Vantagem:} 0\% de valores \texttt{NULL} gerados por colunas não aplicáveis!
+  \end{itemize}
+}{%
+  \alert{Opções 8B, 8C e 8D (Alternativas)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Opção 8B (Apenas Subclasses):} Cria relações só para as subclasses, duplicando atributos da superclasse. Exige obrigatoriamente especialização \textbf{Total e Disjunta}.
+    \item \textbf{Opção 8C (Tabela Única com Tipo):} Junta tudo em uma única relação com coluna discriminadora. Gera muitas colunas com \texttt{NULL}. Exige especialização \textbf{Disjunta}.
+    \item \textbf{Opção 8D (Tabela Única com Booleanos):} Usa colunas \texttt{eh\_subclasse\_X} para especializações \textbf{Sobrepostas}.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Transformação Visual do Passo 8: Opção 8A ($\underline{PK/FK}$ Compartilhada)}
+  \vspace{-0.25cm}
+  \begin{center}
+    \tikz[scale=0.62, transform shape]{
+      % ANTES: DER com Especialização EER (VEICULO)
+      \node[font=\scriptsize\bfseries\sffamily, ScoutGreen] at (-4.4, 2.25) {ANTES: Hierarquia EER (Total e Disjunta)};
+
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.6cm, minimum height=0.60cm, font=\bfseries\sffamily\scriptsize] (sup) at (-4.4, 1.25) {VEICULO};
+
+      \node[draw=black!80, circle, inner sep=1.8pt, font=\scriptsize\bfseries\sffamily] (circ) at (-4.4, 0.25) {d};
+
+      \node[draw=ScoutNavy, fill=ScoutNavy!15, thick, minimum width=2.0cm, minimum height=0.55cm, font=\bfseries\sffamily\tiny] (sub1) at (-6.2, -0.85) {CARRO};
+      \node[draw=ScoutNavy, fill=ScoutNavy!15, thick, minimum width=2.0cm, minimum height=0.55cm, font=\bfseries\sffamily\tiny] (sub2) at (-2.6, -0.85) {CAMINHAO};
+
+      \draw[double, thick] (sup) -- (circ);
+      \draw[semithick] (circ) -- (sub1);
+      \draw[semithick] (circ) -- (sub2);
+
+      % Seta
+      \draw[-{Latex[length=3mm]}, ultra thick, ScoutNavy] (0.0, 0.45) -- node[above, font=\tiny\bfseries\sffamily, ScoutNavy] {Opção 8A} (1.2, 0.45);
+
+      % DEPOIS: 3 Relacoes com PK/FK
+      \node[font=\scriptsize\bfseries\sffamily, ScoutNavy] at (5.5, 2.25) {DEPOIS: Superclasse + Subclasses ($\underline{PK/FK}$)};
+
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=7.2cm, minimum height=0.55cm, font=\sffamily\tiny] (rsup) at (5.5, 1.35) {
+        \textbf{VEICULO}(\underline{placa}, renavam [AK], marca, modelo, ano\_fab)
+      };
+
+      \node[draw=ScoutNavy, fill=ScoutNavy!12, thick, minimum width=7.2cm, minimum height=0.55cm, font=\sffamily\tiny] (rsub1) at (5.5, 0.15) {
+        \textbf{CARRO}(\underline{\textbf{placa\_fk}}, qtd\_portas, volume\_porta\_malas)
+      };
+
+      \node[draw=ScoutNavy, fill=ScoutNavy!12, thick, minimum width=7.2cm, minimum height=0.55cm, font=\sffamily\tiny] (rsub2) at (5.5, -0.95) {
+        \textbf{CAMINHAO}(\underline{\textbf{placa\_fk}}, num\_eixos, capacidade\_ton)
+      };
+
+      % Arcos dirigidos para VEICULO com espaco livre
+      \draw[-{Latex[length=2.1mm]}, very thick, ScoutNavy] ([xshift=-1.8cm]rsub1.north) -- ([xshift=-1.8cm]rsup.south);
+      \node[font=\tiny\bfseries\sffamily, ScoutNavy, left=1.5mm] at ($([xshift=-1.8cm]rsub1.north)!0.5!([xshift=-1.8cm]rsup.south)$) {PK/FK};
+
+      % CAMINHAO contorna pela direita para nao cruzar CARRO
+      \draw[-{Latex[length=2.1mm]}, very thick, ScoutGreen] (rsub2.east) -- ++(0.45, 0) |- (rsup.east);
+      \node[font=\tiny\bfseries\sffamily, ScoutGreen, right=1.5mm] at ($(rsub2.east)+(0.45, 1.15)$) {PK/FK};
+    }
+  \end{center}
+  \vspace{-0.15cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \footnotesize\alert{O Duplo Papel da Chave:}\par
+      \scriptsize
+      $\bullet$ Nas subclasses, \texttt{placa\_fk} é simultaneamente a Chave Primária ($\underline{PK}$) da tupla e a Chave Estrangeira ($FK$) que referencia a superclasse.
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \footnotesize\alert{Consultas com Junção Natural:}\par
+      \scriptsize
+      $\bullet$ Para obter todos os dados de um caminhão, basta realizar a junção: \texttt{VEICULO JOIN CAMINHAO USING(placa)}, com altíssimo desempenho via índice de PK.
+    \end{column}
+  \end{columns}
+\end{frame}

@@ -1,0 +1,128 @@
+\changecolours{ScoutGreen}
+\section[Passo 7: Ternarios]{Passo 7: Mapeamento de Relacionamentos Ternarios}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Passo 7: Regras para Relacionamentos de Grau Superior},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Relacionamentos Ternários e n-ários}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Um relacionamento de grau $n > 2$ conecta simultaneamente 3 ou mais tipos de entidades em um único fato do negócio.
+    \item \textbf{Criação da Relação Associativa:} Cria-se uma relação $R$ para representar a associação.
+    \item \textbf{Propagação de FKs:} Incluem-se como Chaves Estrangeiras as chaves primárias de \textbf{todas as $n$ entidades participantes}.
+    \item Atributos simples do losango migram diretamente para $R$.
+  \end{itemize}
+}{%
+  \alert{Dedução Rigorosa da Chave Primária}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item A composição da Chave Primária depende estritamente das \textbf{cardinalidades máximas}:
+    \item \textbf{Caso 1 ($N:M:P$):} Se nenhuma entidade estiver restrita a no máximo 1 ocorrência para cada combinação das outras, a $\underline{PK}$ é a combinação de \textbf{todas as $n$ FKs}:
+      $$\underline{PK} = \underline{\{FK_1, FK_2, FK_3\}}$$
+    \item \textbf{Caso 2 ($1:N:M$):} Se uma entidade tem cardinalidade máxima $1$, a $\underline{PK}$ é formada \textbf{apenas pelas outras duas FKs}!
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Análise Matemática da Chave em Vínculos 1:N:M},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Cenário Real do Cotidiano Escolar}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Considere o relacionamento ternário \texttt{ALOCACAO} conectando \texttt{PROFESSOR}, \texttt{TURMA} e \texttt{SALA}.
+    \item \textbf{Regra de Negócio:} Cada professor, ao ministrar aula para determinada turma, utiliza \textbf{no máximo uma única sala} de aula.
+    \item A cardinalidade máxima de \texttt{SALA} em relação ao par \texttt{(PROFESSOR, TURMA)} é igual a \textbf{1}.
+  \end{itemize}
+}{%
+  \alert{Consequência na Chave Primária}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Como o par \texttt{(id\_prof, cod\_turma)} determina univocamente a sala alocada, a Chave Primária é:
+      $$\underline{PK} = \underline{\{\text{id\_prof\_fk}, \text{cod\_turma\_fk}\}}$$
+    \item O atributo \texttt{num\_sala\_fk} entra na relação associativa apenas como uma \textbf{Chave Estrangeira simples}, não participando da $\underline{PK}$!
+    \item Incluir a sala na $\underline{PK}$ permitiria que o mesmo professor ministrasse a mesma aula em duas salas ao mesmo tempo!
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Transformação Visual do Passo 7: Relacionamento Ternário}
+  \vspace{-0.25cm}
+  \begin{center}
+    \tikz[scale=0.62, transform shape]{
+      % ANTES: DER Ternario (PROFESSOR, TURMA e SALA)
+      \node[font=\scriptsize\bfseries\sffamily, ScoutGreen] at (-4.4, 2.25) {ANTES: DER com Relacionamento Ternário};
+
+      \node[diamond, aspect=1.4, draw=ScoutNavy, fill=ScoutNavy!15, thick, inner sep=1.2pt, font=\bfseries\sffamily\tiny] (tern) at (-4.4, 0.45) {ALOCA};
+
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.0cm, minimum height=0.55cm, font=\bfseries\sffamily\tiny] (t1) at (-7.2, 1.45) {PROFESSOR};
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.0cm, minimum height=0.55cm, font=\bfseries\sffamily\tiny] (t2) at (-7.2, -0.55) {TURMA};
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, thick, minimum width=2.0cm, minimum height=0.55cm, font=\bfseries\sffamily\tiny] (t3) at (-1.6, 0.45) {SALA};
+
+      \draw[semithick] (t1) -- node[above, font=\tiny\bfseries] {N} (tern);
+      \draw[semithick] (t2) -- node[below, font=\tiny\bfseries] {M} (tern);
+      \draw[semithick] (t3) -- node[above, font=\tiny\bfseries] {1} (tern);
+
+      \node[draw=black!80, fill=white, ellipse, font=\tiny\sffamily, inner sep=1.1pt] (hor) at (-4.4, -0.65) {horario};
+      \draw[semithick] (tern) -- (hor);
+
+      % Seta
+      \draw[-{Latex[length=3mm]}, ultra thick, ScoutNavy] (0.0, 0.45) -- node[above, font=\tiny\bfseries\sffamily, ScoutNavy] {Passo 7} (1.2, 0.45);
+
+      % DEPOIS: Relação Associativa Ternária
+      \node[font=\scriptsize\bfseries\sffamily, ScoutNavy] at (5.5, 2.25) {DEPOIS: Esquema com 3 Arcos Referenciais};
+
+      \node[draw=ScoutGreen, fill=ScoutGreen!12, thick, minimum width=6.6cm, minimum height=0.48cm, font=\sffamily\tiny] (rt1) at (5.5, 1.55) {
+        \textbf{PROFESSOR}(\underline{id\_prof}, nome\_professor, titulacao)
+      };
+
+      \node[draw=amber!90!black, fill=amber!15, thick, minimum width=7.2cm, minimum height=0.52cm, font=\sffamily\tiny] (rassoc) at (5.5, 0.45) {
+        \textbf{ALOCACAO\_AULA}(\underline{\textbf{id\_prof\_fk}}, \underline{\textbf{cod\_turma\_fk}}, \textbf{num\_sala\_fk}, horario)
+      };
+
+      \node[draw=ScoutGreen, fill=ScoutGreen!12, thick, minimum width=6.6cm, minimum height=0.48cm, font=\sffamily\tiny] (rt2) at (5.5, -0.45) {
+        \textbf{TURMA}(\underline{cod\_turma}, ano\_semestre, curso)
+      };
+
+      \node[draw=ScoutGreen, fill=ScoutGreen!12, thick, minimum width=6.6cm, minimum height=0.48cm, font=\sffamily\tiny] (rt3) at (5.5, -1.25) {
+        \textbf{SALA}(\underline{num\_sala}, bloco, capacidade\_alunos)
+      };
+
+      % Arcos de FK
+      \draw[-{Latex[length=2.1mm]}, very thick, ScoutNavy] (3.0, 0.71) -- (3.0, 1.31);
+      \draw[-{Latex[length=2.1mm]}, very thick, ScoutNavy] (4.2, 0.19) -- (4.2, -0.21);
+      \draw[-{Latex[length=2.1mm]}, very thick, ScoutGreen] (6.4, 0.19) -- (6.4, -1.01);
+    }
+  \end{center}
+  \vspace{-0.15cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \footnotesize\alert{Semântica da Chave Primária:}\par
+      \scriptsize
+      $\bullet$ Apenas \texttt{id\_prof\_fk} e \texttt{cod\_turma\_fk} formam a $\underline{PK}$, garantindo que cada par (professor, turma) possui uma única sala no mesmo horário.
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \footnotesize\alert{Rastreabilidade no SGBD:}\par
+      \scriptsize
+      $\bullet$ Três restrições de chave estrangeira ($FK \longrightarrow PK$) garantem que nenhuma aula seja alocada com professor, turma ou sala inexistentes.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Ternário Legítimo vs. Falso Ternário (Decomposição)},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Quando o Ternário é Real e Indivisível?}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Quando a combinação dos 3 elementos representa um fato indivisível.
+    \item No exemplo anterior, o professor só ocupa aquela sala \textbf{porque} está ministrando aula para aquela turma naquele instante.
+    \item Não existe vínculo prévio e autônomo entre o professor e a sala desvinculado da turma.
+  \end{itemize}
+}{%
+  \alert{Quando Decompor em Binários Independentes?}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Se a instituição atribui um gabinete/sala fixo a cada professor e, separadamente, turmas ocorrem em salas de aula.
+    \item Nesse caso, temos dois relacionamentos binários independentes:
+      -- \texttt{PROFESSOR} $1:1$ ou $1:N$ com \texttt{GABINETE};
+      -- \texttt{TURMA} $N:M$ com \texttt{SALA}.
+    \item Tentar forçar um ternário quando há vínculos independentes gera perda semântica e anomalias de atualização!
+  \end{itemize}
+}

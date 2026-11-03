@@ -50,6 +50,8 @@ A avaliação da disciplina é estruturada em dois períodos (N1 e N2), combinan
   - [Aula 07: Estudo Dirigido do Projeto Prático (AVP1) - Definição do Escopo do Minimundo (Sábado Letivo)](Aulas/Aula_07/) ([Caderno PDF](Aulas/Aula_07/materiais/estudo_dirigido_avp1.pdf)).
   - [Aula 08: Laboratório de Modelagem Conceitual com Ferramentas CASE (brModelo e Draw.io)](Aulas/Aula_08/) (Disponível na plataforma web).
   - [Aula 09: Fundamentos Formais do Modelo Relacional e Restrições de Integridade](Aulas/Aula_09/) (Disponível na plataforma web).
+  - [Aula 10: Mapeamento Lógico Relacional (Parte 1) — Entidades Fortes, Fracas e Relacionamentos 1:1 e 1:N](Aulas/Aula_10/) (Disponível na plataforma web).
+  - [Aula 11: Mapeamento Lógico Relacional (Parte 2) — Tabelas Associativas para N:M, Multivalorados, Ternários e Especialização EER](Aulas/Aula_11/) (Disponível na plataforma web).
 
 ### 📝 [Avaliações](Avaliacoes/)
 - [Lista 01 (N1): Fundamentos de SGBD, Arquitetura ANSI/SPARC e Modelagem de Entidades](Avaliacoes/Lista_01_N1.md) ([PDF Oficial](Avaliacoes/lista_01.pdf) | [Código-Fonte](Avaliacoes/lista_01.tex)).

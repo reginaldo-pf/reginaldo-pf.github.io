@@ -1,0 +1,81 @@
+\changecolours{ScoutGreen}
+\section[Passos 5 a 8]{Visao Geral dos Passos Finais do Mapeamento}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{O Mapa dos Passos Finais: De Estruturas Complexas a Tabelas 1FN}
+  \vspace{-0.15cm}
+  \begin{center}
+    \tikz[scale=0.68, transform shape]{
+      % Passo 5
+      \node[draw=ScoutGreen, fill=ScoutGreen!15, very thick, rounded corners=4pt, minimum width=3.3cm, minimum height=2.4cm, align=center, font=\sffamily\scriptsize] (p5) at (-5.4, 0) {
+        \textbf{\color{ScoutGreen}PASSO 5}\\[3pt]
+        \textbf{Relacionamentos $N:M$}\\[2pt]
+        $\bullet$ Tabela Associativa\\
+        $\bullet$ $\underline{PK} = \underline{\{FK_1, FK_2\}}$\\
+        $\bullet$ Atributos do losango\\
+        $\bullet$ Recursivos $N:M$
+      };
+
+      % Passo 6
+      \node[draw=ScoutNavy, fill=ScoutNavy!12, very thick, rounded corners=4pt, minimum width=3.3cm, minimum height=2.4cm, align=center, font=\sffamily\scriptsize] (p6) at (-1.8, 0) {
+        \textbf{\color{ScoutNavy}PASSO 6}\\[3pt]
+        \textbf{Atributos Multivalorados}\\[2pt]
+        $\bullet$ Tabela Autônoma\\
+        $\bullet$ $\underline{PK} = \underline{\{FK_E, Atrib\}}$\\
+        $\bullet$ Fim dos vetores na 1FN\\
+        $\bullet$ Exclusão em Cascata
+      };
+
+      % Passo 7
+      \node[draw=amber!80!black, fill=amber!15, very thick, rounded corners=4pt, minimum width=3.3cm, minimum height=2.4cm, align=center, font=\sffamily\scriptsize] (p7) at (1.8, 0) {
+        \textbf{\color{amber!90!black}PASSO 7}\\[3pt]
+        \textbf{Relac. $n$-ários / Ternários}\\[2pt]
+        $\bullet$ Grau Superior ($n \ge 3$)\\
+        $\bullet$ Relação com $n$ $FK\text{s}$\\
+        $\bullet$ Dedução da PK\\
+        $\bullet$ $N:M:P$ vs. $1:N:M$
+      };
+
+      % Passo 8
+      \node[draw=purple!80!black, fill=purple!12, very thick, rounded corners=4pt, minimum width=3.3cm, minimum height=2.4cm, align=center, font=\sffamily\scriptsize] (p8) at (5.4, 0) {
+        \textbf{\color{purple!90!black}PASSO 8 (EER)}\\[3pt]
+        \textbf{Herança / Especialização}\\[2pt]
+        $\bullet$ 4 Opções de Mapeamento\\
+        $\bullet$ Opção 8A: $\underline{PK/FK}$\\
+        $\bullet$ Total/Parcial, $d/o$\\
+        $\bullet$ Subclasses do Cotidiano
+      };
+    }
+  \end{center}
+  \vspace{0.05cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \footnotesize\alert{O Papel das Novas Relações:}\par
+      \scriptsize
+      $\bullet$ Diferente dos Passos 3 e 4 (que apenas adicionavam colunas $FK$ em tabelas existentes), os Passos 5, 6 e 7 \textbf{sempre criam novas tabelas} no banco de dados.
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \footnotesize\alert{Garantia de Normalização (1FN):}\par
+      \scriptsize
+      $\bullet$ Nenhuma relação terá atributos multivalorados, listas de valores em uma célula ou dependências circulares ocultas.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Taxonomia das Relações no Modelo Relacional},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{1. Relações Base / Entidades (Passos 1 e 2)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Relações Independentes (Fortes):} Modelam objetos autônomos do negócio com chave própria (ex: \texttt{ALUNO}, \texttt{DISCIPLINA}, \texttt{CLIENTE}).
+    \item \textbf{Relações Dependentes (Fracas):} Modelam objetos cuja existência depende da proprietária, com chave parcial (ex: \texttt{DEPENDENTE}, \texttt{EXEMPLAR\_LIVRO}).
+  \end{itemize}
+}{%
+  \alert{2. Relações de Associação e Coleção (Passos 5 a 7)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Tabelas Associativas ($N:M$ e Ternários):} Relacionam duas ou mais entidades com chave primária composta por suas $FK\text{s}$ (ex: \texttt{MATRICULA}, \texttt{ITEM\_PEDIDO}).
+    \item \textbf{Tabelas de Atributo Multivalorado:} Coleções atômicas pertencentes a uma entidade base (ex: \texttt{TELEFONE\_CLIENTE}).
+    \item \textbf{Relações de Subclasses (EER):} Entidades com chave simultaneamente primária e estrangeira ($\underline{PK/FK}$).
+  \end{itemize}
+}

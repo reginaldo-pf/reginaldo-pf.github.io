@@ -1,0 +1,65 @@
+\changecolours{ScoutGreen}
+\section[Ponte e Objetivos]{Ponte Pedagogica e Objetivos de Aprendizagem}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Da Aula 10 para a Aula 11: A Fronteira do Mapeamento},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{O que Consolidamos na Aula 10}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Passo 1 (Entidades Fortes):} Criação de tabelas base na 1FN, achatamento de compostos e omissão de derivados calculados.
+    \item \textbf{Passo 2 (Entidades Fracas):} Propagação da chave primária proprietária com $\underline{PK} = \underline{FK + \text{Discriminador}}$.
+    \item \textbf{Passo 3 (Relacionamentos $1:1$):} FK alocada no lado de Participação Total $(1,1)$ com restrição de unicidade $AK$ para evitar \texttt{NULL}.
+    \item \textbf{Passo 4 (Relacionamentos $1:N$):} Regra de ouro da propagação: $PK$ do lado $1 \longrightarrow FK$ dentro da tabela do lado $N$.
+  \end{itemize}
+}{%
+  \alert{A Fronteira Aberta para Hoje (Aula 11)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{E quando o relacionamento for $N:M$?} Nenhuma das tabelas existentes pode receber uma simples FK sem destruir as propriedades matemáticas da relação.
+    \item \textbf{E atributos com múltiplos valores simultâneos?} Armazenar listas ou vetores em uma célula viola frontalmente o modelo relacional clássico de Codd.
+    \item \textbf{Escopo de Hoje (Passos 5 a 8):}\\
+      -- \textbf{Passo 5:} Relacionamentos $N:M$ e recursivos $N:M$.\\
+      -- \textbf{Passo 6:} Atributos Multivalorados.\\
+      -- \textbf{Passo 7:} Relacionamentos Ternários e $n$-ários.\\
+      -- \textbf{Passo 8:} Especialização e Generalização (EER).
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Por que Relacionamentos N:M Exigem uma Nova Relação?},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Tentativa 1: Inserir Lista de Valores (Quebra da 1FN)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Considere a relação entre \texttt{ALUNO} e \texttt{DISCIPLINA}. Se tentássemos registrar as disciplinas cursadas em uma coluna \texttt{cod\_disciplinas\_fk}, teríamos células como \texttt{\{MAT101, FIS201, BD102\}}.
+    \item \textbf{Violação da 1ª Forma Normal (1FN):} O Modelo Relacional de Codd exige rigorosamente que todos os domínios sejam \textbf{atômicos e indivisíveis}.
+    \item Impossibilita junções indexadas, chaves estrangeiras declaradas e integridade referencial nativa do SGBD.
+  \end{itemize}
+}{%
+  \alert{Tentativa 2: Duplicar Tuplas (Quebra da Chave Primária)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Se duplicássemos a linha do aluno para cada disciplina matriculada, teríamos múltiplas tuplas com a mesma \texttt{matricula}.
+    \item \textbf{Violação da Integridade de Entidade:} A Chave Primária não seria mais única, destruindo a identificação da tupla.
+    \item \textbf{A Solução Algorítmica Canônica:} Isolar o relacionamento em uma \textbf{Tabela Associativa (Relação de Junção)} com Chave Primária Composta ($\underline{PK} = \underline{\{FK_1, FK_2\}}$).
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Objetivos de Aprendizagem e Diretriz Metodológica},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Competências Conceituais e Formais}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Dominar a criação e integridade das \textbf{Tabelas Associativas} para vínculos $N:M$ regulares e recursivos.
+    \item Compreender a transformação formal de \textbf{Atributos Multivalorados} em relações autônomas com exclusão em cascata.
+    \item Entender como restrições de cardinalidade máxima determinam matematicamente a \textbf{Chave Primária em ternários}.
+    \item Analisar as 4 opções de Elmasri \& Navathe para mapeamento de \textbf{Especialização/Generalização EER}.
+  \end{itemize}
+}{%
+  \alert{Diretriz Didática: Domínios Universais}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Exemplos do Cotidiano:} Todas as transformações utilizam domínios comuns e intuitivos (Escola, Comércio, Veículos, Pessoas) para eliminar barreiras técnicas e focar no raciocínio puramente lógico.
+    \item Construir esquemas relacionais intensionais com Chaves Primárias Compostas e arcos dirigidos $FK \longrightarrow PK$.
+    \item Mapear auto-relacionamentos $N:M$ (ex: pré-requisitos entre disciplinas) sem ambiguidades.
+  \end{itemize}
+}
