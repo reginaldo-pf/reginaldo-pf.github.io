@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aula 07: CRUD Avançado e Indexação no MongoDB | BDNR - IFCE Tauá</title>
-  
+  <title>Aula 07: CRUD Avançado, Atualizações Atômicas e Indexação de Alta Performance | BDNR - IFCE Tauá</title>
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -37,18 +37,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-    code, pre { font-family: 'JetBrains Mono', monospace !important; }
-    .tab-btn.active {
-      border-color: #059669;
-      color: #059669;
-      background-color: rgba(5, 150, 105, 0.08);
-      font-weight: 700;
-    }
-  </style>
 </head>
 
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
@@ -61,7 +49,7 @@
       <div class="flex items-center space-x-3">
         <a href="../../index.html" class="flex items-center space-x-3 group">
           <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
-            <i class="fa-solid fa-bolt-lightning text-lg"></i>
+            <i class="fa-solid fa-leaf text-lg"></i>
           </div>
           <div>
             <span class="text-xs uppercase tracking-wider font-bold text-emerald-600 dark:text-emerald-400 block leading-tight">IFCE Campus Tauá • ADS</span>
@@ -90,106 +78,257 @@
   <!-- ========================================== -->
   <!-- BANNER DA AULA                             -->
   <!-- ========================================== -->
-  <section class="bg-gradient-to-r from-slate-950 via-emerald-950 to-slate-900 text-white py-10 border-b border-emerald-950/40">
+  <section class="bg-gradient-to-r from-emerald-950 via-slate-900 to-slate-950 text-white py-10 border-b border-emerald-950/40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold mb-3">
         <i class="fa-solid fa-gauge-high"></i>
-        <span>Unidade I (N1) — Operações CRUD e Indexação de Alta Performance</span>
+        <span>Unidade I (N1) — O Modelo Orientado a Documentos (MongoDB)</span>
       </div>
       <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
         CRUD Avançado e Indexação: <span class="text-emerald-400">Filtros Complexos, Regra ESR e Análise com explain()</span>
       </h1>
       <p class="text-slate-300 text-sm sm:text-base mt-2 max-w-3xl leading-relaxed">
-        Domínio dos operadores <code class="text-emerald-300 font-mono">$elemMatch</code>, <code class="text-emerald-300 font-mono">$expr</code> e <code class="text-emerald-300 font-mono">arrayFilters</code>; fundamentos matemáticos da estrutura <strong>$B\text{-Tree}$</strong> no motor WiredTiger, a <strong>Regra de Ouro ESR</strong>, busca textual ponderada e <strong>Covered Queries</strong>.
+        Domínio dos operadores <code class="text-emerald-300 font-mono">$elemMatch</code>, <code class="text-emerald-300 font-mono">$expr</code> e <code class="text-emerald-300 font-mono">arrayFilters</code>; fundamentos matemáticos da estrutura <strong>B-Tree</strong> no motor WiredTiger, a <strong>Regra de Ouro ESR</strong>, busca textual ponderada e <strong>Covered Queries</strong>.
       </p>
 
-      <div class="flex flex-wrap gap-4 mt-6 text-xs text-slate-300">
-        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
-          <i class="fa-regular fa-calendar text-emerald-400"></i>
-          <span>03/11/2026 (Terça-feira)</span>
+      <div class="flex flex-wrap items-center justify-between gap-4 mt-6 pt-5 border-t border-slate-800">
+        <div class="flex flex-wrap gap-4 text-xs text-slate-300">
+          <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+            <i class="fa-regular fa-calendar text-emerald-400"></i>
+            <span>03/11/2026 (Terça-feira)</span>
+          </div>
+          <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+            <i class="fa-regular fa-clock text-emerald-400"></i>
+            <span>2 h/a (120 min)</span>
+          </div>
+          <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+            <i class="fa-solid fa-chalkboard-user text-emerald-400"></i>
+            <span>Prof. Me. Reginaldo Fernandes</span>
+          </div>
         </div>
-        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
-          <i class="fa-regular fa-clock text-emerald-400"></i>
-          <span>2 horas/aula (120 min)</span>
-        </div>
-        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
-          <i class="fa-solid fa-chalkboard-user text-emerald-400"></i>
-          <span>Prof. Me. Reginaldo Fernandes</span>
-        </div>
-      </div>
 
-      <!-- Links de Acesso Rápido / Downloads -->
-      <div class="flex flex-wrap items-center gap-3 mt-6 pt-5 border-t border-slate-800">
-        <a href="materiais/main.pdf" download class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-colors shadow-sm">
-          <i class="fa-solid fa-file-pdf"></i>
-          <span>Baixar Slides Beamer (.pdf)</span>
-        </a>
-        <a href="codigo/demonstracao_aula07.ipynb" download class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition-colors shadow-sm">
-          <i class="fa-solid fa-book-open"></i>
-          <span>Notebook Jupyter (.ipynb)</span>
-        </a>
-        <a href="codigo/benchmark_indexacao_explain.py" download class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors">
-          <i class="fa-brands fa-python text-emerald-400"></i>
-          <span>Script Benchmark (.py)</span>
-        </a>
-        <a href="codigo/mongosh_aula07_avancado.js" download class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors">
-          <i class="fa-brands fa-js text-amber-400"></i>
-          <span>Roteiro MongoSH (.js)</span>
-        </a>
-        <a href="tutorial_construcao_passo_a_passo.md" class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors">
-          <i class="fa-solid fa-book text-emerald-400"></i>
-          <span>Tutorial Passo a Passo (.md)</span>
+        <!-- Google Colab -->
+        <a href="https://colab.research.google.com/github/reginaldo-pf/reginaldo-pf.github.io/blob/main/Cursos/Tecnologia%20em%20An%C3%A1lise%20e%20Desenvolvimento%20de%20Sistemas/Disciplinas/Banco%20de%20Dados%20N%C3%A3o-Relacionais/Aulas/Aula_07/codigo/demonstracao_aula07.ipynb" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-sm transition-all transform hover:-translate-y-0.5">
+          <i class="fa-solid fa-bolt"></i>
+          <span>Abrir no Google Colab</span>
         </a>
       </div>
     </div>
   </section>
 
   <!-- ========================================== -->
-  <!-- BARRA DE NAVEGAÇÃO DE ABAS                 -->
+  <!-- NAVEGAÇÃO DE ABAS                          -->
   <!-- ========================================== -->
-  <div class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-16 z-40 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <nav class="flex space-x-2 overflow-x-auto py-2 text-xs sm:text-sm font-medium" id="tabs-nav">
-        <button onclick="switchTab('tab-teoria')" class="tab-btn active px-3.5 py-2 rounded-lg border-b-2 border-emerald-600 transition-all flex items-center space-x-2 whitespace-nowrap">
-          <i class="fa-solid fa-network-wired"></i>
-          <span>1. Teoria da B-Tree & Escala</span>
-        </button>
-        <button onclick="switchTab('tab-crud')" class="tab-btn px-3.5 py-2 rounded-lg border-b-2 border-transparent transition-all flex items-center space-x-2 whitespace-nowrap">
-          <i class="fa-solid fa-code-compare"></i>
-          <span>2. CRUD Avançado & Atômicos</span>
-        </button>
-        <button onclick="switchTab('tab-indices')" class="tab-btn px-3.5 py-2 rounded-lg border-b-2 border-transparent transition-all flex items-center space-x-2 whitespace-nowrap">
-          <i class="fa-solid fa-layer-group"></i>
-          <span>3. Tipos de Índices & Regra ESR</span>
-        </button>
-        <button onclick="switchTab('tab-textual')" class="tab-btn px-3.5 py-2 rounded-lg border-b-2 border-transparent transition-all flex items-center space-x-2 whitespace-nowrap">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <span>4. Busca Textual Ponderada</span>
-        </button>
-        <button onclick="switchTab('tab-diagnostico')" class="tab-btn px-3.5 py-2 rounded-lg border-b-2 border-transparent transition-all flex items-center space-x-2 whitespace-nowrap">
-          <i class="fa-solid fa-chart-column"></i>
-          <span>5. explain() & Benchmark</span>
-        </button>
-        <button onclick="switchTab('tab-exercicios')" class="tab-btn px-3.5 py-2 rounded-lg border-b-2 border-transparent transition-all flex items-center space-x-2 whitespace-nowrap">
-          <i class="fa-solid fa-pen-to-square"></i>
-          <span>6. Exercícios de Fixação</span>
-        </button>
-      </nav>
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+    <div class="flex border-b border-slate-200 dark:border-slate-700 mb-6 space-x-2 overflow-x-auto pb-1">
+      <button onclick="switchTab('tab-guia')" id="btn-tab-guia" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 border-emerald-600 text-emerald-600 dark:text-emerald-400 whitespace-nowrap flex items-center space-x-2 transition-all flex-shrink-0">
+        <i class="fa-solid fa-compass"></i>
+        <span>1. Guia Passo a Passo</span>
+      </button>
+      <button onclick="switchTab('tab-teoria')" id="btn-tab-teoria" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 whitespace-nowrap flex items-center space-x-2 transition-all flex-shrink-0">
+        <i class="fa-solid fa-network-wired"></i>
+        <span>2. B-Tree & Regra ESR</span>
+      </button>
+      <button onclick="switchTab('tab-diagnostico')" id="btn-tab-diagnostico" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 whitespace-nowrap flex items-center space-x-2 transition-all flex-shrink-0">
+        <i class="fa-solid fa-chart-column"></i>
+        <span>3. explain() & Benchmark</span>
+      </button>
+      <button onclick="switchTab('tab-slides')" id="btn-tab-slides" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 whitespace-nowrap flex items-center space-x-2 transition-all flex-shrink-0">
+        <i class="fa-solid fa-file-pdf"></i>
+        <span>4. Slides (PDF)</span>
+      </button>
+      <button onclick="switchTab('tab-plano')" id="btn-tab-plano" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 whitespace-nowrap flex items-center space-x-2 transition-all flex-shrink-0">
+        <i class="fa-solid fa-list-check"></i>
+        <span>5. Plano de Aula</span>
+      </button>
+      <button onclick="switchTab('tab-exercicios')" id="btn-tab-exercicios" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 whitespace-nowrap flex items-center space-x-2 transition-all flex-shrink-0">
+        <i class="fa-solid fa-pen-to-square"></i>
+        <span>6. Exercícios & Fixação</span>
+      </button>
+      <button onclick="switchTab('tab-arquivos')" id="btn-tab-arquivos" class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 whitespace-nowrap flex items-center space-x-2 transition-all flex-shrink-0">
+        <i class="fa-solid fa-download"></i>
+        <span>7. Central de Arquivos</span>
+      </button>
     </div>
-  </div>
-
-  <!-- ========================================== -->
-  <!-- CONTEÚDO PRINCIPAL (ABAS)                  -->
-  <!-- ========================================== -->
-  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
 
     <!-- ========================================== -->
-    <!-- ABA 1: TEORIA DA B-TREE E ESCALA           -->
+    <!-- ABA 1: GUIA PASSO A PASSO                  -->
     <!-- ========================================== -->
-    <div id="tab-teoria" class="tab-content space-y-8">
+    <div id="tab-guia" class="tab-content space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 dark:text-white">
+              Construção Prática: CRUD Avançado, Índices e explain() no MongoDB
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+              Roteiro passo a passo para execução no MongoDB Compass (GUI), terminal <code class="font-mono">mongosh</code> e scripts Python (<code class="font-mono">PyMongo</code>).
+            </p>
+          </div>
+          <a href="tutorial_construcao_passo_a_passo.md" download="Aula_07_Guia_Passo_a_Passo.md" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors inline-flex items-center space-x-1.5 shadow-sm">
+            <i class="fa-solid fa-download"></i>
+            <span>Baixar Guia (.md)</span>
+          </a>
+        </div>
+
+        <div class="space-y-8">
+          <!-- Etapa 0: Carga dos Dados -->
+          <div class="p-5 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800">
+            <h3 class="text-sm sm:text-base font-bold text-emerald-700 dark:text-emerald-300 mb-2">
+              0. Preparação do Banco: Conexão e Carga dos Documentos de Teste
+            </h3>
+            <ol class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 space-y-1.5 list-decimal list-inside mb-3">
+              <li>Conecte o <strong>MongoDB Compass</strong> em <code class="font-mono">mongodb://localhost:27017</code> (ou suba o container via <code class="font-mono">docker compose up -d</code>).</li>
+              <li>Acesse o banco <code class="font-mono font-bold">ecommerce_shopgrids</code> estruturado na Aula 06.</li>
+              <li>Para testes rápidos com amostra de catálogo, baixe o dataset <a href="codigo/produtos_amostra_aula07.json" download="produtos_amostra_aula07.json" class="text-emerald-600 dark:text-emerald-400 font-bold underline">produtos_amostra_aula07.json</a> e importe em <strong>Add Data ➔ Import JSON</strong>.</li>
+              <li>Para executar o teste de estresse com 50.000 documentos, execute no terminal: <code class="font-mono bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded">python povoar_dados_benchmark.py</code> (<a href="codigo/povoar_dados_benchmark.py" download="povoar_dados_benchmark.py" class="text-emerald-600 dark:text-emerald-400 font-bold underline">baixar script</a>).</li>
+            </ol>
+          </div>
+
+          <!-- Etapa 1: $elemMatch e $expr -->
+          <div class="p-5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <h3 class="text-sm sm:text-base font-bold text-emerald-600 dark:text-emerald-400 mb-2">
+              1. Filtros Avançados: Eliminando Falsos Positivos com <code class="font-mono">$elemMatch</code> e Expressões com <code class="font-mono">$expr</code>
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-2">
+              <strong>Falso Positivo em Arrays:</strong> Ao filtrar arrays com múltiplos predicados sem <code class="font-mono">$elemMatch</code>, o MongoDB aceita condições satisfeitas por itens diferentes.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+              <div>
+                <span class="text-[11px] font-bold text-red-500 uppercase block mb-1">Incorreto (Falso Positivo)</span>
+                <pre class="rounded-xl text-xs"><code class="language-javascript">db.pedidos.find({
+  "itens.preco": { $gt: 100 },
+  "itens.qtd": { $gte: 3 }
+})</code></pre>
+              </div>
+              <div>
+                <span class="text-[11px] font-bold text-emerald-500 uppercase block mb-1">Correto com $elemMatch</span>
+                <pre class="rounded-xl text-xs"><code class="language-javascript">db.pedidos.find({
+  itens: {
+    $elemMatch: { preco: { $gt: 100 }, qtd: { $gte: 3 } }
+  }
+})</code></pre>
+              </div>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-2">
+              <strong>Comparação Interna com <code class="font-mono">$expr</code>:</strong> Localize produtos cujo estoque atual esteja abaixo do estoque mínimo:
+            </p>
+            <pre class="rounded-xl text-xs"><code class="language-javascript">db.produtos.find({
+  $expr: { $lt: ["$estoque.atual", "$estoque.minimo"] }
+})</code></pre>
+          </div>
+
+          <!-- Etapa 2: Atualizações Atômicas e arrayFilters -->
+          <div class="p-5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <h3 class="text-sm sm:text-base font-bold text-emerald-600 dark:text-emerald-400 mb-2">
+              2. Atualizações Atômicas em Arrays com <code class="font-mono">arrayFilters</code> e <code class="font-mono">$push / $slice</code>
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-2">
+              Atualize cirurgicamente apenas o item <code class="font-mono">MOUSE-01</code> dentro do array de itens do pedido sem precisar saber o seu índice posicional:
+            </p>
+            <pre class="rounded-xl text-xs mb-3"><code class="language-javascript">db.pedidos.updateOne(
+  { codigo: "PED-2026-0001" },
+  { 
+    $set: { 
+      "itens.$[itemAlvo].status": "SEPARADO_EM_ESTOQUE",
+      "itens.$[itemAlvo].data_separacao": new Date()
+    } 
+  },
+  { arrayFilters: [ { "itemAlvo.sku": "MOUSE-01" } ] }
+)</code></pre>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-2">
+              <strong>Manutenção do Subset Pattern com <code class="font-mono">$slice</code>:</strong> Adicione uma avaliação mantendo apenas as 5 mais recentes:
+            </p>
+            <pre class="rounded-xl text-xs"><code class="language-javascript">db.produtos.updateOne(
+  { sku: "NOTE-ACER-15" },
+  {
+    $push: {
+      ultimas_avaliacoes: {
+        $each: [{ nota: 5, autor: "Carlos", data: new Date() }],
+        $slice: -5
+      }
+    }
+  }
+)</code></pre>
+          </div>
+
+          <!-- Etapa 3: Criação de Índices no Compass e CLI -->
+          <div class="p-5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <h3 class="text-sm sm:text-base font-bold text-emerald-600 dark:text-emerald-400 mb-2">
+              3. Gestão de Índices no MongoDB Compass (Aba <em>Indexes</em>) e Terminal
+            </h3>
+            <ol class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 space-y-1.5 list-decimal list-inside mb-3">
+              <li>No <strong>Compass</strong>, abra a coleção <code class="font-mono">produtos</code> e selecione a aba <strong>Indexes</strong>.</li>
+              <li>Clique no botão verde <strong>Create Index</strong>.</li>
+              <li><strong>Índice Único Simples:</strong> Selecione o campo <code class="font-mono">sku</code> (tipo: 1) e marque a opção <em>Create a unique index</em>.</li>
+              <li><strong>Índice Multikey:</strong> Crie um índice no campo <code class="font-mono">tags</code> (tipo: 1). O MongoDB gera entradas individuais na árvore para cada tag!</li>
+              <li><strong>Índice Composto (Regra ESR):</strong> No terminal <code class="font-mono">mongosh</code>, crie o índice seguindo a sequência exata:</li>
+            </ol>
+            <pre class="rounded-xl text-xs mb-3"><code class="language-javascript">// Ordem ESR: Equality (status) -> Sort (data_cadastro) -> Range (preco)
+db.produtos.createIndex(
+  { status: 1, data_cadastro: -1, preco: 1 },
+  { name: "idx_produtos_esr_otimizado" }
+)</code></pre>
+            <p class="text-xs text-emerald-700 dark:text-emerald-300 font-semibold">
+              <i class="fa-solid fa-magnifying-glass mr-1"></i> Consulte a aba Indexes do Compass para verificar o tamanho em bytes do índice gerado na RAM.
+            </p>
+          </div>
+
+          <!-- Etapa 4: Busca Textual Ponderada -->
+          <div class="p-5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <h3 class="text-sm sm:text-base font-bold text-emerald-600 dark:text-emerald-400 mb-2">
+              4. Índice Textual com Pesos Ponderados e Ranqueamento por Relevância (<code class="font-mono">textScore</code>)
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-2">
+              Crie o índice textual atribuindo peso 10 ao título, 5 às tags e 1 à descrição:
+            </p>
+            <pre class="rounded-xl text-xs mb-3"><code class="language-javascript">db.produtos.createIndex(
+  { titulo: "text", tags: "text", descricao: "text" },
+  {
+    weights: { titulo: 10, tags: 5, descricao: 1 },
+    default_language: "portuguese",
+    name: "idx_busca_textual_produtos"
+  }
+)</code></pre>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-2">
+              Realize a busca com radicalização e ordene pelo escore de relevância métrica:
+            </p>
+            <pre class="rounded-xl text-xs"><code class="language-javascript">db.produtos.find(
+  { $text: { $search: "teclado ergonomico sem fio" } },
+  { titulo: 1, preco: 1, score: { $meta: "textScore" }, _id: 0 }
+).sort({ score: { $meta: "textScore" } })</code></pre>
+          </div>
+
+          <!-- Etapa 5: Diagnóstico com explain() -->
+          <div class="p-5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <h3 class="text-sm sm:text-base font-bold text-emerald-600 dark:text-emerald-400 mb-2">
+              5. Auditoria de Performance com <code class="font-mono">explain("executionStats")</code> e Consulta Coberta
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-2">
+              Audite o plano de execução para validar se a busca usou <code class="font-mono text-emerald-600 font-bold">IXSCAN</code> e eliminou o <code class="font-mono text-red-600 font-bold">COLLSCAN</code>:
+            </p>
+            <pre class="rounded-xl text-xs mb-3"><code class="language-javascript">db.produtos.find({ sku: "NOTE-ACER-15" }).explain("executionStats")</code></pre>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-2">
+              <strong>Consulta Coberta (Covered Query):</strong> Projete apenas campos presentes no índice e exclua o <code class="font-mono">_id: 0</code> para atingir <code class="font-mono font-bold text-emerald-600">totalDocsExamined: 0</code>:
+            </p>
+            <pre class="rounded-xl text-xs"><code class="language-javascript">// Indice Composto: { categoria: 1, preco: 1, sku: 1 }
+db.produtos.find(
+  { categoria: "Eletronicos", preco: { $lte: 2000 } },
+  { categoria: 1, preco: 1, sku: 1, _id: 0 }
+).explain("executionStats")</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 2: TEORIA B-TREE & REGRA ESR           -->
+    <!-- ========================================== -->
+    <div id="tab-teoria" class="tab-content hidden space-y-8">
+      
+      <!-- Cards Comparativos: COLLSCAN vs B-Tree -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        <!-- Card: O Colapso do COLLSCAN -->
+        <!-- COLLSCAN -->
         <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
           <div>
             <div class="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center mb-4 text-xl">
@@ -197,12 +336,12 @@
             </div>
             <h2 class="text-lg font-bold mb-2">O Custo do COLLSCAN (Varredura Linear)</h2>
             <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
-              Sem índices secundários, o motor de armazenamento WiredTiger precisa inspecionar <strong>todos os $N$ documentos da coleção</strong> para responder a qualquer filtro.
+              Sem índices secundários, o motor de armazenamento WiredTiger precisa inspecionar <strong>todos os <em>N</em> documentos da coleção</strong> para responder a qualquer filtro.
             </p>
             <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-400">
               <li class="flex items-start space-x-2">
                 <i class="fa-solid fa-xmark text-red-500 mt-0.5"></i>
-                <span><strong>Complexidade Assintótica Linear:</strong> $\mathcal{O}(N)$ em tempo de execução.</span>
+                <span><strong>Complexidade Assintótica Linear:</strong> <code class="font-mono text-xs text-red-600 dark:text-red-400 font-semibold">O(N)</code> em tempo de execução.</span>
               </li>
               <li class="flex items-start space-x-2">
                 <i class="fa-solid fa-xmark text-red-500 mt-0.5"></i>
@@ -219,24 +358,24 @@
           </div>
         </div>
 
-        <!-- Card: A Árvore Balanceada B-Tree -->
+        <!-- B-Tree -->
         <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
           <div>
             <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4 text-xl">
               <i class="fa-solid fa-sitemap"></i>
             </div>
-            <h2 class="text-lg font-bold mb-2">A Estrutura $B\text{-Tree}$ (WiredTiger)</h2>
+            <h2 class="text-lg font-bold mb-2">A Estrutura B-Tree (WiredTiger)</h2>
             <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
               O MongoDB organiza as chaves indexadas em nós balanceados e estritamente ordenados na memória RAM, permitindo buscas por chave pontual e faixas contíguas em tempo logarítmico.
             </p>
             <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-400">
               <li class="flex items-start space-x-2">
                 <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
-                <span><strong>Complexidade Logarítmica:</strong> $\mathcal{O}(\log_{b} N)$, onde $b$ é o Fator de Ramificação (*Fan-out*).</span>
+                <span><strong>Complexidade Logarítmica:</strong> <code class="font-mono text-xs text-emerald-600 dark:text-emerald-400 font-semibold">O(log<sub>b</sub> N)</code>, onde <em>b</em> é o Fator de Ramificação (<em>Fan-out</em>).</span>
               </li>
               <li class="flex items-start space-x-2">
                 <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
-                <span><strong>Altura Enxuta ($h$):</strong> Para $b = 100$, a árvore possui apenas 3 níveis de profundidade!</span>
+                <span><strong>Altura Enxuta (<em>h</em>):</strong> Para <em>b</em> = 100, a árvore possui apenas 3 níveis de profundidade!</span>
               </li>
               <li class="flex items-start space-x-2">
                 <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
@@ -248,22 +387,21 @@
             N = 100.000 docs ➔ Apenas 3 nós inspecionados (Redução de 99.997%)
           </div>
         </div>
-
       </div>
 
-      <!-- Tabela Comparativa de Complexidade Teórico-Computacional -->
+      <!-- Tabela Comparativa de Complexidade -->
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
         <h3 class="text-base font-bold mb-4 flex items-center space-x-2">
           <i class="fa-solid fa-table text-emerald-600 dark:text-emerald-400"></i>
-          <span>Comparativo Matemático: Varredura Linear (COLLSCAN) vs Árvore Balanceada ($B\text{-Tree}$)</span>
+          <span>Comparativo Matemático: Varredura Linear (COLLSCAN) vs Árvore Balanceada (B-Tree)</span>
         </h3>
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs sm:text-sm">
             <thead>
               <tr class="bg-slate-50 dark:bg-slate-900/60 text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
-                <th class="py-3 px-4">Tamanho da Coleção ($N$)</th>
-                <th class="py-3 px-4 text-red-600 dark:text-red-400 font-bold">Sem Índice (COLLSCAN - $\mathcal{O}(N)$)</th>
-                <th class="py-3 px-4 text-emerald-600 dark:text-emerald-400 font-bold">Com Índice $B\text{-Tree}$ ($b = 100$ - $\mathcal{O}(\log_{b} N)$)</th>
+                <th class="py-3 px-4">Tamanho da Coleção (<em>N</em>)</th>
+                <th class="py-3 px-4 text-red-600 dark:text-red-400 font-bold">Sem Índice (COLLSCAN — <code class="font-mono text-xs font-semibold">O(N)</code>)</th>
+                <th class="py-3 px-4 text-emerald-600 dark:text-emerald-400 font-bold">Com Índice B-Tree (<em>b</em> = 100 — <code class="font-mono text-xs font-semibold">O(log<sub>b</sub> N)</code>)</th>
                 <th class="py-3 px-4 text-purple-600 dark:text-purple-400 font-bold">Ganho Teórico de I/O</th>
               </tr>
             </thead>
@@ -271,131 +409,32 @@
               <tr>
                 <td class="py-3 px-4 font-mono font-semibold">1.000 produtos</td>
                 <td class="py-3 px-4">1.000 documentos inspecionados</td>
-                <td class="py-3 px-4 font-semibold text-emerald-600">2 nós da árvore ($h \approx 2$)</td>
+                <td class="py-3 px-4 font-semibold text-emerald-600">2 nós da árvore (<em>h</em> &approx; 2)</td>
                 <td class="py-3 px-4 font-bold text-purple-600">99.80% menor</td>
               </tr>
               <tr>
                 <td class="py-3 px-4 font-mono font-semibold">50.000 produtos</td>
                 <td class="py-3 px-4">50.000 documentos inspecionados</td>
-                <td class="py-3 px-4 font-semibold text-emerald-600">3 nós da árvore ($h \approx 3$)</td>
+                <td class="py-3 px-4 font-semibold text-emerald-600">3 nós da árvore (<em>h</em> &approx; 3)</td>
                 <td class="py-3 px-4 font-bold text-purple-600">99.99% menor</td>
               </tr>
               <tr>
                 <td class="py-3 px-4 font-mono font-semibold">1.000.000 produtos</td>
                 <td class="py-3 px-4">1.000.000 documentos inspecionados</td>
-                <td class="py-3 px-4 font-semibold text-emerald-600">3 nós da árvore ($h \approx 3$)</td>
+                <td class="py-3 px-4 font-semibold text-emerald-600">3 nós da árvore (<em>h</em> &approx; 3)</td>
                 <td class="py-3 px-4 font-bold text-purple-600">99.999% menor</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
-    </div>
 
-    <!-- ========================================== -->
-    <!-- ABA 2: CRUD AVANÇADO & ATÔMICOS            -->
-    <!-- ========================================== -->
-    <div id="tab-crud" class="tab-content hidden space-y-8">
-      
-      <!-- Seção: $elemMatch -->
-      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-        <div class="flex items-center space-x-2 text-emerald-600 dark:text-emerald-400 font-bold text-sm mb-2">
-          <i class="fa-solid fa-bullseye"></i>
-          <span>Operador $elemMatch: Eliminando Falsos Positivos em Listas</span>
-        </div>
-        <h2 class="text-xl font-extrabold mb-3">Casamento Estrito em Arrays de Subdocumentos</h2>
-        <p class="text-sm text-slate-600 dark:text-slate-300 mb-4 leading-relaxed">
-          Quando filtramos arrays com múltiplos critérios, o MongoDB pode casar itens diferentes se não usarmos <code class="font-mono text-emerald-600 font-bold">$elemMatch</code>.
-        </p>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="bg-red-50/60 dark:bg-red-950/20 border border-red-200 dark:border-red-800/40 rounded-xl p-4">
-            <h4 class="text-xs font-bold uppercase text-red-600 dark:text-red-400 mb-2 flex items-center space-x-1.5">
-              <i class="fa-solid fa-triangle-exclamation"></i>
-              <span>Abordagem Incorreta (Falso Positivo)</span>
-            </h4>
-            <pre class="text-xs overflow-x-auto"><code class="language-javascript">// Atende se ITEM 1 satisfaz preco > 100
-// E ITEM 2 satisfaz qtd >= 5 (Itens distintos!)
-db.pedidos.find({
-  "itens.preco": { $gt: 100 },
-  "itens.qtd": { $gte: 5 }
-})</code></pre>
-          </div>
-
-          <div class="bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/40 rounded-xl p-4">
-            <h4 class="text-xs font-bold uppercase text-emerald-600 dark:text-emerald-400 mb-2 flex items-center space-x-1.5">
-              <i class="fa-solid fa-circle-check"></i>
-              <span>Abordagem Correta com $elemMatch</span>
-            </h4>
-            <pre class="text-xs overflow-x-auto"><code class="language-javascript">// Garante que o MESMO subdocumento do array
-// satisfaca ambas as condicoes!
-db.pedidos.find({
-  itens: {
-    $elemMatch: {
-      preco: { $gt: 100 },
-      qtd: { $gte: 5 }
-    }
-  }
-})</code></pre>
-          </div>
-        </div>
-      </div>
-
-      <!-- Seção: $expr e Atômicos -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        <!-- $expr -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-          <h3 class="text-base font-bold mb-2 flex items-center space-x-2">
-            <i class="fa-solid fa-scale-balanced text-emerald-600 dark:text-emerald-400"></i>
-            <span>Operador $expr: Comparando Campos Internos</span>
-          </h3>
-          <p class="text-xs text-slate-600 dark:text-slate-400 mb-4">
-            Permite usar sintaxe de agregação dentro do <code class="font-mono">find()</code> para comparar dois campos do mesmo documento:
-          </p>
-          <pre class="text-xs overflow-x-auto"><code class="language-javascript">// Produtos com estoque atual abaixo do estoque de seguranca:
-db.produtos.find({
-  $expr: {
-    $lt: ["$estoque.atual", "$estoque.minimo"]
-  }
-})</code></pre>
-        </div>
-
-        <!-- arrayFilters -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-          <h3 class="text-base font-bold mb-2 flex items-center space-x-2">
-            <i class="fa-solid fa-filter text-emerald-600 dark:text-emerald-400"></i>
-            <span>Modificação Seletiva com arrayFilters</span>
-          </h3>
-          <p class="text-xs text-slate-600 dark:text-slate-400 mb-4">
-            Atualiza um elemento específico de um array sem conhecer previamente a sua posição numérica:
-          </p>
-          <pre class="text-xs overflow-x-auto"><code class="language-javascript">db.pedidos.updateOne(
-  { codigo: "PED-2026-001" },
-  { 
-    $set: { "itens.$[item].status": "SEPARADO" } 
-  },
-  { 
-    arrayFilters: [ { "item.sku": "PROD-TECLADO" } ] 
-  }
-)</code></pre>
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- ========================================== -->
-    <!-- ABA 3: TIPOS DE ÍNDICES & REGRA ESR        -->
-    <!-- ========================================== -->
-    <div id="tab-indices" class="tab-content hidden space-y-8">
-      
       <!-- Banner Regra ESR -->
       <div class="bg-gradient-to-r from-emerald-900 to-slate-900 text-white rounded-2xl p-6 shadow-md border border-emerald-800/40">
         <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-500/30 text-emerald-200 border border-emerald-500/40">Regra de Ouro</span>
         <h2 class="text-xl sm:text-2xl font-black mt-2">A Regra de Ouro ESR: Equality ➔ Sort ➔ Range</h2>
         <p class="text-xs sm:text-sm text-slate-300 mt-2 max-w-3xl leading-relaxed">
-          A ordem exata na criação de um índice composto determina se a consulta será respondida em $\le 1\text{ ms}$ ou se provocará erro de estouro de memória no sort em RAM (<code class="text-amber-300">Sort exceeded memory limit</code>).
+          A ordem exata na criação de um índice composto determina se a consulta será respondida em &le; 1 ms ou se provocará erro de estouro de memória no sort em RAM (<code class="text-amber-300">Sort exceeded memory limit</code>).
         </p>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 text-xs">
@@ -414,100 +453,63 @@ db.produtos.find({
         </div>
       </div>
 
-      <!-- Exemplos de Código de Índices -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        <!-- Índices Simples e Multikey -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-          <h3 class="text-base font-bold mb-3 flex items-center space-x-2">
-            <i class="fa-solid fa-list-check text-emerald-600 dark:text-emerald-400"></i>
-            <span>Índices Simples & Multikey (Listas)</span>
-          </h3>
-          <pre class="text-xs overflow-x-auto"><code class="language-javascript">// 1. Indice Simples com Unicidade Garantida:
-db.produtos.createIndex({ sku: 1 }, { unique: true })
-
-// 2. Indice Multikey em Array de Tags:
-db.produtos.createIndex({ tags: 1 })
-
-// ATENCAO: No maximo UM array por indice composto!
-// db.produtos.createIndex({ tags: 1, cores: 1 }) -> ERRO!</code></pre>
-        </div>
-
-        <!-- Índices Parciais e TTL -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-          <h3 class="text-base font-bold mb-3 flex items-center space-x-2">
-            <i class="fa-solid fa-memory text-emerald-600 dark:text-emerald-400"></i>
-            <span>Otimizações de RAM: Parciais & TTL</span>
-          </h3>
-          <pre class="text-xs overflow-x-auto"><code class="language-javascript">// 1. Indice Parcial (Economiza dezenas de MBs na RAM):
-db.pedidos.createIndex(
-  { cliente_id: 1, data_criacao: -1 },
-  { partialFilterExpression: { status: "PENDENTE" } }
-)
-
-// 2. Indice TTL (Remove sessoes apos 1 hora):
-db.sessoes.createIndex(
-  { data_expiracao: 1 },
-  { expireAfterSeconds: 0 }
-)</code></pre>
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- ========================================== -->
-    <!-- ABA 4: BUSCA TEXTUAL PONDERADA             -->
-    <!-- ========================================== -->
-    <div id="tab-textual" class="tab-content hidden space-y-8">
+      <!-- Diagrama Arquitetural: Pipeline do Índice Invertido Textual -->
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-        <h2 class="text-xl font-extrabold mb-3 flex items-center space-x-2">
-          <i class="fa-solid fa-magnifying-glass text-emerald-600 dark:text-emerald-400"></i>
-          <span>Full-Text Search com Pesos Diferenciados e Relevância</span>
-        </h2>
-        <p class="text-sm text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
-          Diferente do <code class="font-mono text-xs">$regex</code> (que varre texto caractere por caractere sem radicalização), os índices textuais do MongoDB aplicam <strong>tokenização</strong>, remoção de <strong>stopwords</strong> (artigos e preposições) e <strong>stemming</strong> (redução da palavra ao radical).
+        <h3 class="text-base font-bold mb-2 flex items-center space-x-2">
+          <i class="fa-solid fa-diagram-project text-emerald-600 dark:text-emerald-400"></i>
+          <span>Pipeline do Índice Invertido Textual no MongoDB</span>
+        </h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+          Como o MongoDB processa textos BSON através de tokenização, descarte de stopwords, radicalização (stemming) e escore de relevância ponderado (<code class="font-mono">textScore</code>).
         </p>
-
-        <div class="space-y-4">
-          <div>
-            <h4 class="text-xs font-bold uppercase text-slate-500 mb-2">1. Criação do Índice Textual com Pesos (Weights)</h4>
-            <pre class="text-xs overflow-x-auto"><code class="language-javascript">db.produtos.createIndex(
-  { titulo: "text", tags: "text", descricao: "text" },
-  {
-    weights: { titulo: 10, tags: 5, descricao: 1 },
-    default_language: "portuguese",
-    name: "idx_busca_textual"
-  }
-)</code></pre>
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 overflow-x-auto text-xs font-mono text-slate-700 dark:text-slate-300 space-y-3">
+          <div class="flex items-center space-x-2 text-emerald-600 dark:text-emerald-400 font-bold">
+            <i class="fa-solid fa-file-code"></i>
+            <span>Documento BSON: { titulo: "Mouse Sem Fio Gamer", desc: "Mouse ergonomico" }</span>
           </div>
-
-          <div>
-            <h4 class="text-xs font-bold uppercase text-slate-500 mb-2">2. Consulta por Palavras e Ordenação por Escore ($meta: 'textScore')</h4>
-            <pre class="text-xs overflow-x-auto"><code class="language-javascript">db.produtos.find(
-  { $text: { $search: "teclado ergonomico sem fio" } },
-  { 
-    titulo: 1, 
-    preco: 1, 
-    score: { $meta: "textScore" }, 
-    _id: 0 
-  }
-).sort({ score: { $meta: "textScore" } })</code></pre>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-2 text-center text-[11px]">
+            <div class="p-2.5 rounded-lg bg-white dark:bg-slate-800 border border-purple-300 dark:border-purple-800">
+              <strong class="text-purple-600 dark:text-purple-400 block mb-1">1. Tokenização</strong>
+              <span>'mouse', 'sem', 'fio', 'gamer', 'ergonomico'</span>
+            </div>
+            <div class="p-2.5 rounded-lg bg-white dark:bg-slate-800 border border-purple-300 dark:border-purple-800">
+              <strong class="text-purple-600 dark:text-purple-400 block mb-1">2. Stopwords PT-BR</strong>
+              <span>Descarta partículas vazias ('sem', 'de', 'para')</span>
+            </div>
+            <div class="p-2.5 rounded-lg bg-white dark:bg-slate-800 border border-purple-300 dark:border-purple-800">
+              <strong class="text-purple-600 dark:text-purple-400 block mb-1">3. Stemming (Radical)</strong>
+              <span>'ergonomico' ➔ 'ergonom'<br>'mouse' ➔ 'mous'</span>
+            </div>
+          </div>
+          <div class="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700 text-slate-800 dark:text-emerald-200">
+            <strong>Índice Invertido Ponderado Resultante:</strong><br>
+            • 'ergonom' ➔ [ { Doc#1, peso: 1 } ]<br>
+            • 'gamer' ➔ [ { Doc#1, peso: 10 } ]<br>
+            • 'mous' ➔ [ { Doc#1, peso: 10 + 1 = 11 } ]<br>
+            <span class="text-emerald-600 dark:text-emerald-400 font-bold">Consulta: find({ $text: { $search: 'gamer ergonomico' } }) ➔ textScore = 11.0 (Ranqueamento imediato!)</span>
           </div>
         </div>
       </div>
     </div>
 
     <!-- ========================================== -->
-    <!-- ABA 5: EXPLAIN() & BENCHMARK               -->
+    <!-- ABA 3: EXPLAIN() & BENCHMARK               -->
     <!-- ========================================== -->
     <div id="tab-diagnostico" class="tab-content hidden space-y-8">
       
       <!-- Gráfico do Benchmark -->
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm text-center">
-        <h3 class="text-lg font-bold mb-1">Evidência Empírica de Performance (50.000 Documentos)</h3>
-        <p class="text-xs text-slate-500 mb-4">Medições consolidadas em laboratório: tempo de resposta (ms) e documentos lidos no disco.</p>
-        <img src="benchmark_performance_indices.png" alt="Gráfico de Benchmark de Índices" class="mx-auto rounded-xl shadow-md max-w-full h-auto border border-slate-200 dark:border-slate-700">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div class="text-left">
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Evidência Empírica de Performance (50.000 Documentos)</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Medições consolidadas em laboratório: tempo de resposta (ms) e documentos lidos no disco.</p>
+          </div>
+          <a href="codigo/benchmark_performance_indices.png" download="benchmark_performance_indices.png" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors inline-flex items-center space-x-1.5">
+            <i class="fa-solid fa-download"></i>
+            <span>Baixar Gráfico PNG</span>
+          </a>
+        </div>
+        <img src="codigo/benchmark_performance_indices.png" alt="Gráfico de Benchmark de Índices" class="mx-auto rounded-xl shadow-md max-w-full h-auto border border-slate-200 dark:border-slate-700">
       </div>
 
       <!-- Tabela de Auditoria do executionStats -->
@@ -531,7 +533,7 @@ db.sessoes.createIndex(
           </div>
           <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
             <span class="font-mono text-emerald-600 dark:text-emerald-400 font-bold block text-sm mb-1">executionTimeMillis</span>
-            <p class="text-slate-600 dark:text-slate-300">Tempo de execução real no motor. Deve ser $\le 1\text{ ms}$ para buscas pontuais em e-commerces.</p>
+            <p class="text-slate-600 dark:text-slate-300">Tempo de execução real no motor. Deve ser &le; 1 ms para buscas pontuais em e-commerces.</p>
           </div>
         </div>
       </div>
@@ -558,103 +560,373 @@ db.produtos.find(
     </div>
 
     <!-- ========================================== -->
+    <!-- ABA 4: SLIDES (PDF)                        -->
+    <!-- ========================================== -->
+    <div id="tab-slides" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white">Apresentação — Aula 07 (Beamer 16:9 • 30 Páginas)</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">CRUD Avançado, B-Tree no WiredTiger, Regra ESR, Índices Multikey/Textuais e Auditoria com explain().</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <a href="materiais/main.pdf" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors inline-flex items-center space-x-2">
+              <i class="fa-solid fa-up-right-from-square"></i>
+              <span>Abrir PDF em Nova Aba</span>
+            </a>
+            <a href="materiais/main.pdf" download="Aula07_CRUD_Avancado_Indices_MongoDB.pdf" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors inline-flex items-center space-x-2">
+              <i class="fa-solid fa-download"></i>
+              <span>Baixar PDF</span>
+            </a>
+          </div>
+        </div>
+        <div class="w-full h-[650px] rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-950">
+          <iframe src="materiais/main.pdf" class="w-full h-full" title="Slides Aula 07"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 5: PLANO DE AULA                       -->
+    <!-- ========================================== -->
+    <div id="tab-plano" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 text-sm">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+              <i class="fa-solid fa-list-check text-emerald-600 dark:text-emerald-400"></i>
+              <span>Cronograma Pedagógico da Aula 07 (120 Minutos)</span>
+            </h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Planejamento curricular oficial do IFCE Campus Tauá para Banco de Dados Não-Relacionais.</p>
+          </div>
+          <a href="plano_de_aula.md" download="Aula_07_Plano_de_Aula.md" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors inline-flex items-center space-x-1.5">
+            <i class="fa-solid fa-download"></i>
+            <span>Baixar Plano (.md)</span>
+          </a>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
+                <th class="py-2.5 px-3">Bloco</th>
+                <th class="py-2.5 px-3">Duração</th>
+                <th class="py-2.5 px-4">Descrição das Atividades</th>
+                <th class="py-2.5 px-3">Metodologia & Recursos</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50 text-slate-700 dark:text-slate-300">
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">1. Gargalos & Teoria</td>
+                <td class="py-3 px-3 whitespace-nowrap">00 – 25 min</td>
+                <td class="py-3 px-4"><strong>O Problema da Escala e a Teoria da B-Tree:</strong> O custo do COLLSCAN sob concorrência massiva; estrutura da árvore balanceada no motor WiredTiger; complexidade assintótica O(N) vs O(log<sub>b</sub> N); exemplo matemático pareado de acessos em disco com fan-out b = 100.</td>
+                <td class="py-3 px-3">Exposição dialogada com slides Beamer</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">2. CRUD Avançado</td>
+                <td class="py-3 px-3 whitespace-nowrap">25 – 50 min</td>
+                <td class="py-3 px-4"><strong>Filtros Complexos e Atualizações Atômicas:</strong> Eliminação de falsos positivos com <code>$elemMatch</code> em arrays; expressões lógicas entre campos com <code>$expr</code>; modificadores numéricos <code>$inc</code> e controle de limites com <code>$push</code> + <code>$slice</code>; atualizações seletivas em listas com <code>arrayFilters</code>.</td>
+                <td class="py-3 px-3">Demonstração no Compass e mongosh</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">3. Índices & ESR</td>
+                <td class="py-3 px-3 whitespace-nowrap">50 – 80 min</td>
+                <td class="py-3 px-4"><strong>Construção de Índices e Regra de Ouro ESR:</strong> Índices Simples (únicos), Compostos e Multikey (arrays); prova lógica da sequência Equality ➔ Sort ➔ Range; prevenção de erros de estouro de memória no sort em RAM; índices parciais e esparsos para economia de RAM.</td>
+                <td class="py-3 px-3">Resolução prática no Compass e PyMongo</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">4. Busca Textual</td>
+                <td class="py-3 px-3 whitespace-nowrap">80 – 95 min</td>
+                <td class="py-3 px-4"><strong>Índices Textuais e Relevância:</strong> Full-Text Search com pesos diferenciados (weights) em múltiplos campos textuais; operador <code>$text</code>, tokenização, remoção de stopwords, radicalização (stemming) e ordenação por métrica de relevância (<code>textScore</code>).</td>
+                <td class="py-3 px-3">Prática interativa no catálogo de produtos</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-bold text-emerald-600">5. Diagnóstico & Lab</td>
+                <td class="py-3 px-3 whitespace-nowrap">95 – 120 min</td>
+                <td class="py-3 px-4"><strong>Diagnóstico com explain() e Benchmark:</strong> Análise das métricas do <code>executionStats</code>, identificação de gargalos de leitura (FETCH), verificação do ápice de performance com Covered Queries (<code>totalDocsExamined: 0</code>) e auditoria dos resultados do benchmark com 50.000 documentos.</td>
+                <td class="py-3 px-3">Laboratório prático e visualização gráfica</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
     <!-- ABA 6: EXERCÍCIOS DE FIXAÇÃO               -->
     <!-- ========================================== -->
     <div id="tab-exercicios" class="tab-content hidden space-y-6">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-        <h2 class="text-xl font-bold mb-4 flex items-center space-x-2">
+        <h2 class="text-xl font-bold mb-2 flex items-center space-x-2">
           <i class="fa-solid fa-pen-to-square text-emerald-600 dark:text-emerald-400"></i>
-          <span>Lista de Exercícios Práticos — Aula 07</span>
+          <span>Lista de Exercícios Práticos & Avaliativos — Aula 07</span>
         </h2>
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-6">
+          Resolva as questões abaixo aplicando os conceitos de indexação e operações atômicas aprendidos na aula. Utilize a amostra de dados para testar suas queries:
+        </p>
+
+        <!-- Card de Download do Dataset de Teste -->
+        <div class="mb-6">
+          <a href="codigo/produtos_amostra_aula07.json" download="produtos_amostra_aula07.json" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:shadow-md transition-all flex items-center justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="flex items-center space-x-3">
+              <i class="fa-solid fa-box-open text-emerald-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <div>
+                <h4 class="font-bold text-slate-900 dark:text-white text-xs">Dataset de Apoio: produtos_amostra_aula07.json</h4>
+                <p class="text-[11px] text-slate-500">Catálogo de produtos com tags, subdocumentos de estoque e especificações para testes de consultas e índices.</p>
+              </div>
+            </div>
+            <span class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 inline-flex items-center">
+              Baixar JSON <i class="fa-solid fa-download ml-1.5 text-xs"></i>
+            </span>
+          </a>
+        </div>
         
-        <div class="space-y-6 text-sm">
+        <div class="space-y-4 text-xs sm:text-sm">
           
-          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
-            <h4 class="font-bold text-emerald-600 dark:text-emerald-400 mb-2">Exercício 1: Teoria Assintótica e $B\text{-Tree}$</h4>
-            <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
-              Considere uma coleção com $N = 100.000$ documentos. Calcule matematicamente passo a passo o número de nós inspecionados para encontrar um documento pelo SKU sem índice versus com índice em árvore balanceada ($b = 100$). Demonstre o ganho percentual de redução de I/O de disco.
-            </p>
-          </div>
+          <details class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <summary class="font-bold cursor-pointer text-slate-900 dark:text-white flex items-center justify-between">
+              <span>Exercício 1: Teoria Assintótica e B-Tree (Cálculo de Redução de I/O)</span>
+              <i class="fa-solid fa-chevron-down text-slate-400"></i>
+            </summary>
+            <div class="mt-3 text-slate-600 dark:text-slate-300 space-y-2 border-t border-slate-200 dark:border-slate-700 pt-3">
+              <p><strong>Enunciado:</strong> Considere uma coleção com <em>N</em> = 100.000 documentos. Calcule passo a passo o número de nós inspecionados para encontrar um documento pelo SKU sem índice versus com índice em árvore balanceada (com fator de ramificação <em>b</em> = 100). Demonstre o ganho percentual de redução de I/O.</p>
+              <div class="p-3 rounded-lg bg-emerald-50/60 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 font-mono text-xs text-slate-800 dark:text-emerald-300">
+                1. Sem índice (COLLSCAN): O(N) ➔ pior caso = 100.000 leituras de documentos.<br>
+                2. Com índice B-Tree (IXSCAN): h &approx; &lceil;log<sub>100</sub>(100.000)&rceil; = &lceil;2.5&rceil; = 3 acessos a nós.<br>
+                3. Redução de I/O: (1 - 3/100.000) * 100% = 99.997% de economia de leituras físicas!
+              </div>
+            </div>
+          </details>
 
-          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
-            <h4 class="font-bold text-emerald-600 dark:text-emerald-400 mb-2">Exercício 2: Falsos Positivos e $elemMatch</h4>
-            <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
-              Explique com suas palavras por que um filtro ingênuo sobre um array de subdocumentos pode gerar um falso positivo retornando pedidos que não atendem às condições no mesmo item. Escreva a consulta corrigida utilizando o operador <code class="font-mono text-xs">$elemMatch</code>.
-            </p>
-          </div>
+          <details class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <summary class="font-bold cursor-pointer text-slate-900 dark:text-white flex items-center justify-between">
+              <span>Exercício 2: Falsos Positivos e Operador $elemMatch</span>
+              <i class="fa-solid fa-chevron-down text-slate-400"></i>
+            </summary>
+            <div class="mt-3 text-slate-600 dark:text-slate-300 space-y-2 border-t border-slate-200 dark:border-slate-700 pt-3">
+              <p><strong>Enunciado:</strong> Explique por que um filtro ingênuo sobre um array de subdocumentos pode gerar falso positivo e escreva a consulta corrigida com <code class="font-mono text-xs font-bold">$elemMatch</code> para buscar pedidos que contenham pelo menos um item com preço maior que 100 e quantidade maior ou igual a 5.</p>
+              <pre class="rounded-xl text-xs"><code class="language-javascript">db.pedidos.find({
+  itens: {
+    $elemMatch: { preco: { $gt: 100 }, qtd: { $gte: 5 } }
+  }
+})</code></pre>
+            </div>
+          </details>
 
-          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
-            <h4 class="font-bold text-emerald-600 dark:text-emerald-400 mb-2">Exercício 3: Aplicação da Regra ESR (Equality, Sort, Range)</h4>
-            <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
-              Dada a consulta: <code class="font-mono text-xs">db.produtos.find({ status: "ATIVO", preco: { $gte: 150 } }).sort({ data_cadastro: -1 })</code>.<br>
-              a) Projete o índice composto ideal seguindo a regra ESR.<br>
-              b) Explique o que ocorre com o plano de execução se o índice for criado na ordem E-R-S (<code class="font-mono text-xs">{ status: 1, preco: 1, data_cadastro: -1 }</code>).
-            </p>
-          </div>
+          <details class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <summary class="font-bold cursor-pointer text-slate-900 dark:text-white flex items-center justify-between">
+              <span>Exercício 3: Aplicação da Regra ESR (Equality, Sort, Range)</span>
+              <i class="fa-solid fa-chevron-down text-slate-400"></i>
+            </summary>
+            <div class="mt-3 text-slate-600 dark:text-slate-300 space-y-2 border-t border-slate-200 dark:border-slate-700 pt-3">
+              <p><strong>Enunciado:</strong> Dada a consulta: <code class="font-mono text-xs">db.produtos.find({ status: "ATIVO", preco: { $gte: 150 } }).sort({ data_cadastro: -1 })</code>. Projete o índice composto ideal e explique o que ocorreria se a ordem fosse E-R-S.</p>
+              <div class="p-3 rounded-lg bg-emerald-50/60 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 font-mono text-xs text-slate-800 dark:text-emerald-300">
+                Índice Correto (ESR): { status: 1, data_cadastro: -1, preco: 1 }<br>
+                Se a ordem fosse E-R-S ({ status: 1, preco: 1, data_cadastro: -1 }), o MongoDB teria que percorrer a faixa de preço e carregar todos os documentos na memória RAM para executar a etapa SORT. Se o volume excedesse 100 MB, a consulta falharia com erro de estouro de memória (Sort exceeded memory limit).
+              </div>
+            </div>
+          </details>
 
-          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
-            <h4 class="font-bold text-emerald-600 dark:text-emerald-400 mb-2">Exercício 4: Atualização Seletiva com arrayFilters</h4>
-            <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
-              Escreva o comando em <code class="font-mono text-xs">mongosh</code> ou Python para atualizar o status do item de código <code class="font-mono text-xs">"PROD-102"</code> para <code class="font-mono text-xs">"SEPARADO"</code> dentro de um array de itens de um pedido, sem alterar os outros itens presentes no pedido.
-            </p>
-          </div>
+          <details class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <summary class="font-bold cursor-pointer text-slate-900 dark:text-white flex items-center justify-between">
+              <span>Exercício 4: Atualização Seletiva em Array com arrayFilters</span>
+              <i class="fa-solid fa-chevron-down text-slate-400"></i>
+            </summary>
+            <div class="mt-3 text-slate-600 dark:text-slate-300 space-y-2 border-t border-slate-200 dark:border-slate-700 pt-3">
+              <p><strong>Enunciado:</strong> Escreva o comando para atualizar o status do item de código <code class="font-mono text-xs">"PROD-102"</code> para <code class="font-mono text-xs">"SEPARADO"</code> dentro de um array de itens de um pedido sem alterar os outros itens presentes.</p>
+              <pre class="rounded-xl text-xs"><code class="language-javascript">db.pedidos.updateOne(
+  { codigo: "PED-2026-001" },
+  { $set: { "itens.$[item].status": "SEPARADO" } },
+  { arrayFilters: [ { "item.sku": "PROD-102" } ] }
+)</code></pre>
+            </div>
+          </details>
 
-          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
-            <h4 class="font-bold text-emerald-600 dark:text-emerald-400 mb-2">Exercício 5: Consultas Cobertas e Busca Textual</h4>
-            <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
-              a) O que caracteriza uma Consulta Coberta (*Covered Query*) e por que a projeção do campo <code class="font-mono text-xs">_id: 0</code> é obrigatória?<br>
-              b) Crie um comando para gerar um índice textual nos campos <code class="font-mono text-xs">titulo</code> (peso 10) e <code class="font-mono text-xs">descricao</code> (peso 2), e realize a busca pela palavra <code class="font-mono text-xs">"ergonômico"</code> com ordenação por relevância.
-            </p>
-          </div>
+          <details class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <summary class="font-bold cursor-pointer text-slate-900 dark:text-white flex items-center justify-between">
+              <span>Exercício 5: Consultas Cobertas e Busca Textual Ponderada</span>
+              <i class="fa-solid fa-chevron-down text-slate-400"></i>
+            </summary>
+            <div class="mt-3 text-slate-600 dark:text-slate-300 space-y-2 border-t border-slate-200 dark:border-slate-700 pt-3">
+              <p><strong>Enunciado:</strong> a) Por que a projeção <code class="font-mono text-xs">_id: 0</code> é obrigatória em uma Covered Query?<br>b) Crie o comando para gerar índice textual ponderado e busque por "ergonômico" ordenando pelo escore.</p>
+              <pre class="rounded-xl text-xs"><code class="language-javascript">// a) O campo _id sempre vem na projecao por padrao. Se nao excluir com _id: 0, 
+// o motor eh forcado a fazer FETCH para buscar o _id caso ele nao esteja no indice.
+
+// b) Indice textual e busca:
+db.produtos.createIndex(
+  { titulo: "text", descricao: "text" },
+  { weights: { titulo: 10, descricao: 2 }, default_language: "portuguese" }
+)
+
+db.produtos.find(
+  { $text: { $search: "ergonomico" } },
+  { score: { $meta: "textScore" }, titulo: 1, _id: 0 }
+).sort({ score: { $meta: "textScore" } })</code></pre>
+            </div>
+          </details>
 
         </div>
       </div>
     </div>
 
+    <!-- ========================================== -->
+    <!-- ABA 7: CENTRAL DE ARQUIVOS (REPOSITÓRIO)   -->
+    <!-- ========================================== -->
+    <div id="tab-arquivos" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-1 flex items-center space-x-2">
+          <i class="fa-solid fa-download text-emerald-600 dark:text-emerald-400"></i>
+          <span>Repositório de Arquivos Didáticos da Aula 07</span>
+        </h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Todos os códigos-fonte, notebooks interativos, scripts de banco, planos e apresentações da aula prontos para download.</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          <!-- 1. Slides Oficiais Beamer PDF -->
+          <a href="materiais/main.pdf" download="Aula07_CRUD_Avancado_Indices_MongoDB.pdf" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-solid fa-file-pdf text-red-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Slides Oficiais (PDF)</h3>
+              <p class="text-[11px] text-slate-500">30 páginas Beamer (Widescreen 16:9) sobre CRUD, B-Tree, ESR e explain().</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">Download <i class="fa-solid fa-download ml-1 text-[10px]"></i></span>
+          </a>
+
+          <!-- 2. Jupyter Notebook -->
+          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-amber-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-solid fa-book-open text-amber-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Jupyter Notebook (.ipynb)</h3>
+              <p class="text-[11px] text-slate-500">Caderno interativo executável no Google Colab e VS Code com exemplos pareados.</p>
+            </div>
+            <div class="flex items-center space-x-2 mt-3 pt-2 border-t border-slate-200 dark:border-slate-700">
+              <a href="https://colab.research.google.com/github/reginaldo-pf/reginaldo-pf.github.io/blob/main/Cursos/Tecnologia%20em%20An%C3%A1lise%20e%20Desenvolvimento%20de%20Sistemas/Disciplinas/Banco%20de%20Dados%20N%C3%A3o-Relacionais/Aulas/Aula_07/codigo/demonstracao_aula07.ipynb" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 transition-colors">
+                Colab
+              </a>
+              <a href="codigo/demonstracao_aula07.ipynb" download="demonstracao_aula07.ipynb" class="px-2.5 py-1 text-[11px] font-semibold rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 transition-colors inline-flex items-center">
+                Download <i class="fa-solid fa-download ml-1 text-[9px]"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- 3. Script Benchmark explain() -->
+          <a href="codigo/benchmark_indexacao_explain.py" download="benchmark_indexacao_explain.py" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-brands fa-python text-emerald-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Benchmark explain() (.py)</h3>
+              <p class="text-[11px] text-slate-500">Cronometragem real, extração de executionStats e geração de gráficos didáticos.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">Download <i class="fa-solid fa-download ml-1 text-[10px]"></i></span>
+          </a>
+
+          <!-- 4. Script CRUD Avançado -->
+          <a href="codigo/crud_avancado_operadores.py" download="crud_avancado_operadores.py" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-brands fa-python text-emerald-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">CRUD Avançado & Atômicos (.py)</h3>
+              <p class="text-[11px] text-slate-500">Filtros com $elemMatch, $expr e atualizações atômicas com arrayFilters.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">Download <i class="fa-solid fa-download ml-1 text-[10px]"></i></span>
+          </a>
+
+          <!-- 5. Script Busca Textual -->
+          <a href="codigo/indices_textuais_busca.py" download="indices_textuais_busca.py" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-brands fa-python text-emerald-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Busca Textual Ponderada (.py)</h3>
+              <p class="text-[11px] text-slate-500">Criação de índices com pesos, stopwords, radicalização e textScore.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">Download <i class="fa-solid fa-download ml-1 text-[10px]"></i></span>
+          </a>
+
+          <!-- 6. Script Povoamento Benchmark -->
+          <a href="codigo/povoar_dados_benchmark.py" download="povoar_dados_benchmark.py" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-brands fa-python text-emerald-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Carga de 50.000 Docs (.py)</h3>
+              <p class="text-[11px] text-slate-500">Povoamento em lote de alta performance utilizando bulk_write para testes de estresse.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">Download <i class="fa-solid fa-download ml-1 text-[10px]"></i></span>
+          </a>
+
+          <!-- 7. Roteiro mongosh -->
+          <a href="codigo/mongosh_aula07_avancado.js" download="mongosh_aula07_avancado.js" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-amber-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-brands fa-js text-amber-400 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Roteiro CLI (mongosh .js)</h3>
+              <p class="text-[11px] text-slate-500">Comandos completos prontos para cópia e colagem no terminal shell do MongoDB.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">Download <i class="fa-solid fa-download ml-1 text-[10px]"></i></span>
+          </a>
+
+          <!-- 8. Amostra JSON -->
+          <a href="codigo/produtos_amostra_aula07.json" download="produtos_amostra_aula07.json" class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-blue-500 hover:shadow-md transition-all flex flex-col justify-between group bg-slate-50/50 dark:bg-slate-900/40">
+            <div class="space-y-2">
+              <i class="fa-solid fa-box-open text-blue-500 text-2xl group-hover:scale-110 transition-transform"></i>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Amostra de Produtos (.json)</h3>
+              <p class="text-[11px] text-slate-500">Massa de dados BSON/JSON pronta para importação no Compass e testes pontuais.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-3 inline-flex items-center">Download <i class="fa-solid fa-download ml-1 text-[10px]"></i></span>
+          </a>
+        </div>
+      </div>
+    </div>
   </main>
 
   <!-- ========================================== -->
   <!-- RODAPÉ INSTITUCIONAL                       -->
   <!-- ========================================== -->
-  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-8 text-center text-xs text-slate-500">
-    <div class="max-w-7xl mx-auto px-4">
-      <p class="font-semibold text-slate-700 dark:text-slate-300">Instituto Federal do Ceará (IFCE) — Campus Tauá</p>
-      <p class="mt-1">Tecnologia em Análise e Desenvolvimento de Sistemas (ADS) • Disciplina: Banco de Dados Não-Relacionais</p>
-      <p class="mt-2 text-slate-400">© 2026 Prof. Me. Reginaldo Fernandes • Material didático para fins educacionais</p>
+  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div>
+        <span>Instituto Federal de Educação, Ciência e Tecnologia do Ceará — Campus Tauá</span>
+      </div>
+      <div>
+        <span>Banco de Dados Não-Relacionais (2026.2) • Prof. Me. Reginaldo Fernandes</span>
+      </div>
     </div>
   </footer>
 
-  <!-- Script de Controle das Abas e Tema Escuro -->
+  <!-- ========================================== -->
+  <!-- SCRIPT DE ABAS E TEMA ESCURO               -->
+  <!-- ========================================== -->
   <script>
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-b-2', 'border-emerald-600', 'text-emerald-600', 'dark:text-emerald-400');
+        btn.classList.add('text-slate-500', 'dark:text-slate-400');
+      });
 
-      const target = document.getElementById(tabId);
-      if (target) {
-        target.classList.remove('hidden');
+      const selectedTab = document.getElementById(tabId);
+      const selectedBtn = document.getElementById('btn-' + tabId);
+
+      if (selectedTab) selectedTab.classList.remove('hidden');
+      if (selectedBtn) {
+        selectedBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
+        selectedBtn.classList.add('border-b-2', 'border-emerald-600', 'text-emerald-600', 'dark:text-emerald-400');
       }
-
-      event.currentTarget.classList.add('active');
     }
 
-    // Toggle Modo Escuro
-    const themeToggle = document.getElementById('theme-toggle');
-    themeToggle.addEventListener('click', () => {
-      document.documentElement.classList.toggle('dark');
-      if (document.documentElement.classList.contains('dark')) {
-        localStorage.setItem('theme', 'dark');
-      } else {
-        localStorage.setItem('theme', 'light');
-      }
-    });
-
-    // Restaurar preferência
-    if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
+
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', () => {
+        if (document.documentElement.classList.contains('dark')) {
+          document.documentElement.classList.remove('dark');
+          localStorage.theme = 'light';
+        } else {
+          document.documentElement.classList.add('dark');
+          localStorage.theme = 'dark';
+        }
+      });
+    }
   </script>
 </body>
+
 </html>
