@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 22: Diagramas de Interação e Máquina de Estados | Engenharia de Software - IFCE Tauá</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- Cabeçalho Institucional -->
+  <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 shadow-sm backdrop-blur-md bg-white/90 dark:bg-slate-800/90">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="../../index.html" class="flex items-center space-x-3 group">
+          <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+            <i class="fa-solid fa-arrows-split-up-and-left text-lg"></i>
+          </div>
+          <div>
+            <span class="text-xs uppercase tracking-wider font-bold text-emerald-600 dark:text-emerald-400 block leading-tight">IFCE Campus Tauá • Informática para Internet</span>
+            <span class="text-base font-bold text-slate-900 dark:text-white leading-tight">Engenharia de Software — Aula 22</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <a href="../Aula_21/index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 transition-colors flex items-center space-x-1.5">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span class="hidden sm:inline">Aula 21</span>
+        </a>
+        <a href="../../index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center space-x-1.5">
+          <i class="fa-solid fa-house"></i>
+          <span class="hidden sm:inline">Portal da Disciplina</span>
+        </a>
+        <button id="theme-toggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-emerald-600 transition-colors" title="Alternar Modo Escuro/Claro">
+          <i class="fa-solid fa-moon dark:hidden"></i>
+          <i class="fa-solid fa-sun hidden dark:inline"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Banner da Aula -->
+  <section class="bg-gradient-to-r from-emerald-900 via-slate-900 to-slate-950 text-white py-10 border-b border-emerald-950/40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold mb-3">
+        <i class="fa-solid fa-code-compare"></i>
+        <span>Unidade III (N2) — Modelagem Comportamental Dinâmica (Capítulos 7, 8 e 9 - Gilleanes Guedes)</span>
+      </div>
+      <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
+        Diagramas de Interação (Sequência e Comunicação) e Máquina de Estados
+      </h1>
+      <p class="text-slate-300 text-sm sm:text-base mt-2 max-w-3xl leading-relaxed">
+        Linhas de vida (<em>Lifelines</em>), mensagens síncronas, assíncronas, respostas e autochamadas, fragmentos combinados (<code>alt</code>, <code>opt</code>, <code>loop</code>, <code>par</code>), persistência via <code>Repository</code>/<code>DAO</code>, numeração aninhada no Diagrama de Comunicação e modelagem de ciclo de vida reativo com atividades internas no Diagrama de Máquina de Estados.
+      </p>
+
+      <div class="flex flex-wrap gap-4 mt-6 text-xs text-slate-300">
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-solid fa-book text-emerald-400"></i>
+          <span>Capítulos 7, 8 e 9 (Guedes)</span>
+        </div>
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-regular fa-clock text-emerald-400"></i>
+          <span>2 h/a (100 min)</span>
+        </div>
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-solid fa-chalkboard-user text-emerald-400"></i>
+          <span>Prof. Reginaldo Pereira Fernandes</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Navegação de Abas -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+    <div class="flex border-b border-slate-200 dark:border-slate-700 mb-6 space-x-2 overflow-x-auto pb-1">
+      <button onclick="switchTab('tab-teoria')" id="btn-tab-teoria" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm border-b-2 border-emerald-600 text-emerald-600 dark:text-emerald-400 flex items-center space-x-2">
+        <i class="fa-brands fa-python"></i>
+        <span>Teoria (Caps. 7, 8 e 9) & Código Python</span>
+      </button>
+      <button onclick="switchTab('tab-slides')" id="btn-tab-slides" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-regular fa-file-pdf"></i>
+        <span>Slides da Aula (PDF)</span>
+      </button>
+      <button onclick="switchTab('tab-atividade')" id="btn-tab-atividade" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-solid fa-pen-to-square"></i>
+        <span>Atividade Prática (TauáDelivery)</span>
+      </button>
+      <button onclick="switchTab('tab-plano')" id="btn-tab-plano" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Plano de Aula</span>
+      </button>
+      <button onclick="switchTab('tab-arquivos')" id="btn-tab-arquivos" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-solid fa-download"></i>
+        <span>Central de Arquivos</span>
+      </button>
+    </div>
+
+    <!-- ABA 1: TEORIA E CÓDIGO -->
+    <div id="tab-teoria" class="tab-content space-y-6">
+      
+      <!-- 1. Sequência -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm leading-relaxed">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-timeline text-emerald-600 dark:text-emerald-400"></i>
+          <span>1. Diagrama de Sequência: Ordenação Temporal e Fragmentos Combinados (Cap. 7)</span>
+        </h2>
+        <p class="text-slate-700 dark:text-slate-300 mb-4">
+          O <strong>Diagrama de Sequência</strong> é o modelo de interação mais utilizado na indústria de software. Ele mapeia a linha do tempo (de cima para baixo) com linhas de vida (<em>Lifelines</em>), barras de ativação e estímulos entre instâncias:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 text-xs space-y-2">
+            <span class="px-2 py-0.5 font-bold rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 inline-block">Mensagens Síncronas vs. Assíncronas</span>
+            <p class="text-slate-600 dark:text-slate-300">Mensagens síncronas ($\blacktriangleright$) bloqueiam o remetente até a resposta ($\dashrightarrow$). Mensagens assíncronas ($\rightarrow$) despacham e seguem imediatamente (Fig. 7.3).</p>
+            <img src="imagens/Fig7.3.png" alt="Mensagens na Sequência" class="max-h-40 mx-auto rounded bg-white p-1.5 border">
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 text-xs space-y-2">
+            <span class="px-2 py-0.5 font-bold rounded bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 inline-block">Fragmento Combinado: Operador alt</span>
+            <p class="text-slate-600 dark:text-slate-300">Modela ramificações alternativas exclusivas (<code>if-else</code>). Cada compartimento possui sua condição de guarda entre colchetes (Fig. 7.8).</p>
+            <img src="imagens/Fig7.8.png" alt="Operador alt" class="max-h-40 mx-auto rounded bg-white p-1.5 border">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 text-xs space-y-2">
+            <span class="px-2 py-0.5 font-bold rounded bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 inline-block">Fragmento Combinado: Operador loop</span>
+            <p class="text-slate-600 dark:text-slate-300">Modela laços de iteração sobre coleções ou listas com condições de parada: <code>loop(min, max)[guarda]</code> (Fig. 7.10).</p>
+            <img src="imagens/Fig7.10.png" alt="Operador loop" class="max-h-40 mx-auto rounded bg-white p-1.5 border">
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 text-xs space-y-2">
+            <span class="px-2 py-0.5 font-bold rounded bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 inline-block">Estudo de Caso: Saque Bancário</span>
+            <p class="text-slate-600 dark:text-slate-300">Sequência completa com validação de senha, verificação de saldo via fragmento <code>alt</code> e emissão de comprovante (Fig. 7.18).</p>
+            <img src="imagens/Fig7.18.png" alt="Saque Bancário" class="max-h-40 mx-auto rounded bg-white p-1.5 border">
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Comunicação -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm leading-relaxed">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-circle-nodes text-emerald-600 dark:text-emerald-400"></i>
+          <span>2. Diagrama de Comunicação: Vínculos e Numeração Hierárquica (Cap. 8)</span>
+        </h2>
+        <p class="text-slate-700 dark:text-slate-300 mb-4">
+          O <strong>Diagrama de Comunicação</strong> possui equivalência semântica com a Sequência, porém organiza os objetos como nós de uma rede interligados por <strong>vínculos estruturais</strong> (<em>links</em>). O tempo é governado por <strong>numeração decimal aninhada</strong> (<code>1</code>, <code>1.1</code>, <code>1.2</code>, <code>1.2.1</code>):
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 text-xs space-y-2">
+            <span class="px-2 py-0.5 font-bold rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 inline-block">Vínculos e Notação Decimal</span>
+            <p class="text-slate-600 dark:text-slate-300">Mensagens trafegam sobre linhas de conexão com setas paralelas indicando remetente e destinatário (Fig. 8.2 e 8.3).</p>
+            <img src="imagens/Fig8.3.png" alt="Mensagens Aninhadas" class="max-h-40 mx-auto rounded bg-white p-1.5 border">
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 text-xs space-y-2">
+            <span class="px-2 py-0.5 font-bold rounded bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 inline-block">Processo Emitir Saldo</span>
+            <p class="text-slate-600 dark:text-slate-300">Visão topológica do processo bancário: cliente, interface, controle e entidade de conta bancária (Fig. 8.7).</p>
+            <img src="imagens/Fig8.7.png" alt="Emitir Saldo" class="max-h-40 mx-auto rounded bg-white p-1.5 border">
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Máquina de Estados -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm leading-relaxed">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-toggle-on text-emerald-600 dark:text-emerald-400"></i>
+          <span>3. Diagrama de Máquina de Estados: Ciclo de Vida Reativo (Cap. 9)</span>
+        </h2>
+        <p class="text-slate-700 dark:text-slate-300 mb-4">
+          A <strong>Máquina de Estados</strong> modela as transições que uma única instância atravessa em resposta a estímulos externos. Segue a fórmula canônica <code>gatilho [guarda] / acao</code> e suporta compartimentos internos:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 text-xs space-y-2">
+            <span class="px-2 py-0.5 font-bold rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 inline-block">Atividades Internas: entry, do, exit</span>
+            <p class="text-slate-600 dark:text-slate-300"><code>entry /</code> executa na entrada; <code>do /</code> permanece em execução contínua; <code>exit /</code> executa na saída do estado (Fig. 9.6).</p>
+            <img src="imagens/Fig9.6.png" alt="Atividades Internas" class="max-h-40 mx-auto rounded bg-white p-1.5 border">
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 text-xs space-y-2">
+            <span class="px-2 py-0.5 font-bold rounded bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 inline-block">Pseudoestado de Escolha (Choice)</span>
+            <p class="text-slate-600 dark:text-slate-300">Losango com avaliação dinâmica em tempo de execução: as condições de guarda são testadas ao atingir o nó (Fig. 9.9).</p>
+            <img src="imagens/Fig9.9.png" alt="Pseudoestado Escolha" class="max-h-40 mx-auto rounded bg-white p-1.5 border">
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 text-xs space-y-2 mt-4">
+          <span class="px-2 py-0.5 font-bold rounded bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 inline-block">Ciclo de Vida Completo da Conta Bancária (Fig. 9.28)</span>
+          <p class="text-slate-600 dark:text-slate-300">Do cadastro inicial às operações ativas, bloqueios de segurança e encerramento após liquidação de saldo.</p>
+          <img src="imagens/Fig9.28.png" alt="Ciclo de Vida da Conta" class="max-h-56 mx-auto rounded bg-white p-1.5 border">
+        </div>
+      </div>
+
+      <!-- 4. Código Python -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+            <i class="fa-brands fa-python text-emerald-600 dark:text-emerald-400"></i>
+            <span>4. Script Didático em Python: <code>exemplo_interacao_estados.py</code></span>
+          </h2>
+          <a href="exemplo_interacao_estados.py" download class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white hover:bg-emerald-700 flex items-center space-x-1.5">
+            <i class="fa-solid fa-download"></i>
+            <span>Baixar Código</span>
+          </a>
+        </div>
+        <p class="text-slate-600 dark:text-slate-300 text-xs mb-3">
+          Implementação em Python com rastreador hierárquico de mensagens (Sequência/Comunicação) e Máquina de Estados Finita completa com atividades <code>entry</code>/<code>exit</code> e validação de guardas:
+        </p>
+        <pre class="rounded-xl overflow-x-auto text-xs"><code class="language-python"># Execução e simulação com Python standard library:
+python3 exemplo_interacao_estados.py</code></pre>
+      </div>
+
+    </div>
+
+    <!-- ABA 2: SLIDES DA AULA -->
+    <div id="tab-slides" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-700 gap-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+              <i class="fa-regular fa-file-pdf text-red-500"></i>
+              <span>Slides da Aula 22: Interação e Máquina de Estados</span>
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">Apresentação com 35 slides compilada em LaTeX Beamer com Madrid / Whale.</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <a href="slides_aula.pdf" download class="px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 text-white hover:bg-emerald-700 flex items-center space-x-2 shadow-sm">
+              <i class="fa-solid fa-download"></i>
+              <span>Baixar Slides (PDF)</span>
+            </a>
+            <a href="slides_aula.tex" download class="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 flex items-center space-x-1.5">
+              <i class="fa-solid fa-code"></i>
+              <span>Fonte LaTeX (.tex)</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="mt-6 aspect-[16/9] w-full rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900">
+          <iframe src="slides_aula.pdf" class="w-full h-full" title="Visualizador de Slides"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA 3: ATIVIDADE PRÁTICA -->
+    <div id="tab-atividade" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm leading-relaxed">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+            <i class="fa-solid fa-pen-to-square text-emerald-600 dark:text-emerald-400"></i>
+            <span>Estudo Prático: TauáDelivery Web (Caso de Uso UC03)</span>
+          </h2>
+          <a href="atividade_pratica.md" download class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white hover:bg-emerald-700 flex items-center space-x-1.5">
+            <i class="fa-solid fa-download"></i>
+            <span>Baixar Roteiro (.md)</span>
+          </a>
+        </div>
+
+        <p class="text-slate-700 dark:text-slate-300 mb-4">
+          Nesta aula, aprofundamos a modelagem dinâmica do <strong>Subsistema de Pedidos, Pagamentos e Rastreamento</strong> do sistema <em>TauáDelivery Web</em> através de 3 diagramas resolvidos de apoio:
+        </p>
+
+        <!-- Galeria dos 3 Diagramas Resolvidos de Apoio -->
+        <div class="space-y-6 my-6">
+          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40">
+            <span class="px-2 py-0.5 text-xs font-bold rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">Exemplo 1: Diagrama de Sequência de Apoio</span>
+            <p class="text-xs text-slate-500 mt-1 mb-3">Modelagem de Adicionar Item ao Carrinho com verificação de estoque e fragmento <code>alt</code>:</p>
+            <img src="imagens/modelagem_sequencia_apoio.png" alt="Sequência de Apoio" class="w-full rounded-lg border shadow-sm">
+          </div>
+
+          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40">
+            <span class="px-2 py-0.5 text-xs font-bold rounded bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300">Exemplo 2: Diagrama de Comunicação de Apoio</span>
+            <p class="text-xs text-slate-500 mt-1 mb-3">Equivalente topológico com vínculos estruturais e numeração decimal aninhada:</p>
+            <img src="imagens/modelagem_comunicacao_apoio.png" alt="Comunicação de Apoio" class="w-full rounded-lg border shadow-sm">
+          </div>
+
+          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40">
+            <span class="px-2 py-0.5 text-xs font-bold rounded bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">Exemplo 3: Máquina de Estados da Entidade Pedido</span>
+            <p class="text-xs text-slate-500 mt-1 mb-3">Ciclo de vida reativo com atividades internas <code>entry /</code>, <code>do /</code>, <code>exit /</code> e cancelamento:</p>
+            <img src="imagens/modelagem_estados_apoio.png" alt="Estados de Apoio" class="w-full rounded-lg border shadow-sm">
+          </div>
+        </div>
+
+        <div class="bg-amber-50 dark:bg-amber-950/40 p-4 rounded-xl border border-amber-200 dark:border-amber-800 text-xs text-amber-900 dark:text-amber-200 mt-4">
+          <strong>Critérios de Avaliação (10,0 pontos):</strong> Parte 1: Conceitual (2,5 pts) | Parte 2: Sequência UC03 (2,5 pts) | Parte 3: Comunicação UC03 (2,5 pts) | Parte 4: Máquina de Estados Pedido (2,5 pts). Consulte o arquivo <code>atividade_pratica.md</code> para ver o gabarito comentado.
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA 4: PLANO DE AULA -->
+    <div id="tab-plano" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center space-x-2">
+          <i class="fa-solid fa-list-check text-emerald-600 dark:text-emerald-400"></i>
+          <span>Cronograma e Metodologia da Aula (100 Minutos)</span>
+        </h2>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500">
+                <th class="py-2.5 px-3">Bloco</th>
+                <th class="py-2.5 px-3">Duração</th>
+                <th class="py-2.5 px-3">Descrição do Conteúdo</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-emerald-600">1. Diagrama de Sequência (Cap. 7)</td>
+                <td class="py-2.5 px-3 whitespace-nowrap">25 min</td>
+                <td class="py-2.5 px-3">Lifelines, foco de controle, mensagens (síncrona, assíncrona, retorno), operadores de fragmento (<code>alt</code>, <code>opt</code>, <code>loop</code>, <code>par</code>), persistência com Repository e estudo bancário.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-emerald-600">2. Diagrama de Comunicação (Cap. 8)</td>
+                <td class="py-2.5 px-3 whitespace-nowrap">15 min</td>
+                <td class="py-2.5 px-3">Topologia de rede sobre vínculos, numeração sequencial aninhada (1, 1.1, 1.2.1), guardas, iterações e comparativo Sequência vs. Comunicação.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-emerald-600">3. Diagrama de Máquina de Estados (Cap. 9)</td>
+                <td class="py-2.5 px-3 whitespace-nowrap">25 min</td>
+                <td class="py-2.5 px-3">Estados simples, atividades internas (<code>entry</code>, <code>do</code>, <code>exit</code>), transições internas vs. autotransições, pseudoestados (Escolha vs. Junção, Histórico) e script Python.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-emerald-600">4. Atividade Prática Orientada</td>
+                <td class="py-2.5 px-3 whitespace-nowrap">23 min</td>
+                <td class="py-2.5 px-3">Modelagem do <em>TauáDelivery Web</em>: Sequência do UC03, Comunicação correspondente e Ciclo de Vida da entidade <code>Pedido</code>.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-emerald-600">5. Síntese e Fechamento</td>
+                <td class="py-2.5 px-3 whitespace-nowrap">12 min</td>
+                <td class="py-2.5 px-3">Discussão do gabarito, boas práticas e introdução à Aula 23 (Diagramas Arquiteturais: Pacotes, Componentes e Implantação).</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA 5: CENTRAL DE ARQUIVOS -->
+    <div id="tab-arquivos" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center space-x-2">
+          <i class="fa-solid fa-folder-open text-emerald-600 dark:text-emerald-400"></i>
+          <span>Central de Downloads e Materiais da Aula 22</span>
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <a href="slides_aula.pdf" download class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all flex flex-col justify-between bg-slate-50/50 dark:bg-slate-900/40">
+            <div>
+              <i class="fa-solid fa-file-pdf text-red-500 text-2xl mb-2"></i>
+              <h3 class="font-bold text-xs">slides_aula.pdf</h3>
+              <p class="text-[11px] text-slate-500 mt-1">Apresentação Beamer completa com 35 slides.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 mt-3">Download <i class="fa-solid fa-download ml-1"></i></span>
+          </a>
+
+          <a href="exemplo_interacao_estados.py" download class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all flex flex-col justify-between bg-slate-50/50 dark:bg-slate-900/40">
+            <div>
+              <i class="fa-brands fa-python text-emerald-500 text-2xl mb-2"></i>
+              <h3 class="font-bold text-xs">exemplo_interacao_estados.py</h3>
+              <p class="text-[11px] text-slate-500 mt-1">Código Python demonstrando mensagens e máquina de estados.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 mt-3">Download <i class="fa-solid fa-download ml-1"></i></span>
+          </a>
+
+          <a href="atividade_pratica.md" download class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all flex flex-col justify-between bg-slate-50/50 dark:bg-slate-900/40">
+            <div>
+              <i class="fa-solid fa-pen-ruler text-purple-500 text-2xl mb-2"></i>
+              <h3 class="font-bold text-xs">atividade_pratica.md</h3>
+              <p class="text-[11px] text-slate-500 mt-1">Estudo prático com gabarito comentado e rubrica.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 mt-3">Download <i class="fa-solid fa-download ml-1"></i></span>
+          </a>
+
+          <a href="plano_de_aula.md" download class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all flex flex-col justify-between bg-slate-50/50 dark:bg-slate-900/40">
+            <div>
+              <i class="fa-solid fa-file-lines text-blue-500 text-2xl mb-2"></i>
+              <h3 class="font-bold text-xs">plano_de_aula.md</h3>
+              <p class="text-[11px] text-slate-500 mt-1">Planejamento pedagógico detalhado de 100 minutos.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 mt-3">Download <i class="fa-solid fa-download ml-1"></i></span>
+          </a>
+
+          <a href="slides_aula.tex" download class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all flex flex-col justify-between bg-slate-50/50 dark:bg-slate-900/40">
+            <div>
+              <i class="fa-solid fa-code text-indigo-500 text-2xl mb-2"></i>
+              <h3 class="font-bold text-xs">slides_aula.tex</h3>
+              <p class="text-[11px] text-slate-500 mt-1">Código-fonte modular dos slides em LaTeX Beamer.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 mt-3">Download <i class="fa-solid fa-download ml-1"></i></span>
+          </a>
+
+          <a href="README.md" download class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all flex flex-col justify-between bg-slate-50/50 dark:bg-slate-900/40">
+            <div>
+              <i class="fa-solid fa-book-open text-teal-500 text-2xl mb-2"></i>
+              <h3 class="font-bold text-xs">README.md</h3>
+              <p class="text-[11px] text-slate-500 mt-1">Guia geral de artefatos e comandos da Aula 22.</p>
+            </div>
+            <span class="text-[11px] font-semibold text-emerald-600 mt-3">Download <i class="fa-solid fa-download ml-1"></i></span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <span>Instituto Federal de Educação, Ciência e Tecnologia do Ceará — Campus Tauá</span>
+      <span>Engenharia de Software • Prof. Reginaldo Pereira Fernandes</span>
+    </div>
+  </footer>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-emerald-600', 'text-emerald-600', 'dark:text-emerald-400');
+        btn.classList.add('text-slate-500', 'dark:text-slate-400');
+      });
+      const selectedTab = document.getElementById(tabId);
+      const selectedBtn = document.getElementById('btn-' + tabId);
+      if (selectedTab) selectedTab.classList.remove('hidden');
+      if (selectedBtn) {
+        selectedBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
+        selectedBtn.classList.add('border-b-2', 'border-emerald-600', 'text-emerald-600', 'dark:text-emerald-400');
+      }
+    }
+
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    if (localStorage.theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    themeToggleBtn.addEventListener('click', () => {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        localStorage.theme = 'light';
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.theme = 'dark';
+      }
+    });
+  </script>
+</body>
+
+</html>

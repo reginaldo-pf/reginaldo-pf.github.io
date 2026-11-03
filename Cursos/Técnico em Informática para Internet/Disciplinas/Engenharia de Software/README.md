@@ -36,6 +36,13 @@ Capacitar os alunos nos processos modernos de engenharia de software com foco em
   - `exemplo_classes_atividades.py`: Código em Python implementando associação reflexiva com papéis, agregação, composição forte, classe associativa, realização de interface e simulação de atividade.
   - `atividade_pratica.md`: Atividade prática continuando o projeto *TauáDelivery Web* com exemplos resolvidos, Diagrama de Classes de Domínio e Diagrama de Atividades com Partições (*Swimlanes*).
   - `imagens/`: Galeria com as 108 figuras oficiais dos Capítulos 4 e 10 e diagramas de apoio.
+- [Aula 22 - Diagramas de Interação (Sequência e Comunicação) e Máquina de Estados](Aulas/Aula_22/):
+  - `plano_de_aula.md`: Planejamento da aula de 100 minutos abrangendo os Capítulos 7 (Sequência), 8 (Comunicação) e 9 (Máquina de Estados) do livro de Guedes.
+  - `slides_aula.tex` / `slides_aula.pdf`: Apresentação em Beamer (35 slides) com linhas de vida, fragmentos combinados (`alt`, `opt`, `loop`), numeração aninhada, ciclo de vida reativo e atividades internas (`entry`, `do`, `exit`).
+  - `exemplo_interacao_estados.py`: Código em Python simulando troca de mensagens, numeração hierárquica, persistência via Repository e máquina de estados finita com guardas e auditoria.
+  - `atividade_pratica.md`: Atividade prática continuando o projeto *TauáDelivery Web* com diagramas de apoio resolvidos, Sequência do UC03, Comunicação correspondente e Ciclo de Vida do Pedido (com rubrica e gabarito).
+  - `imagens/`: Galeria com as 79 figuras oficiais dos Capítulos 7, 8 e 9 e diagramas de apoio.
+  - `index.html`: Portal web interativo da aula com abas de teoria, slides, atividade, plano de aula e download de arquivos.
 
 ### 📝 [Avaliacoes](Avaliacoes/)
 - Entregas de Sprints, relatórios de retrospectiva e avaliações práticas de projeto.
