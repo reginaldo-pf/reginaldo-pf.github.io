@@ -1,0 +1,91 @@
+\changecolours{ScoutGreen}
+\section[Produto Cartesiano]{Operador de Produto Cartesiano (\texorpdfstring{$\times$}{x})}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Operador de Produto Cartesiano ($\times$): Definição},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Conceito e Notação Matemática}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Denotado pelo símbolo de multiplicação ($\boldsymbol{\times}$).
+    \item É um operador \textbf{binário} que combina todas as tuplas de $R$ com todas as tuplas de $S$:
+      \[ \boldsymbol{R \times S} = \{\, t_1 \cdot t_2 \mid t_1 \in R \,\land\, t_2 \in S \,\} \]
+    \item Onde $t_1 \cdot t_2$ representa a \textbf{concatenação} das tuplas $t_1$ e $t_2$.
+    \item \textbf{Não exige compatibilidade de união!} Quaisquer duas relações podem ser submetidas ao produto cartesiano.
+  \end{itemize}
+}{%
+  \alert{Efeito Dimensional e Esquema Resultante}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Grau Resultante (Soma das Colunas):}
+      \[ \text{grau}(R \times S) = \text{grau}(R) + \text{grau}(S) \]
+    \item \textbf{Cardinalidade Resultante (Multiplicação):}
+      \[ |R \times S| = |R| \times |S| \]
+    \item Se $R$ possui $100$ tuplas e $S$ possui $500$ tuplas, o produto conterá $50.000$ tuplas!
+    \item Atributos com nomes coincidentes são qualificados com prefixo: $R.A$ e $S.A$.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Demonstração Prática: Combinação de Cursos e Turnos},leftcol=6.8cm,rightcol=7.2cm]{%
+  \alert{Relações de Entrada}\par
+  \scriptsize
+  \textbf{CURSO} ($2$ tuplas, grau $2$):
+  \begin{tabular}{c l}
+    \toprule
+    \textbf{id\_cur} & \textbf{nome\_curso} \\
+    \midrule
+    C1 & Administracao \\
+    C2 & Informatica \\
+    \bottomrule
+  \end{tabular}
+  \par \vspace{2mm}
+  \textbf{TURNO} ($2$ tuplas, grau $2$):
+  \begin{tabular}{c l}
+    \toprule
+    \textbf{id\_tur} & \textbf{periodo} \\
+    \midrule
+    T1 & Matutino \\
+    T2 & Noturno \\
+    \bottomrule
+  \end{tabular}
+}{%
+  \alert{Resultado: CURSO $\times$ TURNO}\par
+  \scriptsize
+  \centering
+  \begin{tabular}{c l c l}
+    \toprule
+    \textbf{id\_cur} & \textbf{nome\_curso} & \textbf{id\_tur} & \textbf{periodo} \\
+    \midrule
+    C1 & Administracao & T1 & Matutino \\
+    C1 & Administracao & T2 & Noturno \\
+    C2 & Informatica & T1 & Matutino \\
+    C2 & Informatica & T2 & Noturno \\
+    \bottomrule
+  \end{tabular}
+  \par \vspace{2mm}
+  \normalsize
+  \begin{itemize}
+    \scriptsize
+    \item Grau final: $2 + 2 = 4$ atributos.
+    \item Cardinalidade final: $2 \times 2 = 4$ tuplas geradas.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Produto Cartesiano como Base da Junção ($\bowtie$)},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{O Perigo da Explosão Combinatória Cega}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Isoladamente, o produto cartesiano raramente tem utilidade direta no mundo real.
+    \item Ele cruza dados sem critérios semânticos (ex: associa um aluno a todos os cursos existentes na instituição).
+    \item Gera um consumo excessivo de memória caso as tabelas sejam volumosas.
+  \end{itemize}
+}{%
+  \alert{O Casamento Perfeito: Seleção + Produto}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item O verdadeiro poder surge ao filtrar o produto cartesiano com uma condição de relacionamento entre Chave Primária e Chave Estrangeira:
+      \[ \boldsymbol{\sigma_{\text{ALUNO.id\_cur\_fk} = \text{CURSO.id\_cur}}(\text{ALUNO} \times \text{CURSO})} \]
+    \item Essa operação combinada ($\sigma \circ \times$) é o fundamento matemático exato da **Junção ($\bowtie$)**, que estudaremos a fundo na **Aula 13**!
+  \end{itemize}
+}

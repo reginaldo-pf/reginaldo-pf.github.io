@@ -52,6 +52,7 @@ A avaliação da disciplina é estruturada em dois períodos (N1 e N2), combinan
   - [Aula 09: Fundamentos Formais do Modelo Relacional e Restrições de Integridade](Aulas/Aula_09/) (Disponível na plataforma web).
   - [Aula 10: Mapeamento Lógico Relacional (Parte 1) — Entidades Fortes, Fracas e Relacionamentos 1:1 e 1:N](Aulas/Aula_10/) (Disponível na plataforma web).
   - [Aula 11: Mapeamento Lógico Relacional (Parte 2) — Tabelas Associativas para N:M, Multivalorados, Ternários e Especialização EER](Aulas/Aula_11/) (Disponível na plataforma web).
+  - [Aula 12: Álgebra Relacional (Parte 1) — Operadores Fundamentais ($\sigma, \pi, \cup, -, \times, \rho$)](Aulas/Aula_12/) (Disponível na plataforma web).
 
 ### 📝 [Avaliações](Avaliacoes/)
 - [Lista 01 (N1): Fundamentos de SGBD, Arquitetura ANSI/SPARC e Modelagem de Entidades](Avaliacoes/Lista_01_N1.md) ([PDF Oficial](Avaliacoes/lista_01.pdf) | [Código-Fonte](Avaliacoes/lista_01.tex)).

@@ -1,0 +1,103 @@
+\changecolours{ScoutGreen}
+\section[Exercícios Resolvidos]{Exercícios e Desafios Práticos Resolvidos}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Desafio 1: Seleção Composta e Projeção Acadêmica},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Contexto e Problema}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Considere a relação universitária:\\
+      \texttt{ALUNO(}\underline{\texttt{id\_aluno}}\texttt{, nome, curso, cr, cidade)}
+    \item \textbf{Demanda da Coordenação:} Recuperar o \textbf{nome} e o \textbf{CR} de todos os estudantes matriculados em \texttt{'Administracao'} que residem em \texttt{'Taua'} e possuem $CR \ge 8.5$.
+    \item Desenvolver a expressão formal da álgebra relacional.
+  \end{itemize}
+}{%
+  \alert{Resolução Algébrica Formal}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Passo 1 (Seleção Horizontal):}\\
+      $P_1 \leftarrow \sigma_{\text{curso} = '\text{Adm}' \,\land\, \text{cid} = '\text{Taua}' \,\land\, \text{cr} \ge 8.5}(\text{ALUNO})$
+    \item \textbf{Passo 2 (Projeção Vertical):}\\
+      $\text{RES} \leftarrow \pi_{\text{nome, cr}}(P_1)$
+    \item \textbf{Expressão Aninhada Equivalente:}\\
+      \[ \boldsymbol{\pi_{\text{nome, cr}}\left(\sigma_{\text{curso} = '\text{Adm}' \,\land\, \text{cid} = '\text{Taua}' \,\land\, \text{cr} \ge 8.5}(\text{ALUNO})\right)} \]
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Desafio 2: Diferença de Conjuntos no Comércio},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Contexto e Problema}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Considere as relações de uma livraria:\\
+      \texttt{CLIENTE(}\underline{\texttt{id\_cli}}\texttt{, nome, cidade)}\\
+      \texttt{PEDIDO(}\underline{\texttt{id\_ped}}\texttt{, id\_cli\_fk, data, valor)}
+    \item \textbf{Demanda do Marketing:} Identificar os códigos e nomes dos clientes cadastrados que \textbf{NUNCA realizaram nenhum pedido}.
+    \item Dica: Operações de conjuntos requerem compatibilidade de união.
+  \end{itemize}
+}{%
+  \alert{Resolução Algébrica Formal}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{1. Extrair todos os IDs de clientes:}\\
+      $C_{\text{todos}} \leftarrow \pi_{\text{id\_cli}}(\text{CLIENTE})$
+    \item \textbf{2. Extrair os IDs com compras:}\\
+      $C_{\text{compraram}} \leftarrow \pi_{\text{id\_cli\_fk}}(\text{PEDIDO})$
+    \item \textbf{3. Diferença de Conjuntos:}\\
+      $C_{\text{inativos}} \leftarrow C_{\text{todos}} - C_{\text{compraram}}$
+    \item \textbf{4. Recuperar os nomes completos:}\\
+      $T_{\text{inativos}} \leftarrow \text{CLIENTE} \times C_{\text{inativos}}$\\
+      $\text{RES} \leftarrow \pi_{\text{id\_cli, nome}}(\sigma_{\text{id\_cli} = \text{id}}(T_{\text{inativos}}))$
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Desafio 3: Associação de Produto e Categoria ($\sigma \circ \times$)},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Contexto e Problema}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Considere os esquemas:\\
+      \texttt{PRODUTO(}\underline{\texttt{id\_prod}}\texttt{, nome\_prod, id\_cat\_fk)}\\
+      \texttt{CATEGORIA(}\underline{\texttt{id\_cat}}\texttt{, nome\_cat)}
+    \item \textbf{Demanda:} Apresentar uma listagem com o \texttt{nome\_prod} e o correspondente \texttt{nome\_cat}, utilizando \textbf{estritamente operadores fundamentais} (sem usar o símbolo de junção $\bowtie$).
+  \end{itemize}
+}{%
+  \alert{Resolução Algébrica Formal}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Passo 1 (Produto Cartesiano Geral):}\\
+      $T_1 \leftarrow \text{PRODUTO} \times \text{CATEGORIA}$
+    \item \textbf{Passo 2 (Filtro por Chave Estrangeira):}\\
+      $T_2 \leftarrow \sigma_{\text{id\_cat\_fk} = \text{id\_cat}}(T_1)$
+    \item \textbf{Passo 3 (Projeção das Colunas Desejadas):}\\
+      $\text{RES} \leftarrow \pi_{\text{nome\_prod, nome\_cat}}(T_2)$
+    \item Expressão completa em linha única:\\[1mm]
+      \resizebox{0.95\linewidth}{!}{$\boldsymbol{\pi_{\text{nome\_prod, nome\_cat}}\left(\sigma_{\text{id\_cat\_fk} = \text{id\_cat}}(\text{PRODUTO} \times \text{CATEGORIA})\right)}$}
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Desafio 4: União de Contatos com Renomeação ($\rho$)},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Contexto e Problema}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Duas tabelas de contatos acadêmicos:\\
+      \texttt{DOCENTE(}\underline{\texttt{id\_doc}}\texttt{, nome, email)}\\
+      \texttt{MONITOR(}\underline{\texttt{id\_mon}}\texttt{, nome\_estudante, email\_acad)}
+    \item \textbf{Problema:} Os nomes das colunas de \texttt{MONITOR} diferem de \texttt{DOCENTE}.
+    \item \textbf{Objetivo:} Produzir uma relação unificada contendo \texttt{nome} e \texttt{email} de ambos os grupos.
+  \end{itemize}
+}{%
+  \alert{Resolução Algébrica Formal}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Passo 1 (Projetar colunas de interesse):}\\
+      $D \leftarrow \pi_{\text{nome, email}}(\text{DOCENTE})$\\
+      $M \leftarrow \pi_{\text{nome\_estudante, email\_acad}}(\text{MONITOR})$
+    \item \textbf{Passo 2 (Renomear para compatibilidade de união):}\\
+      $M_{\text{padrao}} \leftarrow \rho_{(\text{nome, email})}(M)$
+    \item \textbf{Passo 3 (União de Conjuntos):}\\
+      $\text{RES} \leftarrow D \cup M_{\text{padrao}}$
+    \item Garante conformidade sintática estrita com as regras de Codd.
+  \end{itemize}
+}

@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 12: Álgebra Relacional (Parte 1) | Banco de Dados - IFCE Tauá</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Configuração do MathJax para Suporte Matemático Opcional -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']]
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- ========================================== -->
+  <!-- CABEÇALHO INSTITUCIONAL                    -->
+  <!-- ========================================== -->
+  <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 shadow-sm backdrop-blur-md bg-white/90 dark:bg-slate-800/90">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="../../index.html" class="flex items-center space-x-3 group">
+          <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+            <i class="fa-solid fa-calculator text-lg"></i>
+          </div>
+          <div>
+            <span class="text-xs uppercase tracking-wider font-bold text-emerald-600 dark:text-emerald-400 block leading-tight">IFCE Campus Tauá • Telemática</span>
+            <span class="text-base font-bold text-slate-900 dark:text-white leading-tight">Banco de Dados — Aula 12</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <a href="../Aula_11/index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 transition-colors flex items-center space-x-1.5" title="Aula Anterior">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span class="hidden sm:inline">Aula 11</span>
+        </a>
+        <a href="../../index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center space-x-1.5">
+          <i class="fa-solid fa-house"></i>
+          <span class="hidden sm:inline">Portal da Disciplina</span>
+        </a>
+        <button id="theme-toggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-emerald-600 transition-colors" title="Alternar Modo Escuro/Claro">
+          <i class="fa-solid fa-moon dark:hidden"></i>
+          <i class="fa-solid fa-sun hidden dark:inline"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- BANNER DA AULA                             -->
+  <!-- ========================================== -->
+  <section class="bg-gradient-to-r from-emerald-950 via-slate-900 to-slate-950 text-white py-10 border-b border-emerald-950/40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold mb-3">
+        <i class="fa-solid fa-cube"></i>
+        <span>Unidade II (N1) — Fundamentos do Modelo Relacional e Linguagens Formais</span>
+      </div>
+      <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
+        Álgebra Relacional (Parte 1): Operadores Fundamentais (&sigma;, &pi;, &cup;, &minus;, &times;, &rho;)
+      </h1>
+      <p class="text-slate-300 text-sm sm:text-base mt-2 max-w-3xl leading-relaxed">
+        Compreenda a essência matemática que rege as consultas em SGBDs relacionais: o princípio inviolável do <strong>Fechamento Relacional (Closure)</strong>, filtros horizontais de tuplas por <strong>Seleção (&sigma;)</strong>, filtros verticais com deduplicação obrigatória por <strong>Projeção (&pi;)</strong>, <strong>Renomeação (&rho;)</strong>, a regra de <strong>Compatibilidade de União</strong> para operações de conjuntos e a concatenação irrestrita do <strong>Produto Cartesiano (&times;)</strong>.
+      </p>
+
+      <div class="flex flex-wrap gap-4 mt-6 text-xs text-slate-300">
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-regular fa-calendar text-emerald-400"></i>
+          <span>04/11/2026 (Quarta-feira)</span>
+        </div>
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-regular fa-clock text-emerald-400"></i>
+          <span>2 h/a (100 min)</span>
+        </div>
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-solid fa-chalkboard-user text-emerald-400"></i>
+          <span>Prof. Me. Reginaldo Fernandes</span>
+        </div>
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-solid fa-graduation-cap text-emerald-400"></i>
+          <span>Mentoria Individual / PBL</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- NAVEGAÇÃO DE ABAS                          -->
+  <!-- ========================================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+    <div class="flex border-b border-slate-200 dark:border-slate-700 mb-6 space-x-2 overflow-x-auto pb-1">
+      <button onclick="switchTab('tab-operadores')" id="btn-tab-operadores" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm border-b-2 border-emerald-600 text-emerald-600 dark:text-emerald-400 flex items-center space-x-2">
+        <i class="fa-solid fa-calculator"></i>
+        <span>Operadores Fundamentais</span>
+      </button>
+      <button onclick="switchTab('tab-arvores')" id="btn-tab-arvores" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-solid fa-sitemap"></i>
+        <span>Árvores de Consulta & Otimização</span>
+      </button>
+      <button onclick="switchTab('tab-slides')" id="btn-tab-slides" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-regular fa-file-pdf"></i>
+        <span>Slides da Aula (PDF)</span>
+      </button>
+      <button onclick="switchTab('tab-plano')" id="btn-tab-plano" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Plano Pedagógico</span>
+      </button>
+      <button onclick="switchTab('tab-exercicios')" id="btn-tab-exercicios" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center space-x-2">
+        <i class="fa-solid fa-pen-to-square"></i>
+        <span>Exercícios Resolvidos</span>
+      </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 1: OPERADORES FUNDAMENTAIS             -->
+    <!-- ========================================== -->
+    <div id="tab-operadores" class="tab-content space-y-6">
+
+      <!-- Fechamento Relacional -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-rotate text-emerald-600 dark:text-emerald-400"></i>
+          <span>O Princípio Inviolável do Fechamento Relacional (Closure)</span>
+        </h2>
+        <p class="text-slate-700 dark:text-slate-300 mb-3">
+          Na formulação formal de Edgar F. Codd (1970), a Álgebra Relacional opera estritamente sobre <strong>relações</strong> (conjuntos matemáticos de tuplas). A propriedade de <strong>Fechamento Relacional</strong> estabelece que o resultado de qualquer operação algébrica é obrigatoriamente uma <strong>nova relação bem formada</strong>.
+        </p>
+        <div class="p-4 bg-emerald-50 dark:bg-emerald-950/30 rounded-xl border border-emerald-200 dark:border-emerald-800 flex items-center justify-between flex-wrap gap-3">
+          <div class="font-mono text-emerald-800 dark:text-emerald-300 font-bold text-xs sm:text-sm">
+            Relação(ões) de Entrada &rarr; [ Operador Algébrico ] &rarr; Nova Relação Válida (Esquema + Tuplas)
+          </div>
+          <span class="text-xs px-2.5 py-1 bg-emerald-600 text-white rounded-md font-semibold">Viabiliza Aninhamento Arbitrário</span>
+        </div>
+      </div>
+
+      <!-- Minimundo de Referência Didática -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center space-x-2">
+          <i class="fa-solid fa-book text-emerald-600 dark:text-emerald-400"></i>
+          <span>Minimundo Didático de Referência: LIVRO</span>
+        </h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+          Tabela base utilizada para demonstrar os operadores unários. Relação com <strong>grau = 5</strong> (5 atributos) e <strong>cardinalidade = 6</strong> (6 tuplas).
+        </p>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+            <thead class="bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-200 font-bold uppercase tracking-wider text-[11px]">
+              <tr>
+                <th class="py-2.5 px-3 border-b border-slate-200 dark:border-slate-700">isbn (PK)</th>
+                <th class="py-2.5 px-3 border-b border-slate-200 dark:border-slate-700">titulo</th>
+                <th class="py-2.5 px-3 border-b border-slate-200 dark:border-slate-700">categoria</th>
+                <th class="py-2.5 px-3 border-b border-slate-200 dark:border-slate-700 text-center">ano</th>
+                <th class="py-2.5 px-3 border-b border-slate-200 dark:border-slate-700 text-right">preco (R$)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 dark:divide-slate-700/50 font-mono text-[11px]">
+              <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                <td class="py-2 px-3 font-bold text-emerald-600 dark:text-emerald-400">L01</td>
+                <td class="py-2 px-3 text-slate-900 dark:text-white font-sans">Algoritmos</td>
+                <td class="py-2 px-3"><span class="px-2 py-0.5 rounded bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300 text-[10px]">Computacao</span></td>
+                <td class="py-2 px-3 text-center">2020</td>
+                <td class="py-2 px-3 text-right">85.00</td>
+              </tr>
+              <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                <td class="py-2 px-3 font-bold text-emerald-600 dark:text-emerald-400">L02</td>
+                <td class="py-2 px-3 text-slate-900 dark:text-white font-sans">O Pequeno Principe</td>
+                <td class="py-2 px-3"><span class="px-2 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300 text-[10px]">Literatura</span></td>
+                <td class="py-2 px-3 text-center">2018</td>
+                <td class="py-2 px-3 text-right">35.00</td>
+              </tr>
+              <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                <td class="py-2 px-3 font-bold text-emerald-600 dark:text-emerald-400">L03</td>
+                <td class="py-2 px-3 text-slate-900 dark:text-white font-sans">Banco de Dados</td>
+                <td class="py-2 px-3"><span class="px-2 py-0.5 rounded bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300 text-[10px]">Computacao</span></td>
+                <td class="py-2 px-3 text-center">2022</td>
+                <td class="py-2 px-3 text-right">90.00</td>
+              </tr>
+              <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                <td class="py-2 px-3 font-bold text-emerald-600 dark:text-emerald-400">L04</td>
+                <td class="py-2 px-3 text-slate-900 dark:text-white font-sans">Dom Casmurro</td>
+                <td class="py-2 px-3"><span class="px-2 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300 text-[10px]">Literatura</span></td>
+                <td class="py-2 px-3 text-center">2019</td>
+                <td class="py-2 px-3 text-right">42.00</td>
+              </tr>
+              <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                <td class="py-2 px-3 font-bold text-emerald-600 dark:text-emerald-400">L05</td>
+                <td class="py-2 px-3 text-slate-900 dark:text-white font-sans">Inteligencia Artificial</td>
+                <td class="py-2 px-3"><span class="px-2 py-0.5 rounded bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300 text-[10px]">Computacao</span></td>
+                <td class="py-2 px-3 text-center">2023</td>
+                <td class="py-2 px-3 text-right">110.00</td>
+              </tr>
+              <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                <td class="py-2 px-3 font-bold text-emerald-600 dark:text-emerald-400">L06</td>
+                <td class="py-2 px-3 text-slate-900 dark:text-white font-sans">Quimica Organica</td>
+                <td class="py-2 px-3"><span class="px-2 py-0.5 rounded bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300 text-[10px]">Exatas</span></td>
+                <td class="py-2 px-3 text-center">2021</td>
+                <td class="py-2 px-3 text-right">55.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Grade dos 6 Operadores -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- 1. SELEÇÃO -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Operador Unário</span>
+              <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-serif text-lg font-bold">&sigma;</span>
+            </div>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white mb-1">Seleção de Tuplas (&sigma;)</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mb-3">
+              Filtro <strong>horizontal</strong> de linhas baseado em condição booleana <em>p</em>. Mantém o mesmo esquema e todas as colunas, filtrando apenas as linhas.
+            </p>
+            <div class="p-2.5 bg-slate-100 dark:bg-slate-900/80 rounded-lg text-xs font-mono text-emerald-700 dark:text-emerald-400 mb-3 font-bold">
+              &sigma;<sub>p</sub>(R) = { t &in; R | p(t) = VERDADEIRO }
+            </div>
+            <ul class="text-xs space-y-1.5 text-slate-600 dark:text-slate-300 mb-3">
+              <li><i class="fa-solid fa-check text-emerald-500 mr-1.5"></i><strong>Grau:</strong> Inalterado (grau mantido: <span class="font-mono">grau(R)</span>)</li>
+              <li><i class="fa-solid fa-check text-emerald-500 mr-1.5"></i><strong>Cardinalidade:</strong> <span class="font-mono">0 &le; k &le; |R|</span></li>
+              <li><i class="fa-solid fa-check text-emerald-500 mr-1.5"></i><strong>Comutativo:</strong> <span class="font-mono">&sigma;<sub>p1</sub>(&sigma;<sub>p2</sub>(R)) &equiv; &sigma;<sub>p2</sub>(&sigma;<sub>p1</sub>(R))</span></li>
+            </ul>
+          </div>
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-700 text-xs">
+            <span class="text-slate-400 block mb-1">Exemplo Didático:</span>
+            <code class="text-emerald-600 dark:text-emerald-400 font-bold font-mono">&sigma;<sub>preco &lt; 60 &and; ano &ge; 2019</sub>(LIVRO)</code>
+            <span class="text-[11px] text-slate-500 dark:text-slate-400 block mt-1">&rarr; Retorna L04 e L06 (2 tuplas).</span>
+          </div>
+        </div>
+
+        <!-- 2. PROJEÇÃO -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Operador Unário</span>
+              <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-serif text-lg font-bold">&pi;</span>
+            </div>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white mb-1">Projeção de Atributos (&pi;)</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mb-3">
+              Filtro <strong>vertical</strong> de colunas especificadas na lista <em>L</em>. <strong>Regra de ouro:</strong> elimina automaticamente tuplas duplicadas na saída.
+            </p>
+            <div class="p-2.5 bg-slate-100 dark:bg-slate-900/80 rounded-lg text-xs font-mono text-emerald-700 dark:text-emerald-400 mb-3 font-bold">
+              &pi;<sub>L</sub>(R) = { t[L] | t &in; R }
+            </div>
+            <ul class="text-xs space-y-1.5 text-slate-600 dark:text-slate-300 mb-3">
+              <li><i class="fa-solid fa-check text-emerald-500 mr-1.5"></i><strong>Grau:</strong> Reduzido ao tamanho da lista (<span class="font-mono">|L|</span> colunas)</li>
+              <li><i class="fa-solid fa-check text-emerald-500 mr-1.5"></i><strong>Deduplicação:</strong> Mandatória por ser conjunto matemático estrito</li>
+              <li><i class="fa-solid fa-check text-emerald-500 mr-1.5"></i><strong>Cascata:</strong> <span class="font-mono">&pi;<sub>L1</sub>(&pi;<sub>L2</sub>(R)) &equiv; &pi;<sub>L1</sub>(R)</span></li>
+            </ul>
+          </div>
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-700 text-xs">
+            <span class="text-slate-400 block mb-1">Exemplo Didático:</span>
+            <code class="text-emerald-600 dark:text-emerald-400 font-bold font-mono">&pi;<sub>categoria</sub>(LIVRO)</code>
+            <span class="text-[11px] text-slate-500 dark:text-slate-400 block mt-1">&rarr; Retorna {Computacao, Literatura, Exatas} (3 tuplas).</span>
+          </div>
+        </div>
+
+        <!-- 3. RENOMEAÇÃO -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Operador Unário</span>
+              <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-serif text-lg font-bold">&rho;</span>
+            </div>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white mb-1">Renomeação (&rho;)</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mb-3">
+              Atribui novos nomes a relações ou a atributos individuais. Essencial para <strong>desambiguar atributos homônimos</strong> em junções e autorrelacionamentos.
+            </p>
+            <div class="p-2.5 bg-slate-100 dark:bg-slate-900/80 rounded-lg text-xs font-mono text-emerald-700 dark:text-emerald-400 mb-3 font-bold">
+              &rho;<sub>S(B1, B2, ..., Bn)</sub>(R)
+            </div>
+            <ul class="text-xs space-y-1.5 text-slate-600 dark:text-slate-300 mb-3">
+              <li><i class="fa-solid fa-check text-emerald-500 mr-1.5"></i><strong>&rho;<sub>S</sub>(R):</strong> Renomeia apenas a relação</li>
+              <li><i class="fa-solid fa-check text-emerald-500 mr-1.5"></i><strong>&rho;<sub>(B1..Bn)</sub>(R):</strong> Renomeia apenas os atributos</li>
+              <li><i class="fa-solid fa-check text-emerald-500 mr-1.5"></i><strong>Grau e Cardinalidade:</strong> Permanecem rigorosamente intactos</li>
+            </ul>
+          </div>
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-700 text-xs">
+            <span class="text-slate-400 block mb-1">Exemplo Didático:</span>
+            <code class="text-emerald-600 dark:text-emerald-400 font-bold font-mono">&rho;<sub>OBRA(cod, nome, cat, ano, val)</sub>(LIVRO)</code>
+            <span class="text-[11px] text-slate-500 dark:text-slate-400 block mt-1">&rarr; Renomeia a relação e suas 5 colunas.</span>
+          </div>
+        </div>
+
+        <!-- 4. UNIÃO -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Operador Binário</span>
+              <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-mono text-xl font-bold">&cup;</span>
+            </div>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white mb-1">União (&cup;)</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mb-3">
+              Combina todas as tuplas presentes em <strong>R</strong>, em <strong>S</strong> ou em ambas. <strong>Exige Compatibilidade de União</strong> (mesmo grau e domínios pareados compatíveis).
+            </p>
+            <div class="p-2.5 bg-slate-100 dark:bg-slate-900/80 rounded-lg text-xs font-mono text-emerald-700 dark:text-emerald-400 mb-3 font-bold">
+              R &cup; S = { t | t &in; R &or; t &in; S }
+            </div>
+            <ul class="text-xs space-y-1.5 text-slate-600 dark:text-slate-300 mb-3">
+              <li><i class="fa-solid fa-check text-emerald-500 mr-1.5"></i><strong>Compatibilidade:</strong> <span class="font-mono">grau(R) = grau(S) = n</span> e domínios compatíveis</li>
+              <li><i class="fa-solid fa-check text-emerald-500 mr-1.5"></i><strong>Deduplicação:</strong> Tuplas repetidas aparecem uma única vez</li>
+              <li><i class="fa-solid fa-check text-emerald-500 mr-1.5"></i><strong>Comutativo:</strong> <span class="font-mono">R &cup; S &equiv; S &cup; R</span></li>
+            </ul>
+          </div>
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-700 text-xs">
+            <span class="text-slate-400 block mb-1">Exemplo Didático:</span>
+            <code class="text-emerald-600 dark:text-emerald-400 font-bold font-mono">LEITOR_LOCAL &cup; LEITOR_EXTERNO</code>
+            <span class="text-[11px] text-slate-500 dark:text-slate-400 block mt-1">&rarr; Lista unificada de todos os leitores cadastrados.</span>
+          </div>
+        </div>
+
+        <!-- 5. DIFERENÇA -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Operador Binário</span>
+              <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-mono text-xl font-bold">&minus;</span>
+            </div>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white mb-1">Diferença de Conjuntos (&minus;)</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mb-3">
+              Retorna as tuplas que pertencem a <strong>R</strong> e <strong>não</strong> pertencem a <strong>S</strong>. <strong>Operação assimétrica não comutativa</strong> (<span class="font-mono">R &minus; S &ne; S &minus; R</span>).
+            </p>
+            <div class="p-2.5 bg-slate-100 dark:bg-slate-900/80 rounded-lg text-xs font-mono text-emerald-700 dark:text-emerald-400 mb-3 font-bold">
+              R &minus; S = { t | t &in; R &and; t &notin; S }
+            </div>
+            <ul class="text-xs space-y-1.5 text-slate-600 dark:text-slate-300 mb-3">
+              <li><i class="fa-solid fa-check text-emerald-500 mr-1.5"></i><strong>Compatibilidade:</strong> Exige mesma aridade e domínios pareados</li>
+              <li><i class="fa-solid fa-check text-emerald-500 mr-1.5"></i><strong>Não comutativo:</strong> <span class="font-mono">R &minus; S &ne; S &minus; R</span></li>
+              <li><i class="fa-solid fa-check text-emerald-500 mr-1.5"></i><strong>Uso canônico:</strong> Identificar ausências ("quem fez X mas nunca fez Y")</li>
+            </ul>
+          </div>
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-700 text-xs">
+            <span class="text-slate-400 block mb-1">Exemplo Didático:</span>
+            <code class="text-emerald-600 dark:text-emerald-400 font-bold font-mono">&pi;<sub>id_cli</sub>(CLIENTE) &minus; &pi;<sub>id_cli_fk</sub>(PEDIDO)</code>
+            <span class="text-[11px] text-slate-500 dark:text-slate-400 block mt-1">&rarr; Clientes cadastrados que nunca compraram.</span>
+          </div>
+        </div>
+
+        <!-- 6. PRODUTO CARTESIANO -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Operador Binário</span>
+              <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-mono text-xl font-bold">&times;</span>
+            </div>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white mb-1">Produto Cartesiano (&times;)</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mb-3">
+              Combina todas as tuplas de <strong>R</strong> com todas as tuplas de <strong>S</strong>. <strong>Não requer compatibilidade de união</strong>. Base matemática do operador de Junção.
+            </p>
+            <div class="p-2.5 bg-slate-100 dark:bg-slate-900/80 rounded-lg text-xs font-mono text-emerald-700 dark:text-emerald-400 mb-3 font-bold">
+              R &times; S = { t1 &middot; t2 | t1 &in; R &and; t2 &in; S }
+            </div>
+            <ul class="text-xs space-y-1.5 text-slate-600 dark:text-slate-300 mb-3">
+              <li><i class="fa-solid fa-check text-emerald-500 mr-1.5"></i><strong>Grau Resultante:</strong> <span class="font-mono">grau(R) + grau(S)</span> (soma)</li>
+              <li><i class="fa-solid fa-check text-emerald-500 mr-1.5"></i><strong>Cardinalidade:</strong> <span class="font-mono">|R| &times; |S|</span> tuplas geradas</li>
+              <li><i class="fa-solid fa-check text-emerald-500 mr-1.5"></i><strong>Fundamento da Junção:</strong> <span class="font-mono">&sigma;<sub>FK = PK</sub>(R &times; S) &equiv; R &#8904; S</span></li>
+            </ul>
+          </div>
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-700 text-xs">
+            <span class="text-slate-400 block mb-1">Exemplo Didático:</span>
+            <code class="text-emerald-600 dark:text-emerald-400 font-bold font-mono">CURSO (2 tuplas) &times; TURNO (2 tuplas)</code>
+            <span class="text-[11px] text-slate-500 dark:text-slate-400 block mt-1">&rarr; 4 tuplas combinadas com 4 atributos.</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Quadro Sinóptico de Decisão -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-table-list text-emerald-600 dark:text-emerald-400"></i>
+          <span>Quadro Sinóptico dos 6 Operadores Fundamentais da Álgebra Relacional</span>
+        </h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+            <thead class="bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-200 font-bold uppercase tracking-wider text-[11px]">
+              <tr>
+                <th class="py-2.5 px-3 border-b border-slate-200 dark:border-slate-700">Operador</th>
+                <th class="py-2.5 px-3 border-b border-slate-200 dark:border-slate-700 text-center">Símbolo</th>
+                <th class="py-2.5 px-3 border-b border-slate-200 dark:border-slate-700">Sintaxe Canônica</th>
+                <th class="py-2.5 px-3 border-b border-slate-200 dark:border-slate-700 text-center">Aridade</th>
+                <th class="py-2.5 px-3 border-b border-slate-200 dark:border-slate-700">Efeito no Grau (Colunas)</th>
+                <th class="py-2.5 px-3 border-b border-slate-200 dark:border-slate-700">Efeito na Cardinalidade (Linhas)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 dark:divide-slate-700/50 text-[11px]">
+              <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                <td class="py-2 px-3 font-bold text-slate-900 dark:text-white">Seleção</td>
+                <td class="py-2 px-3 text-center font-serif font-bold text-emerald-600 dark:text-emerald-400 text-base">&sigma;</td>
+                <td class="py-2 px-3 font-mono">&sigma;<sub>p</sub>(R)</td>
+                <td class="py-2 px-3 text-center"><span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium">Unário</span></td>
+                <td class="py-2 px-3">Inalterado (= grau(R))</td>
+                <td class="py-2 px-3">Filtrado (0 &le; k &le; |R|)</td>
+              </tr>
+              <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                <td class="py-2 px-3 font-bold text-slate-900 dark:text-white">Projeção</td>
+                <td class="py-2 px-3 text-center font-serif font-bold text-emerald-600 dark:text-emerald-400 text-base">&pi;</td>
+                <td class="py-2 px-3 font-mono">&pi;<sub>L</sub>(R)</td>
+                <td class="py-2 px-3 text-center"><span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium">Unário</span></td>
+                <td class="py-2 px-3">Reduzido (= |L|)</td>
+                <td class="py-2 px-3">Reduzido / Igual (&le; |R|) com deduplicação</td>
+              </tr>
+              <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                <td class="py-2 px-3 font-bold text-slate-900 dark:text-white">Renomeação</td>
+                <td class="py-2 px-3 text-center font-serif font-bold text-emerald-600 dark:text-emerald-400 text-base">&rho;</td>
+                <td class="py-2 px-3 font-mono">&rho;<sub>S(B1..Bn)</sub>(R)</td>
+                <td class="py-2 px-3 text-center"><span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium">Unário</span></td>
+                <td class="py-2 px-3">Inalterado (= grau(R))</td>
+                <td class="py-2 px-3">Inalterado (= |R|)</td>
+              </tr>
+              <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                <td class="py-2 px-3 font-bold text-slate-900 dark:text-white">União</td>
+                <td class="py-2 px-3 text-center font-mono font-bold text-emerald-600 dark:text-emerald-400 text-base">&cup;</td>
+                <td class="py-2 px-3 font-mono">R &cup; S</td>
+                <td class="py-2 px-3 text-center"><span class="px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-semibold">Binário</span></td>
+                <td class="py-2 px-3">Inalterado (Exige compatibilidade: grau n)</td>
+                <td class="py-2 px-3">Máximo |R| + |S| (elimina duplicatas)</td>
+              </tr>
+              <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                <td class="py-2 px-3 font-bold text-slate-900 dark:text-white">Diferença</td>
+                <td class="py-2 px-3 text-center font-mono font-bold text-emerald-600 dark:text-emerald-400 text-base">&minus;</td>
+                <td class="py-2 px-3 font-mono">R &minus; S</td>
+                <td class="py-2 px-3 text-center"><span class="px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-semibold">Binário</span></td>
+                <td class="py-2 px-3">Inalterado (Exige compatibilidade: grau n)</td>
+                <td class="py-2 px-3">Mínimo 0, Máximo |R|</td>
+              </tr>
+              <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                <td class="py-2 px-3 font-bold text-slate-900 dark:text-white">Produto Cartesiano</td>
+                <td class="py-2 px-3 text-center font-mono font-bold text-emerald-600 dark:text-emerald-400 text-base">&times;</td>
+                <td class="py-2 px-3 font-mono">R &times; S</td>
+                <td class="py-2 px-3 text-center"><span class="px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-semibold">Binário</span></td>
+                <td class="py-2 px-3">Soma (grau(R) + grau(S))</td>
+                <td class="py-2 px-3">Multiplicação (|R| &times; |S|)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 2: ÁRVORES DE CONSULTA & OTIMIZAÇÃO    -->
+    <!-- ========================================== -->
+    <div id="tab-arvores" class="tab-content hidden space-y-6">
+
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-sitemap text-emerald-600 dark:text-emerald-400"></i>
+          <span>O que é uma Árvore de Consulta Relacional (Query Tree)?</span>
+        </h2>
+        <p class="text-slate-700 dark:text-slate-300 mb-4">
+          Uma <strong>Árvore de Consulta</strong> é uma estrutura em grafo acíclico dirigida que representa visualmente a sequência procedural de avaliação de uma consulta relacional:
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+            <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase">1. Nós Folha (Base)</span>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Representam as relações físicas armazenadas em disco (tabelas base do catálogo).</p>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+            <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase">2. Nós Internos</span>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Representam os operadores algébricos intermediários (&sigma;, &pi;, &times;, &cup;, &minus;).</p>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700">
+            <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase">3. Nó Raiz (Topo)</span>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Representa a relação final entregue ao usuário ou à aplicação.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Demonstração Visual da Árvore e Avaliação Bottom-Up -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+          <h3 class="font-bold text-slate-900 dark:text-white mb-2 text-base">Estrutura em Árvore: Avaliação Bottom-Up</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+            Consulta: <em>"Recuperar o título e preço dos livros de Literatura com preço menor que R$ 50,00"</em>.
+          </p>
+
+          <!-- Diagrama Visual da Árvore -->
+          <div class="p-6 bg-slate-50 dark:bg-slate-900 rounded-xl flex flex-col items-center justify-center space-y-4">
+            <!-- Raiz: Projeção -->
+            <div class="flex flex-col items-center">
+              <div class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-md border-2 border-emerald-500 flex items-center space-x-2">
+                <span class="font-serif text-sm">&pi;</span>
+                <span>titulo, preco</span>
+              </div>
+              <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1">Nó Raiz (Resultado Final)</span>
+            </div>
+
+            <i class="fa-solid fa-arrow-up text-slate-400"></i>
+
+            <!-- Nó Interno: Seleção -->
+            <div class="flex flex-col items-center">
+              <div class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs shadow-sm border border-slate-300 dark:border-slate-700 flex items-center space-x-2">
+                <span class="font-serif text-sm">&sigma;</span>
+                <span>categoria = 'Literatura' &and; preco &lt; 50</span>
+              </div>
+              <span class="text-[10px] text-slate-500 font-semibold mt-1">Nó Interno (Filtragem de Linhas)</span>
+            </div>
+
+            <i class="fa-solid fa-arrow-up text-slate-400"></i>
+
+            <!-- Folha: Relação Base -->
+            <div class="flex flex-col items-center">
+              <div class="px-5 py-2.5 rounded-xl bg-slate-800 dark:bg-slate-700 text-white font-bold text-xs shadow-md">
+                <i class="fa-solid fa-database mr-1.5 text-emerald-400"></i>
+                <span>LIVRO (Relação Base)</span>
+              </div>
+              <span class="text-[10px] text-slate-500 font-semibold mt-1">Nó Folha (6 tuplas em disco)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Heurística de Otimização -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+          <h3 class="font-bold text-slate-900 dark:text-white mb-2 text-base">Heurística: "Empurrar Seleções para Baixo"</h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 mb-3">
+            O <strong>Query Optimizer</strong> dos SGBDs utiliza leis de equivalência algébrica para reorganizar a árvore antes da execução física.
+          </p>
+
+          <div class="space-y-3 mt-4">
+            <div class="p-3.5 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900">
+              <strong class="text-red-800 dark:text-red-300 text-xs font-bold block mb-1">
+                <i class="fa-solid fa-triangle-exclamation mr-1"></i> Plano Ingênuo (Sem Otimização)
+              </strong>
+              <div class="text-xs font-mono text-red-700 dark:text-red-400 mb-1">
+                &sigma;<sub>cond</sub>(CLIENTE &times; PEDIDO)
+              </div>
+              <p class="text-[11px] text-slate-600 dark:text-slate-300">
+                Gera primeiro todas as 10.000 &times; 100.000 = 1.000.000.000 (1 bilhão) tuplas do produto cartesiano para depois filtrar em memória RAM (alto custo de I/O!).
+              </p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900">
+              <strong class="text-emerald-800 dark:text-emerald-300 text-xs font-bold block mb-1">
+                <i class="fa-solid fa-bolt mr-1"></i> Plano Otimizado (Push-Down Selection)
+              </strong>
+              <div class="text-xs font-mono text-emerald-700 dark:text-emerald-400 mb-1">
+                (&sigma;<sub>cidade = 'Taua'</sub>(CLIENTE)) &times; (&sigma;<sub>ano = 2026</sub>(PEDIDO))
+              </div>
+              <p class="text-[11px] text-slate-600 dark:text-slate-300">
+                Filtra cada relação individualmente antes de cruzar. Reduz os operandos para 20 clientes e 50 pedidos, gerando apenas 1.000 combinações controladas.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 3: SLIDES DA AULA (PDF)                -->
+    <!-- ========================================== -->
+    <div id="tab-slides" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700/60 shadow-sm flex items-center justify-between flex-wrap gap-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg">
+            <i class="fa-regular fa-file-pdf"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white">Apresentação Oficial de Slides (Beamer 16:9)</h3>
+            <span class="text-xs text-slate-500 dark:text-slate-400">41 slides organizados em 9 seções temáticas modulares</span>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <a href="materiais/main.pdf" download="Aula_12_Algebra_Relacional_Parte1.pdf" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white hover:bg-emerald-700 transition-colors flex items-center space-x-1.5 shadow-sm">
+            <i class="fa-solid fa-download"></i>
+            <span>Baixar PDF (362 KB)</span>
+          </a>
+          <a href="materiais/main.pdf" target="_blank" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 transition-colors flex items-center space-x-1.5">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            <span>Abrir em Nova Aba</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Leitor de PDF Embutido -->
+      <div class="bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-lg" style="height: 780px;">
+        <iframe src="materiais/main.pdf" class="w-full h-full border-0" title="Slides da Aula 12"></iframe>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 4: PLANO PEDAGÓGICO                    -->
+    <!-- ========================================== -->
+    <div id="tab-plano" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm space-y-6">
+
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center space-x-2">
+            <i class="fa-solid fa-calendar-check text-emerald-600 dark:text-emerald-400"></i>
+            <span>Cronograma de 100 Minutos (5 Blocos Didáticos)</span>
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+            Estrutura planejada para regime de mentoria individual / tutoria com alternância entre formalismo matemático e exercícios no papel.
+          </p>
+
+          <div class="space-y-3">
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 flex items-start space-x-3">
+              <span class="px-2 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 rounded font-bold text-xs whitespace-nowrap">Bloco 1 (15 min)</span>
+              <div>
+                <strong class="font-bold text-slate-900 dark:text-white text-xs block">Ponte Conceitual & Fechamento Relacional (Slides 1 a 8)</strong>
+                <p class="text-xs text-slate-600 dark:text-slate-300">Ponte das Aulas 09 a 11. O papel da álgebra relacional de Codd (1970). Procedural vs. Declarativo (SQL). A propriedade estrutural de Fechamento Relacional.</p>
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 flex items-start space-x-3">
+              <span class="px-2 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 rounded font-bold text-xs whitespace-nowrap">Bloco 2 (25 min)</span>
+              <div>
+                <strong class="font-bold text-slate-900 dark:text-white text-xs block">Filtros Unários: Seleção (&sigma;), Projeção (&pi;) e Renomeação (&rho;) (Slides 9 a 18)</strong>
+                <p class="text-xs text-slate-600 dark:text-slate-300">Seleção horizontal com predicados booleanos e comutatividade. Projeção vertical com prova formal de deduplicação matemática. Três formas sintáticas de renomeação.</p>
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 flex items-start space-x-3">
+              <span class="px-2 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 rounded font-bold text-xs whitespace-nowrap">Bloco 3 (20 min)</span>
+              <div>
+                <strong class="font-bold text-slate-900 dark:text-white text-xs block">Operações de Conjuntos (&cup;, &minus;, &cap;) & Compatibilidade (Slides 19 a 23)</strong>
+                <p class="text-xs text-slate-600 dark:text-slate-300">Regras de Compatibilidade de União. União deduplicada. Diferença e sua assimetria essencial para isolar ausências. Derivação canônica da interseção.</p>
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 flex items-start space-x-3">
+              <span class="px-2 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 rounded font-bold text-xs whitespace-nowrap">Bloco 4 (20 min)</span>
+              <div>
+                <strong class="font-bold text-slate-900 dark:text-white text-xs block">Produto Cartesiano (&times;) & Árvores de Consulta (Slides 24 a 31)</strong>
+                <p class="text-xs text-slate-600 dark:text-slate-300">Concatenação irrestrita de tuplas (grau(R) + grau(S) atributos, |R| &times; |S| tuplas). Nascimento da Junção via &sigma;<sub>cond</sub>(R &times; S). Modelagem em Query Tree e otimização por push-down.</p>
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 flex items-start space-x-3">
+              <span class="px-2 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 rounded font-bold text-xs whitespace-nowrap">Bloco 5 (20 min)</span>
+              <div>
+                <strong class="font-bold text-slate-900 dark:text-white text-xs block">Oficina de Fixação & Ponte para Aula 13 (Slides 32 a 41)</strong>
+                <p class="text-xs text-slate-600 dark:text-slate-300">Resolução dos 4 desafios analíticos práticos em minimundo de livraria e comércio. Quadro sinóptico de resumo e prévia das Junções derivadas (&#8904;) e Divisão (&divide;).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
+          <span class="text-xs text-slate-500">Documento pedagógico completo disponível no repositório</span>
+          <a href="plano_de_aula.md" target="_blank" class="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline">
+            Ver plano_de_aula.md na íntegra &rarr;
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 5: EXERCÍCIOS RESOLVIDOS               -->
+    <!-- ========================================== -->
+    <div id="tab-exercicios" class="tab-content hidden space-y-6">
+
+      <!-- Desafio 1 -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <div class="flex items-center space-x-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase mb-2">
+          <span>Desafio Prático 1</span>
+          <span>•</span>
+          <span>Seleção Composta & Projeção</span>
+        </div>
+        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-2">Consulta Acadêmica em ALUNO</h3>
+        <p class="text-slate-600 dark:text-slate-300 mb-3 text-xs sm:text-sm">
+          Dada a relação <code>ALUNO(id_aluno, nome, curso, cr, cidade)</code>, formule uma expressão da álgebra relacional que recupere o <strong>nome</strong> e o <strong>CR</strong> de todos os discentes de <code>'Administracao'</code> que residem em <code>'Taua'</code> com <span class="font-mono font-semibold">CR &ge; 8.5</span>.
+        </p>
+
+        <div class="p-4 bg-slate-900 rounded-xl text-emerald-300 font-mono text-xs overflow-x-auto space-y-2">
+          <div class="text-slate-400">// Resolução Modular em Etapas:</div>
+          <div>PASSO1 &larr; &sigma;<sub>curso = 'Administracao' &and; cidade = 'Taua' &and; cr &ge; 8.5</sub>(ALUNO)</div>
+          <div>RESULTADO &larr; &pi;<sub>nome, cr</sub>(PASSO1)</div>
+          <div class="text-slate-400 pt-2">// Expressão Aninhada em Linha Única:</div>
+          <div class="text-white font-bold">&pi;<sub>nome, cr</sub>(&sigma;<sub>curso = 'Administracao' &and; cidade = 'Taua' &and; cr &ge; 8.5</sub>(ALUNO))</div>
+        </div>
+      </div>
+
+      <!-- Desafio 2 -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <div class="flex items-center space-x-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase mb-2">
+          <span>Desafio Prático 2</span>
+          <span>•</span>
+          <span>Diferença de Conjuntos</span>
+        </div>
+        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-2">Detecção de Clientes Inativos via Subtração</h3>
+        <p class="text-slate-600 dark:text-slate-300 mb-3 text-xs sm:text-sm">
+          A partir das relações <code>CLIENTE(id_cli, nome, cidade)</code> e <code>PEDIDO(id_ped, id_cli_fk, data, valor)</code>, encontre o código e nome dos clientes que <strong>NUNCA realizaram nenhuma compra registrada</strong>.
+        </p>
+
+        <div class="p-4 bg-slate-900 rounded-xl text-emerald-300 font-mono text-xs overflow-x-auto space-y-2">
+          <div class="text-slate-400">// 1. Isolar todos os códigos de clientes:</div>
+          <div>TODOS_IDS &larr; &pi;<sub>id_cli</sub>(CLIENTE)</div>
+          <div class="text-slate-400">// 2. Isolar os códigos que aparecem em pedidos:</div>
+          <div>COMPRADORES &larr; &pi;<sub>id_cli_fk</sub>(PEDIDO)</div>
+          <div class="text-slate-400">// 3. Subtração de conjuntos compatíveis:</div>
+          <div>INATIVOS &larr; TODOS_IDS &minus; COMPRADORES</div>
+          <div class="text-slate-400">// 4. Recuperar os nomes através de cruzamento:</div>
+          <div class="text-white font-bold">RESULTADO &larr; &pi;<sub>id_cli, nome</sub>(&sigma;<sub>CLIENTE.id_cli = INATIVOS.id_cli</sub>(CLIENTE &times; INATIVOS))</div>
+        </div>
+      </div>
+
+      <!-- Desafio 3 -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <div class="flex items-center space-x-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase mb-2">
+          <span>Desafio Prático 3</span>
+          <span>•</span>
+          <span>Produto Cartesiano e Junção Manual</span>
+        </div>
+        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-2">Associação de Produto e Categoria</h3>
+        <p class="text-slate-600 dark:text-slate-300 mb-3 text-xs sm:text-sm">
+          Sem utilizar o operador avançado de Junção (&#8904;), associe <code>PRODUTO(id_prod, nome_prod, id_cat_fk)</code> com <code>CATEGORIA(id_cat, nome_cat)</code> gerando uma listagem com <code>nome_prod</code> e <code>nome_cat</code>.
+        </p>
+
+        <div class="p-4 bg-slate-900 rounded-xl text-emerald-300 font-mono text-xs overflow-x-auto space-y-2">
+          <div class="text-slate-400">// Concatenação e filtragem por chave referencial:</div>
+          <div>TEMP1 &larr; PRODUTO &times; CATEGORIA</div>
+          <div>TEMP2 &larr; &sigma;<sub>PRODUTO.id_cat_fk = CATEGORIA.id_cat</sub>(TEMP1)</div>
+          <div class="text-white font-bold">RESULTADO &larr; &pi;<sub>nome_prod, nome_cat</sub>(TEMP2)</div>
+        </div>
+      </div>
+
+      <!-- Desafio 4 -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <div class="flex items-center space-x-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase mb-2">
+          <span>Desafio Prático 4</span>
+          <span>•</span>
+          <span>Padronização com Renomeação (&rho;) e União (&cup;)</span>
+        </div>
+        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-2">Relatório Unificado de Contatos Acadêmicos</h3>
+        <p class="text-slate-600 dark:text-slate-300 mb-3 text-xs sm:text-sm">
+          Considere as tabelas <code>DOCENTE(id_doc, nome, email)</code> e <code>MONITOR(id_mon, nome_estudante, email_acad)</code>. Gere uma relação unificada contendo <code>nome</code> e <code>email</code> de ambos.
+        </p>
+
+        <div class="p-4 bg-slate-900 rounded-xl text-emerald-300 font-mono text-xs overflow-x-auto space-y-2">
+          <div class="text-slate-400">// 1. Projetar colunas homólogas:</div>
+          <div>D &larr; &pi;<sub>nome, email</sub>(DOCENTE)</div>
+          <div>M &larr; &pi;<sub>nome_estudante, email_acad</sub>(MONITOR)</div>
+          <div class="text-slate-400">// 2. Renomear para compatibilidade de esquema:</div>
+          <div>M_PADRAO &larr; &rho;<sub>(nome, email)</sub>(M)</div>
+          <div class="text-slate-400">// 3. União de conjuntos compatíveis:</div>
+          <div class="text-white font-bold">RESULTADO &larr; D &cup; M_PADRAO</div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- RODAPÉ INSTITUCIONAL                       -->
+  <!-- ========================================== -->
+  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center space-x-2">
+        <span>Instituto Federal de Educação, Ciência e Tecnologia do Ceará — Campus Tauá</span>
+      </div>
+      <div>
+        <span>Banco de Dados (2026.2) • Prof. Me. Reginaldo Fernandes</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script de Controle de Abas e Modo Escuro -->
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-emerald-600', 'text-emerald-600', 'dark:text-emerald-400');
+        btn.classList.add('text-slate-500', 'dark:text-slate-400');
+      });
+
+      const selectedTab = document.getElementById(tabId);
+      const selectedBtn = document.getElementById('btn-' + tabId);
+
+      if (selectedTab) selectedTab.classList.remove('hidden');
+      if (selectedBtn) {
+        selectedBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
+        selectedBtn.classList.add('border-b-2', 'border-emerald-600', 'text-emerald-600', 'dark:text-emerald-400');
+      }
+    }
+
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        localStorage.theme = 'light';
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.theme = 'dark';
+      }
+    });
+  </script>
+</body>
+
+</html>

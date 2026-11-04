@@ -1,0 +1,106 @@
+\changecolours{ScoutGreen}
+\section[Projecao e Renomeacao]{Operadores de Projeção (\texorpdfstring{$\pi$}{pi}) e Renomeação (\texorpdfstring{$\rho$}{rho})}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Operador de Projeção ($\pi$): Definição Formal},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Conceito e Notação Matemática}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Denotado pela letra grega \textbf{pi minúscula} ($\boldsymbol{\pi}$).
+    \item É um operador \textbf{unário} que seleciona colunas específicas:
+      \[ \boldsymbol{\pi_L(R)} = \{\, t[L] \mid t \in R \,\} \]
+    \item Onde $L = \langle A_1, A_2, \dots, A_k \rangle$ é a lista de atributos desejados do esquema de $R$.
+    \item As colunas não listadas em $L$ são descartadas do resultado.
+  \end{itemize}
+}{%
+  \alert{Efeito Estrutural no Esquema}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Filtro Vertical:} Extrai subconjuntos de colunas.
+    \item \textbf{Novo Grau (Aridade):} O grau da relação resultante é exatamente igual ao número de atributos na lista $L$:
+      \[ \text{grau}(\pi_L(R)) = k \le \text{grau}(R) \]
+    \item Os atributos na relação resultante seguem rigorosamente a ordem especificada na lista $L$.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={A Regra de Ouro: Eliminação Automática de Duplicatas},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Relação como Conjunto Matemático}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Na formulação clássica de Codd, uma relação é rigorosamente um \textbf{conjunto matemático} de tuplas.
+    \item Conjuntos \textbf{não toleram elementos repetidos}.
+    \item \textbf{Consequência Direta:} Se a lista de projeção $L$ não incluir uma Chave Primária ou Chave Candidata, tuplas duplicadas são \textbf{eliminadas automaticamente}!
+    \item Portanto: $|\pi_L(R)| \le |R|$.
+  \end{itemize}
+}{%
+  \alert{Diferença Crucial: Álgebra Relacional vs. SQL}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item No \textbf{SQL comercial}: a cláusula básica \texttt{SELECT} opera sobre multiconjuntos (\emph{bags}), mantendo linhas repetidas por motivos de desempenho.
+    \item Para obter o comportamento canônico da projeção algébrica em SQL, deve-se usar explicitamente \texttt{SELECT DISTINCT}.
+    \item Na \textbf{Álgebra Relacional pura}: a eliminação de tuplas idênticas é \textbf{sempre implícita e mandatória}.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Demonstração Prática: Projeção com Deduplicação},leftcol=6.8cm,rightcol=7.2cm]{%
+  \alert{Relação Original: CLIENTE}\par
+  \scriptsize
+  \centering
+  \begin{tabular}{c l l c}
+    \toprule
+    \textbf{id\_cli} & \textbf{nome} & \textbf{cidade} & \textbf{uf} \\
+    \midrule
+    101 & Carlos Silva & Taua & CE \\
+    102 & Maria Souza & Fortaleza & CE \\
+    103 & Joao Lima & Taua & CE \\
+    104 & Ana Ribeiro & Iguatu & CE \\
+    105 & Pedro Rocha & Fortaleza & CE \\
+    \bottomrule
+  \end{tabular}
+  \par \vspace{1mm} \tiny Cardinalidade original: $5$ tuplas. Chave Primária: \texttt{id\_cli}.
+}{%
+  \alert{Operação: Cidades com Clientes}\par
+  \[ R_{\text{cid}} \leftarrow \boldsymbol{\pi_{\text{cidade, uf}}(\text{CLIENTE})} \]
+  \scriptsize
+  \centering
+  \begin{tabular}{l c}
+    \toprule
+    \textbf{cidade} & \textbf{uf} \\
+    \midrule
+    Taua & CE \\
+    Fortaleza & CE \\
+    Iguatu & CE \\
+    \bottomrule
+  \end{tabular}
+  \par \vspace{2mm}
+  \normalsize
+  \begin{itemize}
+    \scriptsize
+    \item As tuplas repetidas (\texttt{Taua, CE} e \texttt{Fortaleza, CE}) foram fundidas em tuplas únicas.
+    \item Cardinalidade final: reduzida de $5 \to 3$ tuplas.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Operador de Renomeação ($\rho$ - Rho)},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Por que a Renomeação é Essencial?}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Desambiguação:} Ao combinar relações com nomes de atributos coincidentes (ex: \texttt{id} ou \texttt{nome}).
+    \item \textbf{Autorrelacionamentos:} Quando uma relação é cruzada consigo mesma (ex: funcionário e supervisor).
+    \item \textbf{Atribuição Explícita:} Nomear relações resultantes para facilitar a decomposição em etapas.
+  \end{itemize}
+}{%
+  \alert{As Três Formas de Notação Formal}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item $\boldsymbol{\rho_S(R)}$:\\
+      Renomeia a relação para $S$ (mantém os nomes dos atributos).
+    \item $\boldsymbol{\rho_{(B_1, B_2, \dots, B_n)}(R)}$:\\
+      Renomeia os atributos para $B_1, \dots, B_n$ (mantém o nome de $R$).
+    \item $\boldsymbol{\rho_{S(B_1, B_2, \dots, B_n)}(R)}$:\\
+      Renomeia simultaneamente a relação para $S$ e todos os seus $n$ atributos.
+  \end{itemize}
+}

@@ -1,0 +1,51 @@
+\changecolours{ScoutGreen}
+\section[Síntese e Próximos Passos]{Síntese e Próximos Passos}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[t]{Quadro Sinóptico dos 6 Operadores Fundamentais}
+  \vspace{-1mm}
+  \centering
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{l c l c p{3.2cm} p{2.8cm}}
+    \toprule
+    \textbf{Operador} & \textbf{Símb.} & \textbf{Sintaxe Formal} & \textbf{Aridade} & \textbf{Efeito no Grau} & \textbf{Efeito na Card.} \\
+    \midrule
+    \textbf{Seleção} & $\sigma$ & $\sigma_p(R)$ & Unário & Inalterado ($= grau(R)$) & Filtrado ($0 \le k \le |R|$) \\
+    \addlinespace[1mm]
+    \textbf{Projeção} & $\pi$ & $\pi_L(R)$ & Unário & Reduzido ($= |L|$) & Reduzido/Igual (Deduplica) \\
+    \addlinespace[1mm]
+    \textbf{Renomeação} & $\rho$ & $\rho_{S(B_1,\dots,B_n)}(R)$ & Unário & Inalterado & Inalterado ($= |R|$) \\
+    \addlinespace[1mm]
+    \textbf{União} & $\cup$ & $R \cup S$ & Binário & Inalterado (Compatível) & Máximo $|R| + |S|$ (Deduplica) \\
+    \addlinespace[1mm]
+    \textbf{Diferença} & $-$ & $R - S$ & Binário & Inalterado (Compatível) & Mínimo $0$, Máximo $|R|$ \\
+    \addlinespace[1mm]
+    \textbf{Produto Cart.} & $\times$ & $R \times S$ & Binário & Soma ($grau(R) + grau(S)$) & Multiplica ($|R| \times |S|$) \\
+    \bottomrule
+  \end{tabular}%
+  }
+  \vspace{2mm}
+  \par \tiny \alert{Propriedade Inviolável:} Qualquer combinação desses 6 operadores preserva o princípio de Fechamento Relacional.
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Checklist de Autoavaliação do Estudante},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Verificação de Domínio Conceitual}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item[$\square$] Sei explicar por que a álgebra relacional é uma linguagem formal \textbf{procedural} e não declarativa?
+    \item[$\square$] Compreendo por que a projeção algébrica elimina duplicatas automaticamente, ao contrário do \texttt{SELECT} simples em SQL?
+    \item[$\square$] Sei verificar se duas relações satisfazem as regras de \textbf{Compatibilidade de União}?
+    \item[$\square$] Consigo calcular o grau e a cardinalidade resultantes de um produto cartesiano $R \times S$?
+  \end{itemize}
+}{%
+  \alert{Ponte para a Aula 13}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Na próxima aula (Aula 13):} Estudaremos as operações derivadas de alto nível!
+    \item \textbf{Junção Natural ($\boldsymbol{\bowtie}$):} Cruzamento semântico automático por igualdade de atributos homônimos.
+    \item \textbf{Theta-Join e Equi-Join ($\boldsymbol{\bowtie_p}$):} O operador mais usado no cotidiano de bancos de dados.
+    \item \textbf{Outer Joins (Left, Right e Full Outer Join):} Preservação de tuplas sem correspondência com valores nulos controlados.
+    \item \textbf{Operador de Divisão ($\boldsymbol{\div}$):} Resolução elegante de consultas com quantificação universal (\textit{``para todos''}).
+  \end{itemize}
+}

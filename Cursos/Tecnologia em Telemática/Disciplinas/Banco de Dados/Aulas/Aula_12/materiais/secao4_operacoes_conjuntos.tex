@@ -1,0 +1,121 @@
+\changecolours{ScoutGreen}
+\section[Operacoes de Conjuntos]{Operações Tradicionais de Conjuntos (\texorpdfstring{$\cup, -, \cap$}{Uniao, Diferenca, Intersecao})}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Princípio da Compatibilidade de União},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Por que Duas Relações Precisam ser Compatíveis?}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Na matemática geral, qualquer conjunto pode ser unido a outro.
+    \item No \textbf{Modelo Relacional}, tuplas representam fatos homogêneos sobre uma entidade.
+    \item Não faria sentido unir uma lista de \texttt{LIVRO(isbn, preco)} com uma lista de \texttt{CLIENTE(cpf, cidade, telefone)}.
+    \item Portanto, operações de conjuntos exigem estrita \textbf{Compatibilidade de União (Union-Compatibility)}.
+  \end{itemize}
+}{%
+  \alert{As Duas Regras Formais de Compatibilidade}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{1. Mesmo Grau (Aridade):}\\
+      As relações $R$ e $S$ devem possuir exatamente a mesma quantidade de atributos:
+      \[ \text{grau}(R) = \text{grau}(S) = n \]
+    \item \textbf{2. Domínios Pareados Compatíveis:}\\
+      Para cada posição $i \in \{1, 2, \dots, n\}$, o domínio do atributo $A_i$ de $R$ deve ser equivalente ao de $B_i$ de $S$:
+      \[ \text{dom}(A_i) = \text{dom}(B_i) \]
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Operador de União ($\cup$)},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Definição e Propriedades}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Retorna todas as tuplas presentes em $R$, em $S$ ou em ambas:
+      \[ \boldsymbol{R \cup S} = \{\, t \mid t \in R \,\lor\, t \in S \,\} \]
+    \item \textbf{Eliminação de Duplicatas:} Tuplas idênticas em ambas aparecem uma única vez no resultado.
+    \item \textbf{Comutatividade e Associatividade:}\\
+      $R \cup S \equiv S \cup R$\\
+      $(R \cup S) \cup T \equiv R \cup (S \cup T)$
+    \item Esquema herdado: adota os nomes dos atributos da primeira relação ($R$).
+  \end{itemize}
+}{%
+  \alert{Exemplo: Consolidação de Leitores}\par
+  \scriptsize
+  \textbf{LEITOR\_LOCAL} ($2$ tuplas):\\
+  $\{\langle 1, \text{'Ana'}\rangle, \langle 2, \text{'Bruno'}\rangle\}$\\[1mm]
+  \textbf{LEITOR\_EXTERNO} ($2$ tuplas):\\
+  $\{\langle 2, \text{'Bruno'}\rangle, \langle 3, \text{'Carla'}\rangle\}$\\[2mm]
+  \textbf{Resultado: LEITOR\_LOCAL $\cup$ LEITOR\_EXTERNO}\par
+  \centering
+  \begin{tabular}{c l}
+    \toprule
+    \textbf{id\_leitor} & \textbf{nome} \\
+    \midrule
+    1 & Ana \\
+    2 & Bruno \\
+    3 & Carla \\
+    \bottomrule
+  \end{tabular}
+  \par \vspace{1mm} \tiny Bruno aparecia em ambas e foi unificado. Resultado: $3$ tuplas.
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Operador de Diferença de Conjuntos ($-$)},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Definição e Natureza Assimétrica}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Retorna as tuplas que estão em $R$, mas \textbf{NÃO} estão em $S$:
+      \[ \boldsymbol{R - S} = \{\, t \mid t \in R \,\land\, t \notin S \,\} \]
+    \item Exige também compatibilidade de união entre $R$ e $S$.
+    \item \textbf{NÃO É COMUTATIVO!} A ordem dos operandos altera totalmente o resultado:
+      \[ \boldsymbol{R - S \neq S - R} \]
+    \item É a operação fundamental para responder perguntas do tipo \textit{``Quem fez a ação X, mas NUNCA fez a ação Y?''}.
+  \end{itemize}
+}{%
+  \alert{Demonstração Prática com Relações de Leitores}\par
+  \scriptsize
+  \textbf{1. Leitores que são APENAS locais:}\\
+  $R_1 \leftarrow \text{LEITOR\_LOCAL} - \text{LEITOR\_EXTERNO}$
+  \centering
+  \begin{tabular}{c l}
+    \toprule
+    \textbf{id\_leitor} & \textbf{nome} \\
+    \midrule
+    1 & Ana \\
+    \bottomrule
+  \end{tabular}
+  \par \vspace{2mm}
+  \raggedright
+  \textbf{2. Leitores que são APENAS externos:}\\
+  $R_2 \leftarrow \text{LEITOR\_EXTERNO} - \text{LEITOR\_LOCAL}$
+  \centering
+  \begin{tabular}{c l}
+    \toprule
+    \textbf{id\_leitor} & \textbf{nome} \\
+    \midrule
+    3 & Carla \\
+    \bottomrule
+  \end{tabular}
+  \par \vspace{1mm} \tiny Bruno foi subtraído em ambas as operações porque constava nos dois conjuntos.
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Operador de Interseção ($\cap$): Derivação Canônica},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Definição da Interseção}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Retorna apenas as tuplas presentes simultaneamente em ambas as relações:
+      \[ \boldsymbol{R \cap S} = \{\, t \mid t \in R \,\land\, t \in S \,\} \]
+    \item É uma operação comutativa:
+      \[ R \cap S \equiv S \cap R \]
+    \item Responde a: \textit{``Quais elementos pertencem aos dois grupos ao mesmo tempo?''}.
+  \end{itemize}
+}{%
+  \alert{A Prova da Derivação a Partir da Diferença}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Na Álgebra Relacional fundamental de Codd, a interseção \textbf{não é primitiva}, pois pode ser expressa estritamente por subtrações:
+      \[ \boldsymbol{R \cap S \equiv R - (R - S)} \]
+    \item \textbf{Intuição Matemática:} Se retiramos de $R$ tudo aquilo que $R$ não compartilha com $S$, sobra exatamente o que há em comum entre ambos!
+    \item No exemplo anterior: o resultado é apenas $\{\langle 2, \text{'Bruno'}\rangle\}$.
+  \end{itemize}
+}

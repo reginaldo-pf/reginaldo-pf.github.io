@@ -1,0 +1,114 @@
+\changecolours{ScoutGreen}
+\section[Ponte e Introdução]{Ponte Pedagógica e Introdução à Álgebra Relacional}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Da Estrutura Lógica à Manipulação Formal de Dados},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{O que Consolidamos até a Aula 11}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Modelagem Conceitual (Aulas 03 a 08):} Representação do minimundo através de Entidades, Relacionamentos e Restrições de Cardinalidade.
+    \item \textbf{Fundamentos Relacionais (Aula 09):} Tuplas, atributos, domínios, chaves primárias e integridade referencial.
+    \item \textbf{Mapeamento Lógico (Aulas 10 e 11):} Algoritmo canônico formal de Elmasri \& Navathe para transformar o DER em tabelas na 1FN.
+  \end{itemize}
+}{%
+  \alert{A Grande Fronteira da Aula 12}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Até agora, aprendemos a \textbf{estruturar e armazenar} os dados.
+    \item \textbf{Pergunta Central:} Como formulamos consultas e recuperamos informações de maneira matematicamente rigorosa?
+    \item \textbf{A Resposta de Codd (1970):} A \textbf{Álgebra Relacional}, uma linguagem formal de manipulação procedural que define a essência dos SGBDs modernos.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O que é a Álgebra Relacional e por que Estudá-la?},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Natureza Teórica e Procedural}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item É uma coleção de operações formais sobre o Modelo Relacional.
+    \item É \textbf{procedural}: expressa o \emph{como} obter o resultado por meio de uma sequência encadeada de operações.
+    \item Em contraste, o SQL é \textbf{declarativo} (especifica \emph{o que} deseja, cabendo ao SGBD determinar a estratégia).
+    \item Serve como padrão para medir o poder expressivo de linguagens de consulta relacionais (\textbf{Relational Completeness}).
+  \end{itemize}
+}{%
+  \alert{Importância Prática no Otimizador de Consultas}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Quando você submete uma consulta SQL, o SGBD a converte internamente em uma \textbf{Árvore de Expressão da Álgebra Relacional}.
+    \item O \textbf{Query Optimizer} aplica regras de equivalência algébrica para reordenar operações e minimizar leituras em disco.
+    \item Sem compreender álgebra relacional, é impossível interpretar planos de execução (\texttt{EXPLAIN}) ou otimizar consultas pesadas.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={A Propriedade Fundamental do Fechamento Relacional},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Definição do Princípio de Fechamento (Closure)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Todos os operandos na álgebra relacional são \textbf{relações} (tabelas de tuplas).
+    \item \textbf{Propriedade Inviolável:} O resultado de \textbf{qualquer} operação da álgebra relacional é, por definição formal, uma \textbf{nova relação válida}.
+    \item Isso significa que as relações resultantes possuem seu próprio esquema intensional e sua própria extensão de tuplas.
+  \end{itemize}
+}{%
+  \alert{Consequência Didática e Prática: Aninhamento}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Como a saída é sempre uma relação, o resultado de uma operação pode servir diretamente como \textbf{entrada para outra operação}.
+    \item Permite criar \textbf{expressões compostas aninhadas}:
+      \[ \pi_{\text{titulo}}\left(\sigma_{\text{ano} > 2022}(\text{LIVRO})\right) \]
+    \item Ou armazenar passos em variáveis intermediárias:
+      \[ \text{LIVROS\_NOVOS} \leftarrow \sigma_{\text{ano} > 2022}(\text{LIVRO}) \]
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Visão Geral dos 6 Operadores Fundamentais de Codd},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Operadores Unários (Filtros)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item $\boldsymbol{\sigma}$ \textbf{(Seleção):} Filtro horizontal de tuplas com base em uma condição booleana ($p$).
+    \item $\boldsymbol{\pi}$ \textbf{(Projeção):} Filtro vertical que seleciona atributos especificados e elimina duplicatas.
+    \item $\boldsymbol{\rho}$ \textbf{(Renomeação):} Atribui novos nomes a relações ou a atributos individuais.
+  \end{itemize}
+}{%
+  \alert{Operadores Binários (Teoria dos Conjuntos e Cruzamento)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item $\boldsymbol{\cup}$ \textbf{(União):} Consolida tuplas de duas relações compatíveis, eliminando redundâncias.
+    \item $\boldsymbol{-}$ \textbf{(Diferença):} Retorna tuplas da primeira relação ausentes na segunda.
+    \item $\boldsymbol{\times}$ \textbf{(Produto Cartesiano):} Combina todas as tuplas da relação $R$ com todas as tuplas de $S$.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Domínio de Referência Didática: Acervo de Livros},leftcol=7.2cm,rightcol=6.8cm]{%
+  \alert{Contexto do Acervo Bibliográfico}\par
+  \vspace{1mm}
+  \itemseps[topsepi=1mm,itemsepi=2mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Para ilustrar formalmente as operações algébricas, utilizaremos o acervo da livraria universitária ao lado.
+    \item \textbf{Chave Primária:} \texttt{isbn} identifica univocamente cada exemplar.
+    \item \textbf{Atributos:} \texttt{titulo}, \texttt{categoria}, \texttt{ano} e \texttt{preco}.
+    \item \textbf{Esquema Relacional:}\\
+      $\text{LIVRO}(\underline{\text{isbn}}, \text{titulo}, \text{categoria}, \text{ano}, \text{preco})$
+  \end{itemize}
+}{%
+  \alert{Relação Didática Base: LIVRO}\par
+  \centering
+  \resizebox{0.95\linewidth}{!}{%
+  \begin{tabular}{c l c c r}
+    \toprule
+    \textbf{isbn} & \textbf{titulo} & \textbf{categoria} & \textbf{ano} & \textbf{preco} \\
+    \midrule
+    L01 & Algoritmos & Computacao & 2020 & 85.00 \\
+    L02 & O Pequeno Principe & Literatura & 2018 & 35.00 \\
+    L03 & Banco de Dados & Computacao & 2022 & 90.00 \\
+    L04 & Dom Casmurro & Literatura & 2019 & 42.00 \\
+    L05 & Inteligencia Artificial & Computacao & 2023 & 110.00 \\
+    L06 & Quimica Organica & Exatas & 2021 & 55.00 \\
+    \bottomrule
+  \end{tabular}%
+  }
+  \vspace{1mm}
+  \par \tiny Relação $LIVRO$ com grau $5$ e cardinalidade $6$ tuplas.
+}

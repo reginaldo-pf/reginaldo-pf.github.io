@@ -1,0 +1,103 @@
+\changecolours{ScoutGreen}
+\section[Selecao]{Operador de Seleção (\texorpdfstring{$\sigma$}{sigma}): O Filtro Horizontal}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Operador de Seleção ($\sigma$): Definição Formal},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Conceito e Notação Matemática}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Denotado pela letra grega \textbf{sigma minúscula} ($\boldsymbol{\sigma}$).
+    \item É um operador \textbf{unário} aplicado sobre uma relação $R$:
+      \[ \boldsymbol{\sigma_p(R)} = \{\, t \in R \mid p(t) = \text{VERDADEIRO} \,\} \]
+    \item Onde $p$ é uma \textbf{condição de seleção (predicado booleano)} avaliada para cada tupla $t \in R$.
+    \item Tuplas para as quais $p(t)$ é falso são descartadas; as que satisfazem $p(t)$ compõem a nova relação.
+  \end{itemize}
+}{%
+  \alert{Efeito Estrutural no Esquema e Instância}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Filtro Horizontal:} Seleciona linhas inteiras da tabela.
+    \item \textbf{Grau (Aridade) Inalterado:} A relação resultante possui exatamente os mesmos atributos e na mesma ordem que $R$:
+      \[ \text{grau}(\sigma_p(R)) = \text{grau}(R) \]
+    \item \textbf{Cardinalidade Resultante:} O número de tuplas resultantes $k$ é sempre menor ou igual ao original:
+      \[ 0 \le |\sigma_p(R)| \le |R| \]
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Anatomia do Predicado de Seleção ($p$)},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Cláusulas Atômicas de Comparação}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Cada cláusula básica possui uma das duas formas canônicas:
+      \begin{enumerate}
+        \item $\langle \text{atributo} \rangle \text{ op } \langle \text{constante} \rangle$
+        \item $\langle \text{atributo}_1 \rangle \text{ op } \langle \text{atributo}_2 \rangle$
+      \end{enumerate}
+    \item Onde $\text{op} \in \{ =, \neq, <, \le, >, \ge \}$.
+    \item Os atributos e constantes devem pertencer a domínios de dados compatíveis (ex: números com números, texto com texto).
+  \end{itemize}
+}{%
+  \alert{Composição com Conectivos Booleanos}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Cláusulas atômicas podem ser combinadas livremente através de:
+      \begin{itemize}
+        \item $\boldsymbol{\land}$ (\textbf{Conjunção E} / AND): ambas devem ser verdadeiras.
+        \item $\boldsymbol{\lor}$ (\textbf{Disjunção OU} / OR): ao menos uma deve ser verdadeira.
+        \item $\boldsymbol{\neg}$ (\textbf{Negação NÃO} / NOT): inverte a verdade.
+      \end{itemize}
+    \item Parênteses definem explicitamente a precedência lógica da avaliação booleana.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Exemplo Passo a Passo: Seleção Simpla e Composta},leftcol=6.8cm,rightcol=7.2cm]{%
+  \alert{Consulta 1: Livros de Computação}\par
+  \[ R_1 \leftarrow \boldsymbol{\sigma_{\text{categoria} = '\text{Computacao}'}(\text{LIVRO})} \]
+  \scriptsize
+  \centering
+  \begin{tabular}{c l c c r}
+    \toprule
+    \textbf{isbn} & \textbf{titulo} & \textbf{cat.} & \textbf{ano} & \textbf{preco} \\
+    \midrule
+    L01 & Algoritmos & Comp. & 2020 & 85.00 \\
+    L03 & Banco de Dados & Comp. & 2022 & 90.00 \\
+    L05 & IA & Comp. & 2023 & 110.00 \\
+    \bottomrule
+  \end{tabular}
+  \par \vspace{1mm} \tiny Cardinalidade reduzida de $6 \to 3$ tuplas. Todas as colunas mantidas.
+}{%
+  \alert{Consulta 2: Livros Baratos a partir de 2019}\par
+  \[ R_2 \leftarrow \boldsymbol{\sigma_{\text{preco} < 60.00 \,\land\, \text{ano} \ge 2019}(\text{LIVRO})} \]
+  \scriptsize
+  \centering
+  \begin{tabular}{c l c c r}
+    \toprule
+    \textbf{isbn} & \textbf{titulo} & \textbf{cat.} & \textbf{ano} & \textbf{preco} \\
+    \midrule
+    L04 & Dom Casmurro & Lit. & 2019 & 42.00 \\
+    L06 & Quimica Org. & Exat. & 2021 & 55.00 \\
+    \bottomrule
+  \end{tabular}
+  \par \vspace{1mm} \tiny L02 foi descartado pois ano ($2018 < 2019$), mesmo com preço R\$ 35,00.
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Propriedades Algébricas da Seleção},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{1. Comutatividade da Seleção}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item A ordem na qual condições sucessivas são avaliadas não altera o resultado final:
+      \[ \boldsymbol{\sigma_{p_1}(\sigma_{p_2}(R)) \equiv \sigma_{p_2}(\sigma_{p_1}(R))} \]
+    \item Exemplo: Filtrar por categoria e depois por preço produz o mesmo conjunto que filtrar primeiro por preço e depois por categoria.
+  \end{itemize}
+}{%
+  \alert{2. Fatoração e Cascatas de Seleção}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Uma condição conjuntiva pode ser decomposta em uma cascata de seleções individuais:
+      \[ \boldsymbol{\sigma_{p_1 \land p_2 \land \dots \land p_k}(R) \equiv \sigma_{p_1}(\sigma_{p_2}(\dots(\sigma_{p_k}(R))\dots))} \]
+    \item \textbf{Impacto no Otimizador:} Permite ao SGBD avaliar primeiro o predicado mais seletivo (que elimina mais linhas rapidamente).
+  \end{itemize}
+}
