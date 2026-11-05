@@ -1,0 +1,130 @@
+% !TeX program = pdflatex
+\documentclass[aspectratio=169,t]{beamer}
+
+% Idioma e Codificacao
+\usepackage[brazilian]{babel}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning,calc,shapes.multipart}
+
+% Carrega o Tema Modelo dos Scouts (Widescreen 16:9, Nunito Sans)
+\usetheme{scouts}
+
+% Redefine as Margens para Maximizar a Area Util de Escrita (140mm de largura util em 16:9)
+\setbeamersize{text margin left=10mm, text margin right=10mm}
+
+% Ajuste de Altura e Posicao do Titulo do Slide: Reduz Espacamento com o Topo (Cabecalho)
+\setbeamerfont{frametitle}{series=\bfseries,size=\large}
+\setbeamertemplate{frametitle}{%
+  \vspace*{-2.5mm}% Reduz o espacamento entre o cabecalho da secao e o titulo do frame
+  \begin{beamercolorbox}[wd=\textwidth,sep=0mm,left]{title}%
+    \parbox[t]{\textwidth}{%
+      \usebeamerfont{frametitle}\insertframetitle\strut%
+    }%
+  \end{beamercolorbox}%
+  \vspace*{1.5mm}%
+}
+
+% Ajuste da Fonte do Comando \alert para Manter Hierarquia Visual Subordinada ao Titulo
+\setbeamerfont{alerted text}{series=\bfseries,size=\footnotesize}
+
+% Ajuste do Rodape para Liberar Mais Espaco Vertical
+\setbeamertemplate{footline}{%
+  \begin{beamercolorbox}[wd=\paperwidth,dp=1mm,ht=2.5mm,leftskip=10mm,rightskip=10mm]{footline}%
+    \usebeamerfont{title in head/foot}\hfill%
+  \end{beamercolorbox}%
+}
+
+% Ajuste Global de Fontes Beamer para Evitar Estouro de Listas Aninhadas
+\setbeamerfont{itemize/enumerate body}{size=\scriptsize}
+\setbeamerfont{itemize/enumerate subbody}{size=\scriptsize}
+\setbeamerfont{itemize/enumerate subsubbody}{size=\tiny}
+\setbeamerfont{item}{size=\scriptsize}
+\setbeamerfont{subitem}{size=\tiny}
+
+% Definicao de linguagem JavaScript/JSON/MongoSH para o listings
+\lstdefinelanguage{mongosh}{
+  keywords={use, show, db, dbs, collections, aggregate, match, group, project, sort, limit, skip, unwind, lookup, facet, bucket, count, sum, avg, min, max, push, addToSet, first, last, round, concat, toString, cond, year, month, dayOfMonth, size, ObjectId, ISODate, true, false, null},
+  sensitive=true,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]",
+  morestring=[b]'
+}
+
+% Configuracao para Codigo-Fonte (MongoSH / Python / JSON)
+\lstset{
+    basicstyle=\fontsize{5.2pt}{6.3pt}\selectfont\ttfamily,
+    keywordstyle=\bfseries\color{ScoutNavy},
+    stringstyle=\color{ScoutGreen},
+    commentstyle=\itshape\color{gray},
+    backgroundcolor=\color{black!3},
+    frame=single,
+    rulecolor=\color{black!15},
+    breaklines=true,
+    breakatwhitespace=true,
+    showstringspaces=false,
+    tabsize=2,
+    aboveskip=2pt,
+    belowskip=1pt,
+    literate={á}{{\'a}}1 {ã}{{\~a}}1 {â}{{\^a}}1 {à}{{\`a}}1
+             {é}{{\'e}}1 {ê}{{\^e}}1 {í}{{\'i}}1 {ó}{{\'o}}1
+             {õ}{{\~o}}1 {ô}{{\^o}}1 {ú}{{\'u}}1 {ç}{{\c{c}}}1
+             {Á}{{\'A}}1 {Ã}{{\~A}}1 {É}{{\'E}}1 {Í}{{\'I}}1
+             {Ó}{{\'O}}1 {Õ}{{\~O}}1 {Ú}{{\'U}}1 {Ç}{{\c{C}}}1
+}
+
+% Metadados Institucionais
+\author{Prof. Me. Reginaldo Fernandes}
+\institute{Instituto Federal do Ceará -- Campus Tauá \\ Tecnologia em Análise e Desenvolvimento de Sistemas}
+\title{Bancos de Dados Não-Relacionais}
+\subtitle{Aula 08: MongoDB Aggregation Framework -- Pipelines Analíticos e Business Intelligence}
+\date{10 de Novembro de 2026}
+
+\begin{document}
+\shorthandoff{"}
+
+% ------------------------------------------------------------------------------
+% Capa da Apresentacao
+% ------------------------------------------------------------------------------
+\changecolours[inverse]{ScoutGreen}
+\frame[plain]{\titlepage}
+
+% ------------------------------------------------------------------------------
+% Sumario Executivo da Aula
+% ------------------------------------------------------------------------------
+\changecolours{ScoutGreen}
+\begin{frame}{Agenda do Encontro}
+  \vspace{0.3cm}
+  \tableofcontents
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% Modulos da Aula
+% ------------------------------------------------------------------------------
+\input{secao1_introducao_paradigma_pipeline}
+\input{secao2_estagios_basicos_match_project_sort}
+\input{secao3_agrupamento_acumuladores_group}
+\input{secao4_desconstrucao_juncao_unwind_lookup}
+\input{secao5_estagios_avancados_facet_otimizacao}
+
+% ------------------------------------------------------------------------------
+% Encerramento
+% ------------------------------------------------------------------------------
+\changecolours[inverse]{ScoutGreen}
+\begin{frame}[plain]
+  \vspace{2cm}
+  \centering
+  {\Huge \textbf{Dúvidas \& Prática em Laboratório}}\par
+  \vspace{0.8cm}
+  {\large IFCE Campus Tauá -- ADS16 (Modelo Orientado a Documentos)}\par
+  \vspace{0.3cm}
+  {\normalsize Aggregation Framework: Pipelines Analíticos, Acumuladores e Otimização}
+\end{frame}
+
+\end{document}

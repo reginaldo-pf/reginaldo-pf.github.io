@@ -1,0 +1,113 @@
+% !TeX root = main.tex
+\changecolours{ScoutTeal}
+\section[Revisão MongoDB: CRUD e ESR]{Revisão do MongoDB: Modelagem, CRUD Atômico e Índices ESR}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Decisões de Modelagem: Incorporação vs Referenciamento}
+  \vspace{0.1cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \alert{Incorporação (\textit{Embedding})}\par
+      \footnotesize
+      \begin{itemize}
+        \item Cardinalidades \textbf{1:1} e \textbf{1:Poucos} (\textit{1:Few}).
+        \item Leitura atômica de documento único sem junções em disco.
+        \item Limite máximo físico de 16 MB por documento BSON.
+        \item Indicado para dados consultados em conjunto (ex.: itens de pedido).
+      \end{itemize}
+    \end{column}
+    
+    \begin{column}{0.48\textwidth}
+      \alert{Referenciamento (\textit{Referencing})}\par
+      \footnotesize
+      \begin{itemize}
+        \item Cardinalidades \textbf{1:Muitos} e \textbf{1:Infinitos} (\textit{1:Squillions}).
+        \item Evita replicação excessiva e anomalias de atualização.
+        \item Uso do \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|ObjectId| de 12 bytes como chave primária.
+        \item Indicado para entidades grandes e independentes (ex.: clientes e catálogo).
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Operadores de Atualização Atômica e Filtros em Arrays}
+  \vspace{0.1cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \alert{Atomicidade e Operadores de Modificação}\par
+      \footnotesize
+      \begin{itemize}
+        \item O MongoDB garante atomicidade no nível de documento único sem transações pesadas distribuídas.
+        \item \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$set|: altera campos específicos pontualmente.
+        \item \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$inc|: incremento atômico de contadores ou saldos.
+        \item \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$elemMatch|: evita falsos positivos em arrays de subdocumentos.
+      \end{itemize}
+    \end{column}
+    
+    \begin{column}{0.50\textwidth}
+      \alert{Demonstração no MongoSH}\par
+      \vspace{0.05cm}
+      \begin{lstlisting}[language=mongosh]
+// Filtro rigoroso com $elemMatch no array
+db.pedidos.find({
+  itens: {
+    $elemMatch: {
+      preco_unitario: { $gte: 100.0 },
+      quantidade: { $gte: 2 }
+    }
+  }
+});
+
+// Atualizacao atomica de estoque com $inc
+db.produtos.updateOne(
+  { sku: "SKU-ELE-001" },
+  { $inc: { estoque: -1 } }
+);
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{A Regra de Ouro ESR (\textit{Equality, Sort, Range})}
+  \vspace{0.1cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.50\textwidth}
+      \alert{Ordem Estrita dos Campos no Índice Composto}\par
+      \footnotesize
+      \begin{enumerate}
+        \item \textbf{E (Equality):} Predicados de igualdade exata (ex.: \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|status: "entregue"|).
+        \item \textbf{S (Sort):} Campos de ordenação (\lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|data_pedido: -1|). Elimina ordenação em RAM (\lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|SORT|).
+        \item \textbf{R (Range):} Faixas de valores (\lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$gte|, \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$lt|, \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$in|).
+      \end{enumerate}
+      
+      \vspace{0.15cm}
+      \alert{Diagnóstico com \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|explain()|}\par
+      \footnotesize
+      \begin{itemize}
+        \item Proporção ideal: $\frac{\text{totalDocsExamined}}{\text{nReturned}} \to 1$.
+        \item Elimina varredura total (\lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|COLLSCAN|).
+      \end{itemize}
+    \end{column}
+    
+    \begin{column}{0.48\textwidth}
+      \alert{Pipeline ESR Otimizado}\par
+      \vspace{0.05cm}
+      \begin{lstlisting}[language=mongosh]
+// 1. Criacao do indice composto ESR
+db.pedidos.createIndex({
+  status: 1,        // Equality
+  data_pedido: -1,  // Sort
+  valor_total: 1    // Range
+});
+
+// 2. Consulta otimizada aproveitando indice
+db.pedidos.find({
+  status: "entregue",
+  valor_total: { $gte: 300.0 }
+}).sort({ data_pedido: -1 });
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}

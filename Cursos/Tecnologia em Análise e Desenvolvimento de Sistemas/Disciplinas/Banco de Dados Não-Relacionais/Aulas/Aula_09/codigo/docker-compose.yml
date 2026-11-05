@@ -1,0 +1,47 @@
+services:
+  redis:
+    image: redis:7.4-alpine
+    container_name: shopgrids-redis-aula09
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data_aula09:/data
+
+  redis-insight:
+    image: redis/redis-insight:latest
+    container_name: shopgrids-insight-aula09
+    restart: always
+    ports:
+      - "5540:5540"
+    depends_on:
+      - redis
+
+  mongodb:
+    image: mongo:8.0
+    container_name: shopgrids-mongodb-aula09
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: ecommerce_shopgrids
+    volumes:
+      - mongo_data_aula09:/data/db
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: shopgrids-express-aula09
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: "true"
+      ME_CONFIG_BASICAUTH: "false"
+    depends_on:
+      - mongodb
+
+volumes:
+  redis_data_aula09:
+  mongo_data_aula09:

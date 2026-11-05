@@ -1,0 +1,71 @@
+% !TeX root = main.tex
+\changecolours{ScoutRed}
+\section[Revisão Redis: Estruturas e TTL]{Revisão do Redis: Estruturas de Dados, Caching e Filas}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{As Cinco Estruturas Nativas do Redis}
+  \vspace{0.1cm}
+  \alert{Quadro Sinóptico de Estruturas em Memória RAM}\par
+  \vspace{0.3cm}
+  \scriptsize
+  \begin{tabular}{@{}llp{7.8cm}@{}}
+    \toprule
+    \textbf{Estrutura} & \textbf{Comandos Principais} & \textbf{Cenário de Aplicação Típico} \\
+    \midrule
+    \textbf{Strings}     & \lstinline[language=rediscli, basicstyle=\scriptsize\ttfamily]|SET, GET, INCR, MGET|       & Cache simples, tokens JWT de sessão, contadores atômicos \\
+    \textbf{Hashes}      & \lstinline[language=rediscli, basicstyle=\scriptsize\ttfamily]|HSET, HGET, HGETALL|       & Objetos e entidades (ex.: carrinho, perfil de usuário) \\
+    \textbf{Lists}       & \lstinline[language=rediscli, basicstyle=\scriptsize\ttfamily]|LPUSH, RPOP, BRPOP|        & Filas assíncronas FIFO, desacoplamento produtor/consumidor \\
+    \textbf{Sets}        & \lstinline[language=rediscli, basicstyle=\scriptsize\ttfamily]|SADD, SMEMBERS, SINTER|    & Tags exclusivas, relacionamentos e conjuntos matemáticos \\
+    \textbf{Sorted Sets} & \lstinline[language=rediscli, basicstyle=\scriptsize\ttfamily]|ZADD, ZRANGE, ZREVRANGE|   & Rankings analíticos (\textit{leaderboards}), pontuações por score \\
+    \bottomrule
+  \end{tabular}
+  
+  \vspace{0.35cm}
+  \alert{Complexidade Assintótica e Performance}\par
+  \footnotesize
+  O acesso por chave no Redis opera com complexidade $\mathcal{O}(1)$ em memória RAM, viabilizando latências de leitura e escrita inferiores a $0.1\text{ ms}$.
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Estratégia de Expiração (TTL) e Persistência}
+  \vspace{0.1cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \alert{Mecanismos de TTL e Expiração}\par
+      \footnotesize
+      \begin{itemize}
+        \item \lstinline[language=rediscli, basicstyle=\footnotesize\ttfamily]|EXPIRE chave seg|: define tempo de validade do dado.
+        \item \lstinline[language=rediscli, basicstyle=\footnotesize\ttfamily]|TTL chave|: retorna segundos restantes ($-2$ se expirou, $-1$ se sem TTL).
+        \item \textbf{Gestão de RAM:} Evita retenção indevida de chaves voláteis.
+      \end{itemize}
+      
+      \vspace{0.15cm}
+      \alert{Persistência: RDB vs AOF}\par
+      \begin{itemize}
+        \item \textbf{RDB (Snapshot):} Imagens compactas em intervalos configurados.
+        \item \textbf{AOF (Append Only):} Registro cronológico para durabilidade estrita.
+      \end{itemize}
+    \end{column}
+    
+    \begin{column}{0.50\textwidth}
+      \alert{Demonstração Prática no redis-cli}\par
+      \vspace{0.05cm}
+      \begin{lstlisting}[language=rediscli]
+# Gravacao com expiracao atomica de 60s
+SET produto:SKU-001 "Notebook" EX 60
+
+# Consulta de tempo restante de vida
+TTL produto:SKU-001
+
+# Carrinho em Hash com incremento atomico
+HSET carrinho:user_12 sku "SKU-001"
+HINCRBY carrinho:user_12 quantidade 1
+HGETALL carrinho:user_12
+
+# Fila assincrona FIFO (Produtor / Consumidor)
+LPUSH fila:checkout "PED-2026-001"
+BRPOP fila:checkout 0
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}

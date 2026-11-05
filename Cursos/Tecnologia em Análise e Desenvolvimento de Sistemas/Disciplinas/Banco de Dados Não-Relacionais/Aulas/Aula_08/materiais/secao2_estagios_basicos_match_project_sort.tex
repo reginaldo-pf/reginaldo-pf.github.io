@@ -1,0 +1,112 @@
+% !TeX root = main.tex
+\changecolours{ScoutNavy}
+\shorthandoff{"}
+\section[Estágios Fundamentais: Filtragem e Projeção]{Estágios Fundamentais: Filtragem, Projeção e Ordenação}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{O Estágio \texttt{\$match}: Filtragem Precoce e Índices}
+  \vspace{0.1cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \alert{Princípios de Execução}\par
+      \footnotesize
+      \begin{itemize}
+        \item Recebe os mesmos predicados de busca utilizados no método \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|find()|.
+        \item \textbf{Aproveitamento de Índices:} Quando colocado na primeira posição do pipeline, utiliza índices $B\text{-Tree}$ da coleção.
+        \item \textbf{Regra de Performance:} Reduza o volume no Estágio 1 para poupar RAM e CPU de todos os estágios seguintes.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{Exemplo no E-commerce ShopGrids}\par
+      \vspace{0.05cm}
+      \scriptsize
+      Selecionar pedidos entregues $\ge$ R\$ 200,00:
+      \vspace{0.05cm}
+      \begin{lstlisting}[language=mongosh, basicstyle=\scriptsize\ttfamily]
+db.pedidos.aggregate([
+  {
+    $match: {
+      status: "entregue",
+      valor_total: { $gte: 200.0 }
+    }
+  }
+])
+      \end{lstlisting}
+      \vspace{0.05cm}
+      \textbf{Plano de Execução:} Com índice \lstinline[language=mongosh, basicstyle=\scriptsize\ttfamily]|{ status: 1, valor_total: 1 }|, o motor realiza \texttt{IXSCAN} sem ler a coleção inteira.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Projeção de Documentos: \texttt{\$project} versus \texttt{\$addFields}}
+  \vspace{0.1cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.40\textwidth}
+      \alert{Quando Usar Cada Estágio?}\par
+      \footnotesize
+      \begin{itemize}
+        \item \textbf{\lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$project| (Reestruturação Completa):} Define estritamente quais campos seguem no fluxo (1 = inclui, 0 = remove). O campo \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|_id| é mantido por padrão e requer \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|_id: 0| para ser suprimido.
+        \item \textbf{\lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$addFields| (Enriquecimento Suave):} Mantém todos os campos existentes e injeta apenas atributos calculados, evitando reescrever a projeção inteira.
+        \item \textbf{Performance:} Use \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$project| precoce para descartar dados pesados da memória RAM.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.55\textwidth}
+      \alert{Demonstração de Sintaxe}\par
+      \vspace{0.05cm}
+      \begin{lstlisting}[language=mongosh, basicstyle=\scriptsize\ttfamily]
+// 1. $project: redefine a saida
+{ $project: { _id: 0, pedido: 1, total: 1 } }
+
+// 2. $addFields: adiciona calculo sem perder campos
+{
+  $addFields: {
+    margem_pct: {
+      $multiply: [
+        { $divide: ["$lucro_bruto", "$valor_total"] },
+        100
+      ]
+    }
+  }
+}
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Ordenação e Paginação: \texttt{\$sort}, \texttt{\$limit} e \texttt{\$skip}}
+  \vspace{0.1cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \alert{Controle de Fluxo e Limite de RAM}\par
+      \footnotesize
+      \begin{itemize}
+        \item \textbf{\lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$sort|:} Ordena documentos (1 para ascendente, -1 para descendente).
+        \item \textbf{\lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$limit| e \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$skip|:} Realizam a paginação determinística dos registros.
+        \item \textbf{Gargalo Fatal de Memória RAM:} Sem índice, o \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$sort| aloca buffer em RAM limitado estritamente a \textbf{100 MB}.
+        \item \textbf{Escrita Temporária:} Para relatórios pesados em lote (batch), utilize \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|{ allowDiskUse: true }|.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{Pipeline de Paginação no MongoSH}\par
+      \vspace{0.05cm}
+      \begin{lstlisting}[language=mongosh, basicstyle=\scriptsize\ttfamily]
+db.pedidos.aggregate([
+  { $match: { status: "entregue" } },
+  { $sort: { data_pedido: -1 } },
+  { $skip: 10 },
+  { $limit: 5 },
+  {
+    $project: {
+      _id: 0,
+      numero_pedido: 1,
+      cliente_nome: 1,
+      valor_total: 1
+    }
+  }
+])
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}

@@ -1,0 +1,125 @@
+% !TeX root = main.tex
+\changecolours{ScoutGreen}
+\shorthandoff{"}
+\section[Paradigma de Processamento em Pipeline]{Paradigma de Processamento em Pipeline (Dataflow)}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Além do CRUD: O Gargalo da Análise de Dados no Cliente}
+  \vspace{0.1cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \alert{Limitações do Método \texttt{find()} Convencional}\par
+      \footnotesize
+      \begin{itemize}
+        \item O comando \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|find()| realiza buscas pontuais e filtros simples.
+        \item \textbf{Incapacidade Analítica:} Não calcula métricas agregadas (somas, médias, desvios) nativamente no servidor.
+        \item \textbf{Processamento no Cliente:} Para calcular o faturamento mensal, a aplicação precisa baixar $10.000$ pedidos inteiros.
+        \item \textbf{Impacto:} Saturação da rede e esgotamento da memória RAM dos microsserviços.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{A Solução: Aggregation Framework}\par
+      \footnotesize
+      \begin{itemize}
+        \item \textbf{Processamento no Servidor:} Execução nativa em C++ no motor WiredTiger, junto aos dados.
+        \item \textbf{Arquitetura Dataflow:} Esteira ordenada de estágios onde cada saída é a entrada do próximo estágio.
+        \item \textbf{Economia de Rede:} O servidor processa gigabytes de histórico e entrega ao cliente apenas kilobytes sintetizados.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Conceito de Aggregation Pipeline: Fluxo Sequencial}
+  \vspace{-0.15cm}
+  \centering
+  \begin{tikzpicture}[
+    scale=0.78, transform shape,
+    stagebox/.style={
+      rectangle, draw=ScoutNavy, fill=ScoutNavy!10, rounded corners=3pt,
+      line width=0.8pt, font=\scriptsize\bfseries, align=center, inner sep=3.5pt
+    },
+    filterbox/.style={
+      rectangle, draw=ScoutGreen!85!black, fill=ScoutGreen!15, rounded corners=3pt,
+      line width=0.8pt, font=\scriptsize\bfseries, align=center, inner sep=3.5pt
+    },
+    groupbox/.style={
+      rectangle, draw=ScoutTeal!85!black, fill=ScoutTeal!20, rounded corners=3pt,
+      line width=0.8pt, font=\scriptsize\bfseries, align=center, inner sep=3.5pt
+    },
+    sortbox/.style={
+      rectangle, draw=ScoutPurple!85!black, fill=ScoutPurple!15, rounded corners=3pt,
+      line width=0.8pt, font=\scriptsize\bfseries, align=center, inner sep=3.5pt
+    },
+    flowarrow/.style={->, >=stealth, line width=1.1pt, ScoutNavy!80},
+    metaflow/.style={font=\tiny\bfseries\color{ScoutNavy!90}, align=center}
+  ]
+    \node[stagebox] (n0) at (0, 0) {Coleção Física\\\textbf{\texttt{pedidos}}\\\tiny 10.000 docs};
+    \node[filterbox] (n1) at (3.4, 0) {Estágio 1\\\textbf{\texttt{\$match}}\\\tiny status: entregue};
+    \node[groupbox] (n2) at (6.8, 0) {Estágio 2\\\textbf{\texttt{\$group}}\\\tiny agrupa por mês};
+    \node[sortbox] (n3) at (10.2, 0) {Estágio 3\\\textbf{\texttt{\$sort}}\\\tiny ordem temporal};
+    \node[stagebox, fill=ScoutGreen!25] (n4) at (13.5, 0) {Saída Final\\\textbf{Relatório}\\\tiny 12 registros};
+
+    \draw[flowarrow] (n0) -- node[above=1pt, metaflow] {Stream} (n1);
+    \draw[flowarrow] (n1) -- node[above=1pt, metaflow] {7.500 docs} (n2);
+    \draw[flowarrow] (n2) -- node[above=1pt, metaflow] {12 meses} (n3);
+    \draw[flowarrow] (n3) -- node[above=1pt, metaflow] {Final} (n4);
+  \end{tikzpicture}
+
+  \vspace{0.15cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \alert{Princípio da Imutabilidade}\par
+      \footnotesize
+      \begin{itemize}
+        \item Os documentos na coleção física original permanecem totalmente inalterados.
+        \item Cada estágio gera documentos efêmeros intermediários na memória.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{Processamento em Fluxo (\textit{Streaming})}\par
+      \footnotesize
+      \begin{itemize}
+        \item Documentos fluem continuamente de um estágio para o próximo.
+        \item Descarte precoce de campos e documentos libera memória RAM de imediato.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Equivalência Conceitual: SQL Relacional vs MongoDB Pipeline}
+  \vspace{0.05cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.40\textwidth}
+      \alert{Mapeamento de Operações}\par
+      \vspace{0.4cm}
+      \scriptsize
+      \begin{tabular}{@{}ll@{}}
+        \toprule
+        \textbf{SQL Relacional} & \textbf{Pipeline MongoDB} \\
+        \midrule
+        \textbf{WHERE}    & \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$match| \\
+        \textbf{SELECT}   & \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$project| \\
+        \textbf{GROUP BY} & \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$group| \\
+        \textbf{HAVING}   & \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$match| \textnormal{\textit{(pós)}} \\
+        \textbf{ORDER BY} & \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$sort| \\
+        \textbf{LIMIT}    & \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$limit| \\
+        \textbf{OFFSET}   & \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$skip| \\
+        \textbf{JOIN}     & \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$lookup| \\
+        \textbf{UNNEST}   & \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$unwind| \\
+        \bottomrule
+      \end{tabular}
+    \end{column}%
+    \hfill%
+    \begin{column}{0.56\textwidth}
+      \alert{Diferenças Estruturais de Execução}\par
+      \footnotesize
+      \begin{itemize}
+        \item \textbf{Ordem Livre de Estágios:} Diferente do SQL clássico (\texttt{FROM} $\to$ \texttt{WHERE} $\to$ \texttt{GROUP}), no MongoDB encadeamos estágios conforme o pipeline exigir.
+        \item \textbf{Dados Aninhados Nativos:} Processa subdocumentos e arrays sem criar junções custosas em tabelas intermediárias.
+        \item \textbf{Projeções Polimórficas:} Estágios como \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$project| e \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$addFields| remodelam documentos para formatos BSON customizados.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}

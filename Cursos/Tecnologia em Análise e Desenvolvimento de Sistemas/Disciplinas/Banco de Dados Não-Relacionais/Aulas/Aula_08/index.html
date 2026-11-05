@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 08: MongoDB Aggregation Framework | BDNR - IFCE Tauá</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome & Prism.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- ========================================== -->
+  <!-- CABEÇALHO INSTITUCIONAL                    -->
+  <!-- ========================================== -->
+  <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 shadow-sm backdrop-blur-md bg-white/90 dark:bg-slate-800/90">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="../../index.html" class="flex items-center space-x-3 group">
+          <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+            <i class="fa-solid fa-chart-pie text-lg"></i>
+          </div>
+          <div>
+            <span class="text-xs uppercase tracking-wider font-bold text-emerald-600 dark:text-emerald-400 block leading-tight">IFCE Campus Tauá • ADS</span>
+            <span class="text-base font-bold text-slate-900 dark:text-white leading-tight">Banco de Dados Não-Relacionais — Aula 08</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <a href="../Aula_07/index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 transition-colors flex items-center space-x-1.5" title="Aula Anterior">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span class="hidden sm:inline">Aula 07</span>
+        </a>
+        <a href="../Aula_09/index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-200 transition-colors flex items-center space-x-1.5" title="Próxima Aula">
+          <span class="hidden sm:inline">Aula 09</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+        <a href="../../index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center space-x-1.5">
+          <i class="fa-solid fa-house"></i>
+          <span class="hidden sm:inline">Portal da Disciplina</span>
+        </a>
+        <button id="theme-toggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-emerald-600 transition-colors" title="Alternar Modo Escuro/Claro">
+          <i class="fa-solid fa-moon dark:hidden"></i>
+          <i class="fa-solid fa-sun hidden dark:inline"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- BANNER DA AULA                             -->
+  <!-- ========================================== -->
+  <section class="bg-gradient-to-r from-emerald-950 via-slate-900 to-slate-950 text-white py-10 border-b border-emerald-950/40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold mb-3">
+        <i class="fa-solid fa-layer-group"></i>
+        <span>Unidade II (N1) — Framework de Agregação e Relatórios de Inteligência de Negócio</span>
+      </div>
+      <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
+        MongoDB Aggregation Framework: <span class="text-emerald-400">Pipelines Analíticos e Business Intelligence</span>
+      </h1>
+      <p class="text-slate-300 text-sm sm:text-base mt-2 max-w-3xl leading-relaxed">
+        Domínio da esteira funcional de dados com <code class="text-emerald-300 font-mono">$match</code>, <code class="text-emerald-300 font-mono">$group</code>, <code class="text-emerald-300 font-mono">$project</code>, <code class="text-emerald-300 font-mono">$unwind</code>, <code class="text-emerald-300 font-mono">$lookup</code> e <code class="text-emerald-300 font-mono">$facet</code>; otimização de memória RAM e relatórios de tomada de decisão.
+      </p>
+
+      <div class="flex flex-wrap items-center justify-between gap-4 mt-6 pt-5 border-t border-slate-800">
+        <div class="flex flex-wrap gap-4 text-xs text-slate-300">
+          <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+            <i class="fa-regular fa-calendar text-emerald-400"></i>
+            <span>10/11/2026 (Terça-feira)</span>
+          </div>
+          <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+            <i class="fa-regular fa-clock text-emerald-400"></i>
+            <span>2 h/a (120 min)</span>
+          </div>
+          <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+            <i class="fa-solid fa-chalkboard-user text-emerald-400"></i>
+            <span>Prof. Me. Reginaldo Fernandes</span>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <a href="materiais/main.pdf" download class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow transition-all">
+            <i class="fa-solid fa-file-pdf"></i>
+            <span>Baixar Slides PDF</span>
+          </a>
+          <a href="codigo/povoar_dados_aula08.py" download class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold transition-all">
+            <i class="fa-solid fa-code"></i>
+            <span>Scripts Python</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- NAVEGAÇÃO DE ABAS                          -->
+  <!-- ========================================== -->
+  <div class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-16 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex space-x-4 overflow-x-auto py-2 text-sm font-semibold scrollbar-none" id="tabs">
+        <button onclick="switchTab('visao-geral')" class="tab-btn px-3 py-1.5 rounded-lg transition-colors text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50" data-tab="visao-geral">
+          <i class="fa-solid fa-compass mr-1.5"></i>Visão Geral
+        </button>
+        <button onclick="switchTab('teoria-sql')" class="tab-btn px-3 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400 hover:text-emerald-600" data-tab="teoria-sql">
+          <i class="fa-solid fa-calculator mr-1.5"></i>Paradigma & SQL vs Pipeline
+        </button>
+        <button onclick="switchTab('estagios-codigo')" class="tab-btn px-3 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400 hover:text-emerald-600" data-tab="estagios-codigo">
+          <i class="fa-solid fa-terminal mr-1.5"></i>Pipelines na Prática
+        </button>
+        <button onclick="switchTab('benchmark')" class="tab-btn px-3 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400 hover:text-emerald-600" data-tab="benchmark">
+          <i class="fa-solid fa-chart-line mr-1.5"></i>Benchmark & Otimização
+        </button>
+        <button onclick="switchTab('laboratorio')" class="tab-btn px-3 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400 hover:text-emerald-600" data-tab="laboratorio">
+          <i class="fa-solid fa-flask mr-1.5"></i>Laboratório & Exercícios
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- CONTEÚDO PRINCIPAL (ABAS)                  -->
+  <!-- ========================================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
+
+    <!-- ABA 1: VISÃO GERAL -->
+    <div id="visao-geral" class="tab-content space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl mb-4">
+            <i class="fa-solid fa-water"></i>
+          </div>
+          <h3 class="text-base font-bold text-slate-900 dark:text-white">Arquitetura Dataflow</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+            Processamento em fluxo contínuo onde documentos são progressivamente filtrados, desmembrados e agrupados sem alterar o banco físico.
+          </p>
+        </div>
+
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div class="w-12 h-12 rounded-xl bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl mb-4">
+            <i class="fa-solid fa-boxes-stacked"></i>
+          </div>
+          <h3 class="text-base font-bold text-slate-900 dark:text-white">Acumuladores Analíticos</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+            Cálculo nativo de métricas estatísticas (<code class="text-xs">$sum</code>, <code class="text-xs">$avg</code>, <code class="text-xs">$min</code>, <code class="text-xs">$max</code>) e coleções acumuladas com <code class="text-xs">$push</code> e <code class="text-xs">$addToSet</code>.
+          </p>
+        </div>
+
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl mb-4">
+            <i class="fa-solid fa-bolt"></i>
+          </div>
+          <h3 class="text-base font-bold text-slate-900 dark:text-white">Performance & 100 MB RAM</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+            Aproveitamento de índices B-Tree no <code class="text-xs">$match</code> inicial, early projection e uso controlado da opção <code class="text-xs">allowDiskUse: true</code>.
+          </p>
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3">Cronograma de Atividades da Aula (120 Minutos)</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
+                <th class="py-2.5 px-3 font-semibold">Bloco</th>
+                <th class="py-2.5 px-3 font-semibold">Tempo</th>
+                <th class="py-2.5 px-3 font-semibold">Conteúdo Programático</th>
+                <th class="py-2.5 px-3 font-semibold">Metodologia</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50">
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-emerald-600 dark:text-emerald-400">Bloco 1</td>
+                <td class="py-2.5 px-3 text-slate-500">00 - 25 min</td>
+                <td class="py-2.5 px-3 font-medium">Do SQL ao Pipeline: Limitações do find() e Arquitetura Dataflow</td>
+                <td class="py-2.5 px-3 text-slate-600 dark:text-slate-400">Exposição dialogada com slides</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-emerald-600 dark:text-emerald-400">Bloco 2</td>
+                <td class="py-2.5 px-3 text-slate-500">25 - 45 min</td>
+                <td class="py-2.5 px-3 font-medium">Estágios Fundamentais: $match precoce, $project, $addFields e $sort</td>
+                <td class="py-2.5 px-3 text-slate-600 dark:text-slate-400">Demonstração no shell mongosh</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-emerald-600 dark:text-emerald-400">Bloco 3</td>
+                <td class="py-2.5 px-3 text-slate-500">45 - 70 min</td>
+                <td class="py-2.5 px-3 font-medium">Agrupamento com $group e Acumuladores ($sum, $avg, $push, $addToSet)</td>
+                <td class="py-2.5 px-3 text-slate-600 dark:text-slate-400">Prática pareada com PyMongo</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-emerald-600 dark:text-emerald-400">Bloco 4</td>
+                <td class="py-2.5 px-3 text-slate-500">70 - 95 min</td>
+                <td class="py-2.5 px-3 font-medium">Desconstrução de Arrays ($unwind) e Junções Externas ($lookup)</td>
+                <td class="py-2.5 px-3 text-slate-600 dark:text-slate-400">Laboratório guiado no Compass</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-emerald-600 dark:text-emerald-400">Bloco 5</td>
+                <td class="py-2.5 px-3 text-slate-500">95 - 120 min</td>
+                <td class="py-2.5 px-3 font-medium">Dashboards com $facet, Limite de 100 MB de RAM e Benchmark</td>
+                <td class="py-2.5 px-3 text-slate-600 dark:text-slate-400">Execução de testes práticos</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA 2: TEORIA E MAPEAMENTO SQL -->
+    <div id="teoria-sql" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Tabela Comparativa: SQL Relacional vs MongoDB Aggregation</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-700/50">
+                <th class="py-3 px-4 font-semibold">Cláusula SQL Tradicional</th>
+                <th class="py-3 px-4 font-semibold">Estágio do MongoDB</th>
+                <th class="py-3 px-4 font-semibold">Comportamento e Impacto no Banco</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50">
+              <tr>
+                <td class="py-3 px-4 font-mono text-emerald-600 dark:text-emerald-400">WHERE condicao</td>
+                <td class="py-3 px-4 font-mono font-bold">$match</td>
+                <td class="py-3 px-4 text-slate-600 dark:text-slate-300">Filtra tuplas antes de agregar; aproveita índices B-Tree quando no topo do pipeline.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-mono text-emerald-600 dark:text-emerald-400">SELECT a, b + c AS x</td>
+                <td class="py-3 px-4 font-mono font-bold">$project / $addFields</td>
+                <td class="py-3 px-4 text-slate-600 dark:text-slate-300">Modifica as colunas exibidas, descarta chaves ou adiciona campos calculados.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-mono text-emerald-600 dark:text-emerald-400">GROUP BY chave</td>
+                <td class="py-3 px-4 font-mono font-bold">$group: { _id: "$campo" }</td>
+                <td class="py-3 px-4 text-slate-600 dark:text-slate-300">Sintetiza documentos com base na chave única ou composta informada no _id.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-mono text-emerald-600 dark:text-emerald-400">HAVING SUM(x) > 100</td>
+                <td class="py-3 px-4 font-mono font-bold">$match (pós-$group)</td>
+                <td class="py-3 px-4 text-slate-600 dark:text-slate-300">Filtra o resultado consolidado do agrupamento.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-mono text-emerald-600 dark:text-emerald-400">ORDER BY x DESC</td>
+                <td class="py-3 px-4 font-mono font-bold">$sort: { x: -1 }</td>
+                <td class="py-3 px-4 text-slate-600 dark:text-slate-300">Ordena os documentos. Requer cuidado com o limite de 100 MB se não for indexado.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-mono text-emerald-600 dark:text-emerald-400">LEFT JOIN tabela</td>
+                <td class="py-3 px-4 font-mono font-bold">$lookup</td>
+                <td class="py-3 px-4 text-slate-600 dark:text-slate-300">Realiza junção entre coleções, anexando os dados relacionados como um array.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4 font-mono text-emerald-600 dark:text-emerald-400">UNNEST / EXPLODE(arr)</td>
+                <td class="py-3 px-4 font-mono font-bold">$unwind: "$array"</td>
+                <td class="py-3 px-4 text-slate-600 dark:text-slate-300">Desmembra cada elemento do array em um documento independente no fluxo.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA 3: ESTÁGIOS E CÓDIGO -->
+    <div id="estagios-codigo" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">1. Faturamento Mensal e Ticket Médio (MongoSH)</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">Combinação encadeada de <code class="text-xs">$match</code>, <code class="text-xs">$group</code> com ano/mês, projeção formatada e ordenação cronológica.</p>
+        <pre><code class="language-javascript">db.pedidos.aggregate([
+  { $match: { status: "entregue" } },
+  {
+    $group: {
+      _id: {
+        ano: { $year: "$data_pedido" },
+        mes: { $month: "$data_pedido" }
+      },
+      faturamento_total: { $sum: "$valor_total" },
+      lucro_total: { $sum: "$lucro_bruto" },
+      ticket_medio: { $avg: "$valor_total" },
+      quantidade_pedidos: { $sum: 1 }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      periodo: {
+        $concat: [
+          { $toString: "$_id.ano" }, "-",
+          { $cond: [{ $lt: ["$_id.mes", 10] }, { $concat: ["0", { $toString: "$_id.mes" }] }, { $toString: "$_id.mes" }] }
+        ]
+      },
+      faturamento: { $round: ["$faturamento_total", 2] },
+      ticket_medio: { $round: ["$ticket_medio", 2] },
+      pedidos: "$quantidade_pedidos"
+    }
+  },
+  { $sort: { periodo: 1 } }
+]);</code></pre>
+      </div>
+
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">2. Desconstrução de Arrays com $unwind e Top Produtos (Python)</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">Uso do driver oficial PyMongo para desmembrar a lista de itens de pedidos e ranquear os produtos mais rentáveis.</p>
+        <pre><code class="language-python">from pymongo import MongoClient
+
+client = MongoClient("mongodb://localhost:27017")
+db = client["ecommerce_shopgrids"]
+
+pipeline = [
+    {"$match": {"status": "entregue"}},
+    {"$unwind": "$itens"},
+    {
+        "$group": {
+            "_id": "$itens.sku",
+            "produto": {"$first": "$itens.nome"},
+            "categoria": {"$first": "$itens.categoria"},
+            "unidades_vendidas": {"$sum": "$itens.quantidade"},
+            "receita_total": {"$sum": "$itens.subtotal"}
+        }
+    },
+    {"$sort": {"receita_total": -1}},
+    {"$limit": 5}
+]
+
+for prod in db.pedidos.aggregate(pipeline):
+    print(f"[{prod['_id']}] {prod['produto']:<30} | Qtd: {prod['unidades_vendidas']:>4} | Total: R$ {prod['receita_total']:>10.2f}")</code></pre>
+      </div>
+    </div>
+
+    <!-- ABA 4: BENCHMARK E OTIMIZAÇÃO -->
+    <div id="benchmark" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3">Resultado Empírico: Benchmark de Otimização no Aggregation Pipeline</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
+          O gráfico abaixo demonstra a medição realizada sobre 10.000 pedidos reais no e-commerce ShopGrids. A reordenação de estágios evitando o <code class="text-xs">$unwind</code> prematuro e posicionando o <code class="text-xs">$match</code> no índice B-Tree reduziu a latência em mais de 9 vezes.
+        </p>
+
+        <div class="flex justify-center p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700">
+          <img src="benchmark_aggregation_opt.png" alt="Benchmark de Performance do Aggregation Pipeline" class="max-w-full rounded-lg shadow-md">
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA 5: LABORATÓRIO E EXERCÍCIOS -->
+    <div id="laboratorio" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Desafios de Laboratório para os Estudantes</h2>
+        
+        <div class="space-y-4">
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <h3 class="text-sm font-bold text-emerald-600 dark:text-emerald-400">Desafio 1: Faturamento por Canal de Venda</h3>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">
+              Escreva um pipeline que agrupe pelo campo <code class="font-mono">canal</code> ('web', 'mobile', 'loja_fisica') e calcule faturamento total, ticket médio e volume de transações para pedidos entregues.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <h3 class="text-sm font-bold text-emerald-600 dark:text-emerald-400">Desafio 2: Ranking de Clientes VIP</h3>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">
+              Agrupe os pedidos pelo identificador do cliente e determine os 3 maiores compradores da loja ShopGrids em valor financeiro acumulado.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <h3 class="text-sm font-bold text-emerald-600 dark:text-emerald-400">Desafio 3: Junção com $lookup e Avaliações</h3>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">
+              Cruze a coleção de produtos com as avaliações de clientes, filtrando apenas itens com mais de 5 avaliações e nota média estritamente maior que 4.0.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- RODAPÉ INSTITUCIONAL                       -->
+  <!-- ========================================== -->
+  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 text-center text-xs text-slate-500 dark:text-slate-400 mt-auto">
+    <div class="max-w-7xl mx-auto px-4">
+      <p>IFCE Campus Tauá • Curso de Tecnologia em Análise e Desenvolvimento de Sistemas (ADS)</p>
+      <p class="mt-1">Disciplina: Banco de Dados Não-Relacionais (ADS16) • Prof. Me. Reginaldo Fernandes</p>
+    </div>
+  </footer>
+
+  <!-- Script para alternância de abas e modo escuro -->
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(tabId).classList.remove('hidden');
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('text-emerald-600', 'dark:text-emerald-400', 'bg-emerald-50', 'dark:bg-emerald-950/50');
+        btn.classList.add('text-slate-600', 'dark:text-slate-400');
+      });
+
+      const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
+        activeBtn.classList.add('text-emerald-600', 'dark:text-emerald-400', 'bg-emerald-50', 'dark:bg-emerald-950/50');
+      }
+    }
+
+    const themeToggle = document.getElementById('theme-toggle');
+    themeToggle.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+    });
+  </script>
+</body>
+
+</html>

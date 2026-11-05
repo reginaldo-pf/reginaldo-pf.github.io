@@ -1,0 +1,76 @@
+% !TeX root = main.tex
+\changecolours{ScoutGreen}
+\section[Visão Geral da Revisão N1]{Visão Geral da Revisão Integrada N1}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Objetivos do Sábado Letivo: Revisão e Simulado}
+  \vspace{0.1cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \alert{Propósito do Encontro}\par
+      \footnotesize
+      \begin{itemize}
+        \item Consolidar o conteúdo integral do 1º Período Letivo (Aulas 01 a 08).
+        \item \textbf{Sem conteúdo novo:} foco total em resolução prática e fixação de conceitos.
+        \item Preparação imediata para os exames:
+          \begin{itemize}
+            \item \textbf{AVP1 (Aula 10):} Avaliação prática em laboratório com Redis e MongoDB.
+            \item \textbf{AVT1 (Aula 11):} Avaliação teórica individual e entrega da Lista 1.
+          \end{itemize}
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{Matriz de Competências de N1}\par
+      \footnotesize
+      \begin{itemize}
+        \item \textbf{Teoria:} Teorema CAP, Teorema PACELC e Propriedades ACID vs BASE.
+        \item \textbf{Redis:} Chave-Valor, TTL, Hashes, Filas e Padrão Cache-Aside.
+        \item \textbf{MongoDB:} BSON, Atualizações Atômicas, Regra ESR e Covered Queries.
+        \item \textbf{Analytics:} Aggregation Framework e Pipelines no MongoDB.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Arquitetura Integrada do Simulado: Cache-Aside}
+  \vspace{-0.1cm}
+  \centering
+  \begin{tikzpicture}[
+    box/.style={rectangle, draw=ScoutNavy, rounded corners=3pt, text centered, minimum height=1.0cm, line width=0.8pt, font=\scriptsize\bfseries},
+    arrow/.style={thick, ->, >=stealth, color=ScoutGreen!85!black},
+    lbl/.style={font=\tiny\bfseries, color=ScoutNavy!90, fill=white, inner sep=1.5pt}
+  ]
+    \node [box, fill=ScoutNavy!15, text width=2.8cm] (app) at (0, 0) {Aplicação Python\\(FastAPI / PyMongo)};
+    \node [box, fill=ScoutGreen!20, text width=2.6cm] (redis) at (6.0, 0) {Redis 7.4\\(Cache em RAM / TTL)};
+    \node [box, fill=ScoutGreen!35, text width=2.6cm] (mongo) at (6.0, -1.8) {MongoDB 8.0\\(Disco / BSON)};
+    
+    % Conexões App <-> Redis
+    \draw [arrow] ([yshift=3pt]app.east) -- node[above, lbl] {1. Consulta Cache} ([yshift=3pt]redis.west);
+    \draw [arrow, dashed] ([yshift=-3pt]redis.west) -- node[below, lbl] {Cache Hit ($<0.1\text{ ms}$)} ([yshift=-3pt]app.east);
+    
+    % Conexões App -> Mongo e Mongo -> Redis
+    \draw [arrow] (app.south) |- node[near end, below, lbl] {2. Cache Miss: Lê Primário} (mongo.west);
+    \draw [arrow] (mongo.north) -- node[right, lbl] {3. Salva no Cache com TTL} (redis.south);
+  \end{tikzpicture}
+
+  \vspace{0.25cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \alert{Mecanismo de Consulta e Escrita}\par
+      \footnotesize
+      \begin{itemize}
+        \item \textbf{Cache Hit:} Resposta instantânea em submilisegundo direto da RAM.
+        \item \textbf{Cache Miss:} Busca indexada no MongoDB ($B\text{-Tree}$) e hidratação do Redis.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{Invalidação e Consistência}\par
+      \footnotesize
+      \begin{itemize}
+        \item \textbf{Invalidação:} Deleção atômica da chave do Redis em alterações no MongoDB.
+        \item \textbf{TTL Expirável:} Garante expiração automática contra dados obsoletos.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}

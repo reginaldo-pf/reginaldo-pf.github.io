@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 09: Laboratório de Fixação e Revisão Integrada (Sábado Letivo) | BDNR - IFCE Tauá</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome & Prism.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- ========================================== -->
+  <!-- CABEÇALHO INSTITUCIONAL                    -->
+  <!-- ========================================== -->
+  <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 shadow-sm backdrop-blur-md bg-white/90 dark:bg-slate-800/90">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="../../index.html" class="flex items-center space-x-3 group">
+          <div class="w-10 h-10 rounded-xl bg-amber-600 flex items-center justify-center text-white shadow-md shadow-amber-500/20 group-hover:scale-105 transition-transform">
+            <i class="fa-solid fa-vial-virus text-lg"></i>
+          </div>
+          <div>
+            <span class="text-xs uppercase tracking-wider font-bold text-amber-600 dark:text-amber-400 block leading-tight">IFCE Campus Tauá • ADS</span>
+            <span class="text-base font-bold text-slate-900 dark:text-white leading-tight">Banco de Dados Não-Relacionais — Aula 09 (Sábado Letivo)</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <a href="../Aula_08/index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 transition-colors flex items-center space-x-1.5" title="Aula Anterior">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span class="hidden sm:inline">Aula 08</span>
+        </a>
+        <a href="../../index.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center space-x-1.5">
+          <i class="fa-solid fa-house"></i>
+          <span class="hidden sm:inline">Portal da Disciplina</span>
+        </a>
+        <button id="theme-toggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-amber-600 transition-colors" title="Alternar Modo Escuro/Claro">
+          <i class="fa-solid fa-moon dark:hidden"></i>
+          <i class="fa-solid fa-sun hidden dark:inline"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- BANNER DA AULA                             -->
+  <!-- ========================================== -->
+  <section class="bg-gradient-to-r from-amber-950 via-slate-900 to-slate-950 text-white py-10 border-b border-amber-950/40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold mb-3">
+        <i class="fa-solid fa-calendar-check"></i>
+        <span>Sábado Letivo (Sem Conteúdo Novo) — Preparatório para AVP1 e AVT1</span>
+      </div>
+      <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
+        Laboratório de Fixação: <span class="text-amber-400">Revisão Integrada Redis + MongoDB e Simulado N1</span>
+      </h1>
+      <p class="text-slate-300 text-sm sm:text-base mt-2 max-w-3xl leading-relaxed">
+        Oficina prática de nivelamento e resolução assistida de desafios integrando o padrão <strong>Cache-Aside</strong>, estruturas em memória do Redis, <strong>CRUD atômico</strong>, a <strong>Regra ESR</strong> e pipelines analíticos no MongoDB.
+      </p>
+
+      <div class="flex flex-wrap items-center justify-between gap-4 mt-6 pt-5 border-t border-slate-800">
+        <div class="flex flex-wrap gap-4 text-xs text-slate-300">
+          <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+            <i class="fa-regular fa-calendar text-amber-400"></i>
+            <span>14/11/2026 (Sábado Letivo)</span>
+          </div>
+          <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+            <i class="fa-regular fa-clock text-amber-400"></i>
+            <span>2 h/a (120 min)</span>
+          </div>
+          <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+            <i class="fa-solid fa-chalkboard-user text-amber-400"></i>
+            <span>Prof. Me. Reginaldo Fernandes</span>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <a href="materiais/main.pdf" download class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold shadow transition-all">
+            <i class="fa-solid fa-file-pdf"></i>
+            <span>Baixar Slides PDF</span>
+          </a>
+          <a href="codigo/simulado_n1_desafios.py" download class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold transition-all">
+            <i class="fa-solid fa-code"></i>
+            <span>Baixar Simulado Python</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- NAVEGAÇÃO DE ABAS                          -->
+  <!-- ========================================== -->
+  <div class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-16 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex space-x-4 overflow-x-auto py-2 text-sm font-semibold scrollbar-none" id="tabs">
+        <button onclick="switchTab('visao-geral')" class="tab-btn px-3 py-1.5 rounded-lg transition-colors text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50" data-tab="visao-geral">
+          <i class="fa-solid fa-compass mr-1.5"></i>Visão Geral
+        </button>
+        <button onclick="switchTab('teoria-n1')" class="tab-btn px-3 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400 hover:text-amber-600" data-tab="teoria-n1">
+          <i class="fa-solid fa-brain mr-1.5"></i>Teoria N1 (CAP, PACELC, BASE)
+        </button>
+        <button onclick="switchTab('pratica-integrada')" class="tab-btn px-3 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400 hover:text-amber-600" data-tab="pratica-integrada">
+          <i class="fa-solid fa-network-wired mr-1.5"></i>Cache-Aside & Operações
+        </button>
+        <button onclick="switchTab('benchmark')" class="tab-btn px-3 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400 hover:text-amber-600" data-tab="benchmark">
+          <i class="fa-solid fa-gauge mr-1.5"></i>Benchmark de Latência
+        </button>
+        <button onclick="switchTab('simulado')" class="tab-btn px-3 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400 hover:text-amber-600" data-tab="simulado">
+          <i class="fa-solid fa-list-check mr-1.5"></i>Simulado Prático AVP1
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- CONTEÚDO PRINCIPAL (ABAS)                  -->
+  <!-- ========================================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
+
+    <!-- ABA 1: VISÃO GERAL -->
+    <div id="visao-geral" class="tab-content space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl mb-4">
+            <i class="fa-solid fa-hand-holding-heart"></i>
+          </div>
+          <h3 class="text-base font-bold text-slate-900 dark:text-white">Sem Conteúdo Novo</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+            Sábado dedicado exclusivamente ao alinhamento de dúvidas, nivelamento prático e consolidação dos tópicos das Aulas 01 a 08.
+          </p>
+        </div>
+
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl mb-4">
+            <i class="fa-solid fa-code-merge"></i>
+          </div>
+          <h3 class="text-base font-bold text-slate-900 dark:text-white">Persistência Poliglota</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+            Integração harmoniosa de Redis (velocidade em memória) com MongoDB (documentos estruturados e pipelines de BI).
+          </p>
+        </div>
+
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div class="w-12 h-12 rounded-xl bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center text-xl mb-4">
+            <i class="fa-solid fa-bullseye"></i>
+          </div>
+          <h3 class="text-base font-bold text-slate-900 dark:text-white">Foco na AVP1 e AVT1</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+            Simulação fiel do formato do exame prático com suíte de testes unitários automatizada para autoavaliação imediata.
+          </p>
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3">Cronograma do Sábado Letivo (120 Minutos)</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
+                <th class="py-2.5 px-3 font-semibold">Bloco</th>
+                <th class="py-2.5 px-3 font-semibold">Tempo</th>
+                <th class="py-2.5 px-3 font-semibold">Atividade Planejada</th>
+                <th class="py-2.5 px-3 font-semibold">Dinâmica</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50">
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-amber-600 dark:text-amber-400">Bloco 1</td>
+                <td class="py-2.5 px-3 text-slate-500">00 - 25 min</td>
+                <td class="py-2.5 px-3 font-medium">Revisão Teórica: Teoremas CAP e PACELC, Propriedades ACID vs BASE</td>
+                <td class="py-2.5 px-3 text-slate-600 dark:text-slate-400">Exposição dialogada com slides</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-amber-600 dark:text-amber-400">Bloco 2</td>
+                <td class="py-2.5 px-3 text-slate-500">25 - 45 min</td>
+                <td class="py-2.5 px-3 font-medium">Revisão do Redis: Strings, Hashes, Filas, TTL e Invalidação</td>
+                <td class="py-2.5 px-3 text-slate-600 dark:text-slate-400">Demonstração no redis-cli / Python</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-amber-600 dark:text-amber-400">Bloco 3</td>
+                <td class="py-2.5 px-3 text-slate-500">45 - 70 min</td>
+                <td class="py-2.5 px-3 font-medium">Revisão do MongoDB: CRUD Atômico, Regra ESR, Índices e Aggregation</td>
+                <td class="py-2.5 px-3 text-slate-600 dark:text-slate-400">Demonstração no Compass e mongosh</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-amber-600 dark:text-amber-400">Bloco 4</td>
+                <td class="py-2.5 px-3 text-slate-500">70 - 105 min</td>
+                <td class="py-2.5 px-3 font-medium">Execução do Simulado N1: Os 5 Grandes Desafios Práticos</td>
+                <td class="py-2.5 px-3 text-slate-600 dark:text-slate-400">Laboratório autônomo com testes</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-amber-600 dark:text-amber-400">Bloco 5</td>
+                <td class="py-2.5 px-3 text-slate-500">105 - 120 min</td>
+                <td class="py-2.5 px-3 font-medium">Gabarito Comentado, Plantão de Dúvidas e Orientações para a Prova</td>
+                <td class="py-2.5 px-3 text-slate-600 dark:text-slate-400">Encerramento e alinhamento</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA 2: TEORIA N1 -->
+    <div id="teoria-n1" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+          <h2 class="text-base font-bold text-slate-900 dark:text-white mb-2">Teorema CAP (Brewer, 2000)</h2>
+          <p class="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
+            Em redes não-confiáveis, falhas de partição (<code class="text-xs">P</code>) são inevitáveis. Portanto, o sistema deve escolher entre <strong>Consistência Estrita (CP)</strong> ou <strong>Disponibilidade Contínua (AP)</strong>.
+          </p>
+          <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300">
+            <li>• <strong>CP (ex.: MongoDB):</strong> Sob partição, bloqueia leituras/escritas em nós isolados para prevenir dados divergentes.</li>
+            <li>• <strong>AP (ex.: Cassandra):</strong> Mantém todas as réplicas aceitando escritas, convergindo via consistência eventual.</li>
+          </ul>
+        </div>
+
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+          <h2 class="text-base font-bold text-slate-900 dark:text-white mb-2">Teorema PACELC (Abadi, 2012)</h2>
+          <p class="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
+            Analisa o comportamento tanto sob partição quanto em regime normal:
+          </p>
+          <div class="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-mono">
+            Se [P]artição: [A]vailability vs [C]onsistency;<br>
+            [E]lse: [L]atency vs [C]onsistency.
+          </div>
+          <p class="text-xs text-slate-500 mt-3">
+            O MongoDB classifica-se tipicamente como <strong>PC/EC</strong> (prioriza consistência), enquanto o Redis opera como <strong>PA/EL</strong> (prioriza latência em RAM).
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA 3: PRÁTICA INTEGRADA -->
+    <div id="pratica-integrada" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Padrão Cache-Aside com Invalidação (Python)</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+          Coordenação explícita de leitura no Redis com expiração (TTL) e invalidação atômica em alterações de estoque.
+        </p>
+        <pre><code class="language-python">def buscar_com_cache(r, db, sku: str, ttl: int = 60):
+    chave = f"produto:{sku}"
+    cached = r.get(chave)
+    if cached:
+        return json.loads(cached), "CACHE_HIT"
+
+    doc = db.produtos.find_one({"sku": sku})
+    if doc:
+        doc["_id"] = str(doc["_id"])
+        r.setex(chave, ttl, json.dumps(doc))
+        return doc, "CACHE_MISS"
+    return None, "NOT_FOUND"
+
+def alterar_estoque(r, db, sku: str, delta: int):
+    # Atualização atômica no banco primário
+    res = db.produtos.update_one({"sku": sku}, {"$inc": {"estoque": delta}})
+    if res.modified_count > 0:
+        # Invalidação imediata para evitar dados obsoletos
+        r.delete(f"produto:{sku}")
+        return True
+    return False</code></pre>
+      </div>
+    </div>
+
+    <!-- ABA 4: BENCHMARK -->
+    <div id="benchmark" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3">Medição de Latência: Redis vs MongoDB Indexado vs COLLSCAN</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
+          Comprovando na prática as ordens de magnitude de velocidade entre o cache residente em memória RAM (<0.1 ms), o acesso com árvore balanceada B-Tree (~1 ms) e a varredura linear completa em disco (>18 ms).
+        </p>
+
+        <div class="flex justify-center p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700">
+          <img src="benchmark_latencia_revisao.png" alt="Benchmark de Latência Poliglota Integrada" class="max-w-full rounded-lg shadow-md">
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA 5: SIMULADO -->
+    <div id="simulado" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Os 5 Grandes Desafios Práticos do Simulado N1</h2>
+
+        <div class="space-y-4">
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <h3 class="text-sm font-bold text-amber-600 dark:text-amber-400">Desafio 1: Cache-Aside com Fallback e TTL</h3>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">
+              Implementar consulta de produto verificando primeiro o Redis (<code class="font-mono">produto:{sku}</code>) e hidratando a chave com 60 segundos de expiração caso venha do MongoDB.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <h3 class="text-sm font-bold text-amber-600 dark:text-amber-400">Desafio 2: Invalidação de Cache e Atualização Atômica</h3>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">
+              Executar mutação atômica com <code class="font-mono">$inc</code> no MongoDB e apagar imediatamente a chave no Redis para impedir leituras inconsistentes.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <h3 class="text-sm font-bold text-amber-600 dark:text-amber-400">Desafio 3: Carrinho em Hashes do Redis</h3>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">
+              Manipular chave <code class="font-mono">carrinho:{cliente_id}</code> com o comando <code class="font-mono">HINCRBY</code> e renovação de expiração de 20 minutos.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <h3 class="text-sm font-bold text-amber-600 dark:text-amber-400">Desafio 4: Criação de Índice ESR</h3>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">
+              Criar índice composto na coleção <code class="font-mono">pedidos</code> seguindo estritamente a sequência Equality (<code class="font-mono">status</code>), Sort (<code class="font-mono">data_pedido</code>) e Range (<code class="font-mono">valor_total</code>).
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <h3 class="text-sm font-bold text-amber-600 dark:text-amber-400">Desafio 5: Pipeline Analítico de Vendas</h3>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">
+              Montar agregação com <code class="font-mono">$match</code>, <code class="font-mono">$unwind</code> e <code class="font-mono">$group</code> para calcular o faturamento por categoria de produto.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- RODAPÉ INSTITUCIONAL                       -->
+  <!-- ========================================== -->
+  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 text-center text-xs text-slate-500 dark:text-slate-400 mt-auto">
+    <div class="max-w-7xl mx-auto px-4">
+      <p>IFCE Campus Tauá • Curso de Tecnologia em Análise e Desenvolvimento de Sistemas (ADS)</p>
+      <p class="mt-1">Disciplina: Banco de Dados Não-Relacionais (ADS16) • Prof. Me. Reginaldo Fernandes</p>
+    </div>
+  </footer>
+
+  <!-- Script para alternância de abas e modo escuro -->
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(tabId).classList.remove('hidden');
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('text-amber-600', 'dark:text-amber-400', 'bg-amber-50', 'dark:bg-amber-950/50');
+        btn.classList.add('text-slate-600', 'dark:text-slate-400');
+      });
+
+      const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
+        activeBtn.classList.add('text-amber-600', 'dark:text-amber-400', 'bg-amber-50', 'dark:bg-amber-950/50');
+      }
+    }
+
+    const themeToggle = document.getElementById('theme-toggle');
+    themeToggle.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+    });
+  </script>
+</body>
+
+</html>

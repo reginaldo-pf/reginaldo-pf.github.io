@@ -1,0 +1,93 @@
+% !TeX root = main.tex
+\changecolours{ScoutNavy}
+\section[Fundamentos Teóricos: CAP, PACELC e ACID/BASE]{Fundamentos Teóricos: Teoremas CAP, PACELC e Modelo ACID vs BASE}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Revisão do Teorema CAP (Eric Brewer, 2000)}
+  \vspace{0.1cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \alert{Os Três Pilares Fundamentais}\par
+      \footnotesize
+      \begin{itemize}
+        \item \textbf{C (Consistência Forte):} Todos os nós retornam o dado mais recente ou geram erro imediato.
+        \item \textbf{A (Disponibilidade):} Todo nó ativo responde a qualquer requisição sem retornar erro.
+        \item \textbf{P (Tolerância a Partições):} O sistema continua operando mesmo sob perda ou atraso de pacotes na rede.
+      \end{itemize}
+      
+      \vspace{0.15cm}
+      \textbf{Princípio Físico:} Partições de rede são inevitáveis ($P$), forçando o arquiteto a escolher estritamente entre \textbf{CP} ou \textbf{AP}.
+    \end{column}
+    
+    \begin{column}{0.48\textwidth}
+      \alert{Classificação Arquitetural e Trade-offs}\par
+      \footnotesize
+      \begin{itemize}
+        \item \textbf{Sistemas CP (Consistência):} Priorizam a verdade dos dados. Sob partição, bloqueiam escritas em nós isolados para impedir divergências (\textit{split-brain}). \textbf{Ex.: MongoDB}.
+        
+        \item \textbf{Sistemas AP (Disponibilidade):} Priorizam disponibilidade contínua. Aceitam escritas mesmo desconectados, convergindo depois via consistência eventual. \textbf{Ex.: Cassandra, DynamoDB}.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{O Teorema PACELC (Daniel Abadi, 2012)}
+  \vspace{0.1cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.41\textwidth}
+      \alert{Extensão do Teorema CAP}\par
+      \footnotesize
+      O CAP cobre apenas o sistema em partição. O PACELC detalha também o regime operacional normal:
+      \begin{itemize}
+        \item \textbf{Se Partição (\textbf{P}):} Escolhe-se entre Disponibilidade (\textbf{A}) ou Consistência (\textbf{C});
+        \item \textbf{Senão (\textbf{E}lse -- normal):} Escolhe-se entre Latência (\textbf{L}) ou Consistência (\textbf{C}).
+      \end{itemize}
+      
+      \vspace{0.1cm}
+      $\implies$ \textbf{Trade-off:} Garantir consistência entre réplicas síncronas exige maior latência.
+    \end{column}
+    
+    \begin{column}{0.56\textwidth}
+      \alert{Mapeamento Prático dos Bancos}\par
+      \vspace{0.4cm}
+      \scriptsize
+      \begin{tabular}{@{}llp{3.8cm}@{}}
+        \toprule
+        \textbf{Banco} & \textbf{Classif.} & \textbf{Comportamento em Produção} \\
+        \midrule
+        \textbf{MongoDB}   & \textbf{PC/EC} & Consistência primária e sob partição \\
+        \textbf{Redis}     & \textbf{PA/EL} & Latência mínima ($\approx 0.1\text{ ms}$) e alta disp. \\
+        \textbf{Cassandra} & \textbf{PA/EL} & Consistência eventual com baixa latência \\
+        \bottomrule
+      \end{tabular}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}{Transações ACID versus Modelo BASE}
+  \vspace{0.1cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \alert{Propriedades ACID (RDBMS / Relacional)}\par
+      \footnotesize
+      \begin{itemize}
+        \item \textbf{Atomicidade:} Todas as operações executam com sucesso ou sofrem reversão total (\textit{rollback}).
+        \item \textbf{Consistência:} Respeito estrito a restrições de integridade, tipos e chaves estrangeiras.
+        \item \textbf{Isolamento:} Transações concorrentes não interferem nos resultados intermediários mútuos.
+        \item \textbf{Durabilidade:} Confirmação persistida em disco permanentemente após o \textit{commit}.
+      \end{itemize}
+    \end{column}
+    
+    \begin{column}{0.48\textwidth}
+      \alert{Propriedades BASE (NoSQL / Distribuído)}\par
+      \footnotesize
+      \begin{itemize}
+        \item \textbf{Basically Available:} Disponibilidade básica assegurada mesmo com nós degradados.
+        \item \textbf{Soft State:} O estado dos dados pode sofrer variações temporárias sem requisições do usuário.
+        \item \textbf{Eventual Consistency:} Se nenhuma nova escrita ocorrer, todas as réplicas convergem para o mesmo valor.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}

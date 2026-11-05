@@ -29,8 +29,8 @@ A disciplina capacita os discentes no ecossistema moderno de persistência polig
 - [Aula 05 - Redis na Prática: Estratégias de Cache (TTL), Controle de Sessão e Filas](Aulas/Aula_05/): Aplicação web FastCommerce NoSQL com Cache-Aside, gerenciamento de sessões, carrinhos em hashes e filas assíncronas de checkout (LPUSH/BRPOP) com conexão direta para o MongoDB.
 - [Aula 06 - Modelo de Documentos: JSON/BSON e Decisões de Modelagem no MongoDB (Embedding vs Referencing)](Aulas/Aula_06/): Serialização binária BSON (`ObjectId` de 12 bytes e `Decimal128`), catálogo polimórfico do ShopGrids com `$jsonSchema`, *Embedding vs. Referencing*, *Subset Pattern* e *Snapshot Pattern*.
 - [Aula 07 - CRUD Avançado e Indexação no MongoDB](Aulas/Aula_07/): Filtros avançados (`$elemMatch`, `$expr`), operadores atômicos de atualização, criação e análise de performance com índices simples, compostos (Regra ESR), multikey e textuais via `explain()`.
-- Aula 08 - MongoDB Aggregation Framework: Pipelines analíticos com estágios (`$match`, `$group`, `$project`, `$sort`, `$lookup`, `$unwind`) e relatórios de inteligência de negócio.
-- Aula 09 - Sábado Letivo: Laboratório de fixação intensiva e revisão prática integrada (Redis + MongoDB) preparatório para AVP1/AVT1.
+- [Aula 08 - MongoDB Aggregation Framework](Aulas/Aula_08/): Pipelines analíticos com estágios (`$match`, `$group`, `$project`, `$sort`, `$lookup`, `$unwind`) e relatórios de inteligência de negócio.
+- [Aula 09 - Sábado Letivo: Laboratório de Fixação e Revisão Integrada](Aulas/Aula_09/): Laboratório prático intensivo integrado (Redis + MongoDB) preparatório para AVP1/AVT1 com suíte de testes automatizados.
 - Aula 10 - AVP1 -- Avaliação Prática 1 (Laboratório: Redis + MongoDB).
 - Aula 11 - AVT1 -- Avaliação Teórica 1 + Entrega final da Lista de Exercícios 1 (AV3).
 - Aula 12 - Modelo de Família de Colunas: Arquitetura distribuída peer-to-peer sem SPOF, anel de nós (*consistent hashing*), fator de replicação e consistência ajustável (Cassandra).

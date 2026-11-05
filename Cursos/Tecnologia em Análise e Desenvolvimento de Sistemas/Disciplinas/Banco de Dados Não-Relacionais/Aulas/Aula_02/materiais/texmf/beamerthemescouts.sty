@@ -50,9 +50,8 @@
 % https://tex.stackexchange.com/questions/192686/hyperref-warning-caused-by-beamer-appendix#192689
 \renewcommand\appendixname{Appendix}
 
-%\newlength{scoutmargin}\setlength\scoutmargin{0.175\paperwidth} %Scales margin as same proportion of width as SBC PPT
-\newlength{\scoutmargin}\setlength\scoutmargin{0.5\paperwidth}\addtolength{\scoutmargin}{-52mm}      %keeps textwidth fixed to 104mm cf SBC PPT
-\ifdim \scoutmargin < 10mm \setlength\scoutmargin{10mm} \fi  % Emergency margin for odd slide sizes (shouldn't ever come to this)
+\newlength{\scoutmargin}\setlength\scoutmargin{10mm}      % Margem limpa de 10mm para maximizar a area util (140mm de textwidth em 16:9)
+\ifdim \scoutmargin < 8mm \setlength\scoutmargin{8mm} \fi
 
 \setbeamersize{text margin left=\scoutmargin} 
 \setbeamersize{text margin right=\scoutmargin} 

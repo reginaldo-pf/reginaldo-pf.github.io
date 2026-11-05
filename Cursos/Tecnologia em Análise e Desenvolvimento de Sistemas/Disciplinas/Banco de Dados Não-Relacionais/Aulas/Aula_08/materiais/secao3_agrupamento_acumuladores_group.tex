@@ -1,0 +1,134 @@
+% !TeX root = main.tex
+\changecolours{ScoutTeal}
+\section[Agrupamento Analítico e Acumuladores]{Agrupamento Analítico e Operadores Acumuladores}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{O Estágio \texttt{\$group}: A Chave de Agrupamento \texttt{\_id}}
+	\vspace{0.1cm}
+	\begin{columns}[t,onlytextwidth]
+		
+		% Coluna 1
+		\begin{column}{0.48\textwidth}
+			\alert{Mecanismo de Agrupamento}\par
+			\footnotesize
+			\begin{itemize}
+				\item Reduz múltiplos documentos em um único documento por valor distinto de \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|_id|.
+				
+				\item \textbf{Agrupamento Global (KPI):} Usar \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|_id: null| agrega toda a coleção em um único registro.
+				
+				\item \textbf{Chaves Compostas:} Agrupa por múltiplos atributos via subdocumento:
+				
+				\vspace{0.15cm}
+				\centering
+				\lstinline[language=mongosh, basicstyle=\scriptsize\ttfamily]|_id: { ano: "$ano", mes: "$mes" }|
+			\end{itemize}
+		\end{column}
+		
+		% Coluna 2
+		\begin{column}{0.48\textwidth}
+			\alert{Atenção: A Regra do Cifrão (\texttt{\$})}\par
+			\footnotesize
+			\begin{itemize}
+				\item Para acessar o \textbf{valor de um campo}, é obrigatório usar o prefixo \texttt{\$}:
+				
+				\vspace{0.15cm}
+				\centering
+				\lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|{ $sum: "$valor_total" }|
+				
+				\vspace{0.15cm}
+				\raggedright
+				\item Sem o prefixo \texttt{\$}, interpreta-se o nome como texto literal constante:
+				
+				\vspace{0.15cm}
+				\centering
+				\lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|{ $sum: "valor_total" }|
+				\par\vspace{0.1cm}
+				$\implies$ \textcolor{red!80!black}{\textbf{Erro / Soma Zero!}}
+			\end{itemize}
+		\end{column}
+		
+	\end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Quadro de Acumuladores Fundamentais}
+  \vspace{0.05cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.45\textwidth}
+      \alert{Acumuladores Mais Utilizados}\par
+      \vspace{0.4cm}
+      \scriptsize
+      \begin{tabular}{@{}lp{3.8cm}@{}}
+        \toprule
+        \textbf{Operador} & \textbf{Finalidade Analítica} \\
+        \midrule
+        \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$sum| & Soma ou contagem de itens \\
+        \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$avg| & Média aritmética dos campos \\
+        \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$min/$max| & Menor e maior valor \\
+        \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$first/$last| & Primeiro e último por ordem \\
+        \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$push| & Array com histórico \\
+        \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$addToSet| & Conjunto sem duplicatas \\
+        \bottomrule
+      \end{tabular}
+    \end{column}
+    \begin{column}{0.51\textwidth}
+      \alert{Diferença: \texttt{\$push} vs \texttt{\$addToSet}}\par
+    
+      \begin{itemize}
+        \item \textbf{\texttt{\$push}:} Mantém todas as ocorrências de itens, preservando repetições. Indicado para rastreabilidade e histórico de pedidos.
+        \item \textbf{\texttt{\$addToSet}:} Opera como conjunto matemático estrito, eliminando valores duplicados. Indicado para listar categorias únicas compradas.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Exemplo Pareado: Análise Mensal de Faturamento}
+  \vspace{0.05cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.44\textwidth}
+    	\alert{Formulação Matemática}\par
+    	\vspace{0.2cm}
+    	\scriptsize
+    	Seja o lote de pedidos entregues em Outubro:
+    	\begin{center}
+    		$P = \{150.00, 320.00, 480.00, 50.00\}$
+    	\end{center}
+    	\begin{itemize}
+    		\item \textbf{Faturamento Total ($\text{Fat}$):}
+    		\begin{itemize}
+    			\item[] $\text{Fat} = \sum_{i=1}^{4} p_i = 1000.00$
+    		\end{itemize}
+    		\item \textbf{Ticket Médio ($\bar{X}$):}
+    		\begin{itemize}
+    			\item[] $\bar{X} = \frac{1000.00}{4} = 250.00$
+    		\end{itemize}
+    		\item \textbf{Volume Total de Pedidos:}
+    		\begin{itemize}
+    			\item[] $N = \sum 1 = 4$
+    		\end{itemize}
+    	\end{itemize}
+    \end{column}
+    \begin{column}{0.54\textwidth}
+      \alert{Implementação Equivalente no MongoSH}\par
+      \vspace{0.05cm}
+      \begin{lstlisting}[language=mongosh, basicstyle=\scriptsize\ttfamily]
+db.pedidos.aggregate([
+  { $match: { status: "entregue" } },
+  {
+    $group: {
+      _id: {
+        ano: { $year: "$data_pedido" },
+        mes: { $month: "$data_pedido" }
+      },
+      faturamento: { $sum: "$valor_total" },
+      ticket_medio: { $avg: "$valor_total" },
+      total_pedidos: { $sum: 1 }
+    }
+  },
+  { $sort: { "_id.ano": 1, "_id.mes": 1 } }
+])
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}

@@ -1,0 +1,81 @@
+% !TeX root = main.tex
+\changecolours{ScoutPurple}
+\section[Desconstrução e Junção: unwind e lookup]{Desconstrução de Arrays e Junções entre Coleções}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{O Estágio \texttt{\$unwind}: Desconstrução de Arrays}
+  \vspace{0.1cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.38\textwidth}
+      \alert{Mecanismo de Desdobramento}\par
+      \footnotesize
+      \begin{itemize}
+        \item Desmembra um atributo do tipo array, gerando um documento BSON independente para cada elemento contido.
+        \item Viabiliza agrupamentos analíticos sobre itens aninhados (ex.: faturamento por SKU de produto).
+        \item \textbf{Atenção à Cardinalidade:} Se $10.000$ pedidos possuem em média 3 itens, o \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$unwind| gera $30.000$ documentos em RAM!
+        \item \textbf{Preservação de Vazios:} Por padrão descarta arrays vazios; use \lstinline[language=mongosh, basicstyle=\scriptsize\ttfamily]|preserveNullAndEmptyArrays: true| para retê-los.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.60\textwidth}
+      \alert{Exemplo no E-commerce ShopGrids}\par
+      \vspace{0.05cm}
+      \begin{lstlisting}[language=mongosh, basicstyle=\scriptsize\ttfamily]
+db.pedidos.aggregate([
+  { $match: { status: "entregue" } },
+  { $unwind: "$itens" },
+  {
+    $group: {
+      _id: "$itens.sku",
+      total_unidades: { $sum: "$itens.quantidade" },
+      receita_gerada: { $sum: "$itens.subtotal" }
+    }
+  },
+  { $sort: { receita_gerada: -1 } },
+  { $limit: 5 }
+])
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{O Estágio \texttt{\$lookup}: Junção Externa (\textit{Left Outer Join})}
+  \vspace{0.1cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \alert{Cruzamento entre Coleções}\par
+      \footnotesize
+      \begin{itemize}
+        \item Executa junção externa (\textit{Left Outer Join}) entre coleções do mesmo banco de dados.
+        \item Os registros relacionados são acoplados na forma de um \textbf{array} no documento resultante.
+        \item Caso não haja correspondência, o array resultante retorna vazio (\lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|[]|).
+        \item \textbf{Exigência Crítica de Índice:} O campo \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|foreignField| na coleção de destino \textbf{exige índice B-Tree}, evitando varredura global (\texttt{COLLSCAN}) a cada documento!
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \alert{Sintaxe de Junção no MongoSH}\par
+      \vspace{0.05cm}
+      \begin{lstlisting}[language=mongosh, basicstyle=\scriptsize\ttfamily]
+db.pedidos.aggregate([
+  { $match: { status: "entregue" } },
+  {
+    $lookup: {
+      from: "clientes",
+      localField: "cliente_id",
+      foreignField: "_id",
+      as: "cliente"
+    }
+  },
+  { $unwind: "$cliente" },
+  {
+    $project: {
+      numero_pedido: 1,
+      "cliente.nome": 1,
+      valor_total: 1
+    }
+  }
+])
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
