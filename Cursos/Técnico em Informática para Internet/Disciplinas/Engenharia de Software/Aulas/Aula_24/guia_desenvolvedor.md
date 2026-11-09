@@ -34,7 +34,7 @@
 | **Prioridade:** | Alta (Bloqueante para o fechamento da Sprint 04) |
 | **Estimativa:** | 4 Encontros de Trabalho (8 Horas-Aula) |
 | **Branch Git:** | `feature/task-204-motor-cupons` |
-| **Metas de Hoje:** | Diagramas UC + Classes $\rightarrow$ Arquitetura $\rightarrow$ Implementação de `exceptions.py` e `models/cupom.py` |
+| **Metas de Hoje:** | Diagramas UC + Classes → Arquitetura → Implementação de `exceptions.py` e `models/cupom.py` |
 
 ---
 
@@ -62,8 +62,8 @@ graph LR
     style BiblioTaua fill:#f8fafc,stroke:#0284c7,stroke-width:2px
 ```
 
-*   **$\ll$extend$\gg$ (Extensão):** O caso de uso `UC04: Aplicar Cupom de Desconto` estende opcionalmente o checkout em `UC02: Finalizar Pedido de Livros`. O cliente só insere o código promocional se desejar.
-*   **$\ll$include$\gg$ (Inclusão):** Ao acionar `UC04`, o sistema executa compulsoriamente `UC05: Validar Regras de Elegibilidade`, averiguando validade, limite de usos e valor mínimo.
+*   **«extend» (Extensão):** O caso de uso `UC04: Aplicar Cupom de Desconto` estende opcionalmente o checkout em `UC02: Finalizar Pedido de Livros`. O cliente só insere o código promocional se desejar.
+*   **«include» (Inclusão):** Ao acionar `UC04`, o sistema executa compulsoriamente `UC05: Validar Regras de Elegibilidade`, averiguando validade, limite de usos e valor mínimo.
 
 ---
 
@@ -71,7 +71,7 @@ graph LR
 
 *   **Identificador:** `UC04 -- Aplicar Cupom de Desconto`
 *   **Ator Primário:** `Cliente / Discente`
-*   **Pré-condições:** Carrinho não vazio e subtotal $> 0$.
+*   **Pré-condições:** Carrinho não vazio e subtotal > 0.
 *   **Pós-condições:** Desconto calculado e total do pedido atualizado.
 *   **Fluxo Principal:** 
     1. O cliente informa o código alfanumérico do cupom na tela de checkout.
@@ -79,8 +79,8 @@ graph LR
     3. O sistema calcula o valor do desconto (respeitando o teto do subtotal).
     4. O sistema atualiza o subtotal e o total a pagar.
 *   **Fluxos Alternativos:**
-    *   **FA01 (Desconto Percentual):** $\text{desconto} = \text{subtotal} \times (\text{valor\_desconto} / 100)$.
-    *   **FA02 (Desconto em Valor Fixo):** $\text{desconto} = \min(\text{valor\_desconto}, \text{subtotal})$.
+    *   **FA01 (Desconto Percentual):** `desconto = subtotal * (valor_desconto / 100)`.
+    *   **FA02 (Desconto em Valor Fixo):** `desconto = min(valor_desconto, subtotal)`.
 *   **Fluxos de Exceção (Mapeamento Direto em Código Python):**
     *   **FE01 (Cupom Inexistente ou Inativo):** Lança `CupomInexistenteError` ou `CupomInativoError`.
     *   **FE02 (Validade Ultrapassada):** Lança `CupomExpiradoError`.
@@ -254,7 +254,7 @@ Abra o arquivo `bibliotaua/exceptions.py` e siga os passos abaixo:
 ---
 
 #### Passo 1.3: Cupom Inexistente no Sistema (`CupomInexistenteError`)
-* **Origem no Diagrama:** DUC UC04 $\rightarrow$ **Fluxo de Exceção FE01 (Cupom Inexistente)**. Disparado quando o código digitado pelo estudante no checkout não é encontrado na base.
+* **Origem no Diagrama:** DUC UC04 → **Fluxo de Exceção FE01 (Cupom Inexistente)**. Disparado quando o código digitado pelo estudante no checkout não é encontrado na base.
 * **Código a Implementar:**
   ```python
   class CupomInexistenteError(CupomInvalidoError):
@@ -276,7 +276,7 @@ Abra o arquivo `bibliotaua/exceptions.py` e siga os passos abaixo:
 ---
 
 #### Passo 1.4: Cupom Desativado pela Administração (`CupomInativoError`)
-* **Origem no Diagrama:** DUC UC04 $\rightarrow$ **Fluxo de Exceção FE01 (Cupom Inativo)**. Disparado quando o cupom existe, mas o atributo `-ativo: bool` da classe `Cupom` está como `False`.
+* **Origem no Diagrama:** DUC UC04 → **Fluxo de Exceção FE01 (Cupom Inativo)**. Disparado quando o cupom existe, mas o atributo `-ativo: bool` da classe `Cupom` está como `False`.
 * **Código a Implementar:**
   ```python
   class CupomInativoError(CupomInvalidoError):
@@ -291,7 +291,7 @@ Abra o arquivo `bibliotaua/exceptions.py` e siga os passos abaixo:
 ---
 
 #### Passo 1.5: Cupom com Validade Expirada (`CupomExpiradoError`)
-* **Origem no Diagrama:** DUC UC04 $\rightarrow$ **Fluxo de Exceção FE02 (Validade Ultrapassada)**. Disparado pelo método `esta_expirado()` quando a data de referência é posterior ao atributo `-validade_ate: date`.
+* **Origem no Diagrama:** DUC UC04 → **Fluxo de Exceção FE02 (Validade Ultrapassada)**. Disparado pelo método `esta_expirado()` quando a data de referência é posterior ao atributo `-validade_ate: date`.
 * **Código a Implementar:**
   ```python
   class CupomExpiradoError(CupomInvalidoError):
@@ -307,7 +307,7 @@ Abra o arquivo `bibliotaua/exceptions.py` e siga os passos abaixo:
 ---
 
 #### Passo 1.6: Limite de Usos Esgotado (`CupomEsgotadoError`)
-* **Origem no Diagrama:** DUC UC04 $\rightarrow$ **Fluxo de Exceção FE03 (Cota Esgotada)**. Disparado pelo método `atingiu_limite_usos()` quando `-usos_realizados >= -limite_usos`.
+* **Origem no Diagrama:** DUC UC04 → **Fluxo de Exceção FE03 (Cota Esgotada)**. Disparado pelo método `atingiu_limite_usos()` quando `-usos_realizados >= -limite_usos`.
 * **Código a Implementar:**
   ```python
   class CupomEsgotadoError(CupomInvalidoError):
@@ -323,7 +323,7 @@ Abra o arquivo `bibliotaua/exceptions.py` e siga os passos abaixo:
 ---
 
 #### Passo 1.7: Valor Mínimo do Pedido Não Atingido (`ValorMinimoNaoAtingidoError`)
-* **Origem no Diagrama:** DUC UC04 $\rightarrow$ **Fluxo de Exceção FE04 (Subtotal Mínimo)**. Disparado pelo método `pode_ser_aplicado_ao_pedido()` quando o subtotal do carrinho de livros é inferior a `-valor_minimo_pedido: float`.
+* **Origem no Diagrama:** DUC UC04 → **Fluxo de Exceção FE04 (Subtotal Mínimo)**. Disparado pelo método `pode_ser_aplicado_ao_pedido()` quando o subtotal do carrinho de livros é inferior a `-valor_minimo_pedido: float`.
 * **Código a Implementar:**
   ```python
   class ValorMinimoNaoAtingidoError(CupomInvalidoError):
@@ -429,7 +429,7 @@ Abra o arquivo `bibliotaua/models/cupom.py`. Nele transformaremos o **Diagrama d
   ```
 * **Explicação Linha a Linha:**
   - `self.codigo.strip().upper()` normaliza o código (ex: transforma `' bemvindo10 '` em `'BEMVINDO10'`), evitando falhas por digitação com espaços ou letras minúsculas.
-  - As cláusulas de guarda (`guard clauses`) barram descontos negativos, percentuais abusivos ($> 100\%$) ou limites inválidos, levantando `ValueError`.
+  - As cláusulas de guarda (`guard clauses`) barram descontos negativos, percentuais abusivos (> 100%) ou limites inválidos, levantando `ValueError`.
 * **Como Verificar:**
   ```bash
   python3 -c "from bibliotaua.models.cupom import Cupom, TipoDesconto; Cupom('', TipoDesconto.VALOR_FIXO, -10.0)"
@@ -540,10 +540,10 @@ Abra o arquivo `bibliotaua/models/cupom.py`. Nele transformaremos o **Diagrama d
   ```
 * **Explicação Linha a Linha:**
   - Valida consecutivamente os 4 fluxos de exceção:
-    1. Se `not self.ativo` $\rightarrow$ lança `CupomInativoError(self.codigo)` (FE01).
-    2. Se `self.esta_expirado(...)` $\rightarrow$ lança `CupomExpiradoError` com data formatada (FE02).
-    3. Se `self.atingiu_limite_usos()` $\rightarrow$ lança `CupomEsgotadoError` (FE03).
-    4. Se `subtotal < self.valor_minimo_pedido` $\rightarrow$ lança `ValorMinimoNaoAtingidoError` (FE04).
+    1. Se `not self.ativo` → lança `CupomInativoError(self.codigo)` (FE01).
+    2. Se `self.esta_expirado(...)` → lança `CupomExpiradoError` com data formatada (FE02).
+    3. Se `self.atingiu_limite_usos()` → lança `CupomEsgotadoError` (FE03).
+    4. Se `subtotal < self.valor_minimo_pedido` → lança `ValorMinimoNaoAtingidoError` (FE04).
   - Se todas as regras forem satisfeitas, o método termina silenciosamente (`None`), liberando o prosseguimento da compra.
 * **Como Verificar:**
   ```bash
@@ -634,7 +634,7 @@ if __name__ == "__main__":
 3. `from bibliotaua.exceptions import ValorMinimoNaoAtingidoError`: importa a exceção esperada para o teste de guarda.
 4. `cupom = Cupom(...)`: instancia o cupom promocional `BEMVINDO10` com 10% de desconto e exigência de subtotal mínimo de R$ 50,00.
 5. `desconto = cupom.calcular_desconto(100.0)`: simula uma compra válida de R$ 100,00 em livros didáticos. O retorno calculado é `10.0`.
-6. Bloco `try / except ValorMinimoNaoAtingidoError`: simula uma tentativa de compra de apenas R$ 30,00. Como $30.0 < 50.0$, o método lança a exceção de valor mínimo, capturada com sucesso no `except` e exibida no console.
+6. Bloco `try / except ValorMinimoNaoAtingidoError`: simula uma tentativa de compra de apenas R$ 30,00. Como o subtotal de R$ 30,00 é inferior ao mínimo de R$ 50,00, o método lança a exceção de valor mínimo, capturada com sucesso no `except` e exibida no console.
 
 ---
 
@@ -674,9 +674,6 @@ Ao final do encontro de hoje, registre no seu relatório de sprint:
     *   Implementei método por método em `exceptions.py` e `models/cupom.py`, com validações no `__post_init__`, checagem de expiração, contagem de usos e cálculo de desconto garantindo a validação do valor mínimo.
     *   Criei o arquivo `main.py` e executei o teste prático no terminal, confirmando o funcionamento de todas as regras.
 *   **O que farei no Encontro 2 (Aula 25)?**
-    *   Modelar a persistência relacional da tabela `cupons` no SQLite (`database.py`).
-    *   Implementar o padrão repositório em `CupomRepository` com proteção contra SQL Injection.
-*   **Impedimentos?** Nenhum impedimento.
     *   Modelar a persistência relacional da tabela `cupons` no SQLite (`database.py`).
     *   Implementar o padrão repositório em `CupomRepository` com proteção contra SQL Injection.
 *   **Impedimentos?** Nenhum impedimento.
