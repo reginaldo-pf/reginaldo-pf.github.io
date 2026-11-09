@@ -1,0 +1,49 @@
+\changecolours{ScoutGreen}
+\section[Segurança de Fórmulas]{Segurança de Fórmulas e Relações Infinitas}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Perigo Matemático das Relações Infinitas},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Fórmulas Sintáticas porém Inseguras}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Na lógica matemática pura, qualquer expressão bem formada é válida.
+    \item Considere a consulta:
+      \[ \psi_1 = \{ t \mid \neg(t \in \text{CLIENTE}) \} \]
+    \item Pergunta lógica: Quais tuplas satisfazem $\psi_1$?
+    \item \textbf{Resposta Computacional:} \textbf{Infinitas tuplas!} Qualquer cadeia de caracteres, número ou símbolo imaginável no universo que não seja um cliente cadastrado satisfaz essa condição.
+  \end{itemize}
+}{%
+  \alert{Impacto em Sistemas Computacionais}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Um computador não pode gerar, armazenar nem transmitir um conjunto infinito de tuplas.
+    \item Além disso, a fórmula $\psi_1$ sequer define quais atributos ou domínios de tipos a tupla $t$ deveria ter!
+    \item Portanto, os SGBDs precisam restringir as consultas do Cálculo a uma subclasse bem comportada: as \textbf{Expressões Seguras} (\emph{Safe Expressions}).
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Domínio da Fórmula (\texorpdfstring{$DOM(\psi)$}{DOM(psi)}) e Segurança},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Definição Formal de $DOM(\psi)$}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item O \textbf{Domínio de uma Fórmula} ($DOM(\psi)$) é o conjunto de todas as constantes que:
+      \begin{enumerate}
+        \item Aparecem explicitamente na sintaxe da fórmula $\psi$ (ex: `'Tauá'`, $300$).
+        \item Ou aparecem em qualquer tupla das relações referenciadas dentro de $\psi$.
+      \end{enumerate}
+    \item Por definição, para qualquer banco de dados relacional finito, $DOM(\psi)$ é um \textbf{conjunto estritamente finito}!
+  \end{itemize}
+}{%
+  \alert{Critério de Expressão Segura}\par
+  \itemseps[topsepi=0.5mm,itemsepi=0.8mm,labelsep=1.5mm,leftmargini=2.5mm]
+  \begin{itemize}
+    \item Uma expressão $\{ t \mid P(t) \}$ é dita \textbf{Segura} se:
+      \begin{itemize}
+        \item Toda tupla $t$ que satisfaz $P(t)$ é formada \textbf{somente por valores de $DOM(P)$}.
+        \item Para $\exists u (F(u))$, se $u$ satisfaz $F$, seus valores pertencem a $DOM(F)$.
+        \item Para $\forall u (F(u))$, valores fora de $DOM(F)$ tornam a fórmula satisfeita.
+      \end{itemize}
+    \item Expressões seguras garantem que o resultado é finito e calculável!
+  \end{itemize}
+}

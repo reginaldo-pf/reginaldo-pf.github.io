@@ -1,0 +1,82 @@
+\changecolours{ScoutGreen}
+\section[Junções Externas]{Junções Externas (Outer Joins)}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Problema da Perda de Dados e o Valor Nulo},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{A Rigidez da Junção Interna (Inner Join)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item A Junção Natural descarta implacavelmente qualquer tupla que não tenha par exato na outra tabela.
+    \item \textbf{Cenários Críticos do Cotidiano:}
+      \begin{itemize}
+        \item Relatório de vendas: clientes cadastrados que ainda não realizaram pedidos seriam omitidos!
+        \item Acervo de biblioteca: livros novos que nunca foram emprestados sumiriam do relatório.
+      \end{itemize}
+    \item Necessidade de um mecanismo que \textbf{preserve tuplas órfãs}.
+  \end{itemize}
+}{%
+  \alert{A Solução: Valores Nulos (NULL)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Edgar F. Codd introduziu as \textbf{Junções Externas} (\emph{Outer Joins}).
+    \item Quando uma tupla não encontra par na tabela oposta, seus atributos correspondentes são preenchidos com o marcador de ausência: \textbf{NULL}.
+    \item Três variantes fundamentais:
+      \begin{enumerate}
+        \item \textbf{Left Outer Join:} Preserva a esquerda.
+        \item \textbf{Right Outer Join:} Preserva a direita.
+        \item \textbf{Full Outer Join:} Preserva ambos os lados.
+      \end{enumerate}
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Left Outer Join e Right Outer Join},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Left Outer Join ($R \mathrel{\sqsubset\!\!\bowtie} S$)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Preserva \textbf{todas as tuplas da relação à esquerda} ($R$), havendo ou não casamento em $S$.
+    \item Formalismo em operadores fundamentais:
+      \[ R \mathrel{\sqsubset\!\!\bowtie} S \equiv (R \bowtie S) \cup \left( (R - (R \ltimes S)) \times \{ \langle \text{null}, \dots, \text{null} \rangle \} \right) \]
+    \item Garante que nenhuma linha da tabela base da esquerda seja perdida.
+  \end{itemize}
+}{%
+  \alert{Right Outer Join ($R \mathrel{\bowtie\!\!\sqsupset} S$)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item É a operação simétrica: preserva \textbf{todas as tuplas da relação à direita} ($S$).
+    \item Caso uma tupla de $S$ não tenha vínculo em $R$, as colunas originárias de $R$ recebem $\text{NULL}$.
+    \item Relação de comutatividade espelhada:
+      \[ R \mathrel{\bowtie\!\!\sqsupset} S \equiv S \mathrel{\sqsubset\!\!\bowtie} R \]
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Full Outer Join e Quadro Comparativo},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Full Outer Join ($R \mathrel{\sqsubset\!\!\bowtie\!\!\sqsupset} S$)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Preserva \textbf{todas as tuplas de ambas as relações}.
+    \item Combina o casamento estrito mais as tuplas órfãs de $R$ (com nulos à direita) mais as órfãs de $S$ (com nulos à esquerda):
+      \[ R \mathrel{\sqsubset\!\!\bowtie\!\!\sqsupset} S \equiv (R \mathrel{\sqsubset\!\!\bowtie} S) \cup (R \mathrel{\bowtie\!\!\sqsupset} S) \]
+    \item Visão panorâmica $100\%$ inclusiva.
+  \end{itemize}
+}{%
+  \alert{Instância de CLIENTE $\mathrel{\sqsubset\!\!\bowtie\!\!\sqsupset}$ PLANO}\par
+  \vspace{0.15cm}
+  {\tiny
+  \begin{tabular}{llllr}
+    \toprule
+    \textbf{id\_cli} & \textbf{nome} & \textbf{plano\_id} & \textbf{nome\_plano} & \textbf{valor} \\
+    \midrule
+    C01 & Ana & P1 & Fibra Res. & 89.90 \\
+    C02 & Bruno & P2 & Fibra Emp. & 149.90 \\
+    C03 & Carla & P1 & Fibra Res. & 89.90 \\
+    C04 & Diego & P3 & Dedicado & 399.90 \\
+    C05 & Eva & P4 & \textit{null} & \textit{null} \\
+    \textit{null} & \textit{null} & P9 & Satélite & 250.00 \\
+    \bottomrule
+  \end{tabular}}
+  \par\vspace{0.25cm}
+  \footnotesize
+  Eva (sem plano cadastrado) e Plano P9 (sem assinantes) aparecem coexistindo!
+}

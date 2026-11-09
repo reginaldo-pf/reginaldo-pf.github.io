@@ -1,0 +1,62 @@
+\documentclass[aspectratio=169,utf8,t]{beamer}
+
+% Idioma e Codificacao
+\usepackage[brazilian]{babel}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[normalem]{ulem}
+\usepackage{tikz}
+\usetikzlibrary{shapes,shapes.geometric,arrows,arrows.meta,positioning,calc,fit,trees}
+
+% Carrega o Tema Modelo dos Scouts (Widescreen 16:9, Nunito Sans)
+\usetheme{scouts}
+
+\definecolor{amber}{RGB}{245, 158, 11}
+
+% Metadados Institucionais
+\author{Prof. Me. Reginaldo Fernandes}
+\institute{Instituto Federal do Ceará -- Campus Tauá \\ Tecnologia em Telemática}
+\title{Banco de Dados}
+\subtitle{Aula 13: Álgebra Relacional (Parte 2) -- Junções e Divisão \texorpdfstring{($\bowtie, \bowtie_\theta, \ltimes, \rtimes, \sqsubset\bowtie, \bowtie\sqsupset, \div$)}{(Theta-join, Natural, Outer Joins, Divisão)}}
+\date{10 de Novembro de 2026}
+
+\begin{document}
+\shorthandoff{"}
+
+% ------------------------------------------------------------------------------
+% Capa da Apresentacao
+% ------------------------------------------------------------------------------
+\changecolours[inverse]{ScoutGreen}
+\frame[plain]{\titlepage}
+
+% ------------------------------------------------------------------------------
+% Sumario Executivo da Aula
+% ------------------------------------------------------------------------------
+\changecolours{ScoutGreen}
+\begin{frame}{Agenda do Encontro}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \scriptsize
+      \tableofcontents[sections={1-5}]
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \scriptsize
+      \tableofcontents[sections={6-9}]
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% Modulos Tematicos da Aula
+% ------------------------------------------------------------------------------
+\input{secao1_revisao_transicao}
+\input{secao2_thetajoin_equijoin}
+\input{secao3_juncao_natural}
+\input{secao4_semijoin_antijoin}
+\input{secao5_outer_joins}
+\input{secao6_divisao_relacional}
+\input{secao7_exercicios_praticos}
+\input{secao8_conclusao_proximos_passos}
+\input{secao9_referencias}
+
+\end{document}

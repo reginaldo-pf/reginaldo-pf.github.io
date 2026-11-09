@@ -1,0 +1,98 @@
+\changecolours{ScoutGreen}
+\section[Junção Natural]{A Junção Natural (\texorpdfstring{$\bowtie$}{Bowtie})}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Definição Formal da Junção Natural (\texorpdfstring{$\bowtie$}{Bowtie})},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Mecanismo Implícito de Casamento}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item A \textbf{Junção Natural} ($\bowtie$) é um Equi-join especial que não requer a especificação explícita da condição de igualdade.
+    \item Ela compara automaticamente \textbf{todos os atributos homônimos} (com o mesmo nome) presentes em ambas as relações:
+      \[ Y = \text{atr}(R) \cap \text{atr}(S) \]
+    \item Exige igualdade estrita: $R.Y_1 = S.Y_1 \land \dots \land R.Y_k = S.Y_k$.
+    \item Caso as relações não compartilhem nenhum atributo homônimo, a junção natural degenera no \textbf{Produto Cartesiano} ($R \times S$).
+  \end{itemize}
+}{%
+  \alert{Eliminação Automática de Redundância}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Diferente do Equi-join, a junção natural projeta \textbf{apenas uma única cópia} de cada atributo de junção homônimo.
+    \item \textbf{Cálculo do Grau Resultante:}
+      \[ \text{grau}(R \bowtie S) = \text{grau}(R) + \text{grau}(S) - |Y| \]
+    \item Formalização em operadores fundamentais:
+      \[ R \bowtie S \equiv \pi_{\text{atr}(R) \cup \text{atr}(S)}\left(\sigma_{\text{cond\_igualdade}}(R \times S)\right) \]
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Demonstração Passo a Passo de Junção Natural},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Instâncias de Livros e Empréstimos}\par
+  \vspace{0.15cm}
+  {\tiny
+  \textbf{LIVRO(isbn, titulo, categoria)}
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{isbn} & \textbf{titulo} & \textbf{categoria} \\
+    \midrule
+    L01 & Algoritmos & Computacao \\
+    L02 & O Pequeno Principe & Literatura \\
+    L03 & Quimica Geral & Exatas \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.25cm}
+  \textbf{EMPRESTIMO(isbn, leitor, data)}
+  \begin{tabular}{llr}
+    \toprule
+    \textbf{isbn} & \textbf{leitor} & \textbf{data} \\
+    \midrule
+    L01 & Alice & 10/11 \\
+    L01 & Bob & 15/11 \\
+    L02 & Carlos & 12/11 \\
+    L99 & Daniel & 20/11 \\
+    \bottomrule
+  \end{tabular}}
+}{%
+  \alert{Resultado: LIVRO $\bowtie$ EMPRESTIMO}\par
+  \vspace{0.15cm}
+  {\tiny
+  \begin{tabular}{lllll}
+    \toprule
+    \textbf{isbn} & \textbf{titulo} & \textbf{categoria} & \textbf{leitor} & \textbf{data} \\
+    \midrule
+    L01 & Algoritmos & Computacao & Alice & 10/11 \\
+    L01 & Algoritmos & Computacao & Bob & 15/11 \\
+    L02 & O Pequeno Principe & Literatura & Carlos & 12/11 \\
+    \bottomrule
+  \end{tabular}}
+  \par\vspace{0.25cm}
+  \footnotesize
+  \begin{itemize}
+    \item A coluna \texttt{isbn} aparece apenas uma vez (grau $3 + 3 - 1 = 5$).
+    \item \texttt{L03} (livro sem empréstimo) e \texttt{L99} (empréstimo de livro não catalogado) foram descartados!
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Propriedades Algébricas e Tuplas Órfãs},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Propriedades Formais da Junção}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Comutatividade:}
+      \[ R \bowtie S \equiv S \bowtie R \]
+    \item \textbf{Associatividade:}
+      \[ (R \bowtie S) \bowtie T \equiv R \bowtie (S \bowtie T) \]
+    \item Permite ao otimizador de consultas reordenar a ordem de junção de 3 ou mais tabelas livremente para minimizar tabelas temporárias.
+  \end{itemize}
+}{%
+  \alert{O Fenômeno das Dangling Tuples}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Chamamos de \textbf{Tuplas Órfãs} (\emph{Dangling Tuples}) as linhas que são sumariamente descartadas por não terem correspondente na outra relação:
+      \begin{itemize}
+        \item Livro \texttt{L03} (está no acervo, mas nunca foi emprestado).
+        \item Registro \texttt{L99} (aponta para ISBN inexistente no cadastro).
+      \end{itemize}
+    \item Em relatórios de inventário e auditoria, perder essas linhas gera distorções. Isso motivou as \textbf{Junções Externas}!
+  \end{itemize}
+}

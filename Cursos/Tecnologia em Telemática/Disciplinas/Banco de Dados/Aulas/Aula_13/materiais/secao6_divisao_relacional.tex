@@ -1,0 +1,93 @@
+\changecolours{ScoutGreen}
+\section[Divisão Relacional]{O Operador de Divisão Relacional (\texorpdfstring{$\div$}{Divisão})}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Desafio da Quantificação Universal},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{A Pergunta do Tipo "Para Todo"}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Em bancos de dados, consultas analíticas frequentes exigem o quantificador universal ($\forall$):
+      \begin{itemize}
+        \item \emph{"Quais alunos cursaram \textbf{todas} as matérias obrigatórias do ciclo básico?"}
+        \item \emph{"Quais clientes compraram \textbf{todos} os livros da lista de vestibular?"}
+      \end{itemize}
+    \item Enquanto a junção opera por existência ($\exists$), a \textbf{Divisão Relacional} ($\div$) responde a exigências de cobertura total ($100\%$).
+  \end{itemize}
+}{%
+  \alert{Definição Formal de $R \div S$}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Sejam $R(X \cup Y)$ e $S(Y)$, onde $\text{atr}(S) \subset \text{atr}(R)$.
+    \item A relação resultante $T(X) = R \div S$ contém as tuplas $t_x$ tais que:
+      \[ \forall t_y \in S, \quad \langle t_x, t_y \rangle \in R \]
+    \item \textbf{Cálculo do Grau Resultante:}
+      \[ \text{grau}(R \div S) = \text{grau}(R) - \text{grau}(S) \]
+    \item Subtrai os atributos do divisor!
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Dedução Matemática da Divisão em Operadores Canônicos},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{O Teorema da Decomposição}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item A divisão não é um operador primitivo, mas sim uma abreviação elegante de operações canônicas:
+      \[ R \div S \equiv \pi_X(R) - \pi_X\left( (\pi_X(R) \times S) - R \right) \]
+    \item Esta fórmula prova que a Álgebra Fundamental de Codd ($\sigma, \pi, \rho, \cup, -, \times$) é completa para representar quantificações universais.
+  \end{itemize}
+}{%
+  \alert{As 5 Etapas Didáticas do Algoritmo}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{enumerate}
+    \item \textbf{Candidatos:} Todos os $X$ possíveis: $T_1 \leftarrow \pi_X(R)$.
+    \item \textbf{Cenário Ideal:} Todas as exigências para cada candidato: $T_2 \leftarrow T_1 \times S$.
+    \item \textbf{Faltas:} O que era exigido mas o candidato não possui: $T_3 \leftarrow T_2 - R$.
+    \item \textbf{Reprovados:} Quem falhou em ao menos 1 requisito: $T_4 \leftarrow \pi_X(T_3)$.
+    \item \textbf{Aprovados:} $R \div S \leftarrow T_1 - T_4$.
+  \end{enumerate}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Exemplo Prático de Divisão: Disciplinas Cursadas},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Instâncias de Entrada}\par
+  \vspace{0.15cm}
+  {\tiny
+  \textbf{R = HISTORICO(aluno, disc)}
+  \begin{tabular}{ll}
+    \toprule
+    \textbf{aluno} & \textbf{disc} \\
+    \midrule
+    Ana & Calculo \\
+    Ana & Algoritmos \\
+    Bruno & Calculo \\
+    Carlos & Algoritmos \\
+    Diana & Calculo \\
+    Diana & Algoritmos \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.2cm}
+  \textbf{S = OBRIGATORIA(disc)}
+  \begin{tabular}{l}
+    \toprule
+    \textbf{disc} \\
+    \midrule
+    Calculo \\
+    Algoritmos \\
+    \bottomrule
+  \end{tabular}}
+}{%
+  \alert{Execução Passo a Passo de $R \div S$}\par
+  \vspace{0.15cm}
+  \begin{itemize}
+    \item $T_1 = \pi_{\text{aluno}}(R) = \{ \text{Ana}, \text{Bruno}, \text{Carlos}, \text{Diana} \}$.
+    \item $T_2 = T_1 \times S$ gera $4 \times 2 = 8$ pares ideais esperados.
+    \item $T_3 = T_2 - R$ contém as faltas reais:
+      \[ \{ \langle \text{Bruno}, \text{Algoritmos} \rangle, \langle \text{Carlos}, \text{Calculo} \rangle \} \]
+    \item $T_4 = \pi_{\text{aluno}}(T_3) = \{ \text{Bruno}, \text{Carlos} \}$ (os que falharam).
+    \item $T_1 - T_4 = \mathbf{\{ \text{Ana}, \text{Diana} \}}$.
+  \end{itemize}
+  \par\vspace{0.1cm}
+  \footnotesize
+  Apenas Ana e Diana cursaram todas as disciplinas obrigatórias!
+}

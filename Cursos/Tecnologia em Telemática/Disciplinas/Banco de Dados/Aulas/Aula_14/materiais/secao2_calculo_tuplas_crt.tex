@@ -1,0 +1,82 @@
+\changecolours{ScoutGreen}
+\section[Cálculo de Tuplas (CRT)]{Cálculo Relacional de Tuplas (CRT)}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Sintaxe Canônica do CRT},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Estrutura Fundamental de Consulta}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Uma consulta no CRT é expressa na forma matemática:
+      \[ \{ t \mid P(t) \} \]
+    \item \textbf{Variável Livre ($t$):} É a tupla resultante. Pode representar a tupla inteira ou uma projeção explícita de atributos ($t[\text{atr}_1, \dots, \text{atr}_k]$).
+    \item \textbf{Fórmula Lógica ($P(t)$):} É um predicado booleano que deve ser avaliado como \textbf{Verdadeiro} para que a tupla $t$ seja incluída na resposta.
+  \end{itemize}
+}{%
+  \alert{Átomos Legais do CRT}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Fórmulas lógicas são construídas por três classes de átomos básicos:
+      \begin{enumerate}
+        \item \textbf{Pertinência à Relação:} $t \in R$
+        \item \textbf{Comparação entre Atributos:} $t[A] \ \theta \ s[B]$
+        \item \textbf{Comparação com Constante:} $t[A] \ \theta \ c$
+      \end{enumerate}
+    \item Onde $\theta \in \{=, \neq, <, \le, >, \ge\}$ é o operador de comparação relacional.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Quantificadores no CRT: Existencial e Universal},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Quantificador Existencial ($\exists$)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Notação: $\exists s \in R \, (F(s))$.
+    \item Significa: \emph{"Existe pelo menos uma tupla $s$ na relação $R$ que torna a fórmula $F(s)$ verdadeira"}.
+    \item É a base formal utilizada para expressar \textbf{Junções} entre relações no paradigma declarativo:
+      {\tiny
+      \[ \{ t \mid t \in \text{CLIENTE} \land \exists p \in \text{PEDIDO} \, (p[\text{id\_cli}] = t[\text{id\_cli}]) \} \]}
+  \end{itemize}
+}{%
+  \alert{Quantificador Universal ($\forall$)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Notação: $\forall s \in R \, (F(s))$.
+    \item Significa: \emph{"Para todas as tuplas $s$ pertencentes à relação $R$, a fórmula $F(s)$ é verdadeira"}.
+    \item Utilizado para modelar consultas universais equivalentes à \textbf{Divisão Relacional}.
+    \item \textbf{Equivalência de De Morgan:}
+      \[ \forall s \, (F(s)) \equiv \neg \exists s \, (\neg F(s)) \]
+    \item No SQL, quantificações universais são convertidas em duplas negações (\texttt{NOT EXISTS}).
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Exemplo Prático: Junção Declarativa em CRT},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Consulta em Linguagem Natural}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \emph{"Recupere o nome do cliente e o valor do pedido para clientes da cidade de Tauá com compras acima de R\$ 100,00"}.
+    \item Relações de entrada:
+      \begin{itemize}
+        \item \texttt{CLIENTE(id\_cli, nome, cidade)}
+        \item \texttt{PEDIDO(id\_ped, id\_cli, valor)}
+      \end{itemize}
+  \end{itemize}
+}{%
+  \alert{Expressão Formal em CRT}\par
+  \vspace{0.2cm}
+  {\footnotesize
+  \begin{align*}
+    \{ t^{(2)} \mid &\exists c \in \text{CLIENTE} \, ( \\
+      &c[\text{cidade}] = '\text{Tauá}' \land \\
+      &t[\text{nome}] = c[\text{nome}] \land \\
+      &\exists p \in \text{PEDIDO} \, ( \\
+        &p[\text{id\_cli}] = c[\text{id\_cli}] \land \\
+        &p[\text{valor}] > 100.00 \land \\
+        &t[\text{valor}] = p[\text{valor}] \\
+      ) \\
+    ) \}
+  \end{align*}}
+  \par\vspace{0.1cm}
+  \scriptsize
+  A variável livre $t$ captura os atributos desejados enquanto as variáveis ligadas $c$ e $p$ fazem o pareamento.
+}

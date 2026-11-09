@@ -1,0 +1,62 @@
+\changecolours{ScoutGreen}
+\section[Semi-Junção e Anti-Junção]{Semi-Junções e Anti-Junção}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Operador de Semi-Junção (\texorpdfstring{$\ltimes$}{Semi-Join})},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Definição Formal da Semi-Junção Esquerda}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item A \textbf{Semi-junção Esquerda} ($R \ltimes S$) retorna todas as tuplas de $R$ para as quais existe pelo menos uma tupla compatível em $S$:
+      \[ R \ltimes S \equiv \pi_{\text{atr}(R)}(R \bowtie S) \]
+    \item \textbf{Propriedade Estrutural:} O esquema resultante é \textbf{exatamente o esquema de $R$}.
+    \item Nenhuma coluna de $S$ é concatenada ao resultado!
+    \item Cada tupla de $R$ aparece no máximo uma vez, mesmo que case com múltiplos registros em $S$.
+  \end{itemize}
+}{%
+  \alert{Aplicações em Otimização e Bancos Distribuídos}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Suponha uma livraria com matriz em São Paulo e filial em Fortaleza.
+    \item Deseja-se saber: \emph{"Quais autores da filial possuem livros vendidos na matriz?"}.
+    \item Trafegar toda a tabela de vendas pela rede é um desperdício.
+    \item \textbf{Estratégia Semi-Join:}
+      \begin{enumerate}
+        \item Projeta apenas a chave: $\pi_{\text{id\_autor}}(\text{VENDAS})$.
+        \item Envia apenas os IDs para a filial.
+        \item Executa a semi-junção localmente.
+      \end{enumerate}
+    \item Reduz o volume de tráfego de rede em mais de $90\%$.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Anti-Junção (\texorpdfstring{$\triangleright$}{Anti-Join}): Detecção de Órfãos},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Definição Formal da Anti-Junção}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item A \textbf{Anti-junção} ($R \triangleright S$) retorna exclusivamente as tuplas de $R$ que \textbf{NÃO possuem nenhuma correspondência} em $S$:
+      \[ R \triangleright S \equiv R - (R \ltimes S) \]
+    \item Preserva unicamente o esquema de $R$.
+    \item Equivale à pergunta: \emph{"Quais elementos de $R$ nunca se relacionaram com $S$?"}.
+    \item No SQL comercial, expressa consultas com \texttt{NOT EXISTS} ou \texttt{LEFT JOIN ... WHERE S.id IS NULL}.
+  \end{itemize}
+}{%
+  \alert{Exemplo Prático de Anti-Junção}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Utilizando as relações anteriores:
+      \[ \text{LIVRO} \triangleright \text{EMPRESTIMO} \]
+    \item Identifica livros físicos cadastrados na biblioteca que \textbf{nunca foram emprestados} a nenhum leitor.
+    \item Resultado:
+      \par\vspace{0.15cm}
+      {\tiny
+      \begin{tabular}{lll}
+        \toprule
+        \textbf{isbn} & \textbf{titulo} & \textbf{categoria} \\
+        \midrule
+        L03 & Quimica Geral & Exatas \\
+        \bottomrule
+      \end{tabular}}
+    \item Solução direta, elegante e sem necessidade de produtos cartesianos intermediários!
+  \end{itemize}
+}

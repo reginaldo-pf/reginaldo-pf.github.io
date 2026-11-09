@@ -1,0 +1,53 @@
+\changecolours{ScoutGreen}
+\section[Síntese e Próximos Passos]{Síntese e Próximos Passos}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Quadro Sinóptico dos Operadores Avançados},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Operadores de Junção e Divisão}\par
+  \vspace{0.15cm}
+  {\tiny
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Operador} & \textbf{Símbolo / Sintaxe} & \textbf{Grau Resultante} \\
+    \midrule
+    Theta-Join & $R \bowtie_\theta S$ & $\text{grau}(R) + \text{grau}(S)$ \\
+    Equi-Join & $R \bowtie_{A = B} S$ & $\text{grau}(R) + \text{grau}(S)$ \\
+    Junção Natural & $R \bowtie S$ & $\text{grau}(R) + \text{grau}(S) - |Y|$ \\
+    Semi-Junção & $R \ltimes S$ & $\text{grau}(R)$ \\
+    Anti-Junção & $R \triangleright S$ & $\text{grau}(R)$ \\
+    Left Outer Join & $R \mathrel{\sqsubset\!\!\bowtie} S$ & $\text{grau}(R) + \text{grau}(S) - |Y|$ \\
+    Full Outer Join & $R \mathrel{\sqsubset\!\!\bowtie\!\!\sqsupset} S$ & $\text{grau}(R) + \text{grau}(S) - |Y|$ \\
+    Divisão Relacional & $R \div S$ & $\text{grau}(R) - \text{grau}(S)$ \\
+    \bottomrule
+  \end{tabular}}
+}{%
+  \alert{Preservação e Semântica}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Inner Joins:} Descartam tuplas sem casamento (\emph{dangling tuples}).
+    \item \textbf{Outer Joins:} Preservam tuplas órfãs preenchendo ausências com \texttt{NULL}.
+    \item \textbf{Semi-Joins:} Filtros existenciais eficientes que não duplicam linhas nem aumentam a largura da tabela.
+    \item \textbf{Divisão:} Expressa a exigência universal estrita ($\forall$).
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Checklist Formativo e Ponte para a Aula 14},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Checklist de Autoavaliação}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Consigo diferenciar um Equi-join de uma Junção Natural pelo tratamento de atributos homônimos?
+    \item Sei quando utilizar um Left Outer Join em vez de uma junção interna?
+    \item Compreendo por que a semi-junção reduz tráfego em bancos distribuídos?
+    \item Consigo explicar as 5 etapas da Divisão Relacional?
+  \end{itemize}
+}{%
+  \alert{O Horizonte da Aula 14}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Cálculo Relacional:} A abordagem declarativa baseada na Lógica de Predicados de Primeira Ordem.
+    \item \textbf{CRT e CRD:} Cálculo Relacional de Tuplas e de Domínios.
+    \item \textbf{Equivalência de Codd:} Por que a Álgebra e o Cálculo possuem o mesmo poder expressivo.
+    \item \textbf{Otimizador de Consultas:} Transformação de árvores algébricas e plano de execução do SGBD.
+  \end{itemize}
+}

@@ -1,0 +1,47 @@
+\changecolours{ScoutGreen}
+\section[Síntese e Próximos Passos]{Síntese e Próximos Passos}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Quadro Comparativo Definitivo das Linguagens},leftcol=5.8cm,midcol=1.8cm,rightcol=6.4cm]{%
+  \alert{Síntese dos Paradigmas Formais}\par
+  \vspace{0.15cm}
+  \resizebox{\columnwidth}{!}{%
+  \begin{tabular}{llll}
+    \toprule
+    \textbf{Linguagem} & \textbf{Paradigma} & \textbf{Variável} & \textbf{Uso Principal} \\
+    \midrule
+    Álgebra Relacional & Procedural & Relações & Otimizador (SGBD) \\
+    CRT & Declarativo & Tuplas & Base do SQL \\
+    CRD & Declarativo & Domínios & Interfaces (QBE) \\
+    SQL & Declarativo & Multiconjuntos & Aplicações \\
+    \bottomrule
+  \end{tabular}%
+  }
+}{%
+  \alert{Conclusões Fundamentais}\par
+  \itemseps[topsepi=1mm,itemsepi=2mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Pelo Teorema de Codd, Álgebra e Cálculo são duas faces da mesma moeda matemática.
+    \item O desenvolvedor pensa declarativamente (\emph{o que}), enquanto o motor do SGBD executa proceduralmente (\emph{como}).
+    \item O otimizador de consultas reescreve árvores algébricas com regras de equivalência para garantir tempo de resposta em milissegundos.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Checklist Formativo e Próximos Passos},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Checklist de Autoavaliação}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Sei diferenciar a abordagem procedural da Álgebra da declarativa do Cálculo?
+    \item Consigo construir expressões no CRT com quantificadores $\exists$ e $\forall$?
+    \item Sei diagnosticar se uma consulta lógica é segura utilizando $DOM(\psi)$?
+    \item Sei aplicar a heurística de \emph{Push-Down Selection} para otimizar árvores de consulta?
+  \end{itemize}
+}{%
+  \alert{Próximos Passos do Calendário}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Aula 15 (Sábado Letivo - 14/11):} Aplicação e resolução da \textbf{Lista de Exercícios 02 (N1)} (Mapeamento Relacional e Álgebra Relacional).
+    \item \textbf{Aula 16 (17/11):} Início da Unidade IV — \textbf{Teoria do Projeto Relacional}, anomalias de atualização e Dependências Funcionais (DF).
+  \end{itemize}
+}

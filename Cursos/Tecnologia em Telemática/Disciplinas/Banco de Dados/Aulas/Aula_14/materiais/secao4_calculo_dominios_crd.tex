@@ -1,0 +1,56 @@
+\changecolours{ScoutGreen}
+\section[Cálculo de Domínios (CRD)]{Cálculo Relacional de Domínios (CRD)}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Sintaxe Canônica do CRD},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Operando sobre Valores de Atributos}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item No \textbf{CRD}, as variáveis não representam tuplas completas, mas sim \textbf{valores individuais de domínio} (colunas).
+    \item Sintaxe geral:
+      \[ \{ \langle x_1, x_2, \dots, x_n \rangle \mid P(x_1, x_2, \dots, x_n) \} \]
+    \item Onde cada $x_i$ é uma variável de domínio associada a um atributo.
+    \item Átomo de relação: $\langle x_1, x_2, \dots, x_n \rangle \in R$, indicando que a lista ordenada de valores forma uma tupla em $R$.
+  \end{itemize}
+}{%
+  \alert{Exemplo Prático em CRD}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Esquema: \texttt{LIVRO(isbn, titulo, categoria)}
+    \item Consulta: \emph{"Listar títulos de livros da categoria 'Computacao'"}.
+    \item No CRD:
+      \[ \{ \langle t \rangle \mid \exists i \, (\langle i, t, '\text{Computacao}' \rangle \in \text{LIVRO}) \} \]
+    \item As variáveis que não compõem a saída (como o ISBN $i$) são quantificadas existencialmente.
+    \item Notação muito próxima da álgebra linear e do raciocínio posicional de tabelas.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Impacto Histórico do CRD: Query By Example (QBE)},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{A Revolução do QBE (IBM - 1975)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Concebida por Moshé Zloof no laboratório da IBM em Yorktown Heights.
+    \item Primeira interface visual declarativa bidimensional do mundo.
+    \item Usuários não precisavam escrever código textual; bastava preencher esqueletos de tabelas na tela do terminal.
+    \item O CRD serviu diretamente como a semântica formal por trás de cada comando do QBE!
+  \end{itemize}
+}{%
+  \alert{Como Funciona o QBE na Prática}\par
+  \vspace{0.2cm}
+  {\tiny
+  \begin{tabular}{|l|l|l|}
+    \hline
+    \textbf{CLIENTE} & \textbf{nome} & \textbf{cidade} \\
+    \hline
+    & P. & Tauá \\
+    \hline
+  \end{tabular}}
+  \par\vspace{0.3cm}
+  \footnotesize
+  \begin{itemize}
+    \item \texttt{P.} significa \emph{Print} (projetar na saída).
+    \item A constante \texttt{'Tauá'} sob a coluna cidade atua como a seleção booleana.
+    \item O QBE inspirou as ferramentas visuais modernas de consulta (Microsoft Access Query Grid, interfaces BI, etc.).
+  \end{itemize}
+}

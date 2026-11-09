@@ -1,0 +1,119 @@
+\changecolours{ScoutGreen}
+\section[Exercícios]{Exercícios e Desafios Práticos Resolvidos}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Desafio 1: Biblioteca e Empréstimos por Categoria},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Enunciado do Problema}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Recupere o \texttt{titulo} da obra, o nome do \texttt{leitor} e a \texttt{data\_emp} dos empréstimos realizados para livros da categoria \textbf{'Computacao'}.
+    \item Esquemas das tabelas:
+      \begin{itemize}
+        \item \texttt{LIVRO(isbn, titulo, categoria, ano)}
+        \item \texttt{EMPRESTIMO(id\_emp, isbn, leitor, data\_emp)}
+      \end{itemize}
+  \end{itemize}
+}{%
+  \alert{Resolução Formal}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Estratégia Otimizada (Push-Down Selection):}
+      {\footnotesize
+      \begin{align*}
+        \text{COMP} &\leftarrow \sigma_{\text{categoria} = '\text{Computacao}'}(\text{LIVRO}) \\
+        \text{JUNCAO} &\leftarrow \text{COMP} \bowtie \text{EMPRESTIMO} \\
+        \text{RES} &\leftarrow \pi_{\text{titulo, leitor, data\_emp}}(\text{JUNCAO})
+      \end{align*}}
+    \item \textbf{Tuplas Obtidas:}
+      \begin{itemize}
+        \item $\langle \text{'Algoritmos'}, \text{'Alice'}, \text{'10/11'} \rangle$
+        \item $\langle \text{'Algoritmos'}, \text{'Bob'}, \text{'15/11'} \rangle$
+      \end{itemize}
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Desafio 2: Livros Nunca Emprestados via Anti-Junção},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Enunciado do Problema}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Identifique o \texttt{isbn} e o \texttt{titulo} de todos os livros do acervo que \textbf{nunca foram emprestados} a nenhum leitor.
+    \item Requisito: Não utilize produtos cartesianos ou operações arriscadas de memória.
+  \end{itemize}
+}{%
+  \alert{Resolução com Anti-Junção}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Aplicação Direta de $\triangleright$:}
+      {\footnotesize
+      \begin{align*}
+        \text{SEM\_EMP} &\leftarrow \text{LIVRO} \triangleright \text{EMPRESTIMO} \\
+        \text{RES} &\leftarrow \pi_{\text{isbn, titulo}}(\text{SEM\_EMP})
+      \end{align*}}
+    \item \textbf{Em Operadores Fundamentais:}
+      \[ \pi_{\text{isbn, titulo}}\left(\text{LIVRO} - \pi_{\text{atr(LIVRO)}}(\text{LIVRO} \bowtie \text{EMPRESTIMO})\right) \]
+    \item \textbf{Tuplas Obtidas:}
+      \begin{itemize}
+        \item $\langle \text{'L03'}, \text{'Quimica Geral'} \rangle$
+      \end{itemize}
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Desafio 3: Relatório de Vendas com Left Outer Join},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Enunciado do Problema}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Gere uma listagem com \textbf{todos} os clientes cadastrados exibindo \texttt{nome}, \texttt{cidade} e o \texttt{id\_ped} correspondente, garantindo que os clientes que ainda não compraram não sejam descartados.
+  \end{itemize}
+}{%
+  \alert{Resolução Formal}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Junção Externa Esquerda:}
+      \[ \text{RES} \leftarrow \pi_{\text{nome, cidade, id\_ped}}(\text{CLIENTE} \mathrel{\sqsubset\!\!\bowtie} \text{PEDIDO}) \]
+    \item \textbf{Instância Resultante:}
+      {\tiny
+      \begin{tabular}{llr}
+        \toprule
+        \textbf{nome} & \textbf{cidade} & \textbf{id\_ped} \\
+        \midrule
+        Ana Lima & Tauá & 501 \\
+        Ana Lima & Tauá & 503 \\
+        Bruno Silva & Fortaleza & \textit{null} \\
+        Carla Dias & Tauá & 502 \\
+        Diego Melo & Sobral & 504 \\
+        Eva Rocha & Tauá & \textit{null} \\
+        \bottomrule
+      \end{tabular}}
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Desafio 4: Conclusão de Núcleo Básico com Divisão},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Enunciado do Problema}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Recupere o \texttt{id\_alu} e o \texttt{nome} dos estudantes que cursaram e foram aprovados em \textbf{todas} as matérias contidas na tabela \texttt{DISC\_OBRIGATORIAS}.
+    \item Esquemas: 
+      \begin{itemize}
+        \item \texttt{HISTORICO(id\_alu, cod\_disc)}
+        \item \texttt{DISC\_OBRIGATORIAS(cod\_disc)}
+        \item \texttt{ALUNO(id\_alu, nome, cidade)}
+      \end{itemize}
+  \end{itemize}
+}{%
+  \alert{Resolução Formal com Divisão}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Etapa 1 (Divisão):}
+      \[ \text{APROVADOS} \leftarrow \text{HISTORICO} \div \text{DISC\_OBRIGATORIAS} \]
+    \item \textbf{Etapa 2 (Recuperação do Nome por Junção):}
+      \[ \text{RES} \leftarrow \pi_{\text{id\_alu, nome}}(\text{APROVADOS} \bowtie \text{ALUNO}) \]
+    \item \textbf{Alunos Qualificados:}
+      \begin{itemize}
+        \item $\langle 101, \text{'Ana Lima'} \rangle$
+        \item $\langle 104, \text{'Diana Moreira'} \rangle$
+      \end{itemize}
+  \end{itemize}
+}

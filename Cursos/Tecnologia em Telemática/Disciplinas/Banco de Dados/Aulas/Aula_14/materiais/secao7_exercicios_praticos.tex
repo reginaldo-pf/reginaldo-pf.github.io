@@ -1,0 +1,124 @@
+\changecolours{ScoutGreen}
+\section[Exercícios]{Exercícios e Desafios Práticos Resolvidos}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Desafio 1: Tradução Tripla (Álgebra $\leftrightarrow$ CRT $\leftrightarrow$ SQL)},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Enunciado do Problema}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Recupere o \texttt{nome} e a \texttt{cidade} dos clientes de \texttt{'Tauá'} com compras individuais de valor superior a R\$ 400,00.
+    \item Esquemas:
+      \begin{itemize}
+        \item \texttt{CLIENTE(id\_cli, nome, cidade)}
+        \item \texttt{PEDIDO(id\_ped, id\_cli, valor)}
+      \end{itemize}
+    \item Formule a consulta nas 3 linguagens.
+  \end{itemize}
+}{%
+  \alert{Resoluções Formais Equivalentes}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Álgebra Relacional:}
+      {\tiny
+      \[ \pi_{\text{nome, cidade}}\left(\sigma_{\text{cidade} = '\text{Tauá}' \,\land\, \text{valor} > 400}(\text{CLIENTE} \bowtie \text{PEDIDO})\right) \]}
+    \item \textbf{Cálculo de Tuplas (CRT):}
+      {\tiny
+      \begin{align*}
+        \{ t^{(2)} \mid &\exists c \in \text{CLIENTE} \, (c[\text{cidade}] = '\text{Tauá}' \land t[\text{nome}] = c[\text{nome}] \land t[\text{cid}] = c[\text{cid}] \\
+        &\land \exists p \in \text{PEDIDO} \, (p[\text{id\_cli}] = c[\text{id\_cli}] \land p[\text{valor}] > 400)) \}
+      \end{align*}}
+    \item \textbf{SQL Padrão:}
+      {\tiny\ttfamily
+      SELECT c.nome, c.cidade\\
+      FROM CLIENTE c JOIN PEDIDO p ON c.id\_cli = p.id\_cli\\
+      WHERE c.cidade = 'Tauá' AND p.valor > 400;}
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Desafio 2: Quantificação Universal e De Morgan no CRT},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Enunciado do Problema}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Encontre os clientes que compraram \textbf{todos} os livros promocionais com preço menor que R\$ 30,00.
+    \item Formule em CRT utilizando o quantificador universal ($\forall$) e reescreva-o usando o quantificador existencial ($\exists$) via Leis de De Morgan.
+  \end{itemize}
+}{%
+  \alert{Resoluções Lógicas}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Forma Universal ($\forall$):}
+      {\tiny
+      \begin{align*}
+        \{ c[\text{nome}] \mid c \in \text{CLIENTE} \land \forall l \in \text{LIVRO} \, ( \\
+        l[\text{preco}] < 30 \to \exists p \in \text{PEDIDO} \, ( \\
+        p[\text{id\_cli}] = c[\text{id\_cli}] \land p[\text{isbn}] = l[\text{isbn}])) \}
+      \end{align*}}
+    \item \textbf{Forma Existencial ($\exists$ via De Morgan):}
+      {\tiny
+      \begin{align*}
+        \{ c[\text{nome}] \mid c \in \text{CLIENTE} \land \neg \exists l \in \text{LIVRO} \, ( \\
+        l[\text{preco}] < 30 \land \neg \exists p \in \text{PEDIDO} \, ( \\
+        p[\text{id\_cli}] = c[\text{id\_cli}] \land p[\text{isbn}] = l[\text{isbn}])) \}
+      \end{align*}}
+    \item \emph{"Não existe nenhum livro barato que o cliente não tenha comprado"}.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Desafio 3: Diagnóstico e Correção de Insegurança},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Expressão sob Julgamento}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Avalie a seguinte consulta proposta por um estudante:
+      \[ \psi = \{ t \mid \neg(t \in \text{PEDIDO}) \land t[\text{valor}] > 100 \} \]
+    \item \textbf{Diagnóstico Técnico:}
+      \begin{itemize}
+        \item É \textbf{INSEGURA}.
+        \item O conjunto de tuplas do universo que satisfazem a negação é infinito.
+        \item O esquema da tupla resultante $t$ não está limitado a nenhuma tabela do catálogo.
+      \end{itemize}
+  \end{itemize}
+}{%
+  \alert{Formulação Segura Correta}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Se o objetivo for: \emph{"Clientes que não realizaram nenhum pedido de valor > 100"}:
+      {\footnotesize
+      \begin{align*}
+        \{ c[\text{id\_cli, nome}] \mid &c \in \text{CLIENTE} \land \\
+        &\neg \exists p \in \text{PEDIDO} \, ( \\
+        &p[\text{id\_cli}] = c[\text{id\_cli}] \land \\
+        &p[\text{valor}] > 100) \}
+      \end{align*}}
+    \item Todos os valores de atributos do resultado provêm comprovadamente de $DOM(\psi)$.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Desafio 4: Análise de Custo de Refatoração de Árvores},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Métricas da Loja Virtual}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Tabela $R$ (Clientes): $|R| = 100.000$ tuplas.
+    \item Tabela $S$ (Pedidos): $|S| = 1.000.000$ tuplas.
+    \item Condição de filtro: $S.\text{valor} > 5000$ (apenas $200$ compras especiais).
+    \item Consulta original não otimizada:
+      \[ \pi_{\text{nome}}\left(\sigma_{S.\text{valor} > 5000 \,\land\, R.\text{id} = S.\text{id}}(R \times S)\right) \]
+  \end{itemize}
+}{%
+  \alert{Comparativo Quantitativo de Custo}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Custo Não Otimizado:}
+      \begin{itemize}
+        \item $R \times S = 100.000 \times 1.000.000 = \mathbf{10^{11} \text{ tuplas}}$!
+      \end{itemize}
+    \item \textbf{Custo Otimizado (Push-Down Selection):}
+      \begin{enumerate}
+        \item Seleção prévia: $S' \leftarrow \sigma_{S.\text{valor} > 5000}(S) \implies \mathbf{200 \text{ tuplas}}$.
+        \item Junção: $R \bowtie S' \implies \mathbf{200 \text{ tuplas}}$.
+      \end{enumerate}
+    \item \textbf{Fator de Otimização:} Redução de $10^{11} \to 200$ tuplas temporárias ($\mathbf{500.000.000\times}$ mais leve).
+  \end{itemize}
+}

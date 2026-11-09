@@ -1,0 +1,97 @@
+\changecolours{ScoutGreen}
+\section[Theta-Join e Equi-Join]{Theta-Join e Equi-Join}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Operador Theta-Join (\texorpdfstring{$\bowtie_\theta$}{Theta-Join})},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Definição Formal de Codd}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item A Junção Condicional ou \textbf{Theta-Join} ($\bowtie_\theta$) realiza a concatenação de tuplas de duas relações sob um predicado booleano geral $\theta$:
+      \[ R \bowtie_\theta S \equiv \sigma_\theta(R \times S) \]
+    \item O predicado $\theta$ é da forma:
+      \[ A_i \ \theta \ B_j \quad \text{ou} \quad (A_i \ \theta_1 \ B_j) \land (A_k \ \theta_2 \ B_m) \]
+      onde $\theta \in \{=, \neq, <, \le, >, \ge\}$.
+    \item Os atributos $A_i$ pertencem a $R$ e $B_j$ a $S$.
+  \end{itemize}
+}{%
+  \alert{Grau e Cardinalidade Resultantes}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Grau Aditivo:} Todos os atributos de ambas as relações são herdados no esquema resultante:
+      \[ \text{grau}(R \bowtie_\theta S) = \text{grau}(R) + \text{grau}(S) \]
+    \item \textbf{Limites de Cardinalidade:}
+      \[ 0 \le |R \bowtie_\theta S| \le |R| \times |S| \]
+      \begin{itemize}
+        \item Se nenhuma tupla satisfizer $\theta$: resultado vazio ($0$).
+        \item Se todas as tuplas satisfizerem $\theta$: vira o produto cartesiano total.
+      \end{itemize}
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Theta-Join com Operadores de Desigualdade},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Contexto: Cupons Promocionais por Valor}\par
+  \vspace{0.15cm}
+  {\tiny
+  \textbf{PEDIDO(id\_ped, cliente, valor)}
+  \begin{tabular}{llr}
+    \toprule
+    \textbf{id\_ped} & \textbf{cliente} & \textbf{valor} \\
+    \midrule
+    P10 & Carlos & 120.00 \\
+    P20 & Mariana & 45.00 \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.25cm}
+  \textbf{CUPOM(cod\_cupom, valor\_min)}
+  \begin{tabular}{lr}
+    \toprule
+    \textbf{cod\_cupom} & \textbf{valor\_min} \\
+    \midrule
+    CUPOM50 & 50.00 \\
+    CUPOM100 & 100.00 \\
+    \bottomrule
+  \end{tabular}}
+}{%
+  \alert{Execução de $R \bowtie_{\text{valor} \ge \text{valor\_min}} S$}\par
+  \vspace{0.15cm}
+  {\tiny
+  \begin{tabular}{llrrl}
+    \toprule
+    \textbf{id\_ped} & \textbf{cliente} & \textbf{valor} & \textbf{cod\_cupom} & \textbf{valor\_min} \\
+    \midrule
+    P10 & Carlos & 120.00 & CUPOM50 & 50.00 \\
+    P10 & Carlos & 120.00 & CUPOM100 & 100.00 \\
+    \bottomrule
+  \end{tabular}}
+  \par\vspace{0.3cm}
+  \footnotesize
+  \begin{itemize}
+    \item Mariana (pedido de R\$ 45,00) não alcançou o valor mínimo de nenhum cupom disponível.
+    \item Carlos (pedido de R\$ 120,00) qualificou-se para ambos os cupons.
+    \item Ilustra o poder do Theta-join em formular faixas, limites de preço e regras de negócio com desigualdades.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Equi-Join: Caso Particular de Igualdade Estrita},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Definição do Equi-Join}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item É a classe mais frequente de Theta-join na prática cotidiana de bancos de dados.
+    \item Ocorre quando o operador de comparação $\theta$ contém \textbf{exclusivamente igualdades ($=$)}:
+      \[ R \bowtie_{R.A_1 = S.B_1 \,\land\, \dots \,\land\, R.A_k = S.B_k} S \]
+    \item É utilizado para associar chaves primárias e estrangeiras quando os nomes dos atributos são distintos.
+  \end{itemize}
+}{%
+  \alert{Particularidade: Colunas Redundantes}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item No Equi-join formal, \textbf{ambos os atributos comparados são mantidos} na tabela resultante.
+    \item Se relacionamos:
+      \[ \text{CLIENTE} \bowtie_{\text{id\_plano} = \text{cod\_plano}} \text{PLANO} \]
+    \item A relação de saída terá tanto a coluna \texttt{id\_plano} quanto a coluna \texttt{cod\_plano}.
+    \item Isso motivou Edgar Codd a definir a \textbf{Junção Natural}, que projeta fora a coluna repetida!
+  \end{itemize}
+}

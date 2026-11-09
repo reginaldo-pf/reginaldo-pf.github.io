@@ -1,0 +1,79 @@
+\changecolours{ScoutGreen}
+\section[Paradigma Declarativo]{O Paradigma Declarativo e a Lógica de Predicados}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Da Álgebra Procedural ao Cálculo Declarativo},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{O que Consolidamos até a Aula 13}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item A \textbf{Álgebra Relacional} é uma linguagem formal \textbf{procedural}:
+      \begin{itemize}
+        \item Prescreve a sequência exata de operações passo a passo.
+        \item Define o \emph{como} extrair e transformar os dados.
+      \end{itemize}
+    \item Embora seja o alicerce matemático interno dos SGBDs, é complexa e verbosa para desenvolvedores de software no dia a dia.
+  \end{itemize}
+}{%
+  \alert{A Grande Fronteira da Aula 14}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item E se pudéssemos apenas descrever \textbf{o que} desejamos obter, deixando a decisão do \textbf{como} totalmente a cargo do SGBD?
+    \item \textbf{A Resposta de Codd (1970/1972):} O \textbf{Cálculo Relacional}, uma linguagem não-procedural fundada na Lógica de Predicados de Primeira Ordem.
+    \item É a raiz matemática direta que deu origem à linguagem \textbf{SQL}!
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Comparativo Fundamental: Procedural vs. Declarativo},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Abordagem Procedural (Álgebra)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Foco:} A sequência das operações.
+    \item \textbf{Exemplo:}
+      \[ \pi_{\text{nome}}\left(\sigma_{\text{cidade} = '\text{Tauá}'}(\text{CLIENTE})\right) \]
+    \item O usuário instrui o SGBD a:
+      \begin{enumerate}
+        \item Ler a tabela CLIENTE.
+        \item Filtrar tuplas onde cidade = 'Tauá'.
+        \item Projetar a coluna nome eliminando duplicatas.
+      \end{enumerate}
+    \item Prescritivo e algorítmico.
+  \end{itemize}
+}{%
+  \alert{Abordagem Declarativa (Cálculo)}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Foco:} A propriedade lógica do resultado.
+    \item \textbf{Exemplo:}
+      \[ \{ t[\text{nome}] \mid t \in \text{CLIENTE} \land t[\text{cidade}] = '\text{Tauá}' \} \]
+    \item O usuário declara: \emph{"Quero o nome de toda tupla t tal que t pertença a CLIENTE e tenha cidade 'Tauá'"}.
+    \item Não impõe nenhuma ordem de leitura ou uso de índices. O SGBD que decida!
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Fundamentos da Lógica de Predicados de Primeira Ordem},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Tuplas como Proposições Lógicas}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Uma relação relacional pode ser interpretada como um \textbf{predicado n-ário}.
+    \item Para cada tupla candidata $t$:
+      \begin{itemize}
+        \item $R(t) = \text{Verdadeiro}$, se $t$ está presente na base de dados.
+        \item $R(t) = \text{Falso}$, caso contrário.
+      \end{itemize}
+    \item O resultado de uma consulta nada mais é do que o conjunto verdade de uma fórmula lógica!
+  \end{itemize}
+}{%
+  \alert{As Duas Vertentes Formais do Cálculo}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{CRT (Cálculo Relacional de Tuplas):}
+      As variáveis lógicas representam \textbf{tuplas inteiras} de uma relação:
+      \[ \{ t \mid P(t) \} \]
+    \item \textbf{CRD (Cálculo Relacional de Domínios):}
+      As variáveis lógicas representam \textbf{valores individuais de atributos}:
+      \[ \{ \langle x_1, \dots, x_n \rangle \mid P(x_1, \dots, x_n) \} \]
+    \item Ambas possuem poder expressivo equivalente.
+  \end{itemize}
+}

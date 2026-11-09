@@ -1,0 +1,87 @@
+\changecolours{ScoutGreen}
+\section[Ponte e Gênese]{Ponte Pedagógica e a Gênese da Junção}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Da Concatenação Bruta à Junção Especializada},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{O que Consolidamos na Aula 12}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item \textbf{Fechamento Relacional:} Toda operação recebe relações e devolve uma nova relação na 1FN.
+    \item \textbf{Filtros Unários:} Seleção ($\sigma$) para filtrar linhas e Projeção ($\pi$) para colunas.
+    \item \textbf{Produto Cartesiano ($\times$):} Concatenação irrestrita de todas as tuplas de $R$ com todas as tuplas de $S$.
+    \item \textbf{Junção Simulada:} $\sigma_{\text{cond}}(R \times S)$.
+  \end{itemize}
+}{%
+  \alert{A Grande Fronteira da Aula 13}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item O produto cartesiano irrestrito gera \textbf{explosão combinatória}: $|R| \times |S|$ tuplas intermediárias.
+    \item Em bancos reais com milhões de linhas, calcular $R \times S$ para depois filtrar é computacionalmente inviável.
+    \item \textbf{A Solução Teórica:} Operadores derivados especializados de \textbf{Junção} ($\bowtie$) e \textbf{Divisão} ($\div$), nativamente otimizados nos motores de SGBDs.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Gargalo Computacional do Produto Cartesiano},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Análise de Complexidade de $R \times S$}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Sejam duas tabelas cotidianas de e-commerce:
+      \begin{itemize}
+        \item $R$: $100.000$ clientes ($10^5$).
+        \item $S$: $1.000.000$ pedidos de compras ($10^6$).
+      \end{itemize}
+    \item Cardinalidade de $R \times S$:
+      \[ |R \times S| = 10^5 \times 10^6 = 10^{11} \text{ tuplas} \]
+    \item Com 200 bytes por tupla, o resultado bruto exigiria aproximadamente \textbf{20 Terabytes} de memória temporária!
+  \end{itemize}
+}{%
+  \alert{O Nascimento do Operador de Junção}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Dentre as $10^{11}$ tuplas concatenadas, apenas $10^6$ tuplas possuem correspondência real de chave estrangeira ($PK = FK$).
+    \item Mais de $99,999\%$ do trabalho gerado pelo produto cartesiano puro é \textbf{lixo computacional}.
+    \item A Álgebra Relacional formaliza o operador de \textbf{Junção} para acoplar a geração de pares à condição de validação de forma simultânea.
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Minimundo Didático de Referência: Comércio e Livros},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{Relação CLIENTE}\par
+  \vspace{0.2cm}
+  {\tiny
+  \begin{tabular}{lllr}
+    \toprule
+    \textbf{id\_cli} & \textbf{nome} & \textbf{cidade} & \textbf{id\_plano} \\
+    \midrule
+    C01 & Ana Lima & Tauá & P1 \\
+    C02 & Bruno Silva & Fortaleza & P2 \\
+    C03 & Carla Dias & Tauá & P1 \\
+    C04 & Diego Melo & Sobral & P3 \\
+    C05 & Eva Rocha & Tauá & P4 \\
+    \bottomrule
+  \end{tabular}}
+  \par\vspace{0.2cm}
+  \footnotesize
+  Instância com $5$ tuplas e $4$ atributos.
+}{%
+  \alert{Relação PLANO\_LEITURA}\par
+  \vspace{0.2cm}
+  {\tiny
+  \begin{tabular}{llrr}
+    \toprule
+    \textbf{id\_plano} & \textbf{nome\_plano} & \textbf{livros\_mes} & \textbf{mensalidade} \\
+    \midrule
+    P1 & Leitor Básico & 2 & 29.90 \\
+    P2 & Leitor Padrão & 4 & 49.90 \\
+    P3 & Clube VIP & 8 & 89.90 \\
+    P9 & Premium Digital & 12 & 119.90 \\
+    \bottomrule
+  \end{tabular}}
+  \par\vspace{0.2cm}
+  \footnotesize
+  \begin{itemize}
+    \item O cliente \textbf{C05} possui o plano \texttt{P4} (não cadastrado em \texttt{PLANO\_LEITURA}).
+    \item O plano \textbf{P9} não possui nenhum cliente associado.
+  \end{itemize}
+}

@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 13: Álgebra Relacional (Parte 2) | Banco de Dados - IFCE Tauá</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Configuração do MathJax para Suporte Matemático Opcional -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    code,
+    pre,
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col antialiased transition-colors duration-200">
+
+  <!-- ========================================== -->
+  <!-- BARRA DE NAVEGAÇÃO SUPERIOR                -->
+  <!-- ========================================== -->
+  <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 shadow-sm backdrop-blur-md bg-white/90 dark:bg-slate-800/90">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="../../index.html" class="flex items-center space-x-2 text-emerald-600 dark:text-emerald-400 hover:opacity-80 transition">
+          <i class="fa-solid fa-database text-xl"></i>
+          <span class="font-extrabold text-slate-900 dark:text-white tracking-tight hidden sm:inline">Banco de Dados</span>
+        </a>
+        <span class="text-slate-300 dark:text-slate-600">/</span>
+        <span class="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300">Aula 13</span>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <a href="../Aula_12/index.html" class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center space-x-1">
+          <i class="fa-solid fa-chevron-left text-[10px]"></i>
+          <span class="hidden md:inline">Aula 12</span>
+        </a>
+        <a href="../Aula_14/index.html" class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center space-x-1">
+          <span class="hidden md:inline">Aula 14</span>
+          <i class="fa-solid fa-chevron-right text-[10px]"></i>
+        </a>
+        <button id="theme-toggle" class="w-9 h-9 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+          <i class="fa-solid fa-moon dark:hidden"></i>
+          <i class="fa-solid fa-sun hidden dark:block text-amber-400"></i>
+        </button>
+        <a href="../../index.html" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition flex items-center space-x-1">
+          <i class="fa-solid fa-house"></i>
+          <span class="hidden sm:inline">Portal</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- HERO BANNER DA AULA                        -->
+  <!-- ========================================== -->
+  <section class="bg-gradient-to-r from-emerald-950 via-slate-900 to-slate-950 text-white py-10 border-b border-emerald-950/40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold mb-3">
+        <i class="fa-solid fa-diagram-project"></i>
+        <span>Unidade II (N1) — Fundamentos do Modelo Relacional e Linguagens Formais</span>
+      </div>
+      <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
+        Álgebra Relacional (Parte 2): Junções (&bowtie;, &bowtie;<sub>&theta;</sub>, &ltimes;, &rtimes;, Outer Joins) e Divisão (&divide;)
+      </h1>
+      <p class="text-slate-300 text-sm sm:text-base mt-2 max-w-3xl leading-relaxed">
+        Supere a ineficiência assintótica do produto cartesiano bruto através dos operadores especializados de <strong>Junção (Theta, Equi e Natural)</strong>, explore a preservação de dados e valores nulos nas <strong>Junções Externas (Left, Right, Full Outer Join)</strong>, maximize o desempenho em redes com <strong>Semi-Junções (&ltimes;)</strong> e formule consultas universais com o operador de <strong>Divisão Relacional (&divide;)</strong>.
+      </p>
+
+      <div class="flex flex-wrap gap-4 mt-6 text-xs text-slate-300">
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-regular fa-calendar text-emerald-400"></i>
+          <span>10/11/2026 (Terça-feira)</span>
+        </div>
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-regular fa-clock text-emerald-400"></i>
+          <span>2 h/a (100 min)</span>
+        </div>
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-solid fa-chalkboard-user text-emerald-400"></i>
+          <span>Prof. Me. Reginaldo Fernandes</span>
+        </div>
+        <div class="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-solid fa-graduation-cap text-emerald-400"></i>
+          <span>Mentoria Individual / PBL</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- NAVEGAÇÃO DE ABAS                          -->
+  <!-- ========================================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+    <div class="flex border-b border-slate-200 dark:border-slate-700 mb-6 space-x-2 overflow-x-auto pb-1">
+      <button onclick="switchTab('tab-juncoes')" id="btn-tab-juncoes" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm border-b-2 border-emerald-600 text-emerald-600 dark:text-emerald-400 flex items-center space-x-2">
+        <i class="fa-solid fa-link"></i>
+        <span>Operadores de Junção</span>
+      </button>
+      <button onclick="switchTab('tab-divisao')" id="btn-tab-divisao" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:white flex items-center space-x-2">
+        <i class="fa-solid fa-divide"></i>
+        <span>Divisão Relacional (&divide;)</span>
+      </button>
+      <button onclick="switchTab('tab-slides')" id="btn-tab-slides" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:white flex items-center space-x-2">
+        <i class="fa-regular fa-file-pdf"></i>
+        <span>Slides da Aula (PDF)</span>
+      </button>
+      <button onclick="switchTab('tab-plano')" id="btn-tab-plano" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:white flex items-center space-x-2">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Plano Pedagógico</span>
+      </button>
+      <button onclick="switchTab('tab-exercicios')" id="btn-tab-exercicios" class="tab-btn px-4 py-2.5 rounded-t-lg font-semibold text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:white flex items-center space-x-2">
+        <i class="fa-solid fa-pen-to-square"></i>
+        <span>Desafios Práticos</span>
+      </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 1: OPERADORES DE JUNÇÃO                -->
+    <!-- ========================================== -->
+    <div id="tab-juncoes" class="tab-content space-y-6">
+
+      <!-- Visão Geral e Comparação com Produto Cartesiano -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-bolt text-emerald-600 dark:text-emerald-400"></i>
+          <span>Por que Especializar o Produto Cartesiano?</span>
+        </h2>
+        <p class="text-slate-700 dark:text-slate-300 mb-3">
+          Na Aula 12, vimos que a combinação de duas relações $R$ e $S$ pode ser expressa por $\sigma_{\text{cond}}(R \times S)$. No entanto, calcular o produto cartesiano irrestrito gera $|R| \times |S|$ tuplas na memória antes de aplicar qualquer filtro.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-4 bg-rose-50 dark:bg-rose-950/20 rounded-xl border border-rose-200 dark:border-rose-900/60">
+            <span class="text-xs font-bold text-rose-700 dark:text-rose-400 uppercase tracking-wide block mb-1">Abordagem Ingênua</span>
+            <div class="font-mono text-xs text-rose-900 dark:text-rose-300 font-semibold mb-1">100.000 clientes &times; 1.000.000 chamados</div>
+            <p class="text-xs text-rose-800 dark:text-rose-300">
+              Gera <strong>100 bilhões de tuplas intermediárias</strong> (&asymp; 20 Terabytes em RAM temporária). 99,999% dessas combinações são ruído descartado pela seleção.
+            </p>
+          </div>
+          <div class="p-4 bg-emerald-50 dark:bg-emerald-950/20 rounded-xl border border-emerald-200 dark:border-emerald-900/60">
+            <span class="text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wide block mb-1">Abordagem com Junção ($R \bowtie S$)</span>
+            <div class="font-mono text-xs text-emerald-900 dark:text-emerald-300 font-semibold mb-1">Pareamento Direto com Índices e Hashes</div>
+            <p class="text-xs text-emerald-800 dark:text-emerald-300">
+              Processa e aloca estritamente as <strong>1.000.000 tuplas válidas</strong> com integridade referencial ($PK = FK$). Custo assintótico reduzido drasticamente!
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Família das Junções em Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- 1. Theta-Join -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Condicional Geral</span>
+              <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-serif text-lg font-bold">&bowtie;<sub>&theta;</sub></span>
+            </div>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white mb-2">Theta-Join</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
+              Concatena tuplas de $R$ e $S$ que satisfazem a um predicado arbitrário $\theta \in \{=, \neq, <, \le, >, \ge\}$. Mantém todas as colunas de ambas as relações.
+            </p>
+          </div>
+          <div class="p-2.5 bg-slate-100 dark:bg-slate-700/60 rounded-lg font-mono text-[11px] text-slate-800 dark:text-slate-200">
+            <div><strong>Sintaxe:</strong> R &bowtie;<sub>&theta;</sub> S</div>
+            <div class="text-emerald-600 dark:text-emerald-400 mt-1">Grau = grau(R) + grau(S)</div>
+          </div>
+        </div>
+
+        <!-- 2. Junção Natural -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Padrão Canônico</span>
+              <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-serif text-lg font-bold">&bowtie;</span>
+            </div>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white mb-2">Junção Natural</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
+              Compara automaticamente todos os atributos de mesmo nome (homônimos) por igualdade estrita e <strong>elimina atributos duplicados</strong> através de projeção automática.
+            </p>
+          </div>
+          <div class="p-2.5 bg-slate-100 dark:bg-slate-700/60 rounded-lg font-mono text-[11px] text-slate-800 dark:text-slate-200">
+            <div><strong>Sintaxe:</strong> R &bowtie; S</div>
+            <div class="text-emerald-600 dark:text-emerald-400 mt-1">Grau = grau(R) + grau(S) - k</div>
+          </div>
+        </div>
+
+        <!-- 3. Semi-Junção -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Filtro Existencial</span>
+              <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-serif text-lg font-bold">&ltimes;</span>
+            </div>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white mb-2">Semi-Junção Esquerda</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
+              Retorna as tuplas de $R$ que encontram correspondência em $S$, <strong>sem anexar as colunas de $S$</strong>. Fundamental para minimizar transferência em bancos distribuídos.
+            </p>
+          </div>
+          <div class="p-2.5 bg-slate-100 dark:bg-slate-700/60 rounded-lg font-mono text-[11px] text-slate-800 dark:text-slate-200">
+            <div><strong>Sintaxe:</strong> R &ltimes; S &equiv; &pi;<sub>atr(R)</sub>(R &bowtie; S)</div>
+            <div class="text-emerald-600 dark:text-emerald-400 mt-1">Grau = grau(R)</div>
+          </div>
+        </div>
+
+        <!-- 4. Anti-Junção -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Detecção de Órfãos</span>
+              <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-serif text-lg font-bold">&triangleright;</span>
+            </div>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white mb-2">Anti-Junção</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
+              Isola as tuplas de $R$ que <strong>NÃO possuem nenhum par</strong> em $S$. Substitui o padrão clássico de diferença de conjuntos com produto cartesiano.
+            </p>
+          </div>
+          <div class="p-2.5 bg-slate-100 dark:bg-slate-700/60 rounded-lg font-mono text-[11px] text-slate-800 dark:text-slate-200">
+            <div><strong>Sintaxe:</strong> R &triangleright; S &equiv; R - (R &ltimes; S)</div>
+            <div class="text-emerald-600 dark:text-emerald-400 mt-1">Grau = grau(R)</div>
+          </div>
+        </div>
+
+        <!-- 5. Left Outer Join -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Preservação Esquerda</span>
+              <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-serif text-lg font-bold">&#8666;&bowtie;</span>
+            </div>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white mb-2">Left Outer Join</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
+              Preserva <strong>todas</strong> as tuplas de $R$. Quando uma tupla de $R$ não tem par em $S$, os atributos correspondentes de $S$ são preenchidos com <code>NULL</code>.
+            </p>
+          </div>
+          <div class="p-2.5 bg-slate-100 dark:bg-slate-700/60 rounded-lg font-mono text-[11px] text-slate-800 dark:text-slate-200">
+            <div><strong>Sintaxe:</strong> R &#8666;&bowtie; S</div>
+            <div class="text-emerald-600 dark:text-emerald-400 mt-1">Sem perda de linhas em R</div>
+          </div>
+        </div>
+
+        <!-- 6. Full Outer Join -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Preservação Total</span>
+              <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-serif text-lg font-bold">&#8666;&bowtie;&#8667;</span>
+            </div>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white mb-2">Full Outer Join</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
+              Preserva todas as tuplas de $R$ e todas as tuplas de $S$. Tuplas órfãs de ambos os lados são conservadas com valores nulos nos campos ausentes.
+            </p>
+          </div>
+          <div class="p-2.5 bg-slate-100 dark:bg-slate-700/60 rounded-lg font-mono text-[11px] text-slate-800 dark:text-slate-200">
+            <div><strong>Sintaxe:</strong> R &#8666;&bowtie;&#8667; S</div>
+            <div class="text-emerald-600 dark:text-emerald-400 mt-1">Inclusão bidirecional 100%</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 2: DIVISÃO RELACIONAL                  -->
+    <!-- ========================================== -->
+    <div id="tab-divisao" class="tab-content hidden space-y-6">
+
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-divide text-emerald-600 dark:text-emerald-400"></i>
+          <span>O Operador de Divisão Relacional (R &divide; S) e a Quantificação Universal (&forall;)</span>
+        </h2>
+        <p class="text-slate-700 dark:text-slate-300 mb-3">
+          Enquanto a junção busca a existência de pares ($\exists$), a <strong>Divisão Relacional</strong> atende às perguntas do tipo <strong>"para todo" (&forall;)</strong>. Exemplos clássicos: <em>"Quais estudantes cursaram <strong>todas</strong> as disciplinas obrigatórias do ciclo básico?"</em> ou <em>"Quais clientes compraram <strong>todos</strong> os livros da lista de vestibular?"</em>.
+        </p>
+
+        <!-- Fórmula e decomposição -->
+        <div class="p-4 bg-slate-900 rounded-xl text-emerald-300 font-mono text-xs overflow-x-auto space-y-2 mb-4">
+          <div class="text-slate-400">// Definição formal por compreensão de conjuntos:</div>
+          <div>R(X &cup; Y) &divide; S(Y) = { t<sub>x</sub> | &forall; t<sub>y</sub> &isin; S, &lang; t<sub>x</sub>, t<sub>y</sub> &rang; &isin; R }</div>
+          <div class="text-slate-400 mt-2">// Teorema da equivalência em operadores fundamentais de Codd:</div>
+          <div class="text-amber-300 font-bold">R &divide; S &equiv; &pi;<sub>X</sub>(R) - &pi;<sub>X</sub>( (&pi;<sub>X</sub>(R) &times; S) - R )</div>
+        </div>
+
+        <!-- 5 passos didáticos -->
+        <h3 class="font-bold text-slate-900 dark:text-white text-sm mb-3">As 5 Etapas Algorítmicas da Divisão</h3>
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-3 text-xs">
+          <div class="p-3 bg-slate-100 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600">
+            <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">Passo 1: Candidatos</span>
+            <span class="font-mono text-[11px] block text-slate-800 dark:text-slate-200 mb-1">T1 &larr; &pi;<sub>X</sub>(R)</span>
+            <p class="text-slate-500 dark:text-slate-400 text-[11px]">Projeta todos os elementos únicos de X.</p>
+          </div>
+          <div class="p-3 bg-slate-100 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600">
+            <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">Passo 2: Universo Ideal</span>
+            <span class="font-mono text-[11px] block text-slate-800 dark:text-slate-200 mb-1">T2 &larr; T1 &times; S</span>
+            <p class="text-slate-500 dark:text-slate-400 text-[11px]">Gera todas as combinações ideais esperadas.</p>
+          </div>
+          <div class="p-3 bg-slate-100 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600">
+            <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">Passo 3: Faltas Reais</span>
+            <span class="font-mono text-[11px] block text-slate-800 dark:text-slate-200 mb-1">T3 &larr; T2 - R</span>
+            <p class="text-slate-500 dark:text-slate-400 text-[11px]">Subtrai o que foi feito na prática para achar o que faltou.</p>
+          </div>
+          <div class="p-3 bg-slate-100 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600">
+            <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">Passo 4: Desqualificados</span>
+            <span class="font-mono text-[11px] block text-slate-800 dark:text-slate-200 mb-1">T4 &larr; &pi;<sub>X</sub>(T3)</span>
+            <p class="text-slate-500 dark:text-slate-400 text-[11px]">Isola quem falhou em ao menos uma exigência.</p>
+          </div>
+          <div class="p-3 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg border border-emerald-300 dark:border-emerald-800">
+            <span class="font-bold text-emerald-700 dark:text-emerald-400 block mb-1">Passo 5: Aprovados</span>
+            <span class="font-mono text-[11px] block text-emerald-900 dark:text-emerald-200 font-bold mb-1">RES &larr; T1 - T4</span>
+            <p class="text-emerald-800 dark:text-emerald-300 text-[11px]">Subtração final que revela quem cumpriu 100%.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 3: SLIDES DA AULA (PDF)                -->
+    <!-- ========================================== -->
+    <div id="tab-slides" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700/60 shadow-sm flex items-center justify-between flex-wrap gap-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg">
+            <i class="fa-regular fa-file-pdf"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white">Apresentação Oficial de Slides (Beamer 16:9)</h3>
+            <span class="text-xs text-slate-500 dark:text-slate-400">35 slides organizados em 9 seções temáticas com tema institucional Scouts/IFCE</span>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <a href="materiais/main.pdf" download="Aula_13_Banco_de_Dados_IFCE.pdf" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center space-x-1.5 transition">
+            <i class="fa-solid fa-download"></i>
+            <span>Baixar PDF</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm aspect-[16/9] w-full">
+        <iframe src="materiais/main.pdf" class="w-full h-full border-0" title="Slides da Aula 13"></iframe>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 4: PLANO PEDAGÓGICO                    -->
+    <!-- ========================================== -->
+    <div id="tab-plano" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center space-x-2">
+          <i class="fa-solid fa-list-check text-emerald-600 dark:text-emerald-400"></i>
+          <span>Planejamento Pedagógico da Aula 13</span>
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs sm:text-sm">
+          <div>
+            <h3 class="font-bold text-slate-900 dark:text-white mb-2 text-xs uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Objetivo Geral</h3>
+            <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+              Capacitar o discente a formular consultas relacionais avançadas utilizando os operadores derivados da Álgebra Relacional, compreendendo a semântica formal e o impacto algorítmico das famílias de Junções e da Divisão Relacional.
+            </p>
+
+            <h3 class="font-bold text-slate-900 dark:text-white mb-2 text-xs uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Metodologia Adotada</h3>
+            <ul class="list-disc pl-5 space-y-1.5 text-slate-600 dark:text-slate-300">
+              <li><strong>Mentoria Individual:</strong> Resolução socrática passo a passo.</li>
+              <li><strong>PBL (Problemas Práticos):</strong> Estudos de caso contextualizados em topologias de rede e provedores ISP.</li>
+              <li><strong>Rigor Formal:</strong> Demonstração matemática de equivalências algébricas.</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="font-bold text-slate-900 dark:text-white mb-2 text-xs uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Cronograma da Aula (100 min)</h3>
+            <div class="space-y-2">
+              <div class="p-2.5 bg-slate-50 dark:bg-slate-700/40 rounded-lg flex items-center justify-between">
+                <span><strong>Bloco 1:</strong> Gênese da Junção e Gargalo do Produto</span>
+                <span class="text-xs text-emerald-600 dark:text-emerald-400 font-mono font-semibold">15 min</span>
+              </div>
+              <div class="p-2.5 bg-slate-50 dark:bg-slate-700/40 rounded-lg flex items-center justify-between">
+                <span><strong>Bloco 2:</strong> Theta-Join, Equi-Join e Junção Natural</span>
+                <span class="text-xs text-emerald-600 dark:text-emerald-400 font-mono font-semibold">25 min</span>
+              </div>
+              <div class="p-2.5 bg-slate-50 dark:bg-slate-700/40 rounded-lg flex items-center justify-between">
+                <span><strong>Bloco 3:</strong> Semi-Junções e Anti-Junção</span>
+                <span class="text-xs text-emerald-600 dark:text-emerald-400 font-mono font-semibold">15 min</span>
+              </div>
+              <div class="p-2.5 bg-slate-50 dark:bg-slate-700/40 rounded-lg flex items-center justify-between">
+                <span><strong>Bloco 4:</strong> Junções Externas e Valores Nulos</span>
+                <span class="text-xs text-emerald-600 dark:text-emerald-400 font-mono font-semibold">20 min</span>
+              </div>
+              <div class="p-2.5 bg-slate-50 dark:bg-slate-700/40 rounded-lg flex items-center justify-between">
+                <span><strong>Bloco 5:</strong> Divisão Relacional e Exercícios</span>
+                <span class="text-xs text-emerald-600 dark:text-emerald-400 font-mono font-semibold">25 min</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ABA 5: DESAFIOS RESOLVIDOS                 -->
+    <!-- ========================================== -->
+    <div id="tab-exercicios" class="tab-content hidden space-y-6">
+
+      <!-- Desafio 1 -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <div class="flex items-center space-x-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase mb-2">
+          <span>Desafio 1</span>
+          <span>•</span>
+          <span>Junção Natural e Push-Down Selection</span>
+        </div>
+        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-2">Biblioteca: Empréstimos da Categoria Computação</h3>
+        <p class="text-slate-600 dark:text-slate-300 mb-3 text-xs sm:text-sm">
+          Recupere o <code>titulo</code> da obra, o nome do <code>leitor</code> e a data do empréstimo (<code>data_emp</code>) dos livros da categoria <strong>'Computacao'</strong>.
+        </p>
+        <div class="p-4 bg-slate-900 rounded-xl text-emerald-300 font-mono text-xs overflow-x-auto space-y-2">
+          <div class="text-slate-400">// Passo 1: Filtragem prévia para reduzir cardinalidade (Push-Down)</div>
+          <div>COMP &larr; &sigma;<sub>categoria = 'Computacao'</sub>(LIVRO)</div>
+          <div class="text-slate-400">// Passo 2: Junção natural pelo atributo comum isbn</div>
+          <div>JUNCAO &larr; COMP &bowtie; EMPRESTIMO</div>
+          <div class="text-slate-400">// Passo 3: Projeção final dos atributos necessários</div>
+          <div class="text-white font-bold">RESULTADO &larr; &pi;<sub>titulo, leitor, data_emp</sub>(JUNCAO)</div>
+        </div>
+      </div>
+
+      <!-- Desafio 2 -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <div class="flex items-center space-x-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase mb-2">
+          <span>Desafio 2</span>
+          <span>•</span>
+          <span>Anti-Junção Direta</span>
+        </div>
+        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-2">Identificação de Livros Nunca Emprestados</h3>
+        <p class="text-slate-600 dark:text-slate-300 mb-3 text-xs sm:text-sm">
+          Identifique o <code>isbn</code> e o <code>titulo</code> de todos os livros do acervo que <strong>nunca foram emprestados</strong> a nenhum leitor.
+        </p>
+        <div class="p-4 bg-slate-900 rounded-xl text-emerald-300 font-mono text-xs overflow-x-auto space-y-2">
+          <div class="text-slate-400">// Anti-junção isola diretamente os órfãos sem produto cartesiano:</div>
+          <div>SEM_EMP &larr; LIVRO &triangleright; EMPRESTIMO</div>
+          <div class="text-white font-bold">RESULTADO &larr; &pi;<sub>isbn, titulo</sub>(SEM_EMP)</div>
+        </div>
+      </div>
+
+      <!-- Desafio 3 -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <div class="flex items-center space-x-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase mb-2">
+          <span>Desafio 3</span>
+          <span>•</span>
+          <span>Left Outer Join e Preservação de Clientes</span>
+        </div>
+        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-2">Relatório Completo de Clientes e Compras</h3>
+        <p class="text-slate-600 dark:text-slate-300 mb-3 text-xs sm:text-sm">
+          Gere uma listagem com <strong>todos</strong> os clientes cadastrados exibindo <code>nome</code>, <code>cidade</code> e o <code>id_ped</code> correspondente, garantindo que os clientes que ainda não compraram não sejam descartados.
+        </p>
+        <div class="p-4 bg-slate-900 rounded-xl text-emerald-300 font-mono text-xs overflow-x-auto space-y-2">
+          <div class="text-slate-400">// Left Outer Join preserva a tabela base da esquerda com NULL nos campos vazios:</div>
+          <div class="text-white font-bold">RESULTADO &larr; &pi;<sub>nome, cidade, id_ped</sub>(CLIENTE &#8666;&bowtie; PEDIDO)</div>
+        </div>
+      </div>
+
+      <!-- Desafio 4 -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-relaxed text-sm">
+        <div class="flex items-center space-x-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase mb-2">
+          <span>Desafio 4</span>
+          <span>•</span>
+          <span>Divisão Relacional e Junção de Atributos</span>
+        </div>
+        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-2">Conclusão de Todas as Disciplinas Obrigatórias</h3>
+        <p class="text-slate-600 dark:text-slate-300 mb-3 text-xs sm:text-sm">
+          Identifique o <code>id_alu</code> e o <code>nome</code> dos estudantes que cursaram e foram aprovados em <strong>todas</strong> as matérias obrigatórias da tabela <code>DISC_OBRIGATORIAS</code>.
+        </p>
+        <div class="p-4 bg-slate-900 rounded-xl text-emerald-300 font-mono text-xs overflow-x-auto space-y-2">
+          <div class="text-slate-400">// 1. Divisão relacional para isolar os IDs conformes com 100% dos requisitos:</div>
+          <div>APROVADOS &larr; HISTORICO &divide; DISC_OBRIGATORIAS</div>
+          <div class="text-slate-400">// 2. Junção natural para recompor o nome do aluno:</div>
+          <div class="text-white font-bold">RESULTADO &larr; &pi;<sub>id_alu, nome</sub>(APROVADOS &bowtie; ALUNO)</div>
+        </div>
+      </div>
+          <div class="text-slate-400">// 1. Divisão relacional para isolar os IDs conformes com 100% dos requisitos:</div>
+          <div>CONFORMES &larr; SUPORTE_PROTOCOLO &divide; PROTOCOLO_OBRIGATORIO</div>
+          <div class="text-slate-400">// 2. Junção natural para recompor o hostname do inventário:</div>
+          <div class="text-white font-bold">RESULTADO &larr; &pi;<sub>id_disp, hostname</sub>(CONFORMES &bowtie; DISPOSITIVO)</div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- RODAPÉ INSTITUCIONAL                       -->
+  <!-- ========================================== -->
+  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center space-x-2">
+        <span>Instituto Federal de Educação, Ciência e Tecnologia do Ceará — Campus Tauá</span>
+      </div>
+      <div>
+        <span>Banco de Dados (2026.2) • Prof. Me. Reginaldo Fernandes</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script de Controle de Abas e Modo Escuro -->
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-emerald-600', 'text-emerald-600', 'dark:text-emerald-400');
+        btn.classList.add('text-slate-500', 'dark:text-slate-400');
+      });
+
+      const selectedTab = document.getElementById(tabId);
+      const selectedBtn = document.getElementById('btn-' + tabId);
+
+      if (selectedTab) selectedTab.classList.remove('hidden');
+      if (selectedBtn) {
+        selectedBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
+        selectedBtn.classList.add('border-b-2', 'border-emerald-600', 'text-emerald-600', 'dark:text-emerald-400');
+      }
+    }
+
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        localStorage.theme = 'light';
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.theme = 'dark';
+      }
+    });
+  </script>
+</body>
+
+</html>

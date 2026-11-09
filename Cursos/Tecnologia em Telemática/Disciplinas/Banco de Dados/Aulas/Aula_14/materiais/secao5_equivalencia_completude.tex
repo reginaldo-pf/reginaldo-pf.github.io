@@ -1,0 +1,48 @@
+\changecolours{ScoutGreen}
+\section[Equivalência e Completude]{O Teorema de Codd e a Completude Relacional}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={O Teorema da Equivalência de Edgar F. Codd},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{A Unificação das Linguagens Formais}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Em 1972, Edgar F. Codd publicou a prova matemática definitiva:
+      \[ \text{\textbf{Álgebra Relacional}} \equiv \text{\textbf{CRT Seguro}} \equiv \text{\textbf{CRD Seguro}} \]
+    \item \textbf{Significado Profundo:}
+      \begin{itemize}
+        \item Qualquer consulta formulável na Álgebra Relacional básica possui uma tradução direta e equivalente no CRT Seguro.
+        \item Qualquer consulta do CRT Seguro pode ser reduzida à Álgebra.
+      \end{itemize}
+  \end{itemize}
+}{%
+  \alert{O Conceito de Completude Relacional}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Uma linguagem de consulta é dita \textbf{Relacionalmente Completa} (\emph{Relationally Complete}) se puder expressar, no mínimo, qualquer operação permitida pela Álgebra Relacional de Codd.
+    \item É a régua formal da ciência da computação para validar se um SGBD é verdadeiramente relacional.
+    \item A linguagem SQL é relacionalmente completa (e a expande com funções de agregação, multiconjuntos e recursão).
+  \end{itemize}
+}
+
+% ------------------------------------------------------------------------------
+\twocolframe[title={Por que o SQL se Baseia no Cálculo?},leftcol=7.0cm,rightcol=7.0cm]{%
+  \alert{A Arquitetura Dual do SQL}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Para o programador, o SQL é \textbf{Cálculo Relacional Declarativo}:
+      \begin{itemize}
+        \item \texttt{SELECT} $\to$ projeção da variável livre ($t[A, B]$).
+        \item \texttt{FROM} $\to$ pertinência às relações ($t \in R$).
+        \item \texttt{WHERE} $\to$ predicado lógico da fórmula ($P(t)$).
+      \end{itemize}
+    \item O desenvolvedor não precisa saber se haverá um hash-join, index-scan ou merge-join.
+  \end{itemize}
+}{%
+  \alert{A Conversão Interna pelo SGBD}\par
+  \itemseps[topsepi=0.5mm,itemsepi=1mm,labelsep=2mm,leftmargini=3mm]
+  \begin{itemize}
+    \item Computadores físicos precisam de passos procedurais para executar!
+    \item O SGBD recebe a consulta SQL (Cálculo) e a traduz internamente para uma \textbf{Árvore de Expressão da Álgebra Relacional}.
+    \item É aqui que entra o componente mais sofisticado do banco de dados: o \textbf{Query Optimizer} (Otimizador de Consultas)!
+  \end{itemize}
+}
