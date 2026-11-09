@@ -375,29 +375,41 @@ bibliotaua/
 \section{Implementação: Exceções de Domínio}
 
 \begin{frame}[fragile]{Mão na Massa: Hierarquia de Exceções (\texttt{exceptions.py})}
-\begin{lstlisting}[language=Python, basicstyle=\fontsize{5.8pt}{6.8pt}\ttfamily]
+\begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}[language=Python, basicstyle=\fontsize{5.2pt}{6.1pt}\ttfamily]
 class BiblioTauaException(Exception):
-    """Excecao base para regras de negocio do BiblioTaua."""
+    """Excecao base para regras de negocio."""
     pass
 
 class CupomInvalidoError(BiblioTauaException):
+    """Erro geral de cupom invalido."""
     pass
 
 class CupomInexistenteError(CupomInvalidoError):
     def __init__(self, codigo: str):
         super().__init__(f"Cupom '{codigo}' nao encontrado no sistema.")
+        self.codigo = codigo
 
 class CupomInativoError(CupomInvalidoError):
     def __init__(self, codigo: str):
         super().__init__(f"O cupom '{codigo}' encontra-se desativado temporariamente.")
+        self.codigo = codigo
 
 class CupomExpiradoError(CupomInvalidoError):
     def __init__(self, codigo: str, validade_ate: str):
         super().__init__(f"O cupom '{codigo}' expirou em {validade_ate}.")
-
+        self.codigo = codigo
+        self.validade_ate = validade_ate
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.50\textwidth}
+\begin{lstlisting}[language=Python, basicstyle=\fontsize{5.2pt}{6.1pt}\ttfamily]
 class CupomEsgotadoError(CupomInvalidoError):
     def __init__(self, codigo: str, limite: int):
-        super().__init__(f"O cupom '{codigo}' atingiu a quantidade maxima de {limite} usos.")
+        super().__init__(f"O cupom '{codigo}' atingiu a quantidade maxima de {limite} usos e esgotou.")
+        self.codigo = codigo
+        self.limite = limite
 
 class ValorMinimoNaoAtingidoError(CupomInvalidoError):
     def __init__(self, codigo: str, valor_minimo: float, subtotal_atual: float):
@@ -405,17 +417,22 @@ class ValorMinimoNaoAtingidoError(CupomInvalidoError):
             f"O cupom '{codigo}' exige pedido minimo de R$ {valor_minimo:.2f}. "
             f"Subtotal atual: R$ {subtotal_atual:.2f}."
         )
+        self.codigo = codigo
+        self.valor_minimo = valor_minimo
+        self.subtotal_atual = subtotal_atual
 \end{lstlisting}
+    \end{column}
+\end{columns}
 \end{frame}
 
 \section{Implementação: Modelo Cupom}
 
 \begin{frame}[fragile]{Mão na Massa: Entidade \texttt{Cupom} (\texttt{models/cupom.py})}
-\begin{lstlisting}[language=Python, basicstyle=\fontsize{7.5pt}{8.5pt}\ttfamily]
+\begin{lstlisting}[language=Python, basicstyle=\fontsize{4.8pt}{5.7pt}\ttfamily]
 from dataclasses import dataclass
-from datetime import date
+from datetime import datetime, date
 from enum import Enum
-from typing import Optional
+from typing import Optional, Union
 from bibliotaua.exceptions import *
 
 class TipoDesconto(str, Enum):
@@ -430,18 +447,54 @@ class Cupom:
     valor_minimo_pedido: float = 0.0
     limite_usos: int = 100
     usos_realizados: int = 0
-    validade_ate: date = date.today()
+    validade_ate: Union[str, date] = "2026-12-31"
     ativo: bool = True
     id: Optional[int] = None
+
+    def __post_init__(self):
+        self.codigo = self.codigo.strip().upper()
+        if not self.codigo:
+            raise ValueError("O codigo do cupom nao pode ser vazio.")
+        if self.valor_desconto <= 0:
+            raise ValueError("O valor de desconto deve ser estritamente positivo.")
+        if self.tipo_desconto == TipoDesconto.PERCENTUAL and self.valor_desconto > 100:
+            raise ValueError("O desconto percentual nao pode ser superior a 100%.")
+        if self.valor_minimo_pedido < 0:
+            raise ValueError("O valor minimo do pedido nao pode ser negativo.")
+        if self.limite_usos <= 0:
+            raise ValueError("O limite de utilizacoes deve ser de no minimo 1.")
+        if self.usos_realizados < 0:
+            raise ValueError("A contagem de utilizacoes nao pode ser negativa.")
 \end{lstlisting}
 \end{frame}
 
-\begin{frame}[fragile]{Mão na Massa: Métodos de Domínio na Entidade \texttt{Cupom}}
-\begin{lstlisting}[language=Python, basicstyle=\fontsize{7pt}{8pt}\ttfamily]
-    def pode_ser_aplicado_ao_pedido(self, subtotal: float, data_ref: Optional[date] = None) -> None:
+\begin{frame}[fragile]{Mão na Massa: Métodos de Validação (\texttt{models/cupom.py})}
+\begin{lstlisting}[language=Python, basicstyle=\fontsize{5.8pt}{6.8pt}\ttfamily]
+    def obter_data_validade(self) -> date:
+        if isinstance(self.validade_ate, str):
+            return datetime.strptime(self.validade_ate, "%Y-%m-%d").date()
+        return self.validade_ate
+
+    def esta_expirado(self, data_referencia: Optional[date] = None) -> bool:
+        hoje = data_referencia or date.today()
+        return hoje > self.obter_data_validade()
+
+    def atingiu_limite_usos(self) -> bool:
+        return self.usos_realizados >= self.limite_usos
+
+    def registrar_uso(self) -> None:
+        if self.atingiu_limite_usos():
+            raise CupomEsgotadoError(self.codigo, self.limite_usos)
+        self.usos_realizados += 1
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Mão na Massa: Aplicação e Desconto (\texttt{models/cupom.py})}
+\begin{lstlisting}[language=Python, basicstyle=\fontsize{5.6pt}{6.6pt}\ttfamily]
+    def pode_ser_aplicado_ao_pedido(self, subtotal: float, data_referencia: Optional[date] = None) -> None:
         if not self.ativo:
             raise CupomInativoError(self.codigo)
-        if self.esta_expirado(data_ref):
+        if self.esta_expirado(data_referencia):
             validade_str = self.obter_data_validade().strftime("%d/%m/%Y")
             raise CupomExpiradoError(self.codigo, validade_str)
         if self.atingiu_limite_usos():
@@ -449,8 +502,8 @@ class Cupom:
         if subtotal < self.valor_minimo_pedido:
             raise ValorMinimoNaoAtingidoError(self.codigo, self.valor_minimo_pedido, subtotal)
 
-    def calcular_desconto(self, subtotal: float, data_ref: Optional[date] = None) -> float:
-        self.pode_ser_aplicado_ao_pedido(subtotal, data_ref)
+    def calcular_desconto(self, subtotal: float, data_referencia: Optional[date] = None) -> float:
+        self.pode_ser_aplicado_ao_pedido(subtotal, data_referencia)
         if self.tipo_desconto == TipoDesconto.PERCENTUAL:
             desconto = (subtotal * self.valor_desconto) / 100.0
         else:
@@ -463,12 +516,15 @@ class Cupom:
 \begin{columns}[T]
     \begin{column}{0.54\textwidth}
         \begin{block}{\footnotesize Criando o script de teste (\texttt{main.py})}
-\begin{lstlisting}[language=Python, basicstyle=\fontsize{5.6pt}{6.6pt}\ttfamily]
+\begin{lstlisting}[language=Python, basicstyle=\fontsize{4.6pt}{5.5pt}\ttfamily]
 from datetime import date, timedelta
 from bibliotaua.models.cupom import Cupom, TipoDesconto
 from bibliotaua.exceptions import ValorMinimoNaoAtingidoError
 
 def main():
+    print("--- Testando a Entidade Cupom (BiblioTaua) ---")
+
+    # 1. Instanciando cupom de 10% (minimo R$ 50)
     cupom = Cupom(
         codigo="BEMVINDO10",
         tipo_desconto=TipoDesconto.PERCENTUAL,
@@ -476,15 +532,17 @@ def main():
         valor_minimo_pedido=50.0,
         validade_ate=date.today() + timedelta(days=5)
     )
-    # 1. Pedido valido (R$ 100.00)
-    d = cupom.calcular_desconto(100.0)
-    print(f"Desconto: R$ {d:.2f}")
+    print(f"Cupom: {cupom.codigo} ({cupom.valor_desconto}% OFF)")
 
-    # 2. Pedido abaixo do minimo (R$ 30.00)
+    # 2. Teste valido (R$ 100.00)
+    desconto = cupom.calcular_desconto(100.0)
+    print(f"Subtotal R$ 100.00 -> Desconto: R$ {desconto:.2f}")
+
+    # 3. Teste abaixo do minimo (R$ 30.00)
     try:
         cupom.calcular_desconto(30.0)
     except ValorMinimoNaoAtingidoError as erro:
-        print(f"Bloqueado: {erro}")
+        print(f"Subtotal R$ 30.00  -> Bloqueado: {erro}")
 
 if __name__ == "__main__":
     main()
@@ -493,12 +551,14 @@ if __name__ == "__main__":
     \end{column}
     \begin{column}{0.44\textwidth}
         \begin{block}{\footnotesize Execução no Terminal}
-\begin{lstlisting}[basicstyle=\fontsize{5.8pt}{6.8pt}\ttfamily]
+\begin{lstlisting}[basicstyle=\fontsize{4.6pt}{5.5pt}\ttfamily]
 $ python3 main.py
 
-Desconto: R$ 10.00
-Bloqueado: O cupom 'BEMVINDO10'
-exige pedido minimo de R$ 50.00.
+--- Testando a Entidade Cupom (BiblioTaua) ---
+Cupom: BEMVINDO10 (10.0% OFF)
+Subtotal R$ 100.00 -> Desconto: R$ 10.00
+Subtotal R$ 30.00  -> Bloqueado: O cupom
+'BEMVINDO10' exige pedido minimo de R$ 50.00.
 Subtotal atual: R$ 30.00.
 \end{lstlisting}
         \end{block}

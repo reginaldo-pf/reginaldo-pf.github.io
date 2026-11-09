@@ -3,7 +3,7 @@ Entidade de Domínio: Cupom de Desconto (TASK-204 - Sprint 04)
 Representa a regra de bonificação e promoção aplicável a pedidos de livros da BiblioTauá.
 
 Instruções para o Aluno (Aula 24):
-Consulte os Slides 13 e 14 e o guia_desenvolvedor.md para implementar:
+Consulte os Slides 13, 14 e 15 e o guia_desenvolvedor.md para implementar:
 1. Validações de integridade no __post_init__
 2. Métodos de domínio: esta_expirado, atingiu_limite_usos, pode_ser_aplicado_ao_pedido,
    calcular_desconto e registrar_uso.
@@ -92,7 +92,7 @@ class Cupom:
         - Se self.esta_expirado(data_referencia) -> raise CupomExpiradoError(...)
         - Se self.atingiu_limite_usos() -> raise CupomEsgotadoError(...)
         - Se subtotal < self.valor_minimo_pedido -> raise ValorMinimoNaoAtingidoError(...)
-        (Consulte o Slide 14)
+        (Consulte o Slide 15)
         """
         raise NotImplementedError("TODO: Implementar método pode_ser_aplicado_ao_pedido")
 
@@ -103,7 +103,7 @@ class Cupom:
         2. Se tipo_desconto == PERCENTUAL -> desconto = (subtotal * valor_desconto) / 100.0
            Senão -> desconto = valor_desconto
         3. Retorna round(min(desconto, subtotal), 2), garantindo teto no subtotal.
-        (Consulte o Slide 14)
+        (Consulte o Slide 15)
         """
         raise NotImplementedError("TODO: Implementar método calcular_desconto")
 

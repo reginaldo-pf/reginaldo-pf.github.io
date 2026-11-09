@@ -21,9 +21,11 @@ class CupomInvalidoError(BiblioTauaException):
 # TODO: [ALUNO - TAREFA 1] Implementar as subclasses de exceção da DUC UC04
 # ==============================================================================
 
-# TODO: 1. CupomInexistenteError(CupomInvalidoError)
-# Mensagem: "Cupom '{codigo}' não encontrado no sistema."
-
+class CupomInexistenteError(CupomInvalidoError):
+    """Lançada quando o código de cupom informado não consta na base de dados (FE01)."""
+    def __init__(self, codigo: str):
+        super().__init__(f"Cupom '{codigo}' não encontrado no sistema.")
+        self.codigo = codigo
 
 # TODO: 2. CupomInativoError(CupomInvalidoError)
 # Mensagem: "O cupom '{codigo}' encontra-se desativado temporariamente."

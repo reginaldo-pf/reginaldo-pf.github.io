@@ -4,7 +4,7 @@ Livraria BiblioTauá (Sprint 04 - TASK-204)
 
 Instruções para o Aluno:
 Após implementar bibliotaua/exceptions.py e bibliotaua/models/cupom.py,
-complete o código abaixo conforme apresentado no Slide 15 para testar o cupom.
+complete o código abaixo conforme apresentado no Slide 16 para testar o cupom.
 """
 from datetime import date, timedelta
 from bibliotaua.models.cupom import Cupom, TipoDesconto

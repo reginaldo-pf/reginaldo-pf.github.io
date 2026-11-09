@@ -102,7 +102,7 @@
           <pre class="mermaid text-xs">
 graph LR
     subgraph BiblioTaua["Fronteira: BiblioTauá Livraria Web"]
-        UC01["UC01: Consultar Acervo"]
+        UC01["UC01: Consultar Acervo de Livros"]
         UC02["UC02: Finalizar Pedido de Livros"]
         UC04["UC04: Aplicar Cupom de Desconto"]
         UC05["UC05: Validar Regras de Elegibilidade"]
@@ -112,7 +112,6 @@ graph LR
 
     Cliente --> UC01
     Cliente --> UC02
-    Cliente --> UC04
     UC04 -. "&lt;&lt;extend&gt;&gt;" .-> UC02
     UC04 -. "&lt;&lt;include&gt;&gt;" .-> UC05
 
@@ -151,12 +150,13 @@ classDiagram
         -valor_minimo_pedido: float
         -limite_usos: int
         -usos_realizados: int
-        -validade_ate: date
+        -validade_ate: Union[str, date]
         -ativo: bool
-        +esta_expirado(data_ref) bool
+        -id: Optional[int]
+        +esta_expirado(data_referencia) bool
         +atingiu_limite_usos() bool
-        +pode_ser_aplicado_ao_pedido(subtotal) void
-        +calcular_desconto(subtotal) float
+        +pode_ser_aplicado_ao_pedido(subtotal, data_referencia) void
+        +calcular_desconto(subtotal, data_referencia) float
         +registrar_uso() void
     }
 
@@ -165,13 +165,42 @@ classDiagram
         -cliente: Cliente
         -itens: List[ItemPedido]
         -cupom: Optional[Cupom]
+        -desconto_aplicado: float
+        -status: str
         +aplicar_cupom(cupom) void
         +subtotal float
         +total float
     }
 
+    class Cliente {
+        -id: int
+        -nome: str
+        -email: str
+        -matricula: str
+        -ativo: bool
+    }
+
+    class Livro {
+        -id: int
+        -titulo: str
+        -autor: str
+        -isbn: str
+        -preco: float
+        -estoque: int
+    }
+
+    class ItemPedido {
+        -livro: Livro
+        -quantidade: int
+        -preco_unitario: float
+        +subtotal float
+    }
+
     Cupom ..> TipoDesconto : usa
     Pedido "1" o-- "0..1" Cupom : possui
+    Pedido "1" *-- "1..*" ItemPedido : contem
+    ItemPedido --> Livro : referencia
+    Pedido --> Cliente : realizado por
           </pre>
         </div>
       </div>
@@ -239,7 +268,7 @@ classDiagram
         <div>
           <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <i class="fa-solid fa-code text-emerald-600"></i>
-            <span>4. Mão na Massa: Código Implementado na Aula 1</span>
+            <span>4. Mão na Massa: Código Implementado na Aula 24 (Sprint 04 - TASK-204)</span>
           </h3>
           <p class="text-xs text-slate-500 dark:text-slate-400">
             Conectando os fluxos da DUC diretamente aos arquivos em Python da Sprint 04.
@@ -250,83 +279,229 @@ classDiagram
         </span>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div>
           <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
             <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
-            <span>Hierarquia de Erros: <code>exceptions.py</code></span>
+            <span>Hierarquia de Erros: <code>bibliotaua/exceptions.py</code></span>
           </h4>
-          <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed">
+          <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed max-h-96">
 class BiblioTauaException(Exception):
+    """Exceção base para regras de negócio do BiblioTauá."""
     pass
+
 
 class CupomInvalidoError(BiblioTauaException):
+    """Exceção geral disparada quando um cupom viola regras de negócio ou elegibilidade."""
     pass
 
+
 class CupomInexistenteError(CupomInvalidoError):
+    """Lançada quando o código de cupom informado não consta na base de dados (FE01)."""
     def __init__(self, codigo: str):
-        super().__init__(f"Cupom '{codigo}' nao encontrado.")
+        super().__init__(f"Cupom '{codigo}' não encontrado no sistema.")
+        self.codigo = codigo
+
 
 class CupomInativoError(CupomInvalidoError):
+    """Lançada quando o cupom existe mas foi desativado pela administração (FE01)."""
     def __init__(self, codigo: str):
-        super().__init__(f"O cupom '{codigo}' esta inativo.")
+        super().__init__(f"O cupom '{codigo}' encontra-se desativado temporariamente.")
+        self.codigo = codigo
+
 
 class CupomExpiradoError(CupomInvalidoError):
-    def __init__(self, codigo: str, validade: str):
-        super().__init__(f"O cupom '{codigo}' expirou em {validade}.")
+    """Lançada quando a data atual ultrapassa a data limite de validade do cupom (FE02)."""
+    def __init__(self, codigo: str, validade_ate: str):
+        super().__init__(f"O cupom '{codigo}' expirou em {validade_ate}.")
+        self.codigo = codigo
+        self.validade_ate = validade_ate
+
 
 class CupomEsgotadoError(CupomInvalidoError):
+    """Lançada quando o número de utilizações atinge a cota máxima permitida (FE03)."""
     def __init__(self, codigo: str, limite: int):
-        super().__init__(f"O cupom '{codigo}' atingiu o limite de {limite} usos.")
+        super().__init__(f"O cupom '{codigo}' atingiu a quantidade máxima de {limite} usos e esgotou.")
+        self.codigo = codigo
+        self.limite = limite
+
 
 class ValorMinimoNaoAtingidoError(CupomInvalidoError):
-    def __init__(self, codigo: str, valor_minimo: float, subtotal: float):
+    """Lançada quando o subtotal do pedido é inferior ao mínimo estipulado pelo cupom (FE04)."""
+    def __init__(self, codigo: str, valor_minimo: float, subtotal_atual: float):
         super().__init__(
-            f"O cupom '{codigo}' exige pedido minimo de R$ {valor_minimo:.2f}. "
-            f"Subtotal atual: R$ {subtotal:.2f}."
-        )</pre>
+            f"O cupom '{codigo}' exige pedido mínimo de R$ {valor_minimo:.2f}. "
+            f"Subtotal atual: R$ {subtotal_atual:.2f}."
+        )
+        self.codigo = codigo
+        self.valor_minimo = valor_minimo
+        self.subtotal_atual = subtotal_atual
+
+
+class EstoqueInsuficienteError(BiblioTauaException):
+    """Lançada quando a quantidade solicitada de um livro supera o estoque disponível."""
+    def __init__(self, livro_titulo: str, estoque_atual: int, solicitado: int):
+        super().__init__(
+            f"Estoque insuficiente para '{livro_titulo}'. Disponível: {estoque_atual}, Solicitado: {solicitado}."
+        )
+        self.livro_titulo = livro_titulo
+        self.estoque_atual = estoque_atual
+        self.solicitado = solicitado</pre>
         </div>
 
         <div>
           <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
             <i class="fa-solid fa-cubes text-blue-500"></i>
-            <span>Entidade de Negócio: <code>models/cupom.py</code></span>
+            <span>Entidade de Negócio: <code>bibliotaua/models/cupom.py</code></span>
           </h4>
-          <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed">
+          <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed max-h-96">
+from dataclasses import dataclass
+from datetime import datetime, date
+from enum import Enum
+from typing import Optional, Union
+
+from bibliotaua.exceptions import (
+    CupomInativoError,
+    CupomExpiradoError,
+    CupomEsgotadoError,
+    ValorMinimoNaoAtingidoError
+)
+
+class TipoDesconto(str, Enum):
+    """Enumeração para categorizar a modalidade matemática de desconto."""
+    PERCENTUAL = "PERCENTUAL"
+    VALOR_FIXO = "VALOR_FIXO"
+
+
 @dataclass
 class Cupom:
+    """Entidade Cupom construída a partir da DUC UC04 e Diagrama de Classes."""
     codigo: str
     tipo_desconto: TipoDesconto
     valor_desconto: float
     valor_minimo_pedido: float = 0.0
     limite_usos: int = 100
     usos_realizados: int = 0
-    validade_ate: date = date.today()
+    validade_ate: Union[str, date] = "2026-12-31"
     ativo: bool = True
     id: Optional[int] = None
 
-    def calcular_desconto(self, subtotal: float) -> float:
-        # Valida compulsoriamente regras da DUC UC04
-        self.pode_ser_aplicado_ao_pedido(subtotal)
-        
+    def __post_init__(self):
+        self.codigo = self.codigo.strip().upper()
+        if not self.codigo:
+            raise ValueError("O código do cupom não pode ser vazio.")
+        if self.valor_desconto <= 0:
+            raise ValueError("O valor de desconto deve ser estritamente positivo.")
+        if self.tipo_desconto == TipoDesconto.PERCENTUAL and self.valor_desconto > 100:
+            raise ValueError("O desconto percentual não pode ser superior a 100%.")
+        if self.valor_minimo_pedido < 0:
+            raise ValueError("O valor mínimo do pedido não pode ser negativo.")
+        if self.limite_usos <= 0:
+            raise ValueError("O limite de utilizações deve ser de no mínimo 1.")
+        if self.usos_realizados < 0:
+            raise ValueError("A contagem de utilizações não pode ser negativa.")
+
+    def obter_data_validade(self) -> date:
+        if isinstance(self.validade_ate, str):
+            return datetime.strptime(self.validade_ate, "%Y-%m-%d").date()
+        return self.validade_ate
+
+    def esta_expirado(self, data_referencia: Optional[date] = None) -> bool:
+        hoje = data_referencia or date.today()
+        return hoje > self.obter_data_validade()
+
+    def atingiu_limite_usos(self) -> bool:
+        return self.usos_realizados >= self.limite_usos
+
+    def pode_ser_aplicado_ao_pedido(self, subtotal: float, data_referencia: Optional[date] = None) -> None:
+        if not self.ativo:
+            raise CupomInativoError(self.codigo)
+        if self.esta_expirado(data_referencia):
+            validade_str = self.obter_data_validade().strftime("%d/%m/%Y")
+            raise CupomExpiradoError(self.codigo, validade_str)
+        if self.atingiu_limite_usos():
+            raise CupomEsgotadoError(self.codigo, self.limite_usos)
+        if subtotal < self.valor_minimo_pedido:
+            raise ValorMinimoNaoAtingidoError(self.codigo, self.valor_minimo_pedido, subtotal)
+
+    def calcular_desconto(self, subtotal: float, data_referencia: Optional[date] = None) -> float:
+        self.pode_ser_aplicado_ao_pedido(subtotal, data_referencia)
         if self.tipo_desconto == TipoDesconto.PERCENTUAL:
             desconto = (subtotal * self.valor_desconto) / 100.0
         else:
             desconto = self.valor_desconto
-        return round(min(desconto, subtotal), 2)</pre>
+        return round(min(desconto, subtotal), 2)
+
+    def registrar_uso(self) -> None:
+        if self.atingiu_limite_usos():
+            raise CupomEsgotadoError(self.codigo, self.limite_usos)
+        self.usos_realizados += 1</pre>
         </div>
       </div>
 
-      <!-- Testando no main.py -->
-      <div class="mt-4 bg-slate-950 text-slate-100 p-4 rounded-xl border border-slate-800 text-xs font-mono">
-        <div class="text-emerald-400 font-bold mb-2">
-          $ python3 main.py
+      <!-- Script de Teste main.py e Execução no Terminal -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
+        <div>
+          <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+            <i class="fa-brands fa-python text-emerald-500"></i>
+            <span>Script de Teste do Aluno: <code>main.py</code> (na raiz do projeto)</span>
+          </h4>
+          <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed">
+"""
+Ponto de Entrada e Teste da Implementação - Aula 24
+Livraria BiblioTauá (Sprint 04 - TASK-204)
+"""
+from datetime import date, timedelta
+from bibliotaua.models.cupom import Cupom, TipoDesconto
+from bibliotaua.exceptions import ValorMinimoNaoAtingidoError
+
+def main():
+    print("--- Testando a Entidade Cupom (BiblioTauá) ---")
+
+    # 1. Instanciando cupom de 10% (mínimo R$ 50)
+    cupom = Cupom(
+        codigo="BEMVINDO10",
+        tipo_desconto=TipoDesconto.PERCENTUAL,
+        valor_desconto=10.0,
+        valor_minimo_pedido=50.0,
+        validade_ate=date.today() + timedelta(days=5)
+    )
+    print(f"Cupom: {cupom.codigo} ({cupom.valor_desconto}% OFF)")
+
+    # 2. Teste válido (R$ 100.00)
+    desconto = cupom.calcular_desconto(100.0)
+    print(f"Subtotal R$ 100.00 -> Desconto: R$ {desconto:.2f}")
+
+    # 3. Teste abaixo do mínimo (R$ 30.00)
+    try:
+        cupom.calcular_desconto(30.0)
+    except ValorMinimoNaoAtingidoError as erro:
+        print(f"Subtotal R$ 30.00  -> Bloqueado: {erro}")
+
+if __name__ == "__main__":
+    main()</pre>
         </div>
-        <div class="text-slate-400 space-y-1">
-          <div>--- Testando a Entidade Cupom (BiblioTauá) ---</div>
-          <div>Cupom criado: BEMVINDO10 (10.0% OFF)</div>
-          <div>Subtotal R$ 100.00 -&gt; Desconto calculado: R$ 10.00</div>
-          <div>Subtotal R$ 30.00  -&gt; Bloqueado com sucesso: O cupom 'BEMVINDO10' exige pedido mínimo de R$ 50.00. Subtotal atual: R$ 30.00.</div>
+
+        <div>
+          <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-terminal text-teal-400"></i>
+            <span>Execução no Terminal: <code>$ python3 main.py</code></span>
+          </h4>
+          <div class="bg-slate-950 text-slate-100 p-4 rounded-xl border border-slate-800 text-xs font-mono space-y-2 h-[calc(100%-2rem)]">
+            <div class="text-emerald-400 font-bold border-b border-slate-800 pb-2">
+              $ python3 main.py
+            </div>
+            <div class="text-slate-300 space-y-1.5 leading-relaxed pt-1">
+              <div>--- Testando a Entidade Cupom (BiblioTauá) ---</div>
+              <div class="text-teal-300">Cupom: BEMVINDO10 (10.0% OFF)</div>
+              <div class="text-emerald-300">Subtotal R$ 100.00 -&gt; Desconto: R$ 10.00</div>
+              <div class="text-amber-300">Subtotal R$ 30.00  -&gt; Bloqueado: O cupom 'BEMVINDO10' exige pedido mínimo de R$ 50.00. Subtotal atual: R$ 30.00.</div>
+            </div>
+            <div class="pt-4 text-slate-500 italic text-[11px] border-t border-slate-800/80">
+              <i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i>
+              Regras da DUC UC04 e validação de limite mínimo validadas com sucesso!
+            </div>
+          </div>
         </div>
       </div>
     </section>

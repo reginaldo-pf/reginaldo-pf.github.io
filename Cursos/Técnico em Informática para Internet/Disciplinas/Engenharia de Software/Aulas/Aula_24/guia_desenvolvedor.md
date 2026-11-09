@@ -378,17 +378,17 @@ def main():
         valor_minimo_pedido=50.0,
         validade_ate=date.today() + timedelta(days=5)
     )
-    print(f"Cupom criado: {cupom.codigo} ({cupom.valor_desconto}% OFF)")
+    print(f"Cupom: {cupom.codigo} ({cupom.valor_desconto}% OFF)")
 
     # 2. Testando com subtotal válido (R$ 100.00)
     desconto = cupom.calcular_desconto(100.0)
-    print(f"Subtotal R$ 100.00 -> Desconto calculado: R$ {desconto:.2f}")
+    print(f"Subtotal R$ 100.00 -> Desconto: R$ {desconto:.2f}")
 
     # 3. Testando regra de valor mínimo (R$ 30.00)
     try:
         cupom.calcular_desconto(30.0)
     except ValorMinimoNaoAtingidoError as erro:
-        print(f"Subtotal R$ 30.00  -> Bloqueado com sucesso: {erro}")
+        print(f"Subtotal R$ 30.00  -> Bloqueado: {erro}")
 
 if __name__ == "__main__":
     main()
@@ -406,9 +406,9 @@ python3 main.py
 
 ```text
 --- Testando a Entidade Cupom (BiblioTauá) ---
-Cupom criado: BEMVINDO10 (10.0% OFF)
-Subtotal R$ 100.00 -> Desconto calculado: R$ 10.00
-Subtotal R$ 30.00  -> Bloqueado com sucesso: O cupom 'BEMVINDO10' exige pedido mínimo de R$ 50.00. Subtotal atual: R$ 30.00.
+Cupom: BEMVINDO10 (10.0% OFF)
+Subtotal R$ 100.00 -> Desconto: R$ 10.00
+Subtotal R$ 30.00  -> Bloqueado: O cupom 'BEMVINDO10' exige pedido mínimo de R$ 50.00. Subtotal atual: R$ 30.00.
 ```
 
 ---
