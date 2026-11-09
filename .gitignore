@@ -35,7 +35,14 @@ db.sqlite3
 !**/projeto_aluno.zip
 wssdnmtdrhkyvymdhmdwyjspdcgtvvjq.pdf
 
+# Pacotes e Instaladores do Sistema
+*.deb
+
+# Configurações de Assistentes Locais
+GEMINI.md
+
 # Sistema Operacional e Aplicativos Locais
 .DS_Store
 Thumbs.db
 *.chc
+* copy.*

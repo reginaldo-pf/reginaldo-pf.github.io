@@ -4,9 +4,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aula 24: Casos de Uso, Diagrama de Classes e Início da Codificação | BiblioTauá - IFCE</title>
+  <title>Aula 24: Casos de Uso, Diagrama de Classes e Guia do Desenvolvedor | BiblioTauá - IFCE</title>
+  
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Mermaid.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  
   <script>
     mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
     tailwind.config = {
@@ -28,78 +33,333 @@
       }
     }
   </script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Prism.js Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+
+  <style>
+    pre[class*="language-"] {
+      margin: 0;
+      border-radius: 0.75rem;
+      background: #0f172a !important;
+      font-size: 0.8rem;
+    }
+    code[class*="language-"] {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(16, 185, 129, 0.4);
+      border-radius: 3px;
+    }
+  </style>
 </head>
 
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
 
-  <!-- Header -->
-  <header class="bg-white/90 dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 backdrop-blur-md">
+  <!-- ========================================== -->
+  <!-- CABEÇALHO INSTITUCIONAL                    -->
+  <!-- ========================================== -->
+  <header class="bg-white/95 dark:bg-slate-800/95 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 backdrop-blur-md shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <span class="bg-emerald-600 text-white font-black text-lg px-2.5 py-1 rounded-lg tracking-wider">IFCE</span>
-        <div>
-          <h1 class="text-base font-bold text-slate-900 dark:text-white leading-tight">Engenharia de Software</h1>
-          <p class="text-xs text-slate-500 dark:text-slate-400">Campus Tauá • Técnico em Informática para Internet</p>
-        </div>
+        <a href="../../index.html" class="flex items-center space-x-3 group">
+          <span class="bg-emerald-600 text-white font-black text-lg px-2.5 py-1 rounded-lg tracking-wider shadow-sm group-hover:scale-105 transition-transform">IFCE</span>
+          <div>
+            <h1 class="text-base font-bold text-slate-900 dark:text-white leading-tight">Engenharia de Software</h1>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Campus Tauá • Técnico em Informática para Internet</p>
+          </div>
+        </a>
       </div>
-      <div class="flex items-center space-x-4">
-        <span class="text-xs font-semibold px-2.5 py-1 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 rounded-full border border-emerald-300 dark:border-emerald-800">
-          Sprint 04 • Encontro 1 (Aula 24)
-        </span>
+
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <a href="../Aula_22/index.html" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 transition-colors flex items-center space-x-1.5" title="Aula Anterior">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span class="hidden sm:inline">Aula 22</span>
+        </a>
+        <a href="../Aula_25/index.html" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-200 transition-colors flex items-center space-x-1.5" title="Próxima Aula">
+          <span class="hidden sm:inline">Aula 25</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+        <a href="../../index.html" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center space-x-1.5">
+          <i class="fa-solid fa-house"></i>
+          <span class="hidden sm:inline">Portal</span>
+        </a>
+        <button id="theme-toggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-emerald-600 transition-colors" title="Alternar Modo Escuro/Claro">
+          <i class="fa-solid fa-moon dark:hidden"></i>
+          <i class="fa-solid fa-sun hidden dark:inline"></i>
+        </button>
       </div>
     </div>
   </header>
 
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-
-    <!-- Hero / Sprint Briefing -->
-    <section class="bg-gradient-to-br from-emerald-800 via-teal-900 to-slate-900 text-white rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden">
-      <div class="relative z-10 space-y-4">
-        <div class="inline-flex items-center space-x-2 bg-emerald-500/20 text-emerald-300 text-xs px-3 py-1 rounded-full border border-emerald-400/30">
+  <!-- ========================================== -->
+  <!-- HERO / SPRINT BRIEFING                     -->
+  <!-- ========================================== -->
+  <section class="bg-gradient-to-br from-emerald-800 via-teal-900 to-slate-900 text-white shadow-xl relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 relative z-10 space-y-4">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="inline-flex items-center space-x-1.5 bg-emerald-500/20 text-emerald-300 text-xs px-3 py-1 rounded-full border border-emerald-400/30 font-semibold">
           <i class="fa-solid fa-rocket"></i>
-          <span>Projeto em Andamento: BiblioTauá v0.3.0 &rarr; v0.4.0</span>
+          <span>Sprint 04 • Encontro 1 (Aula 24)</span>
+        </span>
+        <span class="inline-flex items-center space-x-1.5 bg-blue-500/20 text-blue-300 text-xs px-3 py-1 rounded-full border border-blue-400/30 font-semibold">
+          <i class="fa-solid fa-code-branch"></i>
+          <span>Projeto: BiblioTauá v0.3.0 &rarr; v0.4.0</span>
+        </span>
+      </div>
+
+      <h2 class="text-2xl md:text-4xl font-extrabold tracking-tight leading-tight">
+        Casos de Uso, Diagrama de Classes e Início da Codificação
+      </h2>
+      <p class="text-emerald-100/90 text-sm md:text-base max-w-3xl leading-relaxed">
+        Assuma o chamado <strong class="text-white underline decoration-amber-400 decoration-2">TASK-204</strong> da liderança técnica do BiblioTauá, analise a especificação comportamental (DUC UC04) e estrutural da UML 2, e implemente passo a passo o motor de cupons de desconto com verificação imediata no terminal!
+      </p>
+
+      <!-- Botões de Ação Rápida -->
+      <div class="pt-2 flex flex-wrap gap-3">
+        <a href="projeto_aluno.zip" download class="inline-flex items-center space-x-2 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold px-4 py-2.5 rounded-xl text-xs md:text-sm shadow-md transition-all hover:scale-[1.02]">
+          <i class="fa-solid fa-file-zipper text-amber-900"></i>
+          <span>Baixar Projeto do Aluno (.zip)</span>
+        </a>
+        <a href="slides_aula.pdf" target="_blank" class="inline-flex items-center space-x-2 bg-white text-emerald-900 hover:bg-emerald-50 font-bold px-4 py-2.5 rounded-xl text-xs md:text-sm shadow-md transition-all hover:scale-[1.02]">
+          <i class="fa-solid fa-file-pdf text-red-600"></i>
+          <span>Slides Beamer (.pdf)</span>
+        </a>
+        <a href="#guia-desenvolvedor" class="inline-flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-xl text-xs md:text-sm shadow-md transition-all hover:scale-[1.02]">
+          <i class="fa-solid fa-laptop-code"></i>
+          <span>Acessar Guia do Desenvolvedor</span>
+        </a>
+        <a href="guia_desenvolvedor.md" target="_blank" class="inline-flex items-center space-x-2 bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-600 font-semibold px-4 py-2.5 rounded-xl text-xs md:text-sm transition-all">
+          <i class="fa-brands fa-markdown text-sky-400"></i>
+          <span>Arquivo .md Original</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- BARRA DE NAVEGAÇÃO RÁPIDA / SUBMENU        -->
+  <!-- ========================================== -->
+  <nav class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-14 z-40 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex space-x-1 sm:space-x-3 overflow-x-auto py-2.5 text-xs font-semibold text-slate-600 dark:text-slate-300 whitespace-nowrap custom-scrollbar">
+        <a href="#tech-lead" class="px-2.5 py-1 rounded-lg hover:bg-emerald-50 dark:hover:bg-slate-700 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-1.5">
+          <i class="fa-solid fa-headset text-emerald-600"></i>
+          <span>1. Tech Lead</span>
+        </a>
+        <a href="#ticket-task204" class="px-2.5 py-1 rounded-lg hover:bg-emerald-50 dark:hover:bg-slate-700 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-1.5">
+          <i class="fa-solid fa-ticket text-amber-500"></i>
+          <span>2. TASK-204</span>
+        </a>
+        <a href="#diagramas-uml" class="px-2.5 py-1 rounded-lg hover:bg-emerald-50 dark:hover:bg-slate-700 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-1.5">
+          <i class="fa-solid fa-diagram-project text-blue-500"></i>
+          <span>3. Diagramas UML</span>
+        </a>
+        <a href="#arquitetura-projeto" class="px-2.5 py-1 rounded-lg hover:bg-emerald-50 dark:hover:bg-slate-700 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-1.5">
+          <i class="fa-solid fa-folder-tree text-purple-500"></i>
+          <span>4. Arquitetura</span>
+        </a>
+        <a href="#guia-desenvolvedor" class="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 flex items-center gap-1.5">
+          <i class="fa-solid fa-code text-emerald-600"></i>
+          <span>5. Guia Passo a Passo</span>
+        </a>
+        <a href="#diario-bordo" class="px-2.5 py-1 rounded-lg hover:bg-emerald-50 dark:hover:bg-slate-700 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-1.5">
+          <i class="fa-solid fa-clipboard-check text-teal-600"></i>
+          <span>6. Daily Scrum</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========================================== -->
+  <!-- CONTEÚDO PRINCIPAL                         -->
+  <!-- ========================================== -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+
+    <!-- ========================================== -->
+    <!-- 1. FALA DA LIDERANÇA TÉCNICA (TECH LEAD)   -->
+    <!-- ========================================== -->
+    <section id="tech-lead" class="bg-white dark:bg-slate-800 rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200 dark:border-slate-700 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-300 flex items-center justify-center font-bold text-lg">
+            <i class="fa-solid fa-comments"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white">1. Fala de Abertura da Liderança Técnica (Tech Lead)</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Reunião de Planejamento da Sprint 04 — Equipe de Engenharia BiblioTauá</p>
+          </div>
         </div>
-        <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">
-          Sprint 04: Casos de Uso, Diagrama de Classes e Início da Codificação
-        </h2>
-        <p class="text-emerald-100/90 text-sm md:text-base max-w-3xl leading-relaxed">
-          Assuma o ticket <strong>TASK-204</strong> da liderança técnica, analise os diagramas comportamentais e estruturais da UML 2 e inicie hoje mesmo a implementação em Python com regras de negócio ricas!
-        </p>
-        <div class="pt-2 flex flex-wrap gap-3">
-          <a href="projeto_aluno.zip" download class="inline-flex items-center space-x-2 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold px-4 py-2 rounded-xl text-xs md:text-sm shadow-md transition-all">
-            <i class="fa-solid fa-file-zipper text-amber-900"></i>
-            <span>Baixar Projeto do Aluno (ZIP)</span>
-          </a>
-          <a href="slides_aula.pdf" target="_blank" class="inline-flex items-center space-x-2 bg-white text-emerald-900 hover:bg-emerald-50 font-bold px-4 py-2 rounded-xl text-xs md:text-sm shadow-md transition-all">
-            <i class="fa-solid fa-file-pdf text-red-600"></i>
-            <span>Ver Slides Beamer (PDF)</span>
-          </a>
-          <a href="guia_desenvolvedor.md" target="_blank" class="inline-flex items-center space-x-2 bg-emerald-700/80 hover:bg-emerald-600 border border-emerald-500/40 text-white font-semibold px-4 py-2 rounded-xl text-xs md:text-sm transition-all">
-            <i class="fa-solid fa-book-open"></i>
-            <span>Guia do Desenvolvedor (MD)</span>
-          </a>
+        <span class="text-xs font-semibold px-2.5 py-1 bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 rounded-md">
+          Sprint Planning
+        </span>
+      </div>
+
+      <!-- Card Estilo Slack / Team Channel -->
+      <div class="bg-slate-50 dark:bg-slate-900/70 rounded-xl p-5 border border-slate-200 dark:border-slate-700/80 space-y-3">
+        <div class="flex items-start space-x-3">
+          <div class="w-10 h-10 rounded-full bg-emerald-700 text-white flex items-center justify-center font-bold text-sm flex-shrink-0 shadow">
+            AM
+          </div>
+          <div class="space-y-1 text-xs sm:text-sm">
+            <div class="flex items-center space-x-2">
+              <span class="font-bold text-slate-900 dark:text-white">Aline Mendes</span>
+              <span class="text-xs bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 px-2 py-0.5 rounded font-medium">Tech Lead</span>
+              <span class="text-xs text-slate-400">hoje às 08:00</span>
+            </div>
+            <p class="text-slate-600 dark:text-slate-300 italic leading-relaxed">
+              "Olá, time de desenvolvimento do <strong>BiblioTauá</strong>! Sejam bem-vindos à Reunião de Planejamento da <strong>Sprint 04</strong>.<br><br>
+              Nosso sistema de livraria universitária já opera com sucesso nas vendas básicas do acervo didático (versão v0.3.0). Temos catálogo de livros, controle de estoque físico, cadastro de estudantes/clientes, carrinho de compras e banco SQLite funcionando perfeitamente.<br><br>
+              Para a próxima <strong>Feira do Livro do IFCE Campus Tauá</strong>, a diretoria acadêmica encomendou uma funcionalidade essencial: concessão de cupons de desconto aos discentes e servidores. Distribuímos as frentes de trabalho:"
+            </p>
+          </div>
+        </div>
+
+        <!-- Divisão de Papéis da Equipe -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
+          <div class="bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700 text-xs space-y-1">
+            <div class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+              <i class="fa-solid fa-desktop text-blue-500"></i>
+              <span>Mariana (Front-end Web / UI)</span>
+            </div>
+            <p class="text-slate-500 dark:text-slate-400">Interface visual do carrinho de compras e campo de cupom no navegador.</p>
+          </div>
+
+          <div class="bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700 text-xs space-y-1">
+            <div class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+              <i class="fa-solid fa-credit-card text-emerald-500"></i>
+              <span>Lucas (Back-end / Pagamentos)</span>
+            </div>
+            <p class="text-slate-500 dark:text-slate-400">Integração com gateway bancário (PIX) para emitir cobrança do valor líquido.</p>
+          </div>
+
+          <div class="bg-emerald-50 dark:bg-emerald-950/40 p-3 rounded-lg border-2 border-emerald-500 text-xs space-y-1">
+            <div class="font-bold text-emerald-900 dark:text-emerald-300 flex items-center gap-1.5">
+              <i class="fa-solid fa-user-gear text-emerald-600"></i>
+              <span>VOCÊ (Engenheiro de Software)</span>
+            </div>
+            <p class="text-emerald-800 dark:text-emerald-300 font-medium">Ficará com o coração do sistema: a <strong>TASK-204: Motor de Validação e Aplicação de Cupons</strong>.</p>
+          </div>
+
+          <div class="bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700 text-xs space-y-1">
+            <div class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+              <i class="fa-solid fa-vial-circle-check text-purple-500"></i>
+              <span>Beatriz (QA & DevOps)</span>
+            </div>
+            <p class="text-slate-500 dark:text-slate-400">Acompanhará os testes de regressão, suites unitárias e homologação.</p>
+          </div>
+        </div>
+
+        <div class="text-xs text-slate-600 dark:text-slate-400 pt-1 border-t border-slate-200 dark:border-slate-700">
+          <i class="fa-solid fa-bullhorn text-amber-500 mr-1.5"></i>
+          <strong>Diretriz de Hoje:</strong> Compreender o Diagrama de Casos de Uso, a DUC e o Diagrama de Classes, e <strong>iniciar imediatamente a implementação em Python</strong> criando as exceções de domínio e a entidade <code>Cupom</code>!
         </div>
       </div>
     </section>
 
-    <!-- Diagramas Interativos -->
-    <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      
-      <!-- Diagrama de Casos de Uso -->
-      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 space-y-4">
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <i class="fa-solid fa-diagram-project text-emerald-600"></i>
-            <span>1. Diagrama de Casos de Uso (UML 2)</span>
-          </h3>
-          <span class="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 px-2 py-0.5 rounded-full font-medium">Comportamental</span>
+    <!-- ========================================== -->
+    <!-- 2. O TICKET DA SUA SPRINT: TASK-204        -->
+    <!-- ========================================== -->
+    <section id="ticket-task204" class="bg-white dark:bg-slate-800 rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200 dark:border-slate-700 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-300 flex items-center justify-center font-bold text-lg">
+            <i class="fa-solid fa-ticket"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white">2. O Ticket da Sua Sprint: TASK-204</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Quadro Kanban da Sprint 04 • BiblioTauá Livraria</p>
+          </div>
         </div>
-        <p class="text-xs text-slate-500 dark:text-slate-400">
-          Relações entre o Cliente, o caso de uso principal de checkout e a extensão condicional de cupom.
-        </p>
-        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-100 dark:border-slate-700/60 overflow-x-auto flex justify-center">
-          <pre class="mermaid text-xs">
+        <span class="text-xs font-semibold px-2.5 py-1 bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 rounded-md">
+          Prioridade Alta
+        </span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs sm:text-sm border-collapse">
+          <tbody>
+            <tr class="border-b border-slate-200 dark:border-slate-700">
+              <td class="py-2.5 px-3 font-bold text-slate-500 dark:text-slate-400 w-1/4">Identificador:</td>
+              <td class="py-2.5 px-3 font-mono font-bold text-emerald-600 dark:text-emerald-400">TASK-204</td>
+            </tr>
+            <tr class="border-b border-slate-200 dark:border-slate-700">
+              <td class="py-2.5 px-3 font-bold text-slate-500 dark:text-slate-400">Título:</td>
+              <td class="py-2.5 px-3 font-semibold text-slate-800 dark:text-slate-100">Implementação do Motor de Validação e Aplicação de Cupons de Desconto no Checkout de Livros</td>
+            </tr>
+            <tr class="border-b border-slate-200 dark:border-slate-700">
+              <td class="py-2.5 px-3 font-bold text-slate-500 dark:text-slate-400">Responsável:</td>
+              <td class="py-2.5 px-3">Discente (Engenheiro de Software Júnior)</td>
+            </tr>
+            <tr class="border-b border-slate-200 dark:border-slate-700">
+              <td class="py-2.5 px-3 font-bold text-slate-500 dark:text-slate-400">Prioridade:</td>
+              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-xs font-bold bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300">Alta (Bloqueante para o fechamento da Sprint 04)</span></td>
+            </tr>
+            <tr class="border-b border-slate-200 dark:border-slate-700">
+              <td class="py-2.5 px-3 font-bold text-slate-500 dark:text-slate-400">Estimativa:</td>
+              <td class="py-2.5 px-3">4 Encontros de Trabalho (Aulas 24 a 27 • 8 Horas-Aula)</td>
+            </tr>
+            <tr class="border-b border-slate-200 dark:border-slate-700">
+              <td class="py-2.5 px-3 font-bold text-slate-500 dark:text-slate-400">Branch Git:</td>
+              <td class="py-2.5 px-3 font-mono text-xs bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded inline-block">feature/task-204-motor-cupons</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 px-3 font-bold text-slate-500 dark:text-slate-400">Metas do Encontro 1 (Hoje):</td>
+              <td class="py-2.5 px-3 font-semibold text-emerald-700 dark:text-emerald-300">Diagramas UC + Classes &rarr; Arquitetura &rarr; Implementação e teste de <code>exceptions.py</code> e <code>models/cupom.py</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 3. DIAGRAMAS DE ENGENHARIA DE SOFTWARE UML -->
+    <!-- ========================================== -->
+    <section id="diagramas-uml" class="space-y-6">
+      
+      <!-- Cabeçalho da Seção -->
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
+        <div>
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-diagram-project text-emerald-600"></i>
+            <span>3. Modelagem de Engenharia de Software (UML 2)</span>
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Especificações visuais que fundamentam a arquitetura e orientam a escrita de código.
+          </p>
+        </div>
+        <span class="text-xs bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 px-3 py-1 rounded-full font-semibold">
+          UML 2 Padrão OMG
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <!-- 3.1 Diagrama de Casos de Uso -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 space-y-4">
+          <div class="flex items-center justify-between">
+            <h4 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <i class="fa-solid fa-users-viewfinder text-blue-600"></i>
+              <span>3.1 Diagrama de Casos de Uso (UML 2)</span>
+            </h4>
+            <span class="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 px-2 py-0.5 rounded-full font-medium">Comportamental</span>
+          </div>
+          
+          <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-100 dark:border-slate-700/60 overflow-x-auto flex justify-center">
+            <pre class="mermaid text-xs">
 graph LR
     subgraph BiblioTaua["Fronteira: BiblioTauá Livraria Web"]
         UC01["UC01: Consultar Acervo de Livros"]
@@ -117,24 +377,34 @@ graph LR
 
     style UC04 fill:#dcfce7,stroke:#16a34a,stroke-width:2px
     style BiblioTaua fill:#f8fafc,stroke:#0284c7,stroke-width:2px
-          </pre>
-        </div>
-      </div>
+            </pre>
+          </div>
 
-      <!-- Diagrama de Classes -->
-      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 space-y-4">
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <i class="fa-solid fa-sitemap text-emerald-600"></i>
-            <span>2. Diagrama de Classes (UML 2)</span>
-          </h3>
-          <span class="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300 px-2 py-0.5 rounded-full font-medium">Estrutural</span>
+          <!-- Relações estereotipadas -->
+          <div class="space-y-2 text-xs text-slate-600 dark:text-slate-300 pt-1">
+            <div class="bg-emerald-50 dark:bg-emerald-950/30 p-2.5 rounded-lg border border-emerald-200 dark:border-emerald-800/40">
+              <strong class="text-emerald-900 dark:text-emerald-300 font-bold">&laquo;extend&raquo; (Extensão):</strong>
+              O caso de uso <code>UC04: Aplicar Cupom</code> estende opcionalmente o checkout em <code>UC02: Finalizar Pedido</code>. O estudante só insere o código do cupom se desejar desconto.
+            </div>
+            <div class="bg-blue-50 dark:bg-blue-950/30 p-2.5 rounded-lg border border-blue-200 dark:border-blue-800/40">
+              <strong class="text-blue-900 dark:text-blue-300 font-bold">&laquo;include&raquo; (Inclusão):</strong>
+              Ao acionar <code>UC04</code>, o sistema obrigatoriamente executa <code>UC05: Validar Regras de Elegibilidade</code>, averiguando validade, limite de usos e valor mínimo antes do abatimento.
+            </div>
+          </div>
         </div>
-        <p class="text-xs text-slate-500 dark:text-slate-400">
-          A nova classe <code class="text-emerald-600 font-bold">Cupom</code>, seus atributos tipados e métodos operacionais.
-        </p>
-        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-100 dark:border-slate-700/60 overflow-x-auto flex justify-center">
-          <pre class="mermaid text-xs">
+
+        <!-- 3.3 Diagrama de Classes -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 space-y-4">
+          <div class="flex items-center justify-between">
+            <h4 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <i class="fa-solid fa-sitemap text-purple-600"></i>
+              <span>3.3 Diagrama de Classes de Domínio (UML 2)</span>
+            </h4>
+            <span class="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300 px-2 py-0.5 rounded-full font-medium">Estrutural</span>
+          </div>
+
+          <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-100 dark:border-slate-700/60 overflow-x-auto flex justify-center">
+            <pre class="mermaid text-xs">
 classDiagram
     direction TB
     class TipoDesconto {
@@ -187,6 +457,8 @@ classDiagram
         -isbn: str
         -preco: float
         -estoque: int
+        +tem_estoque(quantidade) bool
+        +baixar_estoque(quantidade) void
     }
 
     class ItemPedido {
@@ -199,94 +471,444 @@ classDiagram
     Cupom ..> TipoDesconto : usa
     Pedido "1" o-- "0..1" Cupom : possui
     Pedido "1" *-- "1..*" ItemPedido : contem
-    ItemPedido --> Livro : referencia
-    Pedido --> Cliente : realizado por
-          </pre>
+    ItemPedido --> "1" Livro : refere
+    Cliente "1" --> "1..*" Pedido : realiza
+            </pre>
+          </div>
+
+          <div class="text-xs text-slate-500 dark:text-slate-400">
+            <i class="fa-solid fa-circle-info text-purple-500 mr-1"></i>
+            A classe <code>Cupom</code> é independente e rica em comportamentos (Domain Model), associando-se ao <code>Pedido</code> por agregação.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 3.2 Documentação do Caso de Uso (DUC UC04) -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
+          <div class="flex items-center space-x-2">
+            <i class="fa-solid fa-file-contract text-emerald-600"></i>
+            <h4 class="text-base font-bold text-slate-900 dark:text-white">3.2 Documentação do Caso de Uso: DUC UC04 (Aplicar Cupom de Desconto)</h4>
+          </div>
+          <span class="text-xs font-semibold px-2.5 py-1 bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 rounded">
+            Especificação Textual
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs sm:text-sm">
+          <div class="space-y-3">
+            <div>
+              <span class="font-bold text-slate-700 dark:text-slate-300">Identificador:</span>
+              <span class="font-mono text-emerald-600 dark:text-emerald-400 font-bold ml-1">UC04 -- Aplicar Cupom de Desconto</span>
+            </div>
+            <div>
+              <span class="font-bold text-slate-700 dark:text-slate-300">Ator Primário:</span>
+              <span class="ml-1">Cliente / Estudante do IFCE</span>
+            </div>
+            <div>
+              <span class="font-bold text-slate-700 dark:text-slate-300">Pré-condições:</span>
+              <span class="ml-1 text-slate-600 dark:text-slate-300">Carrinho de compras não vazio e subtotal do pedido &gt; 0.</span>
+            </div>
+            <div>
+              <span class="font-bold text-slate-700 dark:text-slate-300">Pós-condições:</span>
+              <span class="ml-1 text-slate-600 dark:text-slate-300">Desconto calculado e subtraído do total final do pedido.</span>
+            </div>
+            <div>
+              <span class="font-bold text-slate-700 dark:text-slate-300 block mb-1">Fluxo Principal:</span>
+              <ol class="list-decimal list-inside space-y-1 text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/60 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+                <li>O cliente digita o código do cupom na tela de checkout da livraria.</li>
+                <li>O sistema recupera os parâmetros do cupom e valida as regras de negócio.</li>
+                <li>O sistema calcula o abatimento financeiro (respeitando o teto do subtotal).</li>
+                <li>O sistema atualiza o subtotal e o total a pagar na interface.</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <span class="font-bold text-slate-700 dark:text-slate-300 block mb-1">Fluxos Alternativos:</span>
+              <ul class="space-y-1.5 text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/60 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+                <li><strong class="text-slate-800 dark:text-slate-100">FA01 (Desconto Percentual):</strong> <code>desconto = subtotal * (valor_desconto / 100)</code></li>
+                <li><strong class="text-slate-800 dark:text-slate-100">FA02 (Desconto em Valor Fixo):</strong> <code>desconto = min(valor_desconto, subtotal)</code></li>
+              </ul>
+            </div>
+
+            <div>
+              <span class="font-bold text-red-600 dark:text-red-400 block mb-1">Fluxos de Exceção (Mapeamento Direto em Exceções Python):</span>
+              <div class="space-y-1.5 text-xs">
+                <div class="p-2 rounded bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/40">
+                  <strong>FE01 (Cupom Inexistente / Inativo):</strong> Dispara <code>CupomInexistenteError</code> ou <code>CupomInativoError</code>.
+                </div>
+                <div class="p-2 rounded bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/40">
+                  <strong>FE02 (Validade Ultrapassada):</strong> Dispara <code>CupomExpiradoError</code>.
+                </div>
+                <div class="p-2 rounded bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/40">
+                  <strong>FE03 (Cota de Usos Esgotada):</strong> Dispara <code>CupomEsgotadoError</code>.
+                </div>
+                <div class="p-2 rounded bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/40">
+                  <strong>FE04 (Subtotal Inferior ao Mínimo):</strong> Dispara <code>ValorMinimoNaoAtingidoError</code>.
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
     </section>
 
-    <!-- Arquitetura do Projeto: Pré-existente vs. TASK-204 -->
-    <section class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 space-y-4">
+    <!-- ========================================== -->
+    <!-- 4. ARQUITETURA DO PROJETO: v0.3.0 vs TASK  -->
+    <!-- ========================================== -->
+    <section id="arquitetura-projeto" class="bg-white dark:bg-slate-800 rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200 dark:border-slate-700 space-y-6">
       <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-4">
         <div>
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <i class="fa-solid fa-folder-tree text-emerald-600"></i>
-            <span>3. Arquitetura do Projeto BiblioTauá: Pré-existente vs. TASK-204</span>
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-folder-tree text-purple-600"></i>
+            <span>4. Arquitetura do Projeto: Pré-existente vs. TASK-204</span>
           </h3>
           <p class="text-xs text-slate-500 dark:text-slate-400">
             Por que o repositório da Aula 24 possui mais arquivos do que o código digitado nos slides?
           </p>
         </div>
-        <span class="text-xs font-semibold px-2.5 py-1 bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 rounded-md">
-          Simulação de Equipe Ágil
+        <span class="text-xs font-semibold px-2.5 py-1 bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 rounded-md">
+          Simulação de Equipe Real
         </span>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- 3 Motivos Didáticos -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700 text-xs space-y-2">
-          <div class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-            <i class="fa-solid fa-box-archive text-amber-500"></i>
-            <span>Base Pré-existente (Versão v0.3.0 das Sprints 01-03)</span>
+          <div class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+            <span class="w-5 h-5 rounded-full bg-slate-300 dark:bg-slate-700 flex items-center justify-center font-bold text-[11px]">1</span>
+            <span>Nunca Começamos do Zero</span>
           </div>
           <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
-            Em um time profissional, um novo ticket nunca começa com pasta vazia. O BiblioTauá já possui:
+            O BiblioTauá já passou pelas Sprints 01 a 03 (versão v0.3.0), possuindo catálogo de livros, controle de estoque e pedidos operacionais.
           </p>
-          <ul class="list-disc list-inside space-y-1 text-slate-700 dark:text-slate-300 font-mono">
-            <li><code>database.py</code>: conexão e DDL SQLite</li>
-            <li><code>models/cliente.py</code>: entidade discente</li>
-            <li><code>models/livro.py</code>: acervo e estoque</li>
-            <li><code>models/item_pedido.py</code>: item associativo</li>
-            <li><code>models/pedido.py</code>: fechamento de compras</li>
-            <li><code>repositories/</code>: persistência no banco</li>
-          </ul>
         </div>
 
-        <div class="bg-emerald-50 dark:bg-emerald-950/30 p-4 rounded-xl border border-emerald-200 dark:border-emerald-800/50 text-xs space-y-2">
-          <div class="font-bold text-emerald-900 dark:text-emerald-300 flex items-center gap-1.5">
-            <i class="fa-solid fa-code-commit text-emerald-600"></i>
-            <span>O Foco da Codificação de Hoje (Sprint 04 - TASK-204)</span>
+        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700 text-xs space-y-2">
+          <div class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+            <span class="w-5 h-5 rounded-full bg-slate-300 dark:bg-slate-700 flex items-center justify-center font-bold text-[11px]">2</span>
+            <span>Integridade dos Módulos</span>
           </div>
           <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
-            Nos slides e no live coding, focamos cirurgicamente no motor de cupons:
+            O pacote <code>bibliotaua</code> precisa de seus modelos e conexão com o banco para que os <code>imports</code> não gerem <code>ModuleNotFoundError</code>.
           </p>
-          <ul class="list-disc list-inside space-y-1 text-emerald-800 dark:text-emerald-300 font-mono">
-            <li><code>exceptions.py</code>: erros de negócio da DUC UC04</li>
-            <li><code>models/cupom.py</code>: entidade e validações</li>
-            <li><code>main.py</code>: script para testar a implementação</li>
-          </ul>
-          <p class="text-slate-500 dark:text-slate-400 italic pt-1">
-            Nas Aulas 25 e 26, o Cupom será persistido no SQLite e plugado ao Pedido!
+        </div>
+
+        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700 text-xs space-y-2">
+          <div class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+            <span class="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-[11px]">3</span>
+            <span>Foco Cirúrgico de Hoje</span>
+          </div>
+          <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+            Nos slides e nas tarefas de hoje, focamos na <strong>TASK-204</strong> (<code>exceptions.py</code> e <code>models/cupom.py</code>), com todo o ecossistema pronto para testar.
           </p>
+        </div>
+      </div>
+
+      <!-- Matriz de Responsabilidade dos Arquivos -->
+      <div class="space-y-3 pt-2">
+        <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+          <i class="fa-solid fa-table-list text-emerald-600"></i>
+          <span>Matriz de Responsabilidade dos Arquivos do Repositório</span>
+        </h4>
+
+        <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
+              <tr>
+                <th class="py-2.5 px-3 font-bold">Arquivo</th>
+                <th class="py-2.5 px-3 font-bold">Camada / Papel</th>
+                <th class="py-2.5 px-3 font-bold">Origem</th>
+                <th class="py-2.5 px-3 font-bold">Elementos e Responsabilidades Principais</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+              <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
+                <td class="py-2 px-3 font-mono text-slate-700 dark:text-slate-300">bibliotaua/database.py</td>
+                <td class="py-2 px-3">Infra / Dados</td>
+                <td class="py-2 px-3"><span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">Pré-existente (v0.3.0)</span></td>
+                <td class="py-2 px-3">Conexão SQLite e DDL das tabelas <code>clientes</code>, <code>livros</code>, <code>pedidos</code> e <code>itens_pedido</code>. Na Aula 25 receberá <code>cupons</code>.</td>
+              </tr>
+              <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
+                <td class="py-2 px-3 font-mono text-slate-700 dark:text-slate-300">bibliotaua/models/cliente.py</td>
+                <td class="py-2 px-3">Domínio / Entidade</td>
+                <td class="py-2 px-3"><span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">Pré-existente (v0.3.0)</span></td>
+                <td class="py-2 px-3">Representa o estudante/cliente (<code>id</code>, <code>nome</code>, <code>email</code>, <code>matricula</code>, <code>ativo</code>).</td>
+              </tr>
+              <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
+                <td class="py-2 px-3 font-mono text-slate-700 dark:text-slate-300">bibliotaua/models/livro.py</td>
+                <td class="py-2 px-3">Domínio / Entidade</td>
+                <td class="py-2 px-3"><span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">Pré-existente (v0.3.0)</span></td>
+                <td class="py-2 px-3">Catálogo didático (<code>id</code>, <code>titulo</code>, <code>preco</code>, <code>estoque</code>) com métodos de baixa em estoque.</td>
+              </tr>
+              <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
+                <td class="py-2 px-3 font-mono text-slate-700 dark:text-slate-300">bibliotaua/models/item_pedido.py</td>
+                <td class="py-2 px-3">Domínio / Item Associativo</td>
+                <td class="py-2 px-3"><span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">Pré-existente (v0.3.0)</span></td>
+                <td class="py-2 px-3">Linha do pedido associando livro e quantidade. Propriedade calculada <code>subtotal</code>.</td>
+              </tr>
+              <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
+                <td class="py-2 px-3 font-mono text-slate-700 dark:text-slate-300">bibliotaua/models/pedido.py</td>
+                <td class="py-2 px-3">Domínio / Aggregate Root</td>
+                <td class="py-2 px-3"><span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">Pré-existente (v0.3.0)</span></td>
+                <td class="py-2 px-3">Fechamento da compra e cálculo de total. Na Aula 26 receberá o método <code>aplicar_cupom(cupom)</code>.</td>
+              </tr>
+              <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
+                <td class="py-2 px-3 font-mono text-slate-700 dark:text-slate-300">bibliotaua/repositories/</td>
+                <td class="py-2 px-3">Persistência / Dados</td>
+                <td class="py-2 px-3"><span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">Pré-existente (v0.3.0)</span></td>
+                <td class="py-2 px-3">Repositórios CRUD para <code>LivroRepository</code> e <code>PedidoRepository</code> em SQLite.</td>
+              </tr>
+              <tr class="bg-emerald-50/70 dark:bg-emerald-950/30 hover:bg-emerald-100/50 font-medium">
+                <td class="py-2.5 px-3 font-mono text-emerald-700 dark:text-emerald-300 font-bold">bibliotaua/exceptions.py</td>
+                <td class="py-2.5 px-3 font-bold">Domínio / Exceções</td>
+                <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-600 text-white">NOVO (TASK-204)</span></td>
+                <td class="py-2.5 px-3">Hierarquia de erros de negócio derivados dos Fluxos de Exceção (FE01 a FE04) da DUC UC04.</td>
+              </tr>
+              <tr class="bg-emerald-50/70 dark:bg-emerald-950/30 hover:bg-emerald-100/50 font-medium">
+                <td class="py-2.5 px-3 font-mono text-emerald-700 dark:text-emerald-300 font-bold">bibliotaua/models/cupom.py</td>
+                <td class="py-2.5 px-3 font-bold">Domínio / Entidade</td>
+                <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-600 text-white">NOVO (TASK-204)</span></td>
+                <td class="py-2.5 px-3">Entidade <code>Cupom</code> e enum <code>TipoDesconto</code> com todos os métodos de validação e cálculo financeiro.</td>
+              </tr>
+              <tr class="bg-emerald-50/70 dark:bg-emerald-950/30 hover:bg-emerald-100/50 font-medium">
+                <td class="py-2.5 px-3 font-mono text-emerald-700 dark:text-emerald-300 font-bold">main.py</td>
+                <td class="py-2.5 px-3 font-bold">Ponto de Entrada / Teste</td>
+                <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-600 text-white">NOVO (TASK-204)</span></td>
+                <td class="py-2.5 px-3">Script executável pelo discente para instanciar cupons e validar cenários válidos e bloqueios no console.</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
 
-    <!-- Mão na Massa da Aula 24 -->
-    <section class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 space-y-6">
-      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-4">
-        <div>
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <i class="fa-solid fa-code text-emerald-600"></i>
-            <span>4. Mão na Massa: Código Implementado na Aula 24 (Sprint 04 - TASK-204)</span>
+    <!-- ========================================== -->
+    <!-- 5. GUIA DO DESENVOLVEDOR PASSO A PASSO     -->
+    <!-- ========================================== -->
+    <section id="guia-desenvolvedor" class="space-y-8">
+
+      <!-- Header da Seção de Codificação -->
+      <div class="bg-gradient-to-r from-emerald-700 to-teal-800 text-white rounded-2xl p-6 md:p-8 shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="space-y-2">
+          <div class="inline-flex items-center space-x-2 bg-white/20 text-emerald-100 text-xs px-3 py-1 rounded-full font-bold">
+            <i class="fa-solid fa-code"></i>
+            <span>Mão na Massa • Roteiro Oficial TASK-204</span>
+          </div>
+          <h3 class="text-2xl md:text-3xl font-extrabold tracking-tight">
+            5. Guia do Desenvolvedor: Implementação e Verificação Método a Método
           </h3>
-          <p class="text-xs text-slate-500 dark:text-slate-400">
-            Conectando os fluxos da DUC diretamente aos arquivos em Python da Sprint 04.
+          <p class="text-emerald-100 text-xs md:text-sm max-w-2xl">
+            Siga o passo a passo com rastreabilidade direta aos diagramas UML. Para cada método escrito, execute o comando de verificação rápida no terminal antes de avançar!
           </p>
         </div>
-        <span class="text-xs font-semibold px-2.5 py-1 bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300 rounded-md">
-          Ativo em Produção
-        </span>
+        <div class="flex-shrink-0">
+          <a href="projeto_aluno.zip" download class="inline-flex items-center space-x-2 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold px-4 py-2.5 rounded-xl text-xs md:text-sm shadow-md transition-all">
+            <i class="fa-solid fa-download"></i>
+            <span>Baixar projeto_aluno.zip</span>
+          </a>
+        </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div>
-          <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
-            <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
-            <span>Hierarquia de Erros: <code>bibliotaua/exceptions.py</code></span>
-          </h4>
-          <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed max-h-96">
-class BiblioTauaException(Exception):
+      <!-- 5.1 Preparação do Ambiente -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 space-y-4">
+        <div class="flex items-center space-x-2 text-base font-bold text-slate-900 dark:text-white">
+          <span class="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">5.1</span>
+          <h4>Preparação do Ambiente de Trabalho</h4>
+        </div>
+        
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+          Descompacte o pacote <code>projeto_aluno.zip</code> na sua pasta de trabalho e abra-o no VS Code:
+        </p>
+
+        <div class="relative group">
+          <pre class="language-bash"><code class="language-bash">cd projeto_aluno
+code .</code></pre>
+          <button onclick="copySnippet(this, 'cd projeto_aluno\ncode .')" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors">
+            <i class="fa-regular fa-copy"></i> Copiar
+          </button>
+        </div>
+
+        <div class="text-xs text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/60 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+          <i class="fa-solid fa-folder-open text-amber-500 mr-1.5"></i>
+          <strong>Seus alvos de trabalho hoje são:</strong>
+          <code>bibliotaua/exceptions.py</code> (Hierarquia de Erros), <code>bibliotaua/models/cupom.py</code> (Entidade de Domínio) e <code>main.py</code> (Script de Teste).
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- 5.2 PASSO 1: HIERARQUIA DE EXCEÇÕES        -->
+      <!-- ========================================== -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200 dark:border-slate-700 space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-4">
+          <div class="flex items-center space-x-3">
+            <span class="w-8 h-8 rounded-lg bg-red-600 text-white flex items-center justify-center text-sm font-bold">1</span>
+            <div>
+              <h4 class="text-lg font-bold text-slate-900 dark:text-white">Passo 1: Construindo a Hierarquia de Exceções</h4>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Arquivo de destino: <code class="text-emerald-600 font-bold">bibliotaua/exceptions.py</code> (Tradução direta dos Fluxos de Exceção da DUC UC04)</p>
+            </div>
+          </div>
+          <span class="text-xs font-semibold px-2.5 py-1 bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300 rounded">
+            Regras de Negócio
+          </span>
+        </div>
+
+        <!-- Passos 1.1 a 1.7 Detalhados -->
+        <div class="space-y-6">
+
+          <!-- Passo 1.1 -->
+          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 space-y-3">
+            <div class="flex items-center justify-between">
+              <h5 class="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                <span class="text-xs px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold">1.1</span>
+                <span>Exceção Base da Disciplina: <code>BiblioTauaException</code></span>
+              </h5>
+              <span class="text-[11px] text-slate-400">Origem: Raiz semântica de erros de negócio</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-400">
+              Herda da classe padrão <code>Exception</code>. Impede que erros de domínio se misturem com exceções de sintaxe ou infraestrutura.
+            </p>
+            <div class="relative">
+              <pre class="language-python"><code class="language-python">class BiblioTauaException(Exception):
+    """Exceção base para regras de negócio do BiblioTauá."""
+    pass</code></pre>
+            </div>
+            <div class="bg-slate-900 text-slate-200 p-2.5 rounded-lg text-xs font-mono flex items-center justify-between">
+              <div class="truncate">
+                <span class="text-emerald-400">$</span> python3 -c "from bibliotaua.exceptions import BiblioTauaException; raise BiblioTauaException('Teste')"
+              </div>
+              <button onclick="copySnippet(this, 'python3 -c &quot;from bibliotaua.exceptions import BiblioTauaException; raise BiblioTauaException(\'Teste\')&quot;')" class="ml-2 px-2 py-0.5 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700">
+                <i class="fa-regular fa-copy"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Passo 1.2 -->
+          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 space-y-3">
+            <div class="flex items-center justify-between">
+              <h5 class="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                <span class="text-xs px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold">1.2</span>
+                <span>Erro Geral de Cupom: <code>CupomInvalidoError</code></span>
+              </h5>
+              <span class="text-[11px] text-slate-400">Origem: Agrupador dos fluxos FE01 a FE04</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-400">
+              Permite que o checkout capture qualquer violação de cupom em um único bloco <code>except CupomInvalidoError</code>.
+            </p>
+            <pre class="language-python"><code class="language-python">class CupomInvalidoError(BiblioTauaException):
+    """Exceção geral disparada quando um cupom viola regras de negócio ou elegibilidade."""
+    pass</code></pre>
+          </div>
+
+          <!-- Passo 1.3 -->
+          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 space-y-3">
+            <div class="flex items-center justify-between">
+              <h5 class="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                <span class="text-xs px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold">1.3</span>
+                <span>Cupom Inexistente: <code>CupomInexistenteError</code></span>
+              </h5>
+              <span class="text-[11px] text-amber-500 font-bold">Origem: DUC UC04 &rarr; Fluxo FE01</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-400">
+              Disparada quando o código promocional digitado pelo estudante não existe na base de dados.
+            </p>
+            <pre class="language-python"><code class="language-python">class CupomInexistenteError(CupomInvalidoError):
+    """Lançada quando o código de cupom informado não consta na base de dados (FE01)."""
+    def __init__(self, codigo: str):
+        super().__init__(f"Cupom '{codigo}' não encontrado no sistema.")
+        self.codigo = codigo</code></pre>
+            <div class="bg-slate-900 text-slate-200 p-2.5 rounded-lg text-xs font-mono flex items-center justify-between">
+              <div class="truncate">
+                <span class="text-emerald-400">$</span> python3 -c "from bibliotaua.exceptions import CupomInexistenteError; e = CupomInexistenteError('LIVRO99'); print(e.codigo, '|', e)"
+              </div>
+              <button onclick="copySnippet(this, 'python3 -c &quot;from bibliotaua.exceptions import CupomInexistenteError; e = CupomInexistenteError(\'LIVRO99\'); print(e.codigo, \'|\', e)&quot;')" class="ml-2 px-2 py-0.5 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700">
+                <i class="fa-regular fa-copy"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Passos 1.4 a 1.7 em Grade -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            <!-- 1.4 Inativo -->
+            <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-200">1.4 <code>CupomInativoError</code></span>
+                <span class="text-[10px] text-amber-500 font-bold">FE01 (Inativo)</span>
+              </div>
+              <pre class="language-python"><code class="language-python">class CupomInativoError(CupomInvalidoError):
+    """Lançada quando o cupom existe mas foi desativado (FE01)."""
+    def __init__(self, codigo: str):
+        super().__init__(f"O cupom '{codigo}' encontra-se desativado temporariamente.")
+        self.codigo = codigo</code></pre>
+            </div>
+
+            <!-- 1.5 Expirado -->
+            <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-200">1.5 <code>CupomExpiradoError</code></span>
+                <span class="text-[10px] text-amber-500 font-bold">FE02 (Validade)</span>
+              </div>
+              <pre class="language-python"><code class="language-python">class CupomExpiradoError(CupomInvalidoError):
+    """Lançada quando a data atual ultrapassa a data limite (FE02)."""
+    def __init__(self, codigo: str, validade_ate: str):
+        super().__init__(f"O cupom '{codigo}' expirou em {validade_ate}.")
+        self.codigo = codigo
+        self.validade_ate = validade_ate</code></pre>
+            </div>
+
+            <!-- 1.6 Esgotado -->
+            <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-200">1.6 <code>CupomEsgotadoError</code></span>
+                <span class="text-[10px] text-amber-500 font-bold">FE03 (Cota)</span>
+              </div>
+              <pre class="language-python"><code class="language-python">class CupomEsgotadoError(CupomInvalidoError):
+    """Lançada quando a cota máxima de utilizações foi atingida (FE03)."""
+    def __init__(self, codigo: str, limite: int):
+        super().__init__(f"O cupom '{codigo}' atingiu a quantidade máxima de {limite} usos e esgotou.")
+        self.codigo = codigo
+        self.limite = limite</code></pre>
+            </div>
+
+            <!-- 1.7 Mínimo Não Atingido -->
+            <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-200">1.7 <code>ValorMinimoNaoAtingidoError</code></span>
+                <span class="text-[10px] text-amber-500 font-bold">FE04 (Subtotal)</span>
+              </div>
+              <pre class="language-python"><code class="language-python">class ValorMinimoNaoAtingidoError(CupomInvalidoError):
+    """Lançada quando o subtotal é inferior ao exigido (FE04)."""
+    def __init__(self, codigo: str, valor_minimo: float, subtotal_atual: float):
+        super().__init__(
+            f"O cupom '{codigo}' exige pedido mínimo de R$ {valor_minimo:.2f}. "
+            f"Subtotal atual: R$ {subtotal_atual:.2f}."
+        )
+        self.codigo = codigo
+        self.valor_minimo = valor_minimo
+        self.subtotal_atual = subtotal_atual</code></pre>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Visualizador Completo Consolidado de exceptions.py -->
+        <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <i class="fa-solid fa-code text-emerald-600"></i>
+              <span>Código Completo e Consolidado: <code>bibliotaua/exceptions.py</code></span>
+            </span>
+            <button onclick="copySnippet(this, document.getElementById('code-exceptions-full').innerText)" class="px-2.5 py-1 text-xs rounded-md bg-emerald-600 hover:bg-emerald-500 text-white font-semibold flex items-center gap-1.5 transition-colors">
+              <i class="fa-regular fa-copy"></i> Copiar Arquivo Completo
+            </button>
+          </div>
+          <pre class="language-python max-h-96 overflow-y-auto custom-scrollbar"><code id="code-exceptions-full" class="language-python">class BiblioTauaException(Exception):
     """Exceção base para regras de negócio do BiblioTauá."""
     pass
 
@@ -346,16 +968,284 @@ class EstoqueInsuficienteError(BiblioTauaException):
         )
         self.livro_titulo = livro_titulo
         self.estoque_atual = estoque_atual
-        self.solicitado = solicitado</pre>
+        self.solicitado = solicitado</code></pre>
         </div>
 
-        <div>
-          <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
-            <i class="fa-solid fa-cubes text-blue-500"></i>
-            <span>Entidade de Negócio: <code>bibliotaua/models/cupom.py</code></span>
-          </h4>
-          <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed max-h-96">
-from dataclasses import dataclass
+      </div>
+
+      <!-- ========================================== -->
+      <!-- 5.3 PASSO 2: ENTIDADE CUPOM MÉTODO A MÉTODO -->
+      <!-- ========================================== -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200 dark:border-slate-700 space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-4">
+          <div class="flex items-center space-x-3">
+            <span class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-sm font-bold">2</span>
+            <div>
+              <h4 class="text-lg font-bold text-slate-900 dark:text-white">Passo 2: Implementando a Entidade Cupom Método por Método</h4>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Arquivo de destino: <code class="text-emerald-600 font-bold">bibliotaua/models/cupom.py</code> (Transformando o Diagrama de Classes UML em código OO rico)</p>
+            </div>
+          </div>
+          <span class="text-xs font-semibold px-2.5 py-1 bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 rounded">
+            Domain Model
+          </span>
+        </div>
+
+        <div class="space-y-6">
+
+          <!-- Passo 2.1: Enum TipoDesconto -->
+          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 space-y-3">
+            <div class="flex items-center justify-between">
+              <h5 class="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                <span class="text-xs px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold">2.1</span>
+                <span>A Enumeração <code>TipoDesconto</code></span>
+              </h5>
+              <span class="text-[11px] text-slate-400">Origem: &laquo;enumeration&raquo; TipoDesconto</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-400">
+              Define as modalidades matemáticas dos fluxos <strong>FA01 (Percentual)</strong> e <strong>FA02 (Valor Fixo)</strong>. Herdando de <code>(str, Enum)</code>, facilita serialização para JSON e SQLite.
+            </p>
+            <pre class="language-python"><code class="language-python">from enum import Enum
+
+class TipoDesconto(str, Enum):
+    """Enumeração para categorizar a modalidade matemática de desconto."""
+    PERCENTUAL = "PERCENTUAL"
+    VALOR_FIXO = "VALOR_FIXO"</code></pre>
+            <div class="bg-slate-900 text-slate-200 p-2.5 rounded-lg text-xs font-mono flex items-center justify-between">
+              <div class="truncate">
+                <span class="text-emerald-400">$</span> python3 -c "from bibliotaua.models.cupom import TipoDesconto; print(TipoDesconto.PERCENTUAL.value)"
+              </div>
+              <button onclick="copySnippet(this, 'python3 -c &quot;from bibliotaua.models.cupom import TipoDesconto; print(TipoDesconto.PERCENTUAL.value)&quot;')" class="ml-2 px-2 py-0.5 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700">
+                <i class="fa-regular fa-copy"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Passo 2.2: Declaração da Classe @dataclass -->
+          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 space-y-3">
+            <div class="flex items-center justify-between">
+              <h5 class="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                <span class="text-xs px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold">2.2</span>
+                <span>Declaração da Entidade <code>@dataclass class Cupom</code></span>
+              </h5>
+              <span class="text-[11px] text-slate-400">Origem: Classe Cupom com atributos tipados</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-400">
+              Usa <code>@dataclass</code> da biblioteca padrão para criar construtor com tipagem forte e valores padrão seguros.
+            </p>
+            <pre class="language-python"><code class="language-python">from dataclasses import dataclass
+from datetime import datetime, date
+from typing import Optional, Union
+
+from bibliotaua.exceptions import (
+    CupomInativoError,
+    CupomExpiradoError,
+    CupomEsgotadoError,
+    ValorMinimoNaoAtingidoError
+)
+
+@dataclass
+class Cupom:
+    """Entidade Cupom construída a partir da DUC UC04 e do Diagrama de Classes."""
+    codigo: str
+    tipo_desconto: TipoDesconto
+    valor_desconto: float
+    valor_minimo_pedido: float = 0.0
+    limite_usos: int = 100
+    usos_realizados: int = 0
+    validade_ate: Union[str, date] = "2026-12-31"
+    ativo: bool = True
+    id: Optional[int] = None</code></pre>
+          </div>
+
+          <!-- Passo 2.3: Invariantes com __post_init__ -->
+          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 space-y-3">
+            <div class="flex items-center justify-between">
+              <h5 class="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                <span class="text-xs px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold">2.3</span>
+                <span>Invariantes de Integridade: <code>__post_init__(self)</code></span>
+              </h5>
+              <span class="text-[11px] text-amber-500 font-bold">Origem: Invariantes e Cláusulas de Guarda</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-400">
+              Normaliza o código para maiúsculas sem espaços e barra dados inválidos (desconto negativo, percentual &gt; 100%, etc.).
+            </p>
+            <pre class="language-python"><code class="language-python">    def __post_init__(self):
+        self.codigo = self.codigo.strip().upper()
+        if not self.codigo:
+            raise ValueError("O código do cupom não pode ser vazio.")
+        if self.valor_desconto <= 0:
+            raise ValueError("O valor de desconto deve ser estritamente positivo.")
+        if self.tipo_desconto == TipoDesconto.PERCENTUAL and self.valor_desconto > 100:
+            raise ValueError("O desconto percentual não pode ser superior a 100%.")
+        if self.valor_minimo_pedido < 0:
+            raise ValueError("O valor mínimo do pedido não pode ser negativo.")
+        if self.limite_usos <= 0:
+            raise ValueError("O limite de utilizações deve ser de no mínimo 1.")
+        if self.usos_realizados < 0:
+            raise ValueError("A contagem de utilizações não pode ser negativa.")</code></pre>
+            <div class="bg-slate-900 text-slate-200 p-2.5 rounded-lg text-xs font-mono flex items-center justify-between">
+              <div class="truncate">
+                <span class="text-emerald-400">$</span> python3 -c "from bibliotaua.models.cupom import Cupom, TipoDesconto; Cupom('', TipoDesconto.VALOR_FIXO, -10.0)"
+              </div>
+              <button onclick="copySnippet(this, 'python3 -c &quot;from bibliotaua.models.cupom import Cupom, TipoDesconto; Cupom(\'\', TipoDesconto.VALOR_FIXO, -10.0)&quot;')" class="ml-2 px-2 py-0.5 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700">
+                <i class="fa-regular fa-copy"></i>
+              </button>
+            </div>
+            <div class="text-[11px] text-emerald-600 dark:text-emerald-400 italic">
+              Resultado esperado: <code>ValueError: O código do cupom não pode ser vazio.</code>
+            </div>
+          </div>
+
+          <!-- Passos 2.4 a 2.7 em Grade -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <!-- 2.4 Data Validade -->
+            <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-200">2.4 <code>obter_data_validade()</code></span>
+                <span class="text-[10px] text-slate-400">Auxiliar de Apoio</span>
+              </div>
+              <pre class="language-python"><code class="language-python">    def obter_data_validade(self) -> date:
+        """Converte validade para objeto date para comparação segura."""
+        if isinstance(self.validade_ate, str):
+            return datetime.strptime(self.validade_ate, "%Y-%m-%d").date()
+        return self.validade_ate</code></pre>
+            </div>
+
+            <!-- 2.5 Expirado -->
+            <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-200">2.5 <code>esta_expirado(data_ref)</code></span>
+                <span class="text-[10px] text-amber-500 font-bold">FE02</span>
+              </div>
+              <pre class="language-python"><code class="language-python">    def esta_expirado(self, data_referencia: Optional[date] = None) -> bool:
+        """Verifica se a data atual ultrapassou a validade."""
+        hoje = data_referencia or date.today()
+        return hoje > self.obter_data_validade()</code></pre>
+            </div>
+
+            <!-- 2.6 Limite de Usos -->
+            <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-200">2.6 <code>atingiu_limite_usos()</code></span>
+                <span class="text-[10px] text-amber-500 font-bold">FE03</span>
+              </div>
+              <pre class="language-python"><code class="language-python">    def atingiu_limite_usos(self) -> bool:
+        """Verifica se todas as cotas já foram consumidas."""
+        return self.usos_realizados >= self.limite_usos</code></pre>
+            </div>
+
+            <!-- 2.7 Registrar Uso -->
+            <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-200">2.7 <code>registrar_uso()</code></span>
+                <span class="text-[10px] text-emerald-500 font-bold">Operação</span>
+              </div>
+              <pre class="language-python"><code class="language-python">    def registrar_uso(self) -> None:
+        """Incrementa o contador de utilizações respeitando o limite."""
+        if self.atingiu_limite_usos():
+            raise CupomEsgotadoError(self.codigo, self.limite_usos)
+        self.usos_realizados += 1</code></pre>
+            </div>
+
+          </div>
+
+          <!-- Passo 2.8: Guarda Central pode_ser_aplicado_ao_pedido -->
+          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 space-y-3">
+            <div class="flex items-center justify-between">
+              <h5 class="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                <span class="text-xs px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold">2.8</span>
+                <span>Método de Guarda Central: <code>pode_ser_aplicado_ao_pedido(subtotal, data_ref)</code></span>
+              </h5>
+              <span class="text-[11px] text-blue-500 font-bold">Origem: UC05 (Validar Regras de Elegibilidade &laquo;include&raquo;)</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-400">
+              Executa a sequência de checagens dos 4 fluxos de exceção documentados na DUC: inatividade, expiração, esgotamento e piso financeiro.
+            </p>
+            <pre class="language-python"><code class="language-python">    def pode_ser_aplicado_ao_pedido(self, subtotal: float, data_referencia: Optional[date] = None) -> None:
+        """
+        Valida todas as regras de negócio especificadas na DUC UC04.
+        Lança exceções específicas para cada fluxo de exceção violado.
+        """
+        if not self.ativo:
+            raise CupomInativoError(self.codigo)
+
+        if self.esta_expirado(data_referencia):
+            validade_str = self.obter_data_validade().strftime("%d/%m/%Y")
+            raise CupomExpiradoError(self.codigo, validade_str)
+
+        if self.atingiu_limite_usos():
+            raise CupomEsgotadoError(self.codigo, self.limite_usos)
+
+        if subtotal < self.valor_minimo_pedido:
+            raise ValorMinimoNaoAtingidoError(self.codigo, self.valor_minimo_pedido, subtotal)</code></pre>
+            <div class="bg-slate-900 text-slate-200 p-2.5 rounded-lg text-xs font-mono flex items-center justify-between">
+              <div class="truncate">
+                <span class="text-emerald-400">$</span> python3 -c "from bibliotaua.models.cupom import Cupom, TipoDesconto; c = Cupom('MIN50', TipoDesconto.VALOR_FIXO, 10.0, valor_minimo_pedido=50.0); c.pode_ser_aplicado_ao_pedido(30.0)"
+              </div>
+              <button onclick="copySnippet(this, 'python3 -c &quot;from bibliotaua.models.cupom import Cupom, TipoDesconto; c = Cupom(\'MIN50\', TipoDesconto.VALOR_FIXO, 10.0, valor_minimo_pedido=50.0); c.pode_ser_aplicado_ao_pedido(30.0)&quot;')" class="ml-2 px-2 py-0.5 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700">
+                <i class="fa-regular fa-copy"></i>
+              </button>
+            </div>
+            <div class="text-[11px] text-amber-600 dark:text-amber-400 italic">
+              Resultado esperado: <code>ValorMinimoNaoAtingidoError: O cupom 'MIN50' exige pedido mínimo de R$ 50.00. Subtotal atual: R$ 30.00.</code>
+            </div>
+          </div>
+
+          <!-- Passo 2.9: Cálculo Financeiro de Desconto -->
+          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 space-y-3">
+            <div class="flex items-center justify-between">
+              <h5 class="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                <span class="text-xs px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold">2.9</span>
+                <span>Operação Principal de Negócio: <code>calcular_desconto(subtotal, data_ref)</code></span>
+              </h5>
+              <span class="text-[11px] text-emerald-500 font-bold">Origem: DUC UC04 &rarr; Fluxos FA01 e FA02</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-400">
+              Executa a guarda <code>self.pode_ser_aplicado_ao_pedido()</code>, aplica a fórmula correta do tipo e limita o desconto ao subtotal (<code>min(desconto, subtotal)</code>) para evitar saldos negativos.
+            </p>
+            <pre class="language-python"><code class="language-python">    def calcular_desconto(self, subtotal: float, data_referencia: Optional[date] = None) -> float:
+        """
+        Calcula o abatimento financeiro com base no tipo do cupom.
+        Executa a validação prévia de todas as regras de negócio da DUC UC04.
+        Garante que o desconto nunca ultrapasse o subtotal (não gera saldo negativo).
+        """
+        self.pode_ser_aplicado_ao_pedido(subtotal, data_referencia)
+
+        if self.tipo_desconto == TipoDesconto.PERCENTUAL:
+            desconto = (subtotal * self.valor_desconto) / 100.0
+        else:
+            desconto = self.valor_desconto
+
+        # Regra de negócio: o desconto é limitado ao subtotal da compra
+        return round(min(desconto, subtotal), 2)</code></pre>
+            <div class="bg-slate-900 text-slate-200 p-2.5 rounded-lg text-xs font-mono flex items-center justify-between">
+              <div class="truncate">
+                <span class="text-emerald-400">$</span> python3 -c "from bibliotaua.models.cupom import Cupom, TipoDesconto; c = Cupom('DESC10', TipoDesconto.PERCENTUAL, 10.0); print('Desconto R$ 100:', c.calcular_desconto(100.0))"
+              </div>
+              <button onclick="copySnippet(this, 'python3 -c &quot;from bibliotaua.models.cupom import Cupom, TipoDesconto; c = Cupom(\'DESC10\', TipoDesconto.PERCENTUAL, 10.0); print(\'Desconto R$ 100:\', c.calcular_desconto(100.0))&quot;')" class="ml-2 px-2 py-0.5 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700">
+                <i class="fa-regular fa-copy"></i>
+              </button>
+            </div>
+            <div class="text-[11px] text-emerald-600 dark:text-emerald-400 italic">
+              Resultado esperado: <code>Desconto R$ 100: 10.0</code>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Visualizador Completo Consolidado de models/cupom.py -->
+        <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <i class="fa-solid fa-code text-emerald-600"></i>
+              <span>Código Completo e Consolidado: <code>bibliotaua/models/cupom.py</code></span>
+            </span>
+            <button onclick="copySnippet(this, document.getElementById('code-cupom-full').innerText)" class="px-2.5 py-1 text-xs rounded-md bg-emerald-600 hover:bg-emerald-500 text-white font-semibold flex items-center gap-1.5 transition-colors">
+              <i class="fa-regular fa-copy"></i> Copiar Arquivo Completo
+            </button>
+          </div>
+          <pre class="language-python max-h-96 overflow-y-auto custom-scrollbar"><code id="code-cupom-full" class="language-python">from dataclasses import dataclass
 from datetime import datetime, date
 from enum import Enum
 from typing import Optional, Union
@@ -367,6 +1257,7 @@ from bibliotaua.exceptions import (
     ValorMinimoNaoAtingidoError
 )
 
+
 class TipoDesconto(str, Enum):
     """Enumeração para categorizar a modalidade matemática de desconto."""
     PERCENTUAL = "PERCENTUAL"
@@ -375,7 +1266,7 @@ class TipoDesconto(str, Enum):
 
 @dataclass
 class Cupom:
-    """Entidade Cupom construída a partir da DUC UC04 e Diagrama de Classes."""
+    """Entidade Cupom construída a partir da DUC UC04 e do Diagrama de Classes."""
     codigo: str
     tipo_desconto: TipoDesconto
     valor_desconto: float
@@ -402,52 +1293,85 @@ class Cupom:
             raise ValueError("A contagem de utilizações não pode ser negativa.")
 
     def obter_data_validade(self) -> date:
+        """Converte a validade para objeto date para comparação segura."""
         if isinstance(self.validade_ate, str):
             return datetime.strptime(self.validade_ate, "%Y-%m-%d").date()
         return self.validade_ate
 
     def esta_expirado(self, data_referencia: Optional[date] = None) -> bool:
+        """Verifica se a data atual ultrapassou a validade estipulada."""
         hoje = data_referencia or date.today()
         return hoje > self.obter_data_validade()
 
     def atingiu_limite_usos(self) -> bool:
+        """Verifica se todas as cotas do cupom já foram consumidas."""
         return self.usos_realizados >= self.limite_usos
 
     def pode_ser_aplicado_ao_pedido(self, subtotal: float, data_referencia: Optional[date] = None) -> None:
+        """
+        Valida todas as regras de negócio especificadas na DUC UC04.
+        Lança exceções específicas para cada fluxo de exceção violado.
+        """
         if not self.ativo:
             raise CupomInativoError(self.codigo)
+
         if self.esta_expirado(data_referencia):
             validade_str = self.obter_data_validade().strftime("%d/%m/%Y")
             raise CupomExpiradoError(self.codigo, validade_str)
+
         if self.atingiu_limite_usos():
             raise CupomEsgotadoError(self.codigo, self.limite_usos)
+
         if subtotal < self.valor_minimo_pedido:
             raise ValorMinimoNaoAtingidoError(self.codigo, self.valor_minimo_pedido, subtotal)
 
     def calcular_desconto(self, subtotal: float, data_referencia: Optional[date] = None) -> float:
+        """
+        Calcula o abatimento financeiro com base no tipo do cupom.
+        Executa a validação prévia de todas as regras de negócio da DUC UC04.
+        Garante que o desconto nunca ultrapasse o subtotal (não gera saldo negativo).
+        """
         self.pode_ser_aplicado_ao_pedido(subtotal, data_referencia)
+
         if self.tipo_desconto == TipoDesconto.PERCENTUAL:
             desconto = (subtotal * self.valor_desconto) / 100.0
         else:
             desconto = self.valor_desconto
+
+        # Regra de negócio: o desconto é limitado ao subtotal da compra
         return round(min(desconto, subtotal), 2)
 
     def registrar_uso(self) -> None:
+        """Incrementa o contador de utilizações respeitando o limite."""
         if self.atingiu_limite_usos():
             raise CupomEsgotadoError(self.codigo, self.limite_usos)
-        self.usos_realizados += 1</pre>
+        self.usos_realizados += 1</code></pre>
         </div>
+
       </div>
 
-      <!-- Script de Teste main.py e Execução no Terminal -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
-        <div>
-          <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
-            <i class="fa-brands fa-python text-emerald-500"></i>
-            <span>Script de Teste do Aluno: <code>main.py</code> (na raiz do projeto)</span>
-          </h4>
-          <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed">
-"""
+      <!-- ========================================== -->
+      <!-- 5.4 e 5.5 SCRIPT MAIN.PY & TERMINAL       -->
+      <!-- ========================================== -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <!-- Script main.py -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
+            <div class="flex items-center space-x-2">
+              <span class="w-7 h-7 rounded-lg bg-teal-600 text-white flex items-center justify-center text-xs font-bold">3</span>
+              <h4 class="text-base font-bold text-slate-900 dark:text-white">Passo 3: Script de Teste Integrado (<code>main.py</code>)</h4>
+            </div>
+            <button onclick="copySnippet(this, document.getElementById('code-main-py').innerText)" class="px-2 py-1 text-xs rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200">
+              <i class="fa-regular fa-copy"></i> Copiar
+            </button>
+          </div>
+
+          <p class="text-xs text-slate-600 dark:text-slate-400">
+            Crie o arquivo <code>main.py</code> na raiz do projeto para instanciar a entidade e validar o comportamento com casos válidos e com bloqueios por valor mínimo.
+          </p>
+
+          <pre class="language-python max-h-80 overflow-y-auto custom-scrollbar"><code id="code-main-py" class="language-python">"""
 Ponto de Entrada e Teste da Implementação - Aula 24
 Livraria BiblioTauá (Sprint 04 - TASK-204)
 """
@@ -479,39 +1403,206 @@ def main():
         print(f"Subtotal R$ 30.00  -> Bloqueado: {erro}")
 
 if __name__ == "__main__":
-    main()</pre>
+    main()</code></pre>
         </div>
 
-        <div>
-          <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
-            <i class="fa-solid fa-terminal text-teal-400"></i>
-            <span>Execução no Terminal: <code>$ python3 main.py</code></span>
-          </h4>
-          <div class="bg-slate-950 text-slate-100 p-4 rounded-xl border border-slate-800 text-xs font-mono space-y-2 h-[calc(100%-2rem)]">
-            <div class="text-emerald-400 font-bold border-b border-slate-800 pb-2">
+        <!-- Terminal e Critério de Aceite -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
+            <div class="flex items-center space-x-2">
+              <span class="w-7 h-7 rounded-lg bg-teal-600 text-white flex items-center justify-center text-xs font-bold">4</span>
+              <h4 class="text-base font-bold text-slate-900 dark:text-white">Passo 4: Execução no Terminal & Verificação</h4>
+            </div>
+            <span class="text-xs font-semibold px-2 py-0.5 bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 rounded">
+              Saída Esperada
+            </span>
+          </div>
+
+          <p class="text-xs text-slate-600 dark:text-slate-400">
+            Na raiz da pasta <code>projeto_aluno</code>, execute o script no seu terminal:
+          </p>
+
+          <!-- Janela de Terminal Estilizada -->
+          <div class="bg-slate-950 text-slate-100 p-4 rounded-xl border border-slate-800 font-mono text-xs space-y-2 shadow-inner">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2 text-slate-400 text-[11px]">
+              <div class="flex items-center space-x-1.5">
+                <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
+                <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+                <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+                <span class="ml-2 font-bold text-slate-300">bash • IFCE Lab</span>
+              </div>
+              <span>Terminal</span>
+            </div>
+            
+            <div class="text-emerald-400 font-bold pt-1">
               $ python3 main.py
             </div>
-            <div class="text-slate-300 space-y-1.5 leading-relaxed pt-1">
+            <div class="text-slate-300 space-y-1 leading-relaxed">
               <div>--- Testando a Entidade Cupom (BiblioTauá) ---</div>
               <div class="text-teal-300">Cupom: BEMVINDO10 (10.0% OFF)</div>
               <div class="text-emerald-300">Subtotal R$ 100.00 -&gt; Desconto: R$ 10.00</div>
               <div class="text-amber-300">Subtotal R$ 30.00  -&gt; Bloqueado: O cupom 'BEMVINDO10' exige pedido mínimo de R$ 50.00. Subtotal atual: R$ 30.00.</div>
             </div>
-            <div class="pt-4 text-slate-500 italic text-[11px] border-t border-slate-800/80">
-              <i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i>
-              Regras da DUC UC04 e validação de limite mínimo validadas com sucesso!
+          </div>
+
+          <!-- Card de Critério de Aceite Atingido -->
+          <div class="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800/60 text-xs space-y-2">
+            <div class="font-bold text-emerald-900 dark:text-emerald-200 flex items-center gap-1.5 text-sm">
+              <i class="fa-solid fa-circle-check text-emerald-600"></i>
+              <span>Critério de Aceite Atingido com Sucesso!</span>
             </div>
+            <p class="text-emerald-800 dark:text-emerald-300 leading-relaxed">
+              Se a sua saída de terminal coincidir com as 4 linhas exibidas acima, todas as metas de implementação da <strong>Aula 24 (Sprint 04 - TASK-204)</strong> foram atingidas. Você comprovou a rastreabilidade direta entre os diagramas UML 2 e o código Python!
+            </p>
           </div>
         </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 6. DIÁRIO DE BORDO DA SPRINT (DAILY 1)     -->
+    <!-- ========================================== -->
+    <section id="diario-bordo" class="bg-white dark:bg-slate-800 rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200 dark:border-slate-700 space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-teal-100 dark:bg-teal-900/40 text-teal-600 dark:text-teal-300 flex items-center justify-center font-bold text-lg">
+            <i class="fa-solid fa-clipboard-check"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white">6. Diário de Bordo da Sprint (Daily Scrum 1)</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Cerimônia Ágil de Fechamento do Encontro 1 da Sprint 04</p>
+          </div>
+        </div>
+        <span class="text-xs font-semibold px-2.5 py-1 bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-300 rounded-md">
+          Sprint 04 • Daily 1
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs sm:text-sm">
+        
+        <!-- O que realizei hoje -->
+        <div class="bg-slate-50 dark:bg-slate-900/60 p-5 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+          <div class="font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
+            <i class="fa-solid fa-check-circle"></i>
+            <span>O que realizei hoje?</span>
+          </div>
+          <ul class="space-y-2 text-slate-600 dark:text-slate-300">
+            <li class="flex items-start gap-1.5">
+              <i class="fa-solid fa-check text-emerald-500 text-xs mt-1"></i>
+              <span>Participei do Planning da Sprint 04 e assumi a <code>TASK-204</code>.</span>
+            </li>
+            <li class="flex items-start gap-1.5">
+              <i class="fa-solid fa-check text-emerald-500 text-xs mt-1"></i>
+              <span>Baixei o pacote <code>projeto_aluno.zip</code> e mapeei os arquivos da v0.3.0.</span>
+            </li>
+            <li class="flex items-start gap-1.5">
+              <i class="fa-solid fa-check text-emerald-500 text-xs mt-1"></i>
+              <span>Interpretei os Casos de Uso (<code>UC02</code>, <code>UC04</code>, <code>UC05</code>) e a DUC.</span>
+            </li>
+            <li class="flex items-start gap-1.5">
+              <i class="fa-solid fa-check text-emerald-500 text-xs mt-1"></i>
+              <span>Implementei <code>exceptions.py</code> traduzindo os fluxos FE01 a FE04.</span>
+            </li>
+            <li class="flex items-start gap-1.5">
+              <i class="fa-solid fa-check text-emerald-500 text-xs mt-1"></i>
+              <span>Implementei a entidade <code>Cupom</code> e o enum <code>TipoDesconto</code>.</span>
+            </li>
+            <li class="flex items-start gap-1.5">
+              <i class="fa-solid fa-check text-emerald-500 text-xs mt-1"></i>
+              <span>Executei <code>main.py</code> no terminal e validei todas as regras!</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- O que farei na Aula 25 -->
+        <div class="bg-slate-50 dark:bg-slate-900/60 p-5 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+          <div class="font-bold text-blue-700 dark:text-blue-400 flex items-center gap-2">
+            <i class="fa-solid fa-calendar-days"></i>
+            <span>O que farei no Encontro 2 (Aula 25)?</span>
+          </div>
+          <ul class="space-y-2 text-slate-600 dark:text-slate-300">
+            <li class="flex items-start gap-1.5">
+              <i class="fa-solid fa-arrow-right text-blue-500 text-xs mt-1"></i>
+              <span>Modelar a persistência relacional da tabela <code>cupons</code> no SQLite (<code>database.py</code>).</span>
+            </li>
+            <li class="flex items-start gap-1.5">
+              <i class="fa-solid fa-arrow-right text-blue-500 text-xs mt-1"></i>
+              <span>Implementar o padrão <code>Repository</code> em <code>CupomRepository</code> com proteção contra SQL Injection.</span>
+            </li>
+            <li class="flex items-start gap-1.5">
+              <i class="fa-solid fa-arrow-right text-blue-500 text-xs mt-1"></i>
+              <span>Persistir e buscar cupons cadastrados via transações seguras.</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Impedimentos -->
+        <div class="bg-slate-50 dark:bg-slate-900/60 p-5 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+          <div class="font-bold text-amber-700 dark:text-amber-400 flex items-center gap-2">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>Impedimentos?</span>
+          </div>
+          <div class="p-3 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-800 dark:text-emerald-300 font-medium">
+            <i class="fa-solid fa-circle-check text-emerald-500 mr-1.5"></i>
+            <strong>Nenhum impedimento!</strong> O ambiente local em Python 3 está totalmente configurado e a base de testes unitários respondeu com 100% de conformidade.
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Pronto para avançar para a persistência em banco SQLite na próxima sprint daily!
+          </p>
+        </div>
+
       </div>
     </section>
 
   </main>
 
-  <!-- Footer -->
-  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-4 text-center text-xs text-slate-500 dark:text-slate-400">
-    IFCE Campus Tauá • Curso Técnico em Informática para Internet • Disciplina de Engenharia de Software
+  <!-- ========================================== -->
+  <!-- RODAPÉ INSTITUCIONAL                       -->
+  <!-- ========================================== -->
+  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 text-center text-xs text-slate-500 dark:text-slate-400 space-y-1">
+    <div>Instituto Federal de Educação, Ciência e Tecnologia do Ceará — Campus Tauá</div>
+    <div>Curso Técnico em Informática para Internet • Disciplina de Engenharia de Software • Prof. Reginaldo Pereira Fernandes</div>
   </footer>
+
+  <!-- ========================================== -->
+  <!-- SCRIPTS INTERATIVOS                        -->
+  <!-- ========================================== -->
+  <script>
+    // Alternância do Modo Escuro / Claro
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    
+    themeToggleBtn.addEventListener('click', () => {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        localStorage.theme = 'light';
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.theme = 'dark';
+      }
+    });
+
+    // Função de Cópia para Área de Transferência com Feedback Visual
+    function copySnippet(button, text) {
+      navigator.clipboard.writeText(text).then(() => {
+        const originalContent = button.innerHTML;
+        button.innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> Copiado!';
+        button.classList.add('bg-emerald-700', 'text-white');
+        setTimeout(() => {
+          button.innerHTML = originalContent;
+          button.classList.remove('bg-emerald-700', 'text-white');
+        }, 2000);
+      }).catch(err => {
+        console.error('Falha ao copiar:', err);
+      });
+    }
+  </script>
 
 </body>
 </html>
