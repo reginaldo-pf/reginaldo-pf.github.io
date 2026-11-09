@@ -32,6 +32,7 @@ db.sqlite3
 
 # Arquivos binários pesados de temas Beamer arquivados (>50MB)
 *.zip
+!**/projeto_aluno.zip
 wssdnmtdrhkyvymdhmdwyjspdcgtvvjq.pdf
 
 # Sistema Operacional e Aplicativos Locais

@@ -1,0 +1,317 @@
+\documentclass[10pt]{beamer}
+
+% Tema Limpo e Institucional IFCE Taua
+\usetheme{Madrid}
+\usecolortheme{whale}
+
+% Pacotes Essenciais
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazilian]{babel}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows.meta,positioning,calc}
+
+% Configuracao de Cores e Codigo (SQL e Python)
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.96,0.97,0.98}
+
+\lstset{
+    backgroundcolor=\color{backcolour},
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue}\bfseries,
+    stringstyle=\color{red!80!black},
+    commentstyle=\color{green!60!black},
+    numberstyle=\tiny\color{codegray},
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4,
+    frame=single,
+    rulecolor=\color{blue!20}
+}
+
+% Metadados da Apresentacao
+\title[Engenharia de Software -- Aula 25]{Engenharia de Software -- Aula 25}
+\subtitle{Sprint 04: Persistência Relacional com SQLite e Padrão Repository}
+\author[Prof. Me. Reginaldo Fernandes]{Prof. Me. Reginaldo Pereira Fernandes}
+\institute[IFCE Campus Tauá]{
+    Instituto Federal de Educação, Ciência e Tecnologia do Ceará -- Campus Tauá\\
+    Técnico em Informática para Internet (TSII.210)
+}
+\date{Semana 1 -- Encontro 2 (100 min)}
+
+\begin{document}
+
+% Slide 1: Titulo
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% Slide 2: Agenda do Encontro
+\begin{frame}{Agenda do Encontro 2 (100 Minutos)}
+    \tableofcontents
+\end{frame}
+
+\section{Mapeamento Objeto-Relacional e DER}
+
+\begin{frame}{Do Modelo de Classes à Persistência em Banco}
+    \begin{itemize}
+        \item \textbf{Status da Sprint 04:}
+        \begin{itemize}
+            \item Na Aula 24, modelamos os Casos de Uso e Classes e implementamos \texttt{exceptions.py} e a classe \texttt{Cupom}.
+        \end{itemize}
+        \item \textbf{O Problema da Memória Volátil:}
+        \begin{itemize}
+            \item Objetos em memória RAM desaparecem quando o processo encerra.
+            \item Os cupons da livraria universitária precisam persistir em disco no banco \textbf{SQLite}!
+        \end{itemize}
+        \item \textbf{Mapeamento Objeto-Relacional (ORM):}
+        \begin{itemize}
+            \item Como transformar instâncias de \texttt{Cupom} em registros relacionais?
+            \item Como proteger as regras de negócio em duas camadas: código Python E restrições SQL?
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Diagrama Entidade-Relacionamento: Esquema Relacional (DER)}
+\centering
+\resizebox{0.92\textwidth}{!}{%
+\begin{tikzpicture}[>=Latex, font=\sffamily]
+    % Tabela CUPONS
+    \node[draw=blue!80!black, fill=blue!5, thick, rounded corners=2pt, inner sep=3pt] (tbl_cupons) at (-0.2, 0) {
+        \begin{tabular}{ll}
+        \multicolumn{2}{c}{\textbf{\large TABELA: cupons}} \\
+        \hline
+        \scriptsize \textbf{id} & \scriptsize INTEGER [PK, AUTO] \\
+        \scriptsize \textbf{codigo} & \scriptsize TEXT [UNIQUE, NOT NULL] \\
+        \scriptsize tipo\_desconto & \scriptsize TEXT [CHECK Enum] \\
+        \scriptsize valor\_desconto & \scriptsize REAL [CHECK > 0] \\
+        \scriptsize valor\_minimo & \scriptsize REAL [DEFAULT 0.0] \\
+        \scriptsize limite\_usos & \scriptsize INTEGER [CHECK > 0] \\
+        \scriptsize usos\_realizados & \scriptsize INTEGER [DEFAULT 0] \\
+        \scriptsize validade\_ate & \scriptsize TEXT [ISO8601] \\
+        \scriptsize ativo & \scriptsize INTEGER [CHECK 0, 1] \\
+        \end{tabular}
+    };
+
+    % Tabela PEDIDOS
+    \node[draw=green!60!black, fill=green!5, thick, rounded corners=2pt, inner sep=3pt] (tbl_pedidos) at (7.8, 0) {
+        \begin{tabular}{ll}
+        \multicolumn{2}{c}{\textbf{\large TABELA: pedidos}} \\
+        \hline
+        \scriptsize \textbf{id} & \scriptsize INTEGER [PK, AUTO] \\
+        \scriptsize cliente\_id & \scriptsize INTEGER [FK $\rightarrow$ clientes] \\
+        \scriptsize \textbf{cupom\_id} & \scriptsize INTEGER [FK $\rightarrow$ cupons, NULL] \\
+        \scriptsize subtotal & \scriptsize REAL [NOT NULL] \\
+        \scriptsize desconto & \scriptsize REAL [DEFAULT 0.0] \\
+        \scriptsize total & \scriptsize REAL [NOT NULL] \\
+        \scriptsize status & \scriptsize TEXT [NOT NULL] \\
+        \end{tabular}
+    };
+
+    % Conexao de Chave Estrangeira
+    \draw[->, very thick, draw=blue!80!black] (tbl_pedidos.west) -- node[midway, above, font=\tiny\bfseries] {FK (cupom\_id)} (tbl_cupons.east);
+\end{tikzpicture}
+}
+\vspace{0.2cm}
+\footnotesize
+\textit{Associação 0..1: Um pedido pode ou não conter um cupom aplicado.}
+\end{frame}
+
+\begin{frame}{Restrições de Integridade (Constraints) no SQLite}
+    \begin{block}{Defesa em Profundidade: Por que validar no Banco de Dados?}
+    Mesmo que um desenvolvedor esqueça de validar no Python, o motor do SQLite rejeitará dados corrompidos!
+    \end{block}
+    \vspace{0.2cm}
+    \begin{itemize}
+        \item \texttt{UNIQUE(codigo)}: Impede duplicidade de nomes de cupons na livraria.
+        \item \texttt{CHECK(tipo\_desconto IN ('PERCENTUAL', 'VALOR\_FIXO'))}: Garante consistência com o Enum em Python.
+        \item \texttt{CHECK(valor\_desconto > 0)}: Proíbe descontos nulos ou negativos.
+        \item \texttt{FOREIGN KEY(cupom\_id) REFERENCES cupons(id)}: Integridade referencial garantida.
+    \end{itemize}
+\end{frame}
+
+\section{Arquitetura em Camadas e Repositório}
+
+\begin{frame}{Diagrama de Arquitetura: Padrão Repository}
+\centering
+\resizebox{0.92\textwidth}{!}{%
+\begin{tikzpicture}[>=Latex, font=\sffamily]
+    % Camada de Dominio
+    \node[draw=purple!80!black, fill=purple!8, thick, rounded corners=4pt, text width=3.2cm, align=center] (dom) at (0, 0) {
+        \textbf{Camada de Domínio}\\[0.1cm]
+        \scriptsize Entidade \texttt{Cupom}\\
+        \scriptsize Regras de Negócio Puras\\
+        \scriptsize (Sem SQL!)
+    };
+
+    % Camada de Repositorio
+    \node[draw=blue!80!black, fill=blue!8, thick, rounded corners=4pt, text width=3.4cm, align=center] (repo) at (4.5, 0) {
+        \textbf{Camada de Acesso}\\[0.1cm]
+        \scriptsize \texttt{CupomRepository}\\
+        \scriptsize \texttt{salvar()}, \texttt{buscar()}\\
+        \scriptsize \texttt{registrar\_uso()}
+    };
+
+    % Camada do Banco de Dados
+    \node[draw=green!60!black, fill=green!8, thick, rounded corners=4pt, text width=3.2cm, align=center] (db) at (9.0, 0) {
+        \textbf{Banco de Dados}\\[0.1cm]
+        \scriptsize Arquivo \texttt{bibliotaua.db}\\
+        \scriptsize Tabelas Relacionais\\
+        \scriptsize Motor SQLite3
+    };
+
+    % Flechas
+    \draw[<->, thick, draw=black!70] (dom) -- node[midway, above, font=\tiny\bfseries] {Objetos} (repo);
+    \draw[<->, thick, draw=black!70] (repo) -- node[midway, above, font=\tiny\bfseries] {SQL / Tuplas} (db);
+\end{tikzpicture}
+}
+\vspace{0.4cm}
+\begin{alertblock}{Princípio de Responsabilidade Única (SRP)}
+A entidade \texttt{Cupom} não sabe se os dados vieram de um banco SQLite, PostgreSQL ou arquivo JSON. Toda a persistência é encapsulada pelo repositório!
+\end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Blindagem contra SQL Injection (Regra Inegociável)}
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \alert{\textbf{Vulnerabilidade Crítica}}\par
+            \footnotesize Concatenação de Strings:
+\begin{lstlisting}[language=Python]
+# NUNCA FACA ISSO!
+query = f"SELECT * FROM cupons WHERE codigo = '{cod}'"
+cursor.execute(query)
+# Permite: ' OR 1=1; DROP TABLE...
+\end{lstlisting}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \textbf{Padrão Seguro (Parametrizado)}\par
+            \footnotesize Parâmetros Posicionais:
+\begin{lstlisting}[language=Python]
+# SEGURO: Parametros com ?
+query = "SELECT * FROM cupons WHERE codigo = ?"
+cursor.execute(query, (cod,))
+# O driver trata caracteres especiais como dado puro!
+\end{lstlisting}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\section{Implementação: DDL SQLite}
+
+\begin{frame}[fragile]{Mão na Massa: DDL da Tabela \texttt{cupons} (\texttt{database.py})}
+\begin{lstlisting}[language=SQL]
+CREATE TABLE IF NOT EXISTS cupons (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    codigo TEXT NOT NULL UNIQUE,
+    tipo_desconto TEXT NOT NULL CHECK(tipo_desconto IN ('PERCENTUAL', 'VALOR_FIXO')),
+    valor_desconto REAL NOT NULL CHECK(valor_desconto > 0),
+    valor_minimo_pedido REAL NOT NULL DEFAULT 0.0 CHECK(valor_minimo_pedido >= 0),
+    limite_usos INTEGER NOT NULL DEFAULT 100 CHECK(limite_usos > 0),
+    usos_realizados INTEGER NOT NULL DEFAULT 0 CHECK(usos_realizados >= 0),
+    validade_ate TEXT NOT NULL,
+    ativo INTEGER NOT NULL DEFAULT 1 CHECK(ativo IN (0, 1))
+);
+
+CREATE INDEX IF NOT EXISTS idx_cupons_codigo ON cupons(codigo);
+\end{lstlisting}
+\end{frame}
+
+\section{Implementação: Repositório CupomRepository}
+
+\begin{frame}[fragile]{Mão na Massa: \texttt{CupomRepository} (Persistência e Busca)}
+\begin{lstlisting}[language=Python]
+class CupomRepository:
+    def __init__(self, conn: sqlite3.Connection):
+        self.conn = conn
+
+    def salvar(self, cupom: Cupom) -> Cupom:
+        cursor = self.conn.cursor()
+        cursor.execute("""
+            INSERT INTO cupons (codigo, tipo_desconto, valor_desconto, valor_minimo_pedido, limite_usos, validade_ate, ativo)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (cupom.codigo, cupom.tipo_desconto.value, cupom.valor_desconto,
+              cupom.valor_minimo_pedido, cupom.limite_usos, cupom.validade_ate.isoformat(), 1 if cupom.ativo else 0))
+        self.conn.commit()
+        cupom.id = cursor.lastrowid
+        return cupom
+
+    def buscar_por_codigo(self, codigo: str) -> Optional[Cupom]:
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT * FROM cupons WHERE codigo = ?", (codigo.strip().upper(),))
+        row = cursor.fetchone()
+        return self._row_para_objeto(row) if row else None
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Mão na Massa: Incremento Atômico Seguro (\texttt{registrar\_uso})}
+\begin{lstlisting}[language=Python]
+    def registrar_uso(self, cupom_id: int) -> bool:
+        """Incrementa atomicamente os usos realizados sem risco de corrida."""
+        cursor = self.conn.cursor()
+        cursor.execute("""
+            UPDATE cupons 
+            SET usos_realizados = usos_realizados + 1
+            WHERE id = ? AND usos_realizados < limite_usos AND ativo = 1
+        """, (cupom_id,))
+        self.conn.commit()
+        if cursor.rowcount == 0:
+            raise CupomEsgotadoError(0)
+        return True
+\end{lstlisting}
+    \begin{alertblock}{Atomicidade e Proteção contra Concorrência}
+    A cláusula \texttt{WHERE usos\_realizados < limite\_usos} impede que dois clientes utilizem o último cupom simultaneamente!
+    \end{alertblock}
+\end{frame}
+
+\section{Rito Ágil e Próximos Passos}
+
+\begin{frame}{Rito Ágil: Registro da Daily 2}
+    \begin{block}{Anotação para o Relatório da Sprint no \texttt{guia\_desenvolvedor.md}}
+    \begin{itemize}
+        \item \textbf{O que realizei hoje?}
+        \begin{itemize}
+            \item Projetei o Diagrama Entidade-Relacionamento (DER) integrando \texttt{cupons} e \texttt{pedidos}.
+            \item Escrevi o script DDL com restrições \texttt{CHECK}, \texttt{UNIQUE} e índices em \texttt{database.py}.
+            \item Implementei a classe \texttt{CupomRepository} com queries parametrizadas blindadas.
+            \item Implementei o incremento atômico de utilizações \texttt{registrar\_uso}.
+        \end{itemize}
+        \item \textbf{O que farei no Encontro 3 (Aula 26)?}
+        \begin{itemize}
+            \item Analisar o Diagrama de Sequência do checkout.
+            \item Implementar o serviço de cálculo \texttt{CalculadoraDescontoService}.
+            \item Integrar o cupom ao agregado \texttt{Pedido} e implementar o \texttt{CheckoutService}.
+        \end{itemize}
+        \item \textbf{Impedimentos?} Nenhum impedimento.
+    \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Síntese do Encontro 2}
+    \begin{itemize}
+        \item \textbf{Conquistas de Hoje:}
+        \begin{itemize}
+            \item Mapeamento ORM concluído com sucesso.
+            \item Persistência relacional protegida em SQLite.
+            \item Camada de dados isolada da camada de regras de negócio.
+        \end{itemize}
+        \item \textbf{Para o Encontro 3 (Aula 26):}
+        \begin{itemize}
+            \item Orquestração do Negócio: \textbf{Diagrama de Sequência UML}.
+            \item Cálculo de desconto e finalização de pedidos.
+            \item Baixa no estoque de livros e transações completas.
+        \end{itemize}
+    \end{itemize}
+    \vspace{0.4cm}
+    \centering
+    \textbf{Excelente progresso! A persistência do BiblioTauá está blindada!}
+\end{frame}
+
+\end{document}

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 27: Garantia de Qualidade (Pytest), CLI e Fechamento da Sprint | BiblioTauá - IFCE</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- Header -->
+  <header class="bg-white/90 dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <span class="bg-emerald-600 text-white font-black text-lg px-2.5 py-1 rounded-lg tracking-wider">IFCE</span>
+        <div>
+          <h1 class="text-base font-bold text-slate-900 dark:text-white leading-tight">Engenharia de Software</h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Campus Tauá • Técnico em Informática para Internet</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span class="text-xs font-semibold px-2.5 py-1 bg-green-100 dark:bg-green-950/60 text-green-800 dark:text-green-300 rounded-full border border-green-300 dark:border-green-800">
+          Sprint 04 • Encontro 4 (Aula 27)
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- Hero / Sprint Briefing -->
+    <section class="bg-gradient-to-br from-green-900 via-emerald-950 to-slate-900 text-white rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden">
+      <div class="relative z-10 space-y-4">
+        <div class="inline-flex items-center space-x-2 bg-green-500/20 text-green-300 text-xs px-3 py-1 rounded-full border border-green-400/30">
+          <i class="fa-solid fa-flag-checkered"></i>
+          <span>Entrega Final da Sprint 04: BiblioTauá v0.4.0</span>
+        </div>
+        <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">
+          Garantia de Qualidade (Pytest), CLI e Fechamento da Sprint
+        </h2>
+        <p class="text-green-100/90 text-sm md:text-base max-w-3xl leading-relaxed">
+          Validação rigorosa com Pytest automatizado, homologação no terminal executável (CLI), consolidação dos commits semânticos e submissão do Pull Request formal para a Tech Lead!
+        </p>
+        <div class="pt-2 flex flex-wrap gap-3">
+          <a href="slides_aula.pdf" target="_blank" class="inline-flex items-center space-x-2 bg-white text-green-900 hover:bg-green-50 font-bold px-4 py-2 rounded-xl text-xs md:text-sm shadow-md transition-all">
+            <i class="fa-solid fa-file-pdf text-red-600"></i>
+            <span>Ver Slides Beamer (PDF)</span>
+          </a>
+          <a href="guia_desenvolvedor.md" target="_blank" class="inline-flex items-center space-x-2 bg-green-700/80 hover:bg-green-600 border border-green-500/40 text-white font-semibold px-4 py-2 rounded-xl text-xs md:text-sm transition-all">
+            <i class="fa-solid fa-book-open"></i>
+            <span>Guia do Desenvolvedor (MD)</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Diagramas Interativos -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      
+      <!-- Pirâmide de Testes -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-vial-circle-check text-green-600"></i>
+            <span>1. Pirâmide de Testes e Rastreabilidade</span>
+          </h3>
+          <span class="text-xs bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 px-2 py-0.5 rounded-full font-medium">Qualidade (QA)</span>
+        </div>
+        <p class="text-xs text-slate-500 dark:text-slate-400">
+          Mapeamento dos fluxos da DUC em 10 testes automatizados no Pytest.
+        </p>
+        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-100 dark:border-slate-700/60 overflow-x-auto flex justify-center">
+          <pre class="mermaid text-xs">
+graph TD
+    E2E["Testes E2E / CLI (main.py)"]
+    Int["Testes de Integração (SQLite :memory:)"]
+    Unit["Testes Unitários (DUC: Regras & Exceções)"]
+
+    Unit --> Int
+    Int --> E2E
+
+    style Unit fill:#dcfce7,stroke:#16a34a,stroke-width:2px
+    style Int fill:#fef3c7,stroke:#d97706,stroke-width:2px
+    style E2E fill:#fee2e2,stroke:#dc2626,stroke-width:2px
+          </pre>
+        </div>
+      </div>
+
+      <!-- Git Flow -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i class="fa-brands fa-git-alt text-orange-600"></i>
+            <span>2. Git Flow da Sprint 04</span>
+          </h3>
+          <span class="text-xs bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300 px-2 py-0.5 rounded-full font-medium">Ciclo de Entrega</span>
+        </div>
+        <p class="text-xs text-slate-500 dark:text-slate-400">
+          Histórico de commits atômicos até o Pull Request aprovado.
+        </p>
+        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-100 dark:border-slate-700/60 overflow-x-auto flex justify-center">
+          <pre class="mermaid text-xs">
+gitGraph
+    commit id: "v0.3.0"
+    branch feature/task-204
+    checkout feature/task-204
+    commit id: "feat: modelo e excecoes"
+    commit id: "feat: sqlite repository"
+    commit id: "feat: checkout service"
+    commit id: "test: pytest 100% verde"
+    checkout main
+    merge feature/task-204 id: "v0.4.0 (PR)"
+          </pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Homologação da Entrega -->
+    <section class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-4">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-circle-check text-green-600"></i>
+            <span>3. Resultados da Homologação (Sprint 04)</span>
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Relatório de execução de testes e interface em produção.
+          </p>
+        </div>
+        <span class="text-xs font-semibold px-2.5 py-1 bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300 rounded-md">
+          Aprovado pela Liderança
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-terminal text-green-500"></i>
+            <span>Execução do Pytest</span>
+          </h4>
+          <pre class="bg-slate-900 text-emerald-400 p-4 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed">
+$ PYTHONPATH=. pytest bibliotaua/tests -v
+test_buscar_cupom_existente PASSED              [ 10%]
+test_aplicar_cupom_percentual_sucesso PASSED    [ 20%]
+test_aplicar_cupom_valor_fixo_sucesso PASSED    [ 30%]
+test_cupom_inativo_dispara_excecao PASSED       [ 40%]
+test_cupom_expirado_dispara_excecao PASSED      [ 50%]
+test_cupom_esgotado_dispara_excecao PASSED      [ 60%]
+test_subtotal_abaixo_do_minimo PASSED           [ 70%]
+test_checkout_completo_com_cupom PASSED         [ 80%]
+test_decremento_estoque_livros PASSED           [ 90%]
+test_incremento_atomico_usos PASSED             [100%]
+================== 10 passed in 0.03s ==================</pre>
+        </div>
+
+        <div>
+          <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-code-pull-request text-blue-500"></i>
+            <span>Pull Request Homologado</span>
+          </h4>
+          <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700 text-xs space-y-2">
+            <div class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+              <span class="bg-purple-600 text-white px-2 py-0.5 rounded text-[10px]">Merged</span>
+              <span>[TASK-204] Motor de Cupons BiblioTauá</span>
+            </div>
+            <p class="text-slate-600 dark:text-slate-400">
+              <strong>Tech Lead Aline Mendes:</strong> "Excelente trabalho de engenharia! Os diagramas refletiram com precisão o código entregue e todos os testes passaram. Módulo aprovado para a Feira do Livro!"
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-4 text-center text-xs text-slate-500 dark:text-slate-400">
+    IFCE Campus Tauá • Curso Técnico em Informática para Internet • Disciplina de Engenharia de Software
+  </footer>
+
+</body>
+</html>

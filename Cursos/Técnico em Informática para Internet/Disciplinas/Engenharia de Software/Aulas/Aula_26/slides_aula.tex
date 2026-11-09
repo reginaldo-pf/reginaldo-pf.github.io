@@ -1,0 +1,265 @@
+\documentclass[10pt]{beamer}
+
+% Tema Limpo e Institucional IFCE Taua
+\usetheme{Madrid}
+\usecolortheme{whale}
+
+% Pacotes Essenciais
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazilian]{babel}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows.meta,positioning,calc}
+
+% Configuracao de Cores e Codigo (Python)
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.96,0.97,0.98}
+
+\lstset{
+    language=Python,
+    backgroundcolor=\color{backcolour},
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue}\bfseries,
+    stringstyle=\color{red!80!black},
+    commentstyle=\color{green!60!black},
+    numberstyle=\tiny\color{codegray},
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4,
+    frame=single,
+    rulecolor=\color{blue!20}
+}
+
+% Metadados da Apresentacao
+\title[Engenharia de Software -- Aula 26]{Engenharia de Software -- Aula 26}
+\subtitle{Sprint 04: Diagrama de Sequência e Orquestração do Negócio}
+\author[Prof. Me. Reginaldo Fernandes]{Prof. Me. Reginaldo Pereira Fernandes}
+\institute[IFCE Campus Tauá]{
+    Instituto Federal de Educação, Ciência e Tecnologia do Ceará -- Campus Tauá\\
+    Técnico em Informática para Internet (TSII.210)
+}
+\date{Semana 2 -- Encontro 3 (100 min)}
+
+\begin{document}
+
+% Slide 1: Titulo
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% Slide 2: Agenda do Encontro
+\begin{frame}{Agenda do Encontro 3 (100 Minutos)}
+    \tableofcontents
+\end{frame}
+
+\section{Modelagem Dinâmica: Diagrama de Sequência}
+
+\begin{frame}{Por que Precisamos da Visão Dinâmica?}
+    \begin{itemize}
+        \item \textbf{O que já temos até a Aula 25:}
+        \begin{itemize}
+            \item Entidade \texttt{Cupom} com regras de negócio em Python.
+            \item Tabela \texttt{cupons} e \texttt{CupomRepository} persistindo no SQLite.
+        \end{itemize}
+        \item \textbf{A Pergunta que o Diagrama de Classes Não Responde:}
+        \begin{itemize}
+            \item \textit{"Em que ordem temporal os objetos conversam durante a compra de um livro com cupom?"}
+            \item \textit{"Quem deve consultar o repositório? Quem deve debitar o estoque? Quem deve atualizar o total?"}
+        \end{itemize}
+        \item \textbf{Diagrama de Sequência (UML 2 -- Cap. 5):}
+        \begin{itemize}
+            \item O padrão industrial para modelar o fluxo de execução síncrono e transacional entre componentes.
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Diagrama de Sequência: Fluxo do Checkout com Cupom}
+\centering
+\resizebox{0.95\textwidth}{!}{%
+\begin{tikzpicture}[>=Latex, font=\sffamily]
+    % Participantes
+    \node[draw=blue!80!black, fill=blue!10, rounded corners, font=\scriptsize\bfseries] (cli) at (0, 0) {Cliente (UI)};
+    \node[draw=green!60!black, fill=green!10, rounded corners, font=\scriptsize\bfseries] (srv) at (3.2, 0) {CheckoutService};
+    \node[draw=yellow!80!black, fill=yellow!15, rounded corners, font=\scriptsize\bfseries] (rep) at (6.4, 0) {CupomRepo};
+    \node[draw=purple!80!black, fill=purple!10, rounded corners, font=\scriptsize\bfseries] (ped) at (9.6, 0) {Pedido};
+
+    % Linhas de vida
+    \draw[dashed, gray] (cli) -- ++(0, -4.6) coordinate (cli_end);
+    \draw[dashed, gray] (srv) -- ++(0, -4.6) coordinate (srv_end);
+    \draw[dashed, gray] (rep) -- ++(0, -4.6) coordinate (rep_end);
+    \draw[dashed, gray] (ped) -- ++(0, -4.6) coordinate (ped_end);
+
+    % Mensagens com timestamps verticais
+    \draw[->, thick, draw=blue!80!black] ($(cli)!0.12!(cli_end)$) -- node[above, font=\tiny\bfseries] {1: checkout(pedido, COD)} ($(srv)!0.12!(srv_end)$);
+    \draw[->, thick, draw=black!80] ($(srv)!0.26!(srv_end)$) -- node[above, font=\tiny\bfseries] {2: buscar\_por\_codigo(COD)} ($(rep)!0.26!(rep_end)$);
+    \draw[<-, dashed, thick, draw=black!60] ($(srv)!0.38!(srv_end)$) -- node[above, font=\tiny] {3: cupom} ($(rep)!0.38!(rep_end)$);
+    \draw[->, thick, draw=black!80] ($(srv)!0.52!(srv_end)$) -- node[above, font=\tiny\bfseries] {4: aplicar\_cupom(cupom)} ($(ped)!0.52!(ped_end)$);
+    \draw[<-, dashed, thick, draw=black!60] ($(srv)!0.64!(srv_end)$) -- node[above, font=\tiny] {5: total líquido} ($(ped)!0.64!(ped_end)$);
+    \draw[->, thick, draw=orange!90!black] ($(srv)!0.76!(srv_end)$) -- node[above, font=\tiny\bfseries] {6: registrar\_uso(id)} ($(rep)!0.76!(rep_end)$);
+    \draw[<-, dashed, thick, draw=blue!80!black] ($(cli)!0.90!(cli_end)$) -- node[above, font=\tiny\bfseries] {7: Pedido Confirmado} ($(srv)!0.90!(srv_end)$);
+\end{tikzpicture}
+}
+\end{frame}
+
+\section{Diagrama de Atividades e Regras de Negócio}
+
+\begin{frame}{Diagrama de Atividades: Ciclo de Decisão no Checkout}
+\centering
+\resizebox{!}{0.72\textheight}{%
+\begin{tikzpicture}[>=Latex, font=\sffamily, node distance=0.8cm]
+    \node[draw, circle, fill=black, minimum size=0.35cm] (start) {};
+    \node[draw=blue!80!black, fill=blue!5, rounded corners, below=0.4cm of start, font=\scriptsize] (inicia) {Recebe Pedido e Código de Cupom};
+    \node[draw=purple!80!black, fill=purple!5, diamond, aspect=1.8, below=0.5cm of inicia, font=\tiny\bfseries, align=center] (dec_cupom) {Cupom\\informado?};
+    \node[draw=green!60!black, fill=green!5, rounded corners, below=0.6cm of dec_cupom, font=\scriptsize] (valida) {Valida Regras de Elegibilidade (DUC)};
+    \node[draw=green!60!black, fill=green!5, rounded corners, below=0.5cm of valida, font=\scriptsize] (aplica) {Abate Desconto e Calcula Total Líquido};
+    \node[draw=orange!80!black, fill=orange!5, rounded corners, below=0.5cm of aplica, font=\scriptsize] (baixa) {Debita Estoque do Livro e Incrementa Uso};
+    \node[draw, circle, double, fill=black, minimum size=0.4cm, below=0.4cm of baixa] (stop) {};
+
+    \draw[->, thick] (start) -- (inicia);
+    \draw[->, thick] (inicia) -- (dec_cupom);
+    \draw[->, thick] (dec_cupom) -- node[midway, right, font=\tiny\bfseries] {Sim} (valida);
+    \draw[->, thick] (dec_cupom.east) -- ++(1.5,0) |- node[near end, right, font=\tiny\bfseries] {Não (Sem Cupom)} (baixa.east);
+    \draw[->, thick] (valida) -- (aplica);
+    \draw[->, thick] (aplica) -- (baixa);
+    \draw[->, thick] (baixa) -- (stop);
+\end{tikzpicture}
+}
+\end{frame}
+
+\section{Implementação: Calculadora de Desconto}
+
+\begin{frame}[fragile]{Mão na Massa: \texttt{CalculadoraDescontoService}}
+\begin{lstlisting}[language=Python]
+class CalculadoraDescontoService:
+    """Servico de dominio puro: calculo matematico de descontos."""
+
+    @staticmethod
+    def calcular(subtotal: float, tipo_desconto: TipoDesconto, valor_desconto: float) -> float:
+        if subtotal <= 0:
+            return 0.0
+
+        if tipo_desconto == TipoDesconto.PERCENTUAL:
+            desconto = subtotal * (valor_desconto / 100.0)
+        elif tipo_desconto == TipoDesconto.VALOR_FIXO:
+            desconto = min(valor_desconto, subtotal)
+        else:
+            raise ValueError(f"Tipo de desconto desconhecido: {tipo_desconto}")
+
+        return round(desconto, 2)
+\end{lstlisting}
+    \begin{block}{Por que um Serviço Isolado?}
+    Permite testar e reutilizar as fórmulas matemáticas de desconto sem depender de banco de dados ou da interface!
+    \end{block}
+\end{frame}
+
+\section{Implementação: Integração com o Pedido}
+
+\begin{frame}[fragile]{Mão na Massa: Integrando o Cupom ao \texttt{Pedido}}
+\begin{lstlisting}[language=Python]
+class Pedido:
+    def __init__(self, cliente: Cliente, id: Optional[int] = None):
+        self.id = id
+        self.cliente = cliente
+        self.itens: List[ItemPedido] = []
+        self.cupom: Optional[Cupom] = None
+        self.desconto_aplicado: float = 0.0
+        self.status: str = "CRIADO"
+
+    @property
+    def subtotal(self) -> float:
+        return round(sum(item.subtotal for item in self.itens), 2)
+
+    def aplicar_cupom(self, cupom: Cupom) -> float:
+        desconto = cupom.calcular_desconto(self.subtotal)
+        self.cupom = cupom
+        self.desconto_aplicado = desconto
+        return self.desconto_aplicado
+
+    @property
+    def total(self) -> float:
+        return max(round(self.subtotal - self.desconto_aplicado, 2), 0.0)
+\end{lstlisting}
+\end{frame}
+
+\section{Implementação: CheckoutService Orquestrador}
+
+\begin{frame}[fragile]{Mão na Massa: \texttt{CheckoutService} Transacional}
+\begin{lstlisting}[language=Python]
+class CheckoutService:
+    def __init__(self, cupom_repo: CupomRepository, livro_repo: LivroRepository, pedido_repo: PedidoRepository):
+        self.cupom_repo = cupom_repo
+        self.livro_repo = livro_repo
+        self.pedido_repo = pedido_repo
+
+    def processar_checkout(self, pedido: Pedido, codigo_cupom: Optional[str] = None) -> Pedido:
+        # 1. Se informou cupom, busca e aplica
+        if codigo_cupom:
+            cupom = self.cupom_repo.buscar_por_codigo(codigo_cupom)
+            if not cupom:
+                raise CupomInexistenteError(codigo_cupom)
+            pedido.aplicar_cupom(cupom)
+
+        # 2. Debita estoque dos livros adquiridos
+        for item in pedido.itens:
+            self.livro_repo.atualizar_estoque(item.livro.id, -item.quantidade)
+
+        # 3. Registra uso do cupom se aplicado
+        if pedido.cupom:
+            self.cupom_repo.registrar_uso(pedido.cupom.id)
+
+        # 4. Persiste o pedido e finaliza status
+        pedido.status = "PAGO"
+        return self.pedido_repo.salvar(pedido)
+\end{lstlisting}
+\end{frame}
+
+\section{Rito Ágil e Próximos Passos}
+
+\begin{frame}{Rito Ágil: Registro da Daily 3}
+    \begin{block}{Anotação para o Relatório da Sprint no \texttt{guia\_desenvolvedor.md}}
+    \begin{itemize}
+        \item \textbf{O que realizei hoje?}
+        \begin{itemize}
+            \item Interpretei o Diagrama de Sequência UML do fluxo de checkout.
+            \item Implementei a \texttt{CalculadoraDescontoService}.
+            \item Integrei o agregado \texttt{Pedido} ao cupom com recálculo automático do total líquido.
+            \item Implementei o orquestrador \texttt{CheckoutService} garantindo baixa de estoque e registro de uso.
+        \end{itemize}
+        \item \textbf{O que farei no Encontro 4 (Aula 27)?}
+        \begin{itemize}
+            \item Construir a suíte de testes unitários e de integração com \textbf{Pytest}.
+            \item Demonstrar o fluxo interativo no CLI e submeter o Pull Request final.
+        \end{itemize}
+        \item \textbf{Impedimentos?} Nenhum impedimento.
+    \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Síntese do Encontro 3}
+    \begin{itemize}
+        \item \textbf{Sistema Totalmente Integrado:}
+        \begin{itemize}
+            \item A modelagem dinâmica se materializou em serviços coordenados.
+            \item O cálculo de desconto e a baixa de estoque funcionam de ponta a ponta.
+        \end{itemize}
+        \item \textbf{Para o Encontro 4 (Aula 27 - Fechamento da Sprint):}
+        \begin{itemize}
+            \item Validação de Qualidade: \textbf{Pytest} 100\% verde.
+            \item Demonstração CLI para a liderança.
+            \item Submissão do Pull Request e Retrospectiva da Sprint.
+        \end{itemize}
+    \end{itemize}
+    \vspace{0.4cm}
+    \centering
+    \textbf{Excelente trabalho! O Módulo de Cupons está quase pronto para entrega!}
+\end{frame}
+
+\end{document}

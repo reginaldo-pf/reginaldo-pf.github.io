@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 26: Diagrama de Sequência e Orquestração do Negócio | BiblioTauá - IFCE</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- Header -->
+  <header class="bg-white/90 dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <span class="bg-emerald-600 text-white font-black text-lg px-2.5 py-1 rounded-lg tracking-wider">IFCE</span>
+        <div>
+          <h1 class="text-base font-bold text-slate-900 dark:text-white leading-tight">Engenharia de Software</h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Campus Tauá • Técnico em Informática para Internet</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span class="text-xs font-semibold px-2.5 py-1 bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 rounded-full border border-amber-300 dark:border-amber-800">
+          Sprint 04 • Encontro 3 (Aula 26)
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- Hero / Sprint Briefing -->
+    <section class="bg-gradient-to-br from-amber-900 via-orange-950 to-slate-900 text-white rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden">
+      <div class="relative z-10 space-y-4">
+        <div class="inline-flex items-center space-x-2 bg-amber-500/20 text-amber-300 text-xs px-3 py-1 rounded-full border border-amber-400/30">
+          <i class="fa-solid fa-arrows-split-up-and-left"></i>
+          <span>Modelagem Dinâmica: Diagrama de Sequência e Serviços</span>
+        </div>
+        <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">
+          Sprint 04: Diagrama de Sequência e Orquestração do Negócio
+        </h2>
+        <p class="text-amber-100/90 text-sm md:text-base max-w-3xl leading-relaxed">
+          Compreenda o comportamento dinâmico temporal no Diagrama de Sequência UML, implemente os serviços de aplicação e orquestre compras reais na livraria com baixa transacional de estoque e cupons.
+        </p>
+        <div class="pt-2 flex flex-wrap gap-3">
+          <a href="slides_aula.pdf" target="_blank" class="inline-flex items-center space-x-2 bg-white text-amber-900 hover:bg-amber-50 font-bold px-4 py-2 rounded-xl text-xs md:text-sm shadow-md transition-all">
+            <i class="fa-solid fa-file-pdf text-red-600"></i>
+            <span>Ver Slides Beamer (PDF)</span>
+          </a>
+          <a href="guia_desenvolvedor.md" target="_blank" class="inline-flex items-center space-x-2 bg-amber-700/80 hover:bg-amber-600 border border-amber-500/40 text-white font-semibold px-4 py-2 rounded-xl text-xs md:text-sm transition-all">
+            <i class="fa-solid fa-book-open"></i>
+            <span>Guia do Desenvolvedor (MD)</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Diagramas Interativos -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      
+      <!-- Diagrama de Sequência -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-timeline text-amber-600"></i>
+            <span>1. Diagrama de Sequência (UML 2)</span>
+          </h3>
+          <span class="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300 px-2 py-0.5 rounded-full font-medium">Dinâmico Temporal</span>
+        </div>
+        <p class="text-xs text-slate-500 dark:text-slate-400">
+          Troca ordenada de mensagens durante o checkout com cupom.
+        </p>
+        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-100 dark:border-slate-700/60 overflow-x-auto flex justify-center">
+          <pre class="mermaid text-xs">
+sequenceDiagram
+    autonumber
+    actor Cliente as Cliente (UI)
+    participant Servico as CheckoutService
+    participant Repo as CupomRepository
+    participant Pedido as Pedido
+
+    Cliente->>Servico: processar_checkout(pedido, codigo)
+    activate Servico
+    Servico->>Repo: buscar_por_codigo(codigo)
+    Repo-->>Servico: cupom
+    Servico->>Pedido: aplicar_cupom(cupom)
+    Pedido-->>Servico: total liquido
+    Servico->>Repo: registrar_uso(cupom.id)
+    Servico-->>Cliente: Pedido PAGO
+    deactivate Servico
+          </pre>
+        </div>
+      </div>
+
+      <!-- Diagrama de Atividades -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-code-fork text-blue-600"></i>
+            <span>2. Diagrama de Atividades do Checkout</span>
+          </h3>
+          <span class="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 px-2 py-0.5 rounded-full font-medium">Fluxo de Controle</span>
+        </div>
+        <p class="text-xs text-slate-500 dark:text-slate-400">
+          Decisões condicionais de validação, cálculo e baixa no estoque.
+        </p>
+        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-100 dark:border-slate-700/60 overflow-x-auto flex justify-center">
+          <pre class="mermaid text-xs">
+flowchart TD
+    Start([Início]) --> Rec[Recebe Pedido e Cupom]
+    Rec --> Cond{Cupom informado?}
+    Cond -- Não --> Baixa[Debita Estoque]
+    Cond -- Sim --> Valida[Valida DUC]
+    Valida --> Aplica[Abate Desconto]
+    Aplica --> Baixa
+    Baixa --> Reg[Registra Uso Cupom]
+    Reg --> Fim([Fim: Confirmado])
+          </pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mão na Massa da Aula 26 -->
+    <section class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-4">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-cogs text-amber-600"></i>
+            <span>3. Mão na Massa: Serviços e Integração do Pedido</span>
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Orquestração transacional unindo domínio, cálculo e persistência.
+          </p>
+        </div>
+        <span class="text-xs font-semibold px-2.5 py-1 bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 rounded-md">
+          Pronto para Testes
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-calculator text-green-500"></i>
+            <span>Cálculo Desacoplado: <code>calculadora_desconto.py</code></span>
+          </h4>
+          <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed">
+class CalculadoraDescontoService:
+    @staticmethod
+    def calcular(subtotal: float, tipo: TipoDesconto, valor: float) -> float:
+        if subtotal <= 0:
+            return 0.0
+        if tipo == TipoDesconto.PERCENTUAL:
+            desconto = subtotal * (valor / 100.0)
+        else:
+            desconto = min(valor, subtotal)
+        return round(desconto, 2)</pre>
+        </div>
+
+        <div>
+          <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-cart-shopping text-blue-500"></i>
+            <span>Orquestrador Transacional: <code>checkout_service.py</code></span>
+          </h4>
+          <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed">
+def processar_checkout(self, pedido: Pedido, codigo: Optional[str] = None):
+    if codigo:
+        cupom = self.cupom_repo.buscar_por_codigo(codigo)
+        if not cupom:
+            raise CupomInexistenteError(codigo)
+        pedido.aplicar_cupom(cupom)
+    for item in pedido.itens:
+        self.livro_repo.atualizar_estoque(item.livro.id, -item.quantidade)
+    if pedido.cupom:
+        self.cupom_repo.registrar_uso(pedido.cupom.id)
+    pedido.status = "PAGO"
+    return self.pedido_repo.salvar(pedido)</pre>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-4 text-center text-xs text-slate-500 dark:text-slate-400">
+    IFCE Campus Tauá • Curso Técnico em Informática para Internet • Disciplina de Engenharia de Software
+  </footer>
+
+</body>
+</html>

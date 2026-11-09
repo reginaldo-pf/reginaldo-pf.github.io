@@ -1,0 +1,551 @@
+\documentclass[10pt]{beamer}
+
+% Tema Limpo e Institucional IFCE Taua
+\usetheme{Madrid}
+\usecolortheme{whale}
+
+% Pacotes Essenciais
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazilian]{babel}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows.meta,positioning,calc}
+
+% Configuracao de Cores e Codigo (Python)
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.96,0.97,0.98}
+
+\lstset{
+    language=Python,
+    backgroundcolor=\color{backcolour},
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue}\bfseries,
+    stringstyle=\color{red!80!black},
+    commentstyle=\color{green!60!black},
+    numberstyle=\tiny\color{codegray},
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4,
+    frame=single,
+    rulecolor=\color{blue!20}
+}
+
+% Metadados da Apresentacao
+\title[Engenharia de Software -- Aula 24]{Engenharia de Software -- Aula 24}
+\subtitle{Sprint 04: Casos de Uso, Diagrama de Classes e Início da Codificação}
+\author[Prof. Me. Reginaldo Fernandes]{Prof. Me. Reginaldo Pereira Fernandes}
+\institute[IFCE Campus Tauá]{
+    Instituto Federal de Educação, Ciência e Tecnologia do Ceará -- Campus Tauá\\
+    Técnico em Informática para Internet (TSII.210)
+}
+\date{Semana 1 -- Encontro 1 (100 min)}
+
+\begin{document}
+
+% Slide 1: Titulo
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% Slide 2: Agenda do Encontro
+\begin{frame}{Agenda do Encontro 1 (100 Minutos)}
+    \tableofcontents
+\end{frame}
+
+\section{Contexto da Sprint e Liderança Técnica}
+
+\begin{frame}{Cenário Corporativo: O Sistema BiblioTauá}
+    \begin{itemize}
+        \item \textbf{O Sistema:} Livraria Universitária e Biblioteca do IFCE Campus Tauá.
+        \item \textbf{Status Atual (v0.3.0):}
+        \begin{itemize}
+            \item Módulo de Catálogo de Livros e Estoque funcional.
+            \item Cadastro de Clientes e Discentes ativo.
+            \item Persistência relacional em banco de dados SQLite.
+        \end{itemize}
+        \item \textbf{O Desafio da Sprint 04:}
+        \begin{itemize}
+            \item Feira do Livro do IFCE se aproximando.
+            \item Demanda de negócio: conceder \textbf{Cupons Promocionais} aos estudantes.
+            \item Meta: Entregar o Módulo de Cupons em 2 semanas (4 encontros).
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Sprint Planning: Fala da Tech Lead Aline Mendes}
+    \begin{block}{Diretriz da Liderança Técnica}
+    \textit{"Mariana assume a interface web. Lucas adapta o backend de pagamentos para o PIX. E \textbf{VOCÊ} assume a tarefa principal: \textbf{TASK-204 - Motor de Validação e Aplicação de Cupons}."}
+    \end{block}
+    \vspace{0.3cm}
+    \begin{alertblock}{Ritmo Ágil de Alta Produtividade}
+    Neste primeiro encontro, finalizaremos os diagramas de Casos de Uso e Classes e \textbf{já iniciaremos a codificação em Python}!
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{O Ticket da Sprint: TASK-204}
+    \begin{table}[h]
+    \centering
+    \footnotesize
+    \begin{tabular}{ll}
+        \toprule
+        \textbf{Campo} & \textbf{Descrição do Ticket} \\
+        \midrule
+        Identificador & \textbf{TASK-204} \\
+        Título & Motor de Validação e Aplicação de Cupons no Checkout \\
+        Responsável & Desenvolvedor Júnior (Discente) \\
+        Prioridade & Alta / Bloqueante para a Sprint 04 \\
+        Estimativa & 4 Encontros de Trabalho (8 Horas-Aula) \\
+        Branch Git & \texttt{feature/task-204-motor-cupons} \\
+        Entrega Hoje & DUC $\rightarrow$ Diagrama de Classes $\rightarrow$ Exceções \& Modelo Cupom \\
+        \bottomrule
+    \end{tabular}
+    \end{table}
+\end{frame}
+
+\section{Diagrama de Casos de Uso (UML 2)}
+
+\begin{frame}{Modelagem Comportamental: Diagrama de Casos de Uso}
+\centering
+\resizebox{0.96\textwidth}{!}{%
+\begin{tikzpicture}[>=Latex, font=\sffamily]
+    % Fronteira do Sistema
+    \draw[rounded corners=8pt, draw=blue!80!black, thick, fill=blue!3] (1.8,-3.3) rectangle (8.2,2.5);
+    \node[anchor=north west, font=\scriptsize\bfseries, text=blue!80!black] at (2.0,2.3) {Fronteira: BiblioTauá Livraria Web};
+    
+    % Ator Stick Figure
+    \node[draw, circle, minimum size=0.55cm, thick, fill=white] (head) at (0.4, 0.0) {};
+    \draw[thick] (head.south) -- ++(0,-0.65) coordinate (torso);
+    \draw[thick] ($(head.south)!0.3!(torso)$) -- ++(-0.4,-0.2);
+    \draw[thick] ($(head.south)!0.3!(torso)$) -- ++(0.4,-0.2);
+    \draw[thick] (torso) -- ++(-0.35,-0.65);
+    \draw[thick] (torso) -- ++(0.35,-0.65);
+    \node[below=0.75cm of torso, font=\scriptsize\bfseries, align=center] {Cliente /\\Estudante};
+
+    % Casos de Uso (Perfeitamente distribuidos verticalmente sem sobreposicao)
+    \node[draw=blue!80!black, fill=blue!10, ellipse, text width=2.8cm, align=center, font=\scriptsize] (uc01) at (5.0, 1.5) {UC01: Consultar\\Acervo de Livros};
+    \node[draw=blue!80!black, fill=blue!10, ellipse, text width=2.8cm, align=center, font=\scriptsize] (uc02) at (5.0, 0.1) {UC02: Finalizar\\Pedido de Livros};
+    \node[draw=green!60!black, fill=green!15, ellipse, text width=2.8cm, align=center, font=\scriptsize\bfseries] (uc04) at (5.0, -1.3) {UC04: Aplicar Cupom\\de Desconto};
+    \node[draw=blue!80!black, fill=blue!10, ellipse, text width=2.8cm, align=center, font=\scriptsize] (uc05) at (5.0, -2.6) {UC05: Validar Regras\\de Elegibilidade};
+
+    % Associacoes do Ator (Linhas diretas sem cruzamentos)
+    \draw[thick] (head.east) -- (uc01.west);
+    \draw[thick] (head.east) -- (uc02.west);
+    \draw[thick] (head.east) -- (uc04.west);
+
+    % Relacionamentos UML
+    \draw[->, dashed, thick, draw=orange!90!black] (uc04) -- node[midway, right, font=\tiny\bfseries] {$\ll$extend$\gg$} (uc02);
+    \draw[->, dashed, thick, draw=blue!80!black] (uc04) -- node[midway, right, font=\tiny\bfseries] {$\ll$include$\gg$} (uc05);
+
+    % Caixa de Destaque / Guia de Leitura a Direita
+    \node[draw=gray!50, fill=white, rounded corners=6pt, text width=3.8cm, align=left, inner sep=6pt, anchor=west] at (8.6, -0.4) {
+        \textbf{\footnotesize Guia de Leitura UML:}\\[0.15cm]
+        \scriptsize
+        \textbf{\color{orange!90!black}$\ll$extend$\gg$ (Extensão):}\\
+        Condicional: o cliente só aplica cupom se desejar durante o checkout.\\[0.2cm]
+        \textbf{\color{blue!80!black}$\ll$include$\gg$ (Inclusão):}\\
+        Obrigatório: ao aplicar cupom, o sistema valida compulsoriamente as regras.\\[0.2cm]
+        \textbf{\color{green!60!black}Foco da TASK-204:}\\
+        Motor de regras do \textbf{UC04}.
+    };
+\end{tikzpicture}
+}
+\end{frame}
+
+\begin{frame}{Dissecando a DUC UC04: Regras de Negócio e Exceções}
+    \begin{table}[h]
+    \centering
+    \tiny
+    \begin{tabular}{lll}
+        \toprule
+        \textbf{Fluxo} & \textbf{Cenário / Regra de Negócio} & \textbf{Exceção Disparada em Python} \\
+        \midrule
+        \textbf{Principal} & Cupom ativo, dentro do prazo, cota disponível & Desconto calculado e total abatido \\
+        \textbf{FA01} & Desconto percentual (\% sobre o subtotal) & \texttt{desconto = subtotal * (valor / 100)} \\
+        \textbf{FA02} & Desconto em valor fixo (R\$) & \texttt{desconto = min(valor, subtotal)} \\
+        \midrule
+        \textbf{FE01} & Cupom inexistente ou inativo (\texttt{ativo=0}) & \texttt{CupomInexistenteError} / \texttt{CupomInvalidoError} \\
+        \textbf{FE02} & Data atual ultrapassa o limite de validade & \texttt{CupomExpiradoError} \\
+        \textbf{FE03} & Usos realizados atingiram o limite & \texttt{CupomEsgotadoError} \\
+        \textbf{FE04} & Subtotal da compra menor que o mínimo exigido & \texttt{ValorMinimoNaoAtingidoError} \\
+        \bottomrule
+    \end{tabular}
+    \end{table}
+    \vspace{0.2cm}
+    \begin{alertblock}{Conexão Direta: Especificação $\rightarrow$ Código}
+    Cada fluxo de exceção (FE01 a FE04) mapeia exatamente para uma classe em \texttt{exceptions.py}!
+    \end{alertblock}
+\end{frame}
+
+\section{Diagrama de Classes (UML 2)}
+
+\begin{frame}{Modelagem Estrutural: Diagrama de Classes do Domínio}
+\centering
+\resizebox{0.92\textwidth}{!}{%
+\begin{tikzpicture}[>=Latex, font=\sffamily]
+    % Classe Cupom
+    \node[draw=blue!80!black, fill=blue!5, thick, rounded corners=2pt, inner sep=3pt] (cupom) at (0,0) {
+        \begin{tabular}{l}
+        \textbf{\large Cupom} \\
+        \hline
+        \scriptsize - codigo: str \\
+        \scriptsize - tipo\_desconto: TipoDesconto \\
+        \scriptsize - valor\_desconto: float \\
+        \scriptsize - valor\_minimo\_pedido: float \\
+        \scriptsize - limite\_usos: int \\
+        \scriptsize - usos\_realizados: int \\
+        \scriptsize - validade\_ate: date \\
+        \scriptsize - ativo: bool \\
+        \hline
+        \scriptsize + esta\_expirado(data\_ref): bool \\
+        \scriptsize + atingiu\_limite\_usos(): bool \\
+        \scriptsize + pode\_ser\_aplicado(subtotal): void \\
+        \scriptsize + calcular\_desconto(subtotal): float \\
+        \scriptsize + registrar\_uso(): void
+        \end{tabular}
+    };
+
+    % Enum TipoDesconto
+    \node[draw=purple!80!black, fill=purple!5, thick, rounded corners=2pt, inner sep=3pt, right=1.2cm of cupom, yshift=1.6cm] (enum) {
+        \begin{tabular}{l}
+        \textbf{$\ll$enumeration$\gg$} \\
+        \textbf{TipoDesconto} \\
+        \hline
+        \scriptsize PERCENTUAL \\
+        \scriptsize VALOR\_FIXO
+        \end{tabular}
+    };
+
+    % Classe Pedido
+    \node[draw=green!60!black, fill=green!5, thick, rounded corners=2pt, inner sep=3pt, right=1.2cm of cupom, yshift=-1.4cm] (pedido) {
+        \begin{tabular}{l}
+        \textbf{\large Pedido} \\
+        \hline
+        \scriptsize - id: int \\
+        \scriptsize - cliente: Cliente \\
+        \scriptsize - itens: List[ItemPedido] \\
+        \scriptsize - cupom: Optional[Cupom] \\
+        \scriptsize - desconto\_aplicado: float \\
+        \hline
+        \scriptsize + aplicar\_cupom(cupom): void \\
+        \scriptsize + subtotal: float \\
+        \scriptsize + total: float
+        \end{tabular}
+    };
+
+    % Conexoes
+    \draw[->, dashed, thick, draw=purple!80!black] (cupom) -- node[midway, above, font=\tiny\bfseries] {usa} (enum);
+    \draw[thick, draw=black!70] (pedido) -- node[near start, above, font=\tiny\bfseries] {0..1} node[near end, above, font=\tiny\bfseries] {1..*} node[midway, below, font=\tiny\itshape] {possui} (cupom);
+\end{tikzpicture}
+}
+\end{frame}
+
+\begin{frame}{Visão Geral das Classes da Livraria BiblioTauá}
+\centering
+\resizebox{0.92\textwidth}{!}{%
+\begin{tikzpicture}[>=Latex, font=\sffamily]
+    % Classe Cliente
+    \node[draw=gray!80!black, fill=gray!5, thick, rounded corners=2pt, inner sep=3pt] (cliente) at (0, 1.8) {
+        \begin{tabular}{l}
+        \textbf{Cliente} \\
+        \hline
+        \scriptsize - id: int \\
+        \scriptsize - nome: str \\
+        \scriptsize - email: str \\
+        \scriptsize - matricula: str
+        \end{tabular}
+    };
+
+    % Classe Pedido
+    \node[draw=green!60!black, fill=green!5, thick, rounded corners=2pt, inner sep=3pt] (pedido) at (4.0, 1.8) {
+        \begin{tabular}{l}
+        \textbf{Pedido} \\
+        \hline
+        \scriptsize - id: int \\
+        \scriptsize - status: str \\
+        \scriptsize - total: float
+        \end{tabular}
+    };
+
+    % Classe ItemPedido
+    \node[draw=gray!80!black, fill=gray!5, thick, rounded corners=2pt, inner sep=3pt] (item) at (4.0, -1.0) {
+        \begin{tabular}{l}
+        \textbf{ItemPedido} \\
+        \hline
+        \scriptsize - quantidade: int \\
+        \scriptsize - preco\_unitario: float \\
+        \hline
+        \scriptsize + subtotal: float
+        \end{tabular}
+    };
+
+    % Classe Livro
+    \node[draw=gray!80!black, fill=gray!5, thick, rounded corners=2pt, inner sep=3pt] (livro) at (0, -1.0) {
+        \begin{tabular}{l}
+        \textbf{Livro} \\
+        \hline
+        \scriptsize - id: int \\
+        \scriptsize - titulo: str \\
+        \scriptsize - estoque: int \\
+        \scriptsize - preco: float
+        \end{tabular}
+    };
+
+    % Relacionamentos
+    \draw[thick] (cliente) -- node[midway, above, font=\tiny] {realiza 1..*} (pedido);
+    \draw[thick] (pedido) -- node[midway, right, font=\tiny] {contém 1..*} (item);
+    \draw[thick] (item) -- node[midway, above, font=\tiny] {refere 1} (livro);
+\end{tikzpicture}
+}
+\end{frame}
+
+\section{Arquitetura do Projeto BiblioTauá}
+
+\begin{frame}[fragile]{Arquitetura do Projeto: Estrutura de Pastas e Módulos}
+\begin{columns}[T]
+    \begin{column}{0.53\textwidth}
+        \begin{block}{\footnotesize Árvore de Arquivos do BiblioTauá}
+\begin{lstlisting}[basicstyle=\fontsize{5.8pt}{6.8pt}\ttfamily]
+bibliotaua/
+|-- database.py          (SQLite v0.3.0)
+|-- exceptions.py        (NOVO - Aula 24)
+|-- models/
+|   |-- cliente.py       (Base v0.3.0)
+|   |-- livro.py         (Base v0.3.0)
+|   |-- item_pedido.py   (Base v0.3.0)
+|   |-- pedido.py        (Base v0.3.0)
+|   `-- cupom.py         (NOVO - Aula 24)
+`-- repositories/
+    |-- livro_repo.py    (Base v0.3.0)
+    `-- pedido_repo.py   (Base v0.3.0)
+\end{lstlisting}
+        \end{block}
+    \end{column}
+    \begin{column}{0.44\textwidth}
+        \begin{block}{\footnotesize Papel de Cada Camada}
+        \scriptsize
+        \begin{itemize}
+            \item \textbf{\texttt{models/}:} Regras de negócio e entidades OO puras.
+            \item \textbf{\texttt{repositories/}:} Consultas SQL e persistência SQLite.
+            \item \textbf{\texttt{database.py}:} Gerenciamento de conexão e DDL.
+            \item \textbf{\texttt{exceptions.py}:} Exceções mapeadas da DUC.
+        \end{itemize}
+        \end{block}
+    \end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Por que o Repositório tem Mais Códigos que os Slides?}
+    \begin{alertblock}{Simulação Real de Engenharia de Software Ágil}
+    Em um time profissional, um novo ticket de Sprint nunca começa com o repositório em branco!
+    \end{alertblock}
+    \vspace{0.2cm}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{\footnotesize 1. Base Pré-existente (v0.3.0)}
+            \scriptsize
+            \begin{itemize}
+                \item Construída nas Sprints 01 a 03.
+                \item Contém as entidades que já funcionam: \texttt{Cliente}, \texttt{Livro}, \texttt{ItemPedido}, \texttt{Pedido}.
+                \item Evita erros de importação (\texttt{ModuleNotFoundError}) e viabiliza a execução do sistema completo.
+            \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{\footnotesize 2. O Nosso Foco Hoje (TASK-204)}
+            \scriptsize
+            \begin{itemize}
+                \item Baixe o \textbf{\texttt{projeto\_aluno.zip}} com os arquivos base e marcações \texttt{TODO}.
+                \item \textbf{\texttt{exceptions.py}:} Criar classes de erro da DUC.
+                \item \textbf{\texttt{models/cupom.py}:} Criar métodos de regra.
+                \item Teste criando o script \textbf{\texttt{main.py}} no projeto!
+            \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\section{Implementação: Exceções de Domínio}
+
+\begin{frame}[fragile]{Mão na Massa: Hierarquia de Exceções (\texttt{exceptions.py})}
+\begin{lstlisting}[language=Python, basicstyle=\fontsize{5.8pt}{6.8pt}\ttfamily]
+class BiblioTauaException(Exception):
+    """Excecao base para regras de negocio do BiblioTaua."""
+    pass
+
+class CupomInvalidoError(BiblioTauaException):
+    pass
+
+class CupomInexistenteError(CupomInvalidoError):
+    def __init__(self, codigo: str):
+        super().__init__(f"Cupom '{codigo}' nao encontrado no sistema.")
+
+class CupomInativoError(CupomInvalidoError):
+    def __init__(self, codigo: str):
+        super().__init__(f"O cupom '{codigo}' encontra-se desativado temporariamente.")
+
+class CupomExpiradoError(CupomInvalidoError):
+    def __init__(self, codigo: str, validade_ate: str):
+        super().__init__(f"O cupom '{codigo}' expirou em {validade_ate}.")
+
+class CupomEsgotadoError(CupomInvalidoError):
+    def __init__(self, codigo: str, limite: int):
+        super().__init__(f"O cupom '{codigo}' atingiu a quantidade maxima de {limite} usos.")
+
+class ValorMinimoNaoAtingidoError(CupomInvalidoError):
+    def __init__(self, codigo: str, valor_minimo: float, subtotal_atual: float):
+        super().__init__(
+            f"O cupom '{codigo}' exige pedido minimo de R$ {valor_minimo:.2f}. "
+            f"Subtotal atual: R$ {subtotal_atual:.2f}."
+        )
+\end{lstlisting}
+\end{frame}
+
+\section{Implementação: Modelo Cupom}
+
+\begin{frame}[fragile]{Mão na Massa: Entidade \texttt{Cupom} (\texttt{models/cupom.py})}
+\begin{lstlisting}[language=Python, basicstyle=\fontsize{7.5pt}{8.5pt}\ttfamily]
+from dataclasses import dataclass
+from datetime import date
+from enum import Enum
+from typing import Optional
+from bibliotaua.exceptions import *
+
+class TipoDesconto(str, Enum):
+    PERCENTUAL = "PERCENTUAL"
+    VALOR_FIXO = "VALOR_FIXO"
+
+@dataclass
+class Cupom:
+    codigo: str
+    tipo_desconto: TipoDesconto
+    valor_desconto: float
+    valor_minimo_pedido: float = 0.0
+    limite_usos: int = 100
+    usos_realizados: int = 0
+    validade_ate: date = date.today()
+    ativo: bool = True
+    id: Optional[int] = None
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Mão na Massa: Métodos de Domínio na Entidade \texttt{Cupom}}
+\begin{lstlisting}[language=Python, basicstyle=\fontsize{7pt}{8pt}\ttfamily]
+    def pode_ser_aplicado_ao_pedido(self, subtotal: float, data_ref: Optional[date] = None) -> None:
+        if not self.ativo:
+            raise CupomInativoError(self.codigo)
+        if self.esta_expirado(data_ref):
+            validade_str = self.obter_data_validade().strftime("%d/%m/%Y")
+            raise CupomExpiradoError(self.codigo, validade_str)
+        if self.atingiu_limite_usos():
+            raise CupomEsgotadoError(self.codigo, self.limite_usos)
+        if subtotal < self.valor_minimo_pedido:
+            raise ValorMinimoNaoAtingidoError(self.codigo, self.valor_minimo_pedido, subtotal)
+
+    def calcular_desconto(self, subtotal: float, data_ref: Optional[date] = None) -> float:
+        self.pode_ser_aplicado_ao_pedido(subtotal, data_ref)
+        if self.tipo_desconto == TipoDesconto.PERCENTUAL:
+            desconto = (subtotal * self.valor_desconto) / 100.0
+        else:
+            desconto = self.valor_desconto
+        return round(min(desconto, subtotal), 2)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Testando a Implementação: Arquivo \texttt{main.py}}
+\begin{columns}[T]
+    \begin{column}{0.54\textwidth}
+        \begin{block}{\footnotesize Criando o script de teste (\texttt{main.py})}
+\begin{lstlisting}[language=Python, basicstyle=\fontsize{5.6pt}{6.6pt}\ttfamily]
+from datetime import date, timedelta
+from bibliotaua.models.cupom import Cupom, TipoDesconto
+from bibliotaua.exceptions import ValorMinimoNaoAtingidoError
+
+def main():
+    cupom = Cupom(
+        codigo="BEMVINDO10",
+        tipo_desconto=TipoDesconto.PERCENTUAL,
+        valor_desconto=10.0,
+        valor_minimo_pedido=50.0,
+        validade_ate=date.today() + timedelta(days=5)
+    )
+    # 1. Pedido valido (R$ 100.00)
+    d = cupom.calcular_desconto(100.0)
+    print(f"Desconto: R$ {d:.2f}")
+
+    # 2. Pedido abaixo do minimo (R$ 30.00)
+    try:
+        cupom.calcular_desconto(30.0)
+    except ValorMinimoNaoAtingidoError as erro:
+        print(f"Bloqueado: {erro}")
+
+if __name__ == "__main__":
+    main()
+\end{lstlisting}
+        \end{block}
+    \end{column}
+    \begin{column}{0.44\textwidth}
+        \begin{block}{\footnotesize Execução no Terminal}
+\begin{lstlisting}[basicstyle=\fontsize{5.8pt}{6.8pt}\ttfamily]
+$ python3 main.py
+
+Desconto: R$ 10.00
+Bloqueado: O cupom 'BEMVINDO10'
+exige pedido minimo de R$ 50.00.
+Subtotal atual: R$ 30.00.
+\end{lstlisting}
+        \end{block}
+        \vspace{0.15cm}
+        \begin{exampleblock}{\footnotesize Conclusão da Aula 24}
+        \scriptsize
+        A entidade \texttt{Cupom} e as regras de negócio foram validadas com sucesso pelo script \texttt{main.py}!
+        \end{exampleblock}
+    \end{column}
+\end{columns}
+\end{frame}
+
+\section{Rito Ágil e Próximos Passos}
+
+\begin{frame}{Rito Ágil: Registro da Daily 1}
+    \begin{block}{Anotação para o Relatório da Sprint no \texttt{guia\_desenvolvedor.md}}
+    \begin{itemize}
+        \item \textbf{O que realizei hoje?}
+        \begin{itemize}
+            \item Interpretei o Diagrama de Casos de Uso e o Diagrama de Classes.
+            \item Mapeei todos os fluxos da DUC UC04 em regras técnicas.
+            \item Implementei a hierarquia de exceções em \texttt{exceptions.py}.
+            \item Implementei a entidade de domínio \texttt{Cupom} e enum \texttt{TipoDesconto} com validações no \texttt{models/cupom.py}.
+        \end{itemize}
+        \item \textbf{O que farei no Encontro 2 (Aula 25)?}
+        \begin{itemize}
+            \item Mapeamento relacional (DER): criação da tabela \texttt{cupons} no SQLite.
+            \item Implementação do padrão repositório em \texttt{CupomRepository}.
+        \end{itemize}
+        \item \textbf{Impedimentos?} Nenhum impedimento.
+    \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Síntese do Encontro 1}
+    \begin{itemize}
+        \item \textbf{Objetivo Cumprido com Sucesso:} Saímos do alinhamento ágil, modelamos o sistema em UML (UC + Classes) e entregamos os primeiros arquivos de código em produção.
+        \item \textbf{Para o Encontro 2 (Aula 25):}
+        \begin{itemize}
+            \item Persistência relacional com SQLite.
+            \item Script DDL e constraints \texttt{CHECK}, \texttt{UNIQUE}.
+            \item Repositório com prevenção contra SQL Injection.
+        \end{itemize}
+    \end{itemize}
+    \vspace{0.4cm}
+    \centering
+    \textbf{Excelente início! O motor de cupons já começou a ganhar vida!}
+\end{frame}
+
+\end{document}

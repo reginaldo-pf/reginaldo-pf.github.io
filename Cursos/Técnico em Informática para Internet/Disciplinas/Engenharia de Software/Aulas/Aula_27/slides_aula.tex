@@ -1,0 +1,259 @@
+\documentclass[10pt]{beamer}
+
+% Tema Limpo e Institucional IFCE Taua
+\usetheme{Madrid}
+\usecolortheme{whale}
+
+% Pacotes Essenciais
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazilian]{babel}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows.meta,positioning,calc}
+
+% Configuracao de Cores e Codigo (Python)
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.96,0.97,0.98}
+
+\lstset{
+    language=Python,
+    backgroundcolor=\color{backcolour},
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue}\bfseries,
+    stringstyle=\color{red!80!black},
+    commentstyle=\color{green!60!black},
+    numberstyle=\tiny\color{codegray},
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4,
+    frame=single,
+    rulecolor=\color{blue!20}
+}
+
+% Metadados da Apresentacao
+\title[Engenharia de Software -- Aula 27]{Engenharia de Software -- Aula 27}
+\subtitle{Sprint 04: Testes Automatizados (Pytest), CLI e Fechamento da Sprint}
+\author[Prof. Me. Reginaldo Fernandes]{Prof. Me. Reginaldo Pereira Fernandes}
+\institute[IFCE Campus Tauá]{
+    Instituto Federal de Educação, Ciência e Tecnologia do Ceará -- Campus Tauá\\
+    Técnico em Informática para Internet (TSII.210)
+}
+\date{Semana 2 -- Encontro 4 (100 min)}
+
+\begin{document}
+
+% Slide 1: Titulo
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% Slide 2: Agenda do Encontro
+\begin{frame}{Agenda do Encontro 4 (100 Minutos)}
+    \tableofcontents
+\end{frame}
+
+\section{Garantia de Qualidade e Pirâmide de Testes}
+
+\begin{frame}{Por que Automatizar Testes de Software?}
+    \begin{itemize}
+        \item \textbf{A Ilusão do Teste Manual:}
+        \begin{itemize}
+            \item Testar "clicando na tela" é lento, não repetível e propenso a esquecimentos.
+            \item Toda alteração no código exige re-testar tudo do zero (regressão!).
+        \end{itemize}
+        \item \textbf{A Filosofia do Pytest:}
+        \begin{itemize}
+            \item Testes são código que valida código.
+            \item Execução de centenas de cenários em poucos milissegundos.
+            \item Confiança total antes de enviar o Pull Request para a liderança.
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Diagrama da Pirâmide de Testes e Rastreabilidade}
+\centering
+\resizebox{0.92\textwidth}{!}{%
+\begin{tikzpicture}[>=Latex, font=\sffamily]
+    % Piramide
+    \draw[thick, draw=red!70!black, fill=red!15] (5, 3.2) -- (3.8, 1.8) -- (6.2, 1.8) -- cycle;
+    \node[font=\tiny\bfseries] at (5, 2.3) {E2E / CLI};
+
+    \draw[thick, draw=yellow!80!black, fill=yellow!20] (3.8, 1.8) -- (2.6, 0.4) -- (7.4, 0.4) -- (6.2, 1.8) -- cycle;
+    \node[font=\tiny\bfseries] at (5, 1.1) {Integração (SQLite em Memória)};
+
+    \draw[thick, draw=green!70!black, fill=green!20] (2.6, 0.4) -- (1.0, -1.2) -- (9.0, -1.2) -- (7.4, 0.4) -- cycle;
+    \node[font=\scriptsize\bfseries] at (5, -0.4) {Testes Unitários (DUC: Regras \& Exceções)};
+
+    % Rastreabilidade DUC
+    \node[anchor=west, font=\tiny, text=blue!80!black] at (9.2, -0.4) {$\leftarrow$ Valida FE01..FE04, FA01, FA02};
+    \node[anchor=west, font=\tiny, text=blue!80!black] at (7.6, 1.1) {$\leftarrow$ Valida Baixa no Estoque e Banco};
+    \node[anchor=west, font=\tiny, text=blue!80!black] at (6.4, 2.3) {$\leftarrow$ Valida Interface de Terminal};
+\end{tikzpicture}
+}
+\end{frame}
+
+\section{Git Flow e Ciclo de Vida da Sprint}
+
+\begin{frame}{Diagrama de Git Flow: Da Feature ao Pull Request}
+\centering
+\resizebox{0.95\textwidth}{!}{%
+\begin{tikzpicture}[>=Latex, font=\sffamily]
+    % Main branch
+    \draw[very thick, draw=blue!80!black] (0, 1.8) -- (10, 1.8);
+    \node[anchor=east, font=\scriptsize\bfseries, text=blue!80!black] at (-0.2, 1.8) {main};
+    \node[draw, circle, fill=blue!80!black, inner sep=1.5pt] at (1, 1.8) {};
+    \node[draw, circle, fill=blue!80!black, inner sep=1.5pt] at (9, 1.8) {};
+    \node[above=0.1cm, font=\tiny] at (1, 1.8) {v0.3.0};
+    \node[above=0.1cm, font=\tiny\bfseries] at (9, 1.8) {v0.4.0 (Merge)};
+
+    % Feature branch
+    \draw[very thick, draw=green!60!black] (1, 1.8) -- (2, 0) -- (8, 0) -- (9, 1.8);
+    \node[anchor=east, font=\scriptsize\bfseries, text=green!60!black] at (1.8, -0.4) {feature/task-204};
+
+    % Commits semanticos
+    \node[draw, circle, fill=green!60!black, inner sep=1.5pt] (c1) at (3, 0) {};
+    \node[draw, circle, fill=green!60!black, inner sep=1.5pt] (c2) at (4.5, 0) {};
+    \node[draw, circle, fill=green!60!black, inner sep=1.5pt] (c3) at (6, 0) {};
+    \node[draw, circle, fill=green!60!black, inner sep=1.5pt] (c4) at (7.5, 0) {};
+
+    \node[below=0.1cm of c1, font=\tiny, align=center] {feat(domain):\\modelo};
+    \node[below=0.1cm of c2, font=\tiny, align=center] {feat(db):\\sqlite repo};
+    \node[below=0.1cm of c3, font=\tiny, align=center] {feat(service):\\checkout};
+    \node[below=0.1cm of c4, font=\tiny, align=center] {test(pytest):\\10 testes};
+\end{tikzpicture}
+}
+\vspace{0.3cm}
+\begin{alertblock}{Conventional Commits na Equipe}
+Commits atômicos e claros facilitam o code review e a rastreabilidade do projeto!
+\end{alertblock}
+\end{frame}
+
+\section{Implementação: Suíte de Testes com Pytest}
+
+\begin{frame}[fragile]{Mão na Massa: Fixture com SQLite em Memória (\texttt{test\_cupons.py})}
+\begin{lstlisting}[language=Python]
+import pytest
+from datetime import date, timedelta
+from bibliotaua.database import obter_conexao, SCHEMA_SQL, popular_dados_iniciais
+from bibliotaua.repositories.cupom_repository import CupomRepository
+from bibliotaua.models.cupom import Cupom, TipoDesconto
+
+@pytest.fixture
+def conn():
+    """Cria um banco SQLite limpo em memoria para cada teste."""
+    conexao = obter_conexao(":memory:")
+    conexao.executescript(SCHEMA_SQL)
+    popular_dados_iniciais(conexao)
+    yield conexao
+    conexao.close()
+
+@pytest.fixture
+def cupom_repo(conn):
+    return CupomRepository(conn)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Mão na Massa: Testando Caminho Feliz e Exceções}
+\begin{lstlisting}[language=Python]
+def test_aplicar_cupom_percentual_sucesso(cupom_repo):
+    cupom = cupom_repo.buscar_por_codigo("VOLTAAULAS10")
+    # Livro de R$ 100.00 -> 10% de desconto = R$ 10.00
+    desconto = cupom.calcular_desconto(100.0)
+    assert desconto == 10.0
+
+def test_cupom_expirado_dispara_excecao(conn, cupom_repo):
+    cupom = Cupom(
+        codigo="EXPIRADO",
+        tipo_desconto=TipoDesconto.VALOR_FIXO,
+        valor_desconto=15.0,
+        validade_ate=date.today() - timedelta(days=1)
+    )
+    cupom_repo.salvar(cupom)
+    with pytest.raises(CupomExpiradoError):
+        cupom.calcular_desconto(50.0)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Execução do Pytest: 100\% Verde no Terminal}
+\begin{lstlisting}[language=bash]
+$ PYTHONPATH=. pytest bibliotaua/tests/test_cupons.py -v
+
+test_cupons.py::test_buscar_cupom_existente PASSED              [ 10%]
+test_cupons.py::test_buscar_cupom_inexistente_retorna_none PASSED [ 20%]
+test_cupons.py::test_aplicar_cupom_percentual_sucesso PASSED    [ 30%]
+test_cupons.py::test_aplicar_cupom_valor_fixo_sucesso PASSED    [ 40%]
+test_cupons.py::test_cupom_inativo_dispara_excecao PASSED       [ 50%]
+test_cupons.py::test_cupom_expirado_dispara_excecao PASSED      [ 60%]
+test_cupons.py::test_cupom_esgotado_dispara_excecao PASSED      [ 70%]
+test_cupons.py::test_subtotal_abaixo_do_minimo_dispara_excecao PASSED [ 80%]
+test_cupons.py::test_checkout_completo_com_cupom PASSED         [ 90%]
+test_cupons.py::test_decremento_estoque_livros_no_checkout PASSED [100%]
+
+============================== 10 passed in 0.03s ==============================
+\end{lstlisting}
+\end{frame}
+
+\section{Demonstração Interativa (CLI)}
+
+\begin{frame}[fragile]{Homologação no Terminal: \texttt{bibliotaua/main.py}}
+\begin{lstlisting}[language=bash]
+$ python3 -m bibliotaua.main
+==================================================
+   BIBLIOTAUA - LIVRARIA DO IFCE CAMPUS TAUA
+==================================================
+1. Acervo de Livros Disponiveis
+2. Simular Compra no Carrinho
+3. Sair
+Escolha uma opcao: 2
+
+Livro: Introducao ao Python (Qtd: 1) - R$ 80.00
+Cupom Informado: VOLTAAULAS10
+--------------------------------------------------
+Subtotal:          R$ 80.00
+Desconto (10%):  - R$  8.00
+Total a Pagar:     R$ 72.00 (PIX Gerado com Sucesso!)
+--------------------------------------------------
+Estoque atualizado de 15 para 14 exemplares.
+\end{lstlisting}
+\end{frame}
+
+\section{Fechamento da Sprint e Pull Request}
+
+\begin{frame}{Rito Ágil: Submissão do Pull Request (PR)}
+    \begin{block}{Template de PR para a Tech Lead Aline Mendes}
+    \begin{itemize}
+        \item \textbf{Título:} \texttt{feat(cupons): Motor de Validação e Aplicação (TASK-204)}
+        \item \textbf{Descrição do que foi feito:}
+        \begin{itemize}
+            \item Mapeamento das regras da DUC UC04 e classes UML.
+            \item Tabela \texttt{cupons} criada no SQLite com constraints estritas.
+            \item \texttt{CupomRepository} implementado com proteção contra SQL Injection.
+            \item \texttt{CheckoutService} coordenando faturamento e baixa de estoque.
+            \item 10 testes no Pytest com 100\% de cobertura dos fluxos de exceção.
+        \end{itemize}
+        \item \textbf{Status da Entrega:} Homologado e Pronto para Merge!
+    \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Síntese da Sprint 04: O Que Construímos em 4 Encontros?}
+    \begin{itemize}
+        \item \textbf{Encontro 1:} Diagrama de Casos de Uso, Classes, DUC, Exceções de Domínio e Entidade \texttt{Cupom}.
+        \item \textbf{Encontro 2:} Diagrama Relacional (DER), script DDL SQLite e \texttt{CupomRepository}.
+        \item \textbf{Encontro 3:} Diagrama de Sequência, \texttt{CalculadoraDescontoService} e \texttt{CheckoutService}.
+        \item \textbf{Encontro 4:} Testes automatizados com Pytest, demonstração CLI e Pull Request.
+    \end{itemize}
+    \vspace{0.4cm}
+    \centering
+    \textbf{Parabéns pelo trabalho profissional de Engenharia de Software!}
+\end{frame}
+
+\end{document}

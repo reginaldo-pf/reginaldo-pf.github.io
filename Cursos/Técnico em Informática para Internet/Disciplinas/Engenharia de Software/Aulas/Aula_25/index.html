@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 25: Persistência Relacional SQLite e Padrão Repository | BiblioTauá - IFCE</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- Header -->
+  <header class="bg-white/90 dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <span class="bg-emerald-600 text-white font-black text-lg px-2.5 py-1 rounded-lg tracking-wider">IFCE</span>
+        <div>
+          <h1 class="text-base font-bold text-slate-900 dark:text-white leading-tight">Engenharia de Software</h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Campus Tauá • Técnico em Informática para Internet</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span class="text-xs font-semibold px-2.5 py-1 bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 rounded-full border border-blue-300 dark:border-blue-800">
+          Sprint 04 • Encontro 2 (Aula 25)
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- Hero / Sprint Briefing -->
+    <section class="bg-gradient-to-br from-blue-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden">
+      <div class="relative z-10 space-y-4">
+        <div class="inline-flex items-center space-x-2 bg-blue-500/20 text-blue-300 text-xs px-3 py-1 rounded-full border border-blue-400/30">
+          <i class="fa-solid fa-database"></i>
+          <span>Mapeamento Objeto-Relacional: SQLite & Padrão Repository</span>
+        </div>
+        <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">
+          Sprint 04: Persistência Relacional com SQLite e Padrão Repository
+        </h2>
+        <p class="text-blue-100/90 text-sm md:text-base max-w-3xl leading-relaxed">
+          Converta o modelo de domínio em tabelas relacionais com restrições <code>CHECK</code> e <code>UNIQUE</code>, blindando o sistema contra SQL Injection e garantindo concorrência segura com o <code>CupomRepository</code>.
+        </p>
+        <div class="pt-2 flex flex-wrap gap-3">
+          <a href="slides_aula.pdf" target="_blank" class="inline-flex items-center space-x-2 bg-white text-blue-900 hover:bg-blue-50 font-bold px-4 py-2 rounded-xl text-xs md:text-sm shadow-md transition-all">
+            <i class="fa-solid fa-file-pdf text-red-600"></i>
+            <span>Ver Slides Beamer (PDF)</span>
+          </a>
+          <a href="guia_desenvolvedor.md" target="_blank" class="inline-flex items-center space-x-2 bg-blue-700/80 hover:bg-blue-600 border border-blue-500/40 text-white font-semibold px-4 py-2 rounded-xl text-xs md:text-sm transition-all">
+            <i class="fa-solid fa-book-open"></i>
+            <span>Guia do Desenvolvedor (MD)</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Diagramas Interativos -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      
+      <!-- Diagrama Entidade-Relacionamento (DER) -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-table text-blue-600"></i>
+            <span>1. Diagrama Entidade-Relacionamento (DER)</span>
+          </h3>
+          <span class="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 px-2 py-0.5 rounded-full font-medium">Físico Relacional</span>
+        </div>
+        <p class="text-xs text-slate-500 dark:text-slate-400">
+          Chave estrangeira <code class="text-blue-600 font-bold">cupom_id</code> em pedidos referenciando cupons.
+        </p>
+        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-100 dark:border-slate-700/60 overflow-x-auto flex justify-center">
+          <pre class="mermaid text-xs">
+erDiagram
+    CUPONS ||--o{ PEDIDOS : "aplicado_em"
+    CUPONS {
+        INTEGER id PK
+        TEXT codigo UK
+        TEXT tipo_desconto
+        REAL valor_desconto
+        REAL valor_minimo_pedido
+        INTEGER limite_usos
+        INTEGER usos_realizados
+        TEXT validade_ate
+        INTEGER ativo
+    }
+    PEDIDOS {
+        INTEGER id PK
+        INTEGER cliente_id FK
+        INTEGER cupom_id FK
+        REAL subtotal
+        REAL total
+        TEXT status
+    }
+          </pre>
+        </div>
+      </div>
+
+      <!-- Diagrama de Arquitetura -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-layer-group text-purple-600"></i>
+            <span>2. Arquitetura em Camadas (Repository)</span>
+          </h3>
+          <span class="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300 px-2 py-0.5 rounded-full font-medium">Desacoplamento</span>
+        </div>
+        <p class="text-xs text-slate-500 dark:text-slate-400">
+          A entidade de domínio é 100% agnóstica de banco; o repositório cuida do SQL.
+        </p>
+        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-100 dark:border-slate-700/60 overflow-x-auto flex justify-center">
+          <pre class="mermaid text-xs">
+graph LR
+    Dom["Entidade Cupom<br>(Domínio Puro)"]
+    Repo["CupomRepository<br>(Persistência & Buscas)"]
+    DB[("bibliotaua.db<br>(SQLite)")]
+
+    Dom <-->|"Objetos"| Repo
+    Repo <-->|"SQL Parametrizado (?)"| DB
+          </pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mão na Massa da Aula 25 -->
+    <section class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-4">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-code text-blue-600"></i>
+            <span>3. Mão na Massa: Implementação da Persistência</span>
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Script DDL no SQLite e métodos seguros do <code>CupomRepository</code>.
+          </p>
+        </div>
+        <span class="text-xs font-semibold px-2.5 py-1 bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 rounded-md">
+          Concluído no Encontro 2
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-database text-emerald-500"></i>
+            <span>Script DDL: <code>database.py</code></span>
+          </h4>
+          <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed">
+CREATE TABLE IF NOT EXISTS cupons (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    codigo TEXT NOT NULL UNIQUE,
+    tipo_desconto TEXT NOT NULL CHECK(
+        tipo_desconto IN ('PERCENTUAL', 'VALOR_FIXO')
+    ),
+    valor_desconto REAL NOT NULL CHECK(valor_desconto > 0),
+    valor_minimo_pedido REAL NOT NULL DEFAULT 0.0,
+    limite_usos INTEGER NOT NULL DEFAULT 100,
+    usos_realizados INTEGER NOT NULL DEFAULT 0,
+    validade_ate TEXT NOT NULL,
+    ativo INTEGER NOT NULL DEFAULT 1
+);</pre>
+        </div>
+
+        <div>
+          <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-shield-halved text-blue-500"></i>
+            <span>Incremento Atômico: <code>CupomRepository</code></span>
+          </h4>
+          <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed">
+def registrar_uso(self, cupom_id: int) -> bool:
+    cursor = self.conn.cursor()
+    cursor.execute("""
+        UPDATE cupons
+        SET usos_realizados = usos_realizados + 1
+        WHERE id = ? AND usos_realizados < limite_usos AND ativo = 1
+    """, (cupom_id,))
+    self.conn.commit()
+    if cursor.rowcount == 0:
+        raise CupomEsgotadoError(0)
+    return True</pre>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-4 text-center text-xs text-slate-500 dark:text-slate-400">
+    IFCE Campus Tauá • Curso Técnico em Informática para Internet • Disciplina de Engenharia de Software
+  </footer>
+
+</body>
+</html>

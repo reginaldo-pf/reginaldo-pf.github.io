@@ -43,6 +43,14 @@ Capacitar os alunos nos processos modernos de engenharia de software com foco em
   - `atividade_pratica.md`: Atividade prática continuando o projeto *TauáDelivery Web* com diagramas de apoio resolvidos, Sequência do UC03, Comunicação correspondente e Ciclo de Vida do Pedido (com rubrica e gabarito).
   - `imagens/`: Galeria com as 79 figuras oficiais dos Capítulos 7, 8 e 9 e diagramas de apoio.
   - `index.html`: Portal web interativo da aula com abas de teoria, slides, atividade, plano de aula e download de arquivos.
+- [Aula 24 - Casos de Uso, Diagrama de Classes e Início da Codificação (TASK-204)](Aulas/Aula_24/):
+  - `plano_de_aula.md`: Planejamento pedagógico de 100 minutos com modelagem comportamental e estrutural do BiblioTauá e início ágil da implementação.
+  - `slides_aula.tex` / `slides_aula.pdf`: Apresentação completa em LaTeX Beamer com diagramas UML (DUC e Classes) e guia passo a passo da TASK-204.
+  - `guia_desenvolvedor.md`: Documentação técnica detalhada das classes de exceção e modelo de domínio com critérios de validação.
+  - `roteiro_videoaula.md`: Roteiro estruturado para gravação e tutoria assíncrona.
+  - `projeto_aluno/` / `projeto_aluno.zip`: Pacote inicial do discente com esqueleto e testes (`main.py`) para implementação hands-on.
+  - `codigo_etapa/`: Solução de referência com implementação completa e testes de validação.
+  - `index.html`: Portal web interativo da aula com documentação, visualizador de slides e downloads.
 
 ### 📝 [Avaliacoes](Avaliacoes/)
 - Entregas de Sprints, relatórios de retrospectiva e avaliações práticas de projeto.
