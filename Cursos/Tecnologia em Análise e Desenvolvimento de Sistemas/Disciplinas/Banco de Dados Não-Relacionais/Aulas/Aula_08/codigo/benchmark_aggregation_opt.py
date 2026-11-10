@@ -12,6 +12,7 @@ Compara o tempo de resposta e documentos processados em memória:
 Gera o gráfico analítico: benchmark_aggregation_opt.png
 """
 
+import os
 import time
 import numpy as np
 import matplotlib.pyplot as plt
@@ -48,8 +49,8 @@ def rodar_benchmark_simulado_ou_real():
             # Pipeline 1: Não Otimizado ($unwind primeiro, $match depois)
             p1 = [
                 {"$unwind": "$itens"},
-                {"$match": {"status": "entregue"}},
-                {"$group": {"_id": "$itens.categoria", "total": {"$sum": "$itens.subtotal"}}},
+                {"$match": {"status": "ENTREGUE"}},
+                {"$group": {"_id": "$itens.sku", "total": {"$sum": "$itens.preco"}}},
                 {"$sort": {"total": -1}}
             ]
             t0 = time.perf_counter()
@@ -57,11 +58,11 @@ def rodar_benchmark_simulado_ou_real():
                 list(db.pedidos.aggregate(p1))
             t_p1 = (time.perf_counter() - t0) / 5 * 1000
 
-            # Pipeline 2: $match precoce sem índice específico
+            # Pipeline 2: $match precoce sem projeção prévia
             p2 = [
-                {"$match": {"canal": "web"}},
+                {"$match": {"status": "ENTREGUE"}},
                 {"$unwind": "$itens"},
-                {"$group": {"_id": "$itens.categoria", "total": {"$sum": "$itens.subtotal"}}},
+                {"$group": {"_id": "$itens.sku", "total": {"$sum": "$itens.preco"}}},
                 {"$sort": {"total": -1}}
             ]
             t0 = time.perf_counter()
@@ -69,11 +70,12 @@ def rodar_benchmark_simulado_ou_real():
                 list(db.pedidos.aggregate(p2))
             t_p2 = (time.perf_counter() - t0) / 5 * 1000
 
-            # Pipeline 3: $match precoce na chave indexada
+            # Pipeline 3: $match precoce + early projection (descarta campos desnecessários)
             p3 = [
-                {"$match": {"status": "entregue"}},
+                {"$match": {"status": "ENTREGUE"}},
+                {"$project": {"itens.sku": 1, "itens.preco": 1}},
                 {"$unwind": "$itens"},
-                {"$group": {"_id": "$itens.categoria", "total": {"$sum": "$itens.subtotal"}}},
+                {"$group": {"_id": "$itens.sku", "total": {"$sum": "$itens.preco"}}},
                 {"$sort": {"total": -1}}
             ]
             t0 = time.perf_counter()
@@ -82,7 +84,7 @@ def rodar_benchmark_simulado_ou_real():
             t_p3 = (time.perf_counter() - t0) / 5 * 1000
 
             tempos = [t_p1, t_p2, t_p3]
-            docs = [total_pedidos * 2.5, total_pedidos * 0.45, total_pedidos * 0.75]
+            docs = [total_pedidos * 2.5, total_pedidos * 0.75, total_pedidos * 0.75]
     except Exception:
         pass
 
@@ -131,10 +133,15 @@ def rodar_benchmark_simulado_ou_real():
     plt.tight_layout()
 
     nome_grafico = 'benchmark_aggregation_opt.png'
-    plt.savefig(nome_grafico, dpi=300, bbox_inches='tight')
-    plt.savefig(f'../materiais/{nome_grafico}', dpi=300, bbox_inches='tight')
-    plt.savefig(f'../{nome_grafico}', dpi=300, bbox_inches='tight')
-    print(f"Gráfico gerado com sucesso em: {nome_grafico}")
+    base_dir = os.path.dirname(os.path.abspath(__file__))  # codigo/
+    aula_dir = os.path.dirname(base_dir)  # Aula_08/
+    materiais_dir = os.path.join(aula_dir, 'materiais')
+
+    plt.savefig(os.path.join(base_dir, nome_grafico), dpi=300, bbox_inches='tight')
+    if os.path.exists(materiais_dir):
+        plt.savefig(os.path.join(materiais_dir, nome_grafico), dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(aula_dir, nome_grafico), dpi=300, bbox_inches='tight')
+    print(f"Gráfico gerado com sucesso em: {os.path.join(materiais_dir, nome_grafico)}")
 
 if __name__ == '__main__':
     rodar_benchmark_simulado_ou_real()

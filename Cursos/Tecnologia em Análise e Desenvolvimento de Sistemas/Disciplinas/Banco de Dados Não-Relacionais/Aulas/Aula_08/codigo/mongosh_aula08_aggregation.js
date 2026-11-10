@@ -5,7 +5,7 @@
  * Docente: Prof. Me. Reginaldo Fernandes
  */
 
-use ecommerce_shopgrids;
+db = db.getSiblingDB("ecommerce_shopgrids");
 
 // ==============================================================================
 // 1. PIPELINE BÁSICO: $match, $group, $project e $sort
@@ -13,21 +13,20 @@ use ecommerce_shopgrids;
 // ==============================================================================
 print("\n--- 1. Relatório Mensal de Faturamento ---");
 
-db.pedidos.aggregate([
+printjson(db.pedidos.aggregate([
   {
     $match: {
-      status: "entregue"
+      status: "ENTREGUE"
     }
   },
   {
     $group: {
       _id: {
-        ano: { $year: "$data_pedido" },
-        mes: { $month: "$data_pedido" }
+        ano: { $year: "$data_criacao" },
+        mes: { $month: "$data_criacao" }
       },
-      faturamento_total: { $sum: "$valor_total" },
-      lucro_total: { $sum: "$lucro_bruto" },
-      ticket_medio: { $avg: "$valor_total" },
+      faturamento_total: { $sum: "$pagamento.total_pago" },
+      ticket_medio: { $avg: "$pagamento.total_pago" },
       total_pedidos: { $sum: 1 }
     }
   },
@@ -47,7 +46,6 @@ db.pedidos.aggregate([
         ]
       },
       faturamento_total: { $round: ["$faturamento_total", 2] },
-      lucro_total: { $round: ["$lucro_total", 2] },
       ticket_medio: { $round: ["$ticket_medio", 2] },
       total_pedidos: 1
     }
@@ -55,7 +53,7 @@ db.pedidos.aggregate([
   {
     $sort: { mes_ano: 1 }
   }
-]);
+]).toArray());
 
 // ==============================================================================
 // 2. DESCONSTRUÇÃO DE ARRAYS: $unwind
@@ -63,85 +61,137 @@ db.pedidos.aggregate([
 // ==============================================================================
 print("\n--- 2. Top 5 Produtos com $unwind ---");
 
-db.pedidos.aggregate([
-  { $match: { status: "entregue" } },
+printjson(db.pedidos.aggregate([
+  { $match: { status: "ENTREGUE" } },
   { $unwind: "$itens" },
   {
     $group: {
-      _id: {
-        sku: "$itens.sku",
-        nome: "$itens.nome",
-        categoria: "$itens.categoria"
-      },
-      unidades_vendidas: { $sum: "$itens.quantidade" },
-      receita_total: { $sum: "$itens.subtotal" }
+      _id: "$itens.sku",
+      unidades_vendidas: { $sum: "$itens.qtd" },
+      receita_total: { $sum: { $multiply: ["$itens.preco", "$itens.qtd"] } }
     }
   },
   {
     $project: {
       _id: 0,
-      sku: "$_id.sku",
-      produto: "$_id.nome",
-      categoria: "$_id.categoria",
+      sku: "$_id",
       unidades_vendidas: 1,
       receita_total: { $round: ["$receita_total", 2] }
     }
   },
   { $sort: { receita_total: -1 } },
   { $limit: 5 }
-]);
+]).toArray());
 
 // ==============================================================================
-// 3. JUNÇÃO EXTERNA: $lookup
-// Cruzando Catálogo de Produtos com Avaliações
+// 3. JUNÇÃO EXTERNA: $lookup entre Pedidos e Catálogo de Produtos
 // ==============================================================================
-print("\n--- 3. Cruzamento de Produtos com Avaliações ($lookup) ---");
+print("\n--- 3. Cruzamento de Pedidos com Produtos ($lookup 'produtos') ---");
 
-db.produtos.aggregate([
+printjson(db.pedidos.aggregate([
+  { $match: { status: "ENTREGUE" } },
+  { $unwind: "$itens" },
+  {
+    $lookup: {
+      from: "produtos",
+      localField: "itens.sku",
+      foreignField: "sku",
+      as: "prod"
+    }
+  },
+  { $unwind: "$prod" },
+  {
+    $project: {
+      _id: 0,
+      codigo: 1,
+      sku: "$itens.sku",
+      titulo: "$prod.titulo",
+      categoria: "$prod.categoria",
+      preco: "$itens.preco",
+      qtd: "$itens.qtd"
+    }
+  },
+  { $limit: 5 }
+]).toArray());
+
+// ==============================================================================
+// 4. JUNÇÃO EXTERNA: $lookup entre Pedidos e Cadastro de Clientes
+// Enriquecimento com Dados Cadastrais e Localização
+// ==============================================================================
+print("\n--- 4. Enriquecimento de Pedidos com Clientes ($lookup 'clientes') ---");
+
+printjson(db.pedidos.aggregate([
+  { $match: { status: "ENTREGUE" } },
+  { $sort: { "pagamento.total_pago": -1 } },
+  { $limit: 5 },
+  {
+    $lookup: {
+      from: "clientes",
+      localField: "cliente_id",
+      foreignField: "cliente_id",
+      as: "cliente"
+    }
+  },
+  { $unwind: "$cliente" },
+  {
+    $project: {
+      _id: 0,
+      codigo: 1,
+      cliente_nome: "$cliente.nome",
+      localizacao: { $concat: ["$cliente.cidade", "/", "$cliente.estado"] },
+      segmento: "$cliente.segmento",
+      total_pago: "$pagamento.total_pago"
+    }
+  }
+]).toArray());
+
+// ==============================================================================
+// 5. JUNÇÃO EXTERNA: $lookup entre Produtos e Avaliações
+// Média de Avaliações e Volume de Reviews por SKU
+// ==============================================================================
+print("\n--- 5. Catálogo com Avaliações ($lookup 'avaliacoes') ---");
+
+printjson(db.produtos.aggregate([
+  { $match: { categoria: "Informática", status: "ATIVO" } },
   {
     $lookup: {
       from: "avaliacoes",
-      localField: "_id",
-      foreignField: "produto_id",
-      as: "avaliacoes_recebidas"
+      localField: "sku",
+      foreignField: "sku",
+      as: "avaliacoes"
     }
   },
   {
     $project: {
+      _id: 0,
       sku: 1,
-      nome: 1,
-      categoria: 1,
+      titulo: 1,
       preco: 1,
-      quantidade_avaliacoes: { $size: "$avaliacoes_recebidas" },
-      nota_media: {
-        $cond: [
-          { $gt: [{ $size: "$avaliacoes_recebidas" }, 0] },
-          { $round: [{ $avg: "$avaliacoes_recebidas.nota" }, 1] },
-          0.0
-        ]
-      }
+      total_avaliacoes: { $size: "$avaliacoes" },
+      nota_media: { $round: [{ $avg: "$avaliacoes.nota" }, 1] }
     }
   },
-  { $sort: { nota_media: -1, quantidade_avaliacoes: -1 } },
+  { $match: { total_avaliacoes: { $gte: 2 } } },
+  { $sort: { nota_media: -1, total_avaliacoes: -1 } },
   { $limit: 5 }
-]);
+]).toArray());
 
 // ==============================================================================
-// 4. MULTI-PERSPECTIVA: $facet
+// 6. MULTI-PERSPECTIVA: $facet
 // Dashboard Executivo em Operação Única
 // ==============================================================================
-print("\n--- 4. Dashboard Executivo com $facet ---");
+print("\n--- 6. Dashboard Executivo com $facet ---");
 
-db.pedidos.aggregate([
-  { $match: { status: "entregue" } },
+printjson(db.pedidos.aggregate([
+  { $match: { status: "ENTREGUE" } },
   {
     $facet: {
       resumo_geral: [
         {
           $group: {
             _id: null,
-            faturamento: { $sum: "$valor_total" },
-            ticket_medio: { $avg: "$valor_total" },
+            faturamento: { $sum: "$pagamento.total_pago" },
+            ticket_medio: { $avg: "$pagamento.total_pago" },
             pedidos: { $sum: 1 }
           }
         },
@@ -154,31 +204,33 @@ db.pedidos.aggregate([
           }
         }
       ],
-      por_canal: [
+      maiores_pedidos: [
+        { $sort: { "pagamento.total_pago": -1 } },
+        { $limit: 3 },
         {
-          $group: {
-            _id: "$canal",
-            total_vendas: { $sum: 1 },
-            faturamento: { $sum: "$valor_total" }
+          $project: {
+            _id: 0,
+            codigo: 1,
+            cliente_id: 1,
+            total_pago: "$pagamento.total_pago"
           }
-        },
-        { $sort: { faturamento: -1 } }
+        }
       ]
     }
   }
-]);
+]).toArray());
 
 // ==============================================================================
-// 5. INSPEÇÃO DO PLANO DE EXECUÇÃO: explain("executionStats")
+// 7. INSPEÇÃO DO PLANO DE EXECUÇÃO: explain("executionStats")
 // ==============================================================================
-print("\n--- 5. Plano de Execução do Pipeline ---");
+print("\n--- 7. Plano de Execução do Pipeline ---");
 
-db.pedidos.explain("executionStats").aggregate([
-  { $match: { status: "entregue" } },
+printjson(db.pedidos.explain("executionStats").aggregate([
+  { $match: { status: "ENTREGUE" } },
   {
     $group: {
-      _id: "$canal",
-      faturamento: { $sum: "$valor_total" }
+      _id: "$status",
+      faturamento: { $sum: "$pagamento.total_pago" }
     }
   }
-]);
+]));

@@ -45,7 +45,7 @@ Capacitar os estudantes a projetar, otimizar e implementar pipelines de agregaç
 | **1. Fundamentos e Comparação** | 00 – 25 min | **Do SQL ao Pipeline de Agregação:** Gargalos de processamento analítico no cliente; arquitetura *Dataflow*; equivalência estrutural com o SQL tradicional; o pipeline visual no MongoDB Compass. | Exposição dialogada com slides Beamer e demonstração no Compass. |
 | **2. Filtragem e Projeção** | 25 – 45 min | **Estágios Fundamentais (`$match`, `$project`, `$addFields`, `$sort`):** Filtragem precoce orientada por índices; enriquecimento com novos campos calculados; ordenação e paginação analítica. | Demonstração guiada no shell `mongosh`. |
 | **3. Agrupamento e Acumuladores** | 45 – 70 min | **O Poder do `$group` e Cálculos Analíticos:** Agrupamento por períodos temporais (`$year`, `$month`); acumuladores `$sum`, `$avg`, `$push` e `$addToSet`; relatório de faturamento e ticket médio. | Resolução pareada e prática com PyMongo. |
-| **4. Desconstrução e Junção** | 70 – 95 min | **Manipulação de Coleções Complexas (`$unwind` e `$lookup`):** Desconstrução de subdocumentos em arrays; cruzamento entre catálogo e histórico de avaliações (*Left Outer Join*); análise de cardinalidade. | Laboratório assistido e exercícios práticos. |
+| **4. Desconstrução e Junção** | 70 – 95 min | **Manipulação de Coleções Complexas (`$unwind` e `$lookup`):** Desconstrução de subdocumentos em arrays; cruzamento multicoleção entre pedidos, catálogo de produtos, clientes e avaliações (*Left Outer Join*); análise de cardinalidade e índices estrangeiros. | Laboratório assistido e exercícios práticos. |
 | **5. Otimização e Laboratório** | 95 – 120 min | **Estágios Avançados (`$facet`), Limites de RAM e Benchmark:** Relatórios multi-perspectiva para painéis executivos; limite de 100 MB de RAM e `allowDiskUse`; análise de benchmark com gráfico comparativo. | Laboratório prático individual e discussão de resultados. |
 
 ---
@@ -54,22 +54,25 @@ Capacitar os estudantes a projetar, otimizar e implementar pipelines de agregaç
 
 * **Slide 1:** Capa da Aula e Apresentação do Módulo (Framework de Agregação no MongoDB).
 * **Slide 2:** Sumário e Agenda Executiva da Aula.
-* **Slide 3:** Além do CRUD: Por que consultas simples com `find()` não atendem às demandas de Business Intelligence.
-* **Slide 4:** O Conceito de Aggregation Pipeline: Fluxo contínuo, transformações em memória e imutabilidade dos dados originais.
-* **Slide 5:** Equivalência Conceitual entre a Álgebra SQL e os Estágios de Pipeline do MongoDB.
-* **Slide 6:** O Estágio `$match`: Filtragem seletiva precoce e o aproveitamento de índices $B\text{-Tree}$.
-* **Slide 7:** Os Estágios `$project` e `$addFields`: Seleção de campos, exclusão do `_id` e enriquecimento de documentos.
-* **Slide 8:** Ordenação e Paginação Analítica: Uso seguro de `$sort`, `$limit` e `$skip`.
-* **Slide 9:** O Estágio `$group`: A chave de agrupamento `_id` (simples e composta) e o prefixo `$` para referência de campos.
-* **Slide 10:** Tabela Comparativa de Acumuladores: `$sum`, `$avg`, `$min`, `$max`, `$count`, `$first` e `$last`.
-* **Slide 11:** Diferença Estrutural entre `$push` (preservação de histórico) e `$addToSet` (conjunto deduplicado).
-* **Slide 12:** Exemplo Pareado: Cálculo manual do faturamento e ticket médio versus pipeline no MongoSH.
-* **Slide 13:** O Estágio `$unwind`: Desconstrução de arrays de itens e a atenção à explosão volumétrica em memória.
-* **Slide 14:** O Estágio `$lookup`: Junção externa (*Left Outer Join*), sintaxe de mapeamento e exigência de índices na coleção externa.
-* **Slide 15:** O Estágio `$facet`: Dashboards executivos multi-perspectiva com processamento em passo único.
-* **Slide 16:** Otimização Interna do Pipeline: Limite de 100 MB de RAM, `allowDiskUse` e regras de reordenação automática da engine.
-* **Slide 17:** Validação Empírica: Gráfico comparativo de latência e consumo de memória entre pipelines otimizados e não-otimizados.
-* **Slide 18:** Encerramento e Apresentação dos Desafios Práticos de Laboratório.
+* **Slide 3:** Preparação do Ambiente Prático: Atualização da Base no MongoDB com as 4 coleções canônicas (`python3 povoar_dados_aula08.py`).
+* **Slide 4:** Além do CRUD: Por que consultas simples com `find()` não atendem às demandas de Business Intelligence.
+* **Slide 5:** O Conceito de Aggregation Pipeline: Fluxo contínuo, transformações em memória e imutabilidade dos dados originais.
+* **Slide 6:** Equivalência Conceitual entre a Álgebra SQL e os Estágios de Pipeline do MongoDB.
+* **Slide 7:** O Estágio `$match`: Filtragem seletiva precoce e o aproveitamento de índices $B\text{-Tree}$.
+* **Slide 8:** Os Estágios `$project` e `$addFields`: Seleção de campos, exclusão do `_id` e enriquecimento de documentos.
+* **Slide 9:** Ordenação e Paginação Analítica: Uso seguro de `$sort`, `$limit` e `$skip`.
+* **Slide 10:** O Estágio `$group`: A chave de agrupamento `_id` (simples e composta) e o prefixo `$` para referência de campos.
+* **Slide 11:** Tabela Comparativa de Acumuladores: `$sum`, `$avg`, `$min`, `$max`, `$count`, `$first` e `$last`.
+* **Slide 12:** Diferença Estrutural entre `$push` (preservação de histórico) e `$addToSet` (conjunto deduplicado).
+* **Slide 13:** Exemplo Pareado: Cálculo manual do faturamento e ticket médio versus pipeline no MongoSH.
+* **Slide 14:** O Estágio `$unwind`: Desconstrução de arrays de itens e a atenção à explosão volumétrica em memória.
+* **Slide 15:** O Estágio `$lookup`: Junção externa (*Left Outer Join*) entre `pedidos` e catálogo `produtos`.
+* **Slide 16:** Junção Externa com `clientes`: Enriquecimento cadastral, localização geográfica e análise de ticket por cliente.
+* **Slide 17:** Junção Externa com `avaliacoes`: Cálculo analítico de nota média e contagem de reviews por SKU.
+* **Slide 18:** O Estágio `$facet`: Dashboards executivos multi-perspectiva com processamento em passo único.
+* **Slide 19:** Otimização Interna do Pipeline: Limite de 100 MB de RAM, `allowDiskUse` e regras de reordenação automática da engine.
+* **Slide 20:** Validação Empírica: Gráfico comparativo de latência e consumo de memória entre pipelines otimizados e não-otimizados.
+* **Slide 21:** Encerramento e Apresentação dos Desafios Práticos de Laboratório.
 
 ---
 
@@ -77,15 +80,17 @@ Capacitar os estudantes a projetar, otimizar e implementar pipelines de agregaç
 
 Os exercícios devem ser executados no terminal **`mongosh`** ou via **Python (`PyMongo`)** utilizando o banco `ecommerce_shopgrids`:
 
-1. **Exercício 1 (Faturamento por Canal de Venda):**  
-   Construa um pipeline que filtre os pedidos entregues e agrupe pelo campo `canal` ('web', 'mobile', 'loja_fisica'). O relatório deve exibir o faturamento total arredondado em 2 casas decimais, o ticket médio e o total de pedidos, ordenados pelo maior faturamento.
-2. **Exercício 2 (Top 3 Clientes VIP em Volume de Compras):**  
-   Construa um pipeline que filtre pedidos concluídos, agrupe pelo `cliente_id` e `cliente_nome`, calcule o total gasto e a quantidade de compras efetuadas. Ordene pelo valor total gasto de forma decrescente e limite aos 3 maiores compradores.
+1. **Exercício 1 (Faturamento e Distribuição por Status de Pedido):**  
+   Construa um pipeline sobre a coleção `pedidos` que agrupe pelo campo `status` ('ENTREGUE', 'CANCELADO', 'PENDENTE', etc.). O relatório deve exibir o faturamento total acumulado (`pagamento.total_pago`), o ticket médio e o total de pedidos, ordenados pelo maior faturamento.
+2. **Exercício 2 (Top 5 Clientes VIP com Enriquecimento Cadastral):**  
+   Filtre pedidos entregues (`status: 'ENTREGUE'`), agrupe por `cliente_id` somando o total pago e, utilizando `$lookup` com a coleção `clientes`, recupere o nome, cidade, estado e segmento dos 5 maiores compradores da loja.
 3. **Exercício 3 (Análise de Itens com `$unwind`):**  
-   Desconstrua o array de `itens` de pedidos entregues e calcule a quantidade total de itens vendidos e a receita gerada por cada categoria de produto ('Eletrônicos', 'Periféricos', etc.). Ordene pela quantidade total de peças vendidas.
-4. **Exercício 4 (Cruzamento com `$lookup`):**  
-   A partir da coleção `produtos`, realize um `$lookup` com a coleção `avaliacoes`. Projete o nome do produto, o preço atual, a quantidade de avaliações recebidas e a nota média. Filtre apenas produtos que possuam nota média superior ou igual a 4.0.
-5. **Exercício 5 (Dashboard Consolidado com `$facet`):**  
-   Elabore um pipeline utilizando `$facet` que calcule simultaneamente:
-   - As métricas gerais da loja (faturamento total e média de lucro bruto).
-   - O ranking dos 5 produtos que mais geraram desconto total concedido.
+   Desconstrua o array de `itens` de pedidos entregues (`status: 'ENTREGUE'`) e agrupe por `itens.sku`. Calcule a quantidade total vendida (`$sum: '$itens.qtd'`) e a receita acumulada (`$multiply: ['$itens.preco', '$itens.qtd']`). Ordene pela quantidade total de peças vendidas de forma decrescente e limite aos 10 primeiros.
+4. **Exercício 4 (Cruzamento com `$lookup` e Catálogo de Produtos):**  
+   A partir da coleção `pedidos`, filtre os pedidos entregues (`status: 'ENTREGUE'`), aplique `$unwind` em `itens` e realize um `$lookup` com a coleção `produtos` (unindo `itens.sku` com `sku`). Projete o código do pedido (`codigo`), o SKU, o título do produto (`produtos.titulo`), a categoria e a quantidade adquirida.
+5. **Exercício 5 (Satisfação de Consumidores com `$lookup` em Avaliações):**  
+   A partir da coleção `produtos` (categoria 'Informática' e status 'ATIVO'), execute um `$lookup` com a coleção `avaliacoes` pela chave `sku`. Projete o título, preço, contagem de reviews e nota média calculada, filtrando itens com nota média $\ge 4.5$ e no mínimo 2 avaliações.
+6. **Exercício 6 (Dashboard Consolidado com `$facet`):**  
+   Elabore um pipeline utilizando `$facet` sobre a coleção `pedidos` filtrando pedidos entregues que calcule simultaneamente:
+   - Os KPIs gerais da loja (faturamento total somando `pagamento.total_pago`, ticket médio e total de pedidos entregues).
+   - O ranking dos 5 maiores pedidos em valor financeiro (`pagamento.total_pago`), projetando `codigo`, `cliente_id` e o valor pago.

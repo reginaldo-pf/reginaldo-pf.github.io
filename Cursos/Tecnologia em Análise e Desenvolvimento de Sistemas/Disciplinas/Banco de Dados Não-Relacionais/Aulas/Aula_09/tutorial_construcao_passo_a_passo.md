@@ -97,7 +97,7 @@ db.pedidos.find({
 ### 3.2 A Regra de Ouro ESR (*Equality, Sort, Range*)
 A ordem em que os atributos são declarados na criação de um índice composto determina se a busca conseguirá eliminar varreduras desnecessárias e evitar ordenações custosas na memória RAM:
 
-1. **E (Equality):** Atributos com operadores de correspondência exata (`status: "entregue"`).
+1. **E (Equality):** Atributos com operadores de correspondência exata (`status: "ENTREGUE"`).
 2. **S (Sort):** Atributo utilizado na cláusula de ordenação (`sort({ data_pedido: -1 })`).
 3. **R (Range):** Atributos com operadores de faixa ou desigualdade (`valor_total: { $gte: 200 }`).
 

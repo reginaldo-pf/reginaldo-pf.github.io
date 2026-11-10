@@ -19,20 +19,25 @@
     \begin{column}{0.52\textwidth}
       \alert{Sintaxe de Dashboard no MongoSH}\par
       \vspace{0.05cm}
-      \begin{lstlisting}[language=mongosh, basicstyle=\scriptsize\ttfamily]
+      \begin{lstlisting}[language=mongosh, basicstyle=\fontsize{6.8pt}{7.6pt}\ttfamily]
 db.pedidos.aggregate([
-  { $match: { status: "entregue" } },
+  { $match: { status: "ENTREGUE" } },
   { $facet: {
       "kpis_gerais": [
         { $group: {
             _id: null,
-            faturamento: { $sum: "$valor_total" },
+            faturamento: { $sum: "$pagamento.total_pago" },
             pedidos: { $sum: 1 }
         } }
       ],
-      "por_canal": [
-        { $group: { _id: "$canal", total: { $sum: "$valor_total" } } },
-        { $sort: { total: -1 } }
+      "maiores_pedidos": [
+        { $sort: { "pagamento.total_pago": -1 } },
+        { $limit: 3 },
+        { $project: {
+            _id: 0,
+            codigo: 1,
+            total: "$pagamento.total_pago"
+        } }
       ]
   } }
 ])

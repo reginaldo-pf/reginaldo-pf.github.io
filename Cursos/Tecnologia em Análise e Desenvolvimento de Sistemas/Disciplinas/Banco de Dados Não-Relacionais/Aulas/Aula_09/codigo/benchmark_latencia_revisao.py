@@ -58,7 +58,7 @@ def rodar_benchmark():
             # Consulta indexada
             t0 = time.perf_counter()
             for _ in range(20):
-                db.pedidos.find_one({"status": "entregue"})
+                db.pedidos.find_one({"status": "ENTREGUE"})
             tempo_mongo_idx = ((time.perf_counter() - t0) / 20) * 1000
 
             # Consulta sem índice forçando varredura

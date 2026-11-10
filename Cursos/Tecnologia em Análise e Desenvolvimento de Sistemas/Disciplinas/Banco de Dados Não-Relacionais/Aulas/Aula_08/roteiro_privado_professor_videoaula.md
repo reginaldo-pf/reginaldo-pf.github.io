@@ -23,7 +23,10 @@ A condução da aula apoia-se em três eixos:
 ## ⏱️ Bloco a Bloco: Condução da Aula (120 Minutos)
 
 ### Bloco 1: Do SQL ao Pipeline de Agregação (00 a 25 min)
-* **Abertura Provocativa (5 min):** Perguntar: *"Se o diretor da loja ShopGrids pedir um gráfico do ticket médio de vendas por mês nos últimos 2 anos, como vocês implementariam isso usando apenas o método find()?"*
+* **Abertura e Preparação do Ambiente (5 min):** 
+  - Solicitar aos alunos que acessem o terminal no diretório `codigo` e rodem: `python3 povoar_dados_aula08.py`.
+  - Explicar que esse comando atualiza a base `ecommerce_shopgrids` com as 4 coleções canônicas (`clientes`, `produtos`, `pedidos`, `avaliacoes`) e cria os índices de agregação.
+  - Provocação inicial: *"Se o diretor da loja ShopGrids pedir um gráfico do ticket médio de vendas por mês nos últimos 2 anos, como vocês implementariam isso usando apenas o método find()?"*
   - Destacar que baixar 100.000 pedidos em um script Node/Python para calcular a média em um loop estoura a memória do back-end e satura a rede.
 * **Apresentação do Conceito de Dataflow (10 min):**
   - Explicar a esteira de montagem: Documentos entram $\to$ sofrem transformações intermediárias $\to$ saem agregados.
@@ -53,21 +56,23 @@ A condução da aula apoia-se em três eixos:
   - Demonstrar os três cenários:
     1. `_id: null` para métrica total da loja.
     2. `_id: "$status"` para agregação por campo simples.
-    3. `_id: { ano: { $year: "$data_pedido" }, mes: { $month: "$data_pedido" } }` para chave composta temporal.
+    3. `_id: { ano: { $year: "$data_criacao" }, mes: { $month: "$data_criacao" } }` para chave composta temporal.
 * **Operadores Acumuladores (15 min):**
-  - Praticar `$sum: "$valor_total"` e `$sum: 1` (contagem de ocorrências).
+  - Praticar `$sum: "$pagamento.total_pago"` e `$sum: 1` (contagem de ocorrências).
   - Demonstrar a diferença crítica entre `$push` (preserva duplicatas para auditoria de histórico) e `$addToSet` (elimina duplicatas como conjunto matemático).
 
 ---
 
 ### Bloco 4: Desconstrução de Arrays e Junções Externas (70 a 95 min)
-* **O Operador `$unwind` (15 min):**
-  - Mostrar visualmente no Compass a expansão de um pedido com 3 itens em 3 documentos independentes.
+* **O Operador `$unwind` (10 min):**
+  - Mostrar visualmente no Compass a expansão de um pedido com múltiplos itens em documentos independentes.
   - Alertar sobre a explosão volumétrica de dados na memória.
   - Explicar o parâmetro `preserveNullAndEmptyArrays: true` para não perder registros sem itens.
-* **O Operador `$lookup` (10 min):**
-  - Demonstrar a junção entre a coleção `produtos` e a coleção `avaliacoes`.
-  - Ressaltar: o campo de destino (`foreignField`) **precisa impreterivelmente de um índice** para não transformar a junção em um `COLLSCAN` repetido.
+* **O Operador `$lookup` em Três Cenários Reais (15 min):**
+  - **Cenário 1 (Itens $\to$ Produtos):** Cruzar `itens.sku` com `produtos.sku` para obter título e categoria.
+  - **Cenário 2 (Pedidos $\to$ Clientes):** Cruzar `pedidos.cliente_id` com `clientes.cliente_id` para obter nome, cidade e estado do comprador.
+  - **Cenário 3 (Produtos $\to$ Avaliações):** Cruzar `produtos.sku` com `avaliacoes.sku` e aplicar `$size` e `$avg` para obter a nota média de cada produto.
+  - Ressaltar com ênfase: o campo de destino (`foreignField`) **precisa impreterivelmente de um índice B-Tree** para não transformar a junção em um `COLLSCAN` repetido.
 
 ---
 
@@ -83,8 +88,8 @@ A condução da aula apoia-se em três eixos:
 ## ⚠️ Armadilhas Comuns dos Alunos e Como Destravar
 
 1. **Esquecer o Cifrão (`$`) ao Referenciar Campos:**
-   - *Erro típico:* `{ $sum: "valor_total" }` $\to$ O MongoDB tentará somar o texto constante "valor_total", gerando resultado zero.
-   - *Correção:* Explicar a regra: para referenciar o valor contido no campo do documento, use sempre `"$valor_total"`.
+   - *Erro típico:* `{ $sum: "pagamento.total_pago" }` $\to$ O MongoDB tentará somar o texto constante "pagamento.total_pago", gerando resultado zero.
+   - *Correção:* Explicar a regra: para referenciar o valor contido no campo do documento, use sempre `"$pagamento.total_pago"`.
 2. **Esquecer de Usar `$unwind` Antes de Agrupar por Itens:**
    - *Erro típico:* Tentar fazer `{ $group: { _id: "$itens.categoria" } }` esperando categorias únicas e recebendo arrays de categorias agregadas.
    - *Correção:* Demonstrar que arrays exigem `$unwind` prévio para atomizar cada item em um registro.

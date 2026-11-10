@@ -88,7 +88,7 @@ def solucao_desafio_5_pipeline_analitico():
     4. $sort: ordena pelo faturamento final.
     """
     pipeline = [
-        {"$match": {"status": "entregue"}},
+        {"$match": {"status": "ENTREGUE"}},
         {"$unwind": "$itens"},
         {
             "$group": {

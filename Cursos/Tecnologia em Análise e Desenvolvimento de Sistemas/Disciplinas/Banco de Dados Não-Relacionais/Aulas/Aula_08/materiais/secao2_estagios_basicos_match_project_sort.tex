@@ -26,14 +26,14 @@
 db.pedidos.aggregate([
   {
     $match: {
-      status: "entregue",
-      valor_total: { $gte: 200.0 }
+      status: "ENTREGUE",
+      "pagamento.total_pago": { $gte: 200.0 }
     }
   }
 ])
       \end{lstlisting}
       \vspace{0.05cm}
-      \textbf{Plano de Execução:} Com índice \lstinline[language=mongosh, basicstyle=\scriptsize\ttfamily]|{ status: 1, valor_total: 1 }|, o motor realiza \texttt{IXSCAN} sem ler a coleção inteira.
+      \textbf{Plano de Execução:} Com índice \lstinline[language=mongosh, basicstyle=\scriptsize\ttfamily]|{ status: 1, "pagamento.total_pago": 1 }|, o motor realiza \texttt{IXSCAN} sem ler a coleção inteira.
     \end{column}
   \end{columns}
 \end{frame}
@@ -55,17 +55,14 @@ db.pedidos.aggregate([
       \alert{Demonstração de Sintaxe}\par
       \vspace{0.05cm}
       \begin{lstlisting}[language=mongosh, basicstyle=\scriptsize\ttfamily]
-// 1. $project: redefine a saida
-{ $project: { _id: 0, pedido: 1, total: 1 } }
+// 1. $project: redefine a saida projetando codigo e total
+{ $project: { _id: 0, codigo: 1, total_pago: "$pagamento.total_pago" } }
 
-// 2. $addFields: adiciona calculo sem perder campos
+// 2. $addFields: adiciona desconto sem perder campos
 {
   $addFields: {
-    margem_pct: {
-      $multiply: [
-        { $divide: ["$lucro_bruto", "$valor_total"] },
-        100
-      ]
+    desconto_aplicado: {
+      $subtract: ["$pagamento.subtotal", "$pagamento.total_pago"]
     }
   }
 }
@@ -93,16 +90,16 @@ db.pedidos.aggregate([
       \vspace{0.05cm}
       \begin{lstlisting}[language=mongosh, basicstyle=\scriptsize\ttfamily]
 db.pedidos.aggregate([
-  { $match: { status: "entregue" } },
-  { $sort: { data_pedido: -1 } },
+  { $match: { status: "ENTREGUE" } },
+  { $sort: { data_criacao: -1 } },
   { $skip: 10 },
   { $limit: 5 },
   {
     $project: {
       _id: 0,
-      numero_pedido: 1,
-      cliente_nome: 1,
-      valor_total: 1
+      codigo: 1,
+      cliente_id: 1,
+      total_pago: "$pagamento.total_pago"
     }
   }
 ])

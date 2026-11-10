@@ -33,7 +33,7 @@
 				
 				\vspace{0.15cm}
 				\centering
-				\lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|{ $sum: "$valor_total" }|
+				\lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|{ $sum: "$pagamento.total_pago" }|
 				
 				\vspace{0.15cm}
 				\raggedright
@@ -41,7 +41,7 @@
 				
 				\vspace{0.15cm}
 				\centering
-				\lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|{ $sum: "valor_total" }|
+				\lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|{ $sum: "pagamento.total_pago" }|
 				\par\vspace{0.1cm}
 				$\implies$ \textcolor{red!80!black}{\textbf{Erro / Soma Zero!}}
 			\end{itemize}
@@ -114,15 +114,15 @@
       \vspace{0.05cm}
       \begin{lstlisting}[language=mongosh, basicstyle=\scriptsize\ttfamily]
 db.pedidos.aggregate([
-  { $match: { status: "entregue" } },
+  { $match: { status: "ENTREGUE" } },
   {
     $group: {
       _id: {
-        ano: { $year: "$data_pedido" },
-        mes: { $month: "$data_pedido" }
+        ano: { $year: "$data_criacao" },
+        mes: { $month: "$data_criacao" }
       },
-      faturamento: { $sum: "$valor_total" },
-      ticket_medio: { $avg: "$valor_total" },
+      faturamento: { $sum: "$pagamento.total_pago" },
+      ticket_medio: { $avg: "$pagamento.total_pago" },
       total_pedidos: { $sum: 1 }
     }
   },

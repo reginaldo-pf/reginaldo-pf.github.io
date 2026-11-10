@@ -36,12 +36,12 @@
 - `codigo/`:
   - [`docker-compose.yml`](codigo/docker-compose.yml): Configuração para subir instâncias locais do MongoDB 8.0 e Mongo Express (GUI web na porta `8081`).
   - [`requirements.txt`](codigo/requirements.txt): Dependências Python (`pymongo`, `matplotlib`, `numpy`, `pandas`).
-  - [`povoar_dados_aula08.py`](codigo/povoar_dados_aula08.py): Script de geração e carga sintética de 10.000 pedidos, clientes e catálogo do *ShopGrids*.
-  - [`pipelines_analiticos.py`](codigo/pipelines_analiticos.py): Demonstração em Python (`PyMongo`) dos 5 relatórios analíticos de inteligência de negócio.
+  - [`povoar_dados_aula08.py`](codigo/povoar_dados_aula08.py): Script de geração e carga sintética das 4 coleções canônicas do *ShopGrids*: `clientes` (2.500), `produtos` (50.000), `pedidos` (10.000) e `avaliacoes` (25.000).
+  - [`pipelines_analiticos.py`](codigo/pipelines_analiticos.py): Demonstração em Python (`PyMongo`) dos 6 relatórios analíticos de inteligência de negócio.
   - [`benchmark_aggregation_opt.py`](codigo/benchmark_aggregation_opt.py): Medição empírica de latência e alocação de memória gerando o gráfico comparativo `benchmark_aggregation_opt.png`.
-  - [`mongosh_aula08_aggregation.js`](codigo/mongosh_aula08_aggregation.js): Script completo com pipelines comentados para execução no terminal `mongosh`.
+  - [`mongosh_aula08_aggregation.js`](codigo/mongosh_aula08_aggregation.js): Script completo com 6 pipelines comentados para execução no terminal `mongosh`.
   - [`demonstracao_aula08.ipynb`](codigo/demonstracao_aula08.ipynb): Caderno interativo Jupyter Notebook para exploração dos dados com Pandas e MongoDB.
-  - [`pedidos_amostra_aula08.json`](codigo/pedidos_amostra_aula08.json): Amostra de documentos para testes rápidos na interface gráfica MongoDB Compass.
+  - [`pedidos_amostra_aula08.json`](codigo/pedidos_amostra_aula08.json), [`clientes_amostra_aula08.json`](codigo/clientes_amostra_aula08.json) e [`avaliacoes_amostra_aula08.json`](codigo/avaliacoes_amostra_aula08.json): Amostras representativas para apoio no MongoDB Compass.
 - `materiais/`:
   - [`main.pdf`](materiais/main.pdf) e módulos LaTeX Beamer 16:9 (`secao1_*.tex` a `secao5_*.tex`) prontos para exibição.
   - [`benchmark_aggregation_opt.png`](materiais/benchmark_aggregation_opt.png): Gráfico de alta resolução demonstrando o ganho de velocidade com otimização.

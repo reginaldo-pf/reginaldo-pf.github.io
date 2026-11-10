@@ -1,0 +1,77 @@
+[
+  {
+    "_id": {
+      "$oid": "6af30f70f86e1f78f582a495"
+    },
+    "cliente_id": 1001,
+    "nome": "Helena Silva Teixeira",
+    "email": "helena.silva.teixeir1001@exemplo.com.br",
+    "telefone": "(81) 98501-4657",
+    "cidade": "Caruaru",
+    "estado": "PE",
+    "segmento": "Varejo",
+    "data_cadastro": {
+      "$date": "2026-07-23T21:56:02Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6af30f70f86e1f78f582a496"
+    },
+    "cliente_id": 1002,
+    "nome": "Marcio Oliveira Moreira",
+    "email": "marcio.oliveira.more1002@exemplo.com.br",
+    "telefone": "(71) 98065-1488",
+    "cidade": "Natal",
+    "estado": "RN",
+    "segmento": "Varejo",
+    "data_cadastro": {
+      "$date": "2026-04-13T19:28:08Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6af30f70f86e1f78f582a497"
+    },
+    "cliente_id": 1003,
+    "nome": "Diego Cardoso Silva",
+    "email": "diego.cardoso.silva1003@exemplo.com.br",
+    "telefone": "(71) 98407-9928",
+    "cidade": "Teresina",
+    "estado": "PI",
+    "segmento": "Varejo",
+    "data_cadastro": {
+      "$date": "2025-10-27T14:43:08Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6af30f70f86e1f78f582a498"
+    },
+    "cliente_id": 1004,
+    "nome": "Patricia Ferreira Cunha",
+    "email": "patricia.ferreira.cu1004@exemplo.com.br",
+    "telefone": "(71) 98013-3615",
+    "cidade": "Curitiba",
+    "estado": "PR",
+    "segmento": "Varejo",
+    "data_cadastro": {
+      "$date": "2026-01-20T05:51:11Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6af30f70f86e1f78f582a499"
+    },
+    "cliente_id": 1005,
+    "nome": "Sabrina Lima Costa",
+    "email": "sabrina.lima.costa1005@exemplo.com.br",
+    "telefone": "(21) 98689-2674",
+    "cidade": "Niterói",
+    "estado": "RJ",
+    "segmento": "Varejo",
+    "data_cadastro": {
+      "$date": "2026-07-28T09:39:30Z"
+    }
+  }
+]

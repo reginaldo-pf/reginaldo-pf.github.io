@@ -4,6 +4,48 @@
 \section[Paradigma de Processamento em Pipeline]{Paradigma de Processamento em Pipeline (Dataflow)}
 
 % ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Preparação do Ambiente: Atualização da Base no MongoDB}
+  \vspace{0.1cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.47\textwidth}
+      \alert{Atualização do Banco ShopGrids}\par
+      \footnotesize
+      \begin{itemize}
+        \item Antes de iniciar a escrita dos pipelines analíticos, é necessário atualizar a base de dados \texttt{ecommerce\_shopgrids}.
+        \item O script em Python gera e indexa as \textbf{4 coleções canônicas} da loja:
+          \begin{itemize}\scriptsize
+            \item \texttt{clientes} ($2.500$ documentos cadastrais);
+            \item \texttt{produtos} ($50.000$ itens em $10$ categorias);
+            \item \texttt{pedidos} ($10.000$ compras com itens e status);
+            \item \texttt{avaliacoes} ($25.000$ notas de consumidores).
+          \end{itemize}
+        \item Cria índices $B\text{-Tree}$ de suporte à agregação e exporta amostras em JSON para apoio no Compass.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.51\textwidth}
+      \alert{Execução do Script Python no Terminal}\par
+      \vspace{0.05cm}
+      \begin{lstlisting}[language=bash, basicstyle=\fontsize{6.0pt}{6.9pt}\ttfamily]
+# 1. Acessar a pasta de codigo da Aula 08
+cd codigo
+
+# 2. Executar o script de carga e indexacao
+python3 povoar_dados_aula08.py
+
+# Saida esperada no terminal:
+# [1/6] Limpando colecoes e views existentes...
+# [2/6] Inserindo 2.500 clientes... (0.03s)
+# [3/6] Inserindo 50.000 produtos... (0.71s)
+# [4/6] Inserindo 10.000 pedidos... (0.14s)
+# [5/6] Inserindo 25.000 avaliacoes... (0.38s)
+# [6/6] Criando indices B-Tree para agregacao...
+# POVOAMENTO CONCLUIDO COM SUCESSO!
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
 \begin{frame}[fragile]{Além do CRUD: O Gargalo da Análise de Dados no Cliente}
   \vspace{0.1cm}
   \begin{columns}[t,onlytextwidth]
@@ -55,7 +97,7 @@
     metaflow/.style={font=\tiny\bfseries\color{ScoutNavy!90}, align=center}
   ]
     \node[stagebox] (n0) at (0, 0) {Coleção Física\\\textbf{\texttt{pedidos}}\\\tiny 10.000 docs};
-    \node[filterbox] (n1) at (3.4, 0) {Estágio 1\\\textbf{\texttt{\$match}}\\\tiny status: entregue};
+    \node[filterbox] (n1) at (3.4, 0) {Estágio 1\\\textbf{\texttt{\$match}}\\\tiny status: ENTREGUE};
     \node[groupbox] (n2) at (6.8, 0) {Estágio 2\\\textbf{\texttt{\$group}}\\\tiny agrupa por mês};
     \node[sortbox] (n3) at (10.2, 0) {Estágio 3\\\textbf{\texttt{\$sort}}\\\tiny ordem temporal};
     \node[stagebox, fill=ScoutGreen!25] (n4) at (13.5, 0) {Saída Final\\\textbf{Relatório}\\\tiny 12 registros};

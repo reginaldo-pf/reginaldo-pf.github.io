@@ -299,16 +299,15 @@
         <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">1. Faturamento Mensal e Ticket Médio (MongoSH)</h2>
         <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">Combinação encadeada de <code class="text-xs">$match</code>, <code class="text-xs">$group</code> com ano/mês, projeção formatada e ordenação cronológica.</p>
         <pre><code class="language-javascript">db.pedidos.aggregate([
-  { $match: { status: "entregue" } },
+  { $match: { status: "ENTREGUE" } },
   {
     $group: {
       _id: {
-        ano: { $year: "$data_pedido" },
-        mes: { $month: "$data_pedido" }
+        ano: { $year: "$data_criacao" },
+        mes: { $month: "$data_criacao" }
       },
-      faturamento_total: { $sum: "$valor_total" },
-      lucro_total: { $sum: "$lucro_bruto" },
-      ticket_medio: { $avg: "$valor_total" },
+      faturamento_total: { $sum: "$pagamento.total_pago" },
+      ticket_medio: { $avg: "$pagamento.total_pago" },
       quantidade_pedidos: { $sum: 1 }
     }
   },
@@ -331,23 +330,32 @@
       </div>
 
       <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">2. Desconstrução de Arrays com $unwind e Top Produtos (Python)</h2>
-        <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">Uso do driver oficial PyMongo para desmembrar a lista de itens de pedidos e ranquear os produtos mais rentáveis.</p>
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">2. Desconstrução de Arrays com $unwind, $lookup e Top Produtos (Python)</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">Uso do driver oficial PyMongo para desmembrar a lista de itens de pedidos, enriquecer com dados do catálogo via $lookup e ranquear os produtos mais rentáveis.</p>
         <pre><code class="language-python">from pymongo import MongoClient
 
 client = MongoClient("mongodb://localhost:27017")
 db = client["ecommerce_shopgrids"]
 
 pipeline = [
-    {"$match": {"status": "entregue"}},
+    {"$match": {"status": "ENTREGUE"}},
     {"$unwind": "$itens"},
+    {
+        "$lookup": {
+            "from": "produtos",
+            "localField": "itens.sku",
+            "foreignField": "sku",
+            "as": "detalhes"
+        }
+    },
+    {"$unwind": "$detalhes"},
     {
         "$group": {
             "_id": "$itens.sku",
-            "produto": {"$first": "$itens.nome"},
-            "categoria": {"$first": "$itens.categoria"},
-            "unidades_vendidas": {"$sum": "$itens.quantidade"},
-            "receita_total": {"$sum": "$itens.subtotal"}
+            "produto": {"$first": "$detalhes.titulo"},
+            "categoria": {"$first": "$detalhes.categoria"},
+            "unidades_vendidas": {"$sum": "$itens.qtd"},
+            "receita_total": {"$sum": {"$multiply": ["$itens.preco", "$itens.qtd"]}}
         }
     },
     {"$sort": {"receita_total": -1}},
@@ -356,6 +364,67 @@ pipeline = [
 
 for prod in db.pedidos.aggregate(pipeline):
     print(f"[{prod['_id']}] {prod['produto']:<30} | Qtd: {prod['unidades_vendidas']:>4} | Total: R$ {prod['receita_total']:>10.2f}")</code></pre>
+      </div>
+
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">3. Enriquecimento Cadastral com $lookup em Clientes (MongoSH)</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">Cruzamento entre <code class="text-xs">pedidos</code> e a coleção <code class="text-xs">clientes</code> via chave indexada <code class="text-xs">cliente_id</code> para exibir nome e cidade/estado do comprador.</p>
+        <pre><code class="language-javascript">db.pedidos.aggregate([
+  { $match: { status: "ENTREGUE" } },
+  { $sort: { "pagamento.total_pago": -1 } },
+  { $limit: 5 },
+  {
+    $lookup: {
+      from: "clientes",
+      localField: "cliente_id",
+      foreignField: "cliente_id",
+      as: "cliente"
+    }
+  },
+  { $unwind: "$cliente" },
+  {
+    $project: {
+      _id: 0,
+      codigo: 1,
+      cliente: "$cliente.nome",
+      local: { $concat: ["$cliente.cidade", "/", "$cliente.estado"] },
+      segmento: "$cliente.segmento",
+      total_pago: "$pagamento.total_pago"
+    }
+  }
+]);</code></pre>
+      </div>
+
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-2">4. Catálogo com Média de Avaliações ($lookup em Avaliações - Python)</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">Cálculo dinâmico da satisfação do consumidor calculando a média das notas e o volume total de reviews embutidos.</p>
+        <pre><code class="language-python">pipeline_avaliacoes = [
+    {"$match": {"categoria": "Informática", "status": "ATIVO"}},
+    {
+        "$lookup": {
+            "from": "avaliacoes",
+            "localField": "sku",
+            "foreignField": "sku",
+            "as": "reviews"
+        }
+    },
+    {
+        "$project": {
+            "_id": 0,
+            "sku": 1,
+            "titulo": 1,
+            "preco": 1,
+            "total_avaliacoes": {"$size": "$reviews"},
+            "nota_media": {"$round": [{"$avg": "$reviews.nota"}, 1]}
+        }
+    },
+    {"$match": {"total_avaliacoes": {"$gte": 2}}},
+    {"$sort": {"nota_media": -1, "total_avaliacoes": -1}},
+    {"$limit": 5}
+]
+
+for prod in db.produtos.aggregate(pipeline_avaliacoes):
+    print(f"[{prod['sku']}] {prod['titulo'][:30]:<30} | R$ {prod['preco']:>8.2f} | Reviews: {prod['total_avaliacoes']:>2} | Média: {prod['nota_media']} ★")</code></pre>
       </div>
     </div>
 
@@ -380,23 +449,30 @@ for prod in db.pedidos.aggregate(pipeline):
         
         <div class="space-y-4">
           <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
-            <h3 class="text-sm font-bold text-emerald-600 dark:text-emerald-400">Desafio 1: Faturamento por Canal de Venda</h3>
+            <h3 class="text-sm font-bold text-emerald-600 dark:text-emerald-400">Desafio 1: Distribuição de Faturamento por Status</h3>
             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">
-              Escreva um pipeline que agrupe pelo campo <code class="font-mono">canal</code> ('web', 'mobile', 'loja_fisica') e calcule faturamento total, ticket médio e volume de transações para pedidos entregues.
+              Escreva um pipeline que agrupe pelo campo <code class="font-mono">status</code> ('ENTREGUE', 'CANCELADO', 'PENDENTE', etc.) e calcule faturamento total somando <code class="font-mono">pagamento.total_pago</code>, ticket médio e volume de transações.
             </p>
           </div>
 
           <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
-            <h3 class="text-sm font-bold text-emerald-600 dark:text-emerald-400">Desafio 2: Ranking de Clientes VIP</h3>
+            <h3 class="text-sm font-bold text-emerald-600 dark:text-emerald-400">Desafio 2: Ranking de Clientes VIP com Enriquecimento Cadastral</h3>
             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">
-              Agrupe os pedidos pelo identificador do cliente e determine os 3 maiores compradores da loja ShopGrids em valor financeiro acumulado.
+              Filtre pedidos entregues (<code class="font-mono">status: 'ENTREGUE'</code>), agrupe por <code class="font-mono">cliente_id</code> e some o total gasto. Em seguida, utilize <code class="font-mono">$lookup</code> com a coleção <code class="font-mono">clientes</code> para recuperar o nome do cliente, cidade, estado e segmento dos 5 maiores compradores da loja.
             </p>
           </div>
 
           <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
-            <h3 class="text-sm font-bold text-emerald-600 dark:text-emerald-400">Desafio 3: Junção com $lookup e Avaliações</h3>
+            <h3 class="text-sm font-bold text-emerald-600 dark:text-emerald-400">Desafio 3: Satisfação de Clientes no Catálogo ($lookup em Avaliações)</h3>
             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">
-              Cruze a coleção de produtos com as avaliações de clientes, filtrando apenas itens com mais de 5 avaliações e nota média estritamente maior que 4.0.
+              A partir da coleção <code class="font-mono">produtos</code> (categoria 'Informática' e status 'ATIVO'), execute um <code class="font-mono">$lookup</code> com a coleção <code class="font-mono">avaliacoes</code> pela chave <code class="font-mono">sku</code>. Projete a nota média, o total de avaliações recebidas e filtre apenas itens com nota $\ge 4.5$ e no mínimo 2 reviews.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+            <h3 class="text-sm font-bold text-emerald-600 dark:text-emerald-400">Desafio 4: Faturamento Geográfico por Estado (UF)</h3>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">
+              Construa um pipeline sobre a coleção <code class="font-mono">pedidos</code> que faça junção com <code class="font-mono">clientes</code> e agrupe pelo campo <code class="font-mono">cliente.estado</code>, gerando o ranking dos estados líderes em receita entregue e ticket médio.
             </p>
           </div>
         </div>

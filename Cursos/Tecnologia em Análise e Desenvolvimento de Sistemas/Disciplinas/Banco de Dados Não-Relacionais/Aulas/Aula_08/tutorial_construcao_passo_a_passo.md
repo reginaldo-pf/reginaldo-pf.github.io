@@ -56,11 +56,11 @@ Um pipeline de agregação é uma esteira sequencial ordenada composta por múlt
 O estágio `$match` utiliza a mesma sintaxe de filtros do método `find()`. Quando colocado na **primeira posição do pipeline**, ele permite que o otimizador do WiredTiger utilize índices já existentes, descartando dados irrelevantes antes que entrem na esteira de memória.
 
 ```javascript
-// Filtrando apenas pedidos entregues com valor superior ou igual a R$ 100,00
+// Filtrando apenas pedidos entregues com valor pago superior ou igual a R$ 100,00
 {
   $match: {
-    status: "entregue",
-    valor_total: { $gte: 100.0 }
+    status: "ENTREGUE",
+    "pagamento.total_pago": { $gte: 100.0 }
   }
 }
 ```
@@ -76,10 +76,10 @@ O estágio `$match` utiliza a mesma sintaxe de filtros do método `find()`. Quan
 {
   $project: {
     _id: 0,
-    numero_pedido: 1,
-    cliente_nome: 1,
-    valor_liquido: {
-      $subtract: ["$valor_total", "$desconto_total"]
+    codigo: 1,
+    cliente_id: 1,
+    desconto_concedido: {
+      $subtract: ["$pagamento.subtotal", "$pagamento.total_pago"]
     }
   }
 }
@@ -93,8 +93,8 @@ A sequência de ordenação e paginação é essencial para relatórios de grand
 ```javascript
 // Pipeline completo de listagem das 5 compras mais recentes
 [
-  { $match: { status: "entregue" } },
-  { $sort: { data_pedido: -1 } },
+  { $match: { status: "ENTREGUE" } },
+  { $sort: { data_criacao: -1 } },
   { $skip: 0 },
   { $limit: 5 }
 ]
@@ -107,32 +107,31 @@ A sequência de ordenação e paginação é essencial para relatórios de grand
 ### 3.1 A Chave de Agrupamento `_id`
 No estágio `$group`, a chave `_id` define a identidade única de cada grupo de saída:
 1. **Agrupamento Global (KPI Único):** `_id: null` consolida a coleção inteira em uma única métrica global (ex.: faturamento total da loja).
-2. **Agrupamento por Campo Simples:** `_id: "$cliente_estado"` agrupa por Unidade Federativa.
-3. **Agrupamento por Chave Composta:** `_id: { ano: { $year: "$data_pedido" }, canal: "$canal" }` agrega por período temporal e canal de venda em um subdocumento.
+2. **Agrupamento por Campo Simples:** `_id: "$status"` agrupa por situação do pedido (`ENTREGUE`, `PAGO`, etc.).
+3. **Agrupamento por Chave Composta:** `_id: { ano: { $year: "$data_criacao" }, status: "$status" }` agrega por período temporal e situação em um subdocumento.
 
 ---
 
 ### 3.2 Operadores Acumuladores em Ação
 
 * **`$sum`:** Realiza somatórios numéricos ou contagem simples quando recebe a constante 1:
-  `total_faturado: { $sum: "$valor_total" }` | `quantidade: { $sum: 1 }`
+  `total_faturado: { $sum: "$pagamento.total_pago" }` | `quantidade: { $sum: 1 }`
 * **`$avg`:** Calcula a média aritmética dos valores:
-  `ticket_medio: { $avg: "$valor_total" }`
+  `ticket_medio: { $avg: "$pagamento.total_pago" }`
 * **`$min` e `$max`:** Determina o piso e teto observados no grupo.
 * **`$push`:** Acumula os valores de cada registro em uma lista sequencial, preservando todas as repetições.
 * **`$addToSet`:** Cria uma lista agregada que atua como conjunto matemático rigoroso, **eliminando entradas duplicadas**.
 
 ```javascript
-// MongoSH: Agrupamento de pedidos por canal de venda
+// MongoSH: Agrupamento de pedidos por status com faturamento e ticket médio
 db.pedidos.aggregate([
-  { $match: { status: "entregue" } },
+  { $match: { "pagamento.total_pago": { $gt: 0 } } },
   {
     $group: {
-      _id: "$canal",
-      faturamento_total: { $sum: "$valor_total" },
-      ticket_medio: { $avg: "$valor_total" },
-      formas_usadas: { $addToSet: "$forma_pagamento" },
-      total_vendas: { $sum: 1 }
+      _id: "$status",
+      faturamento_total: { $sum: "$pagamento.total_pago" },
+      ticket_medio: { $avg: "$pagamento.total_pago" },
+      total_pedidos: { $sum: 1 }
     }
   },
   { $sort: { faturamento_total: -1 } }
@@ -151,15 +150,15 @@ O operador `$unwind` "desmembra" essa lista: se um documento possuir um array co
 ```javascript
 // Desmembrando itens para calcular os produtos com maior faturamento
 db.pedidos.aggregate([
-  { $match: { status: "entregue" } },
+  { $match: { status: "ENTREGUE" } },
   { $unwind: "$itens" },
   {
     $group: {
       _id: "$itens.sku",
-      produto: { $first: "$itens.nome" },
-      categoria: { $first: "$itens.categoria" },
-      total_unidades: { $sum: "$itens.quantidade" },
-      receita_gerada: { $sum: "$itens.subtotal" }
+      total_unidades: { $sum: "$itens.qtd" },
+      receita_gerada: {
+        $sum: { $multiply: ["$itens.preco", "$itens.qtd"] }
+      }
     }
   },
   { $sort: { receita_gerada: -1 } },
@@ -175,32 +174,94 @@ db.pedidos.aggregate([
 O `$lookup` possibilita conectar duas coleções distintas da mesma base de dados. Os documentos correspondentes são anexados como um array de subdocumentos.
 
 ```javascript
-// Cruzando dados de produtos com a colecao de avaliacoes
+// Cruzando dados de pedidos com o catalogo de produtos para obter titulos e categorias
+db.pedidos.aggregate([
+  { $match: { status: "ENTREGUE" } },
+  { $unwind: "$itens" },
+  {
+    $lookup: {
+      from: "produtos",
+      localField: "itens.sku",
+      foreignField: "sku",
+      as: "produto_info"
+    }
+  },
+  { $unwind: "$produto_info" },
+  {
+    $project: {
+      _id: 0,
+      codigo: 1,
+      sku: "$itens.sku",
+      titulo: "$produto_info.titulo",
+      categoria: "$produto_info.categoria",
+      preco: "$itens.preco",
+      qtd: "$itens.qtd"
+    }
+  },
+  { $limit: 5 }
+]);
+```
+
+---
+
+### 4.3 Enriquecimento de Pedidos com Cadastro de Clientes
+Conectando transações em `pedidos` à coleção `clientes` pela chave `cliente_id`:
+
+```javascript
+db.pedidos.aggregate([
+  { $match: { status: "ENTREGUE" } },
+  { $sort: { "pagamento.total_pago": -1 } },
+  { $limit: 5 },
+  {
+    $lookup: {
+      from: "clientes",
+      localField: "cliente_id",
+      foreignField: "cliente_id",
+      as: "cliente"
+    }
+  },
+  { $unwind: "$cliente" },
+  {
+    $project: {
+      _id: 0,
+      codigo: 1,
+      cliente: "$cliente.nome",
+      localizacao: { $concat: ["$cliente.cidade", "/", "$cliente.estado"] },
+      segmento: "$cliente.segmento",
+      total_pago: "$pagamento.total_pago"
+    }
+  }
+]);
+```
+
+---
+
+### 4.4 Análise de Satisfação no Catálogo com a Coleção `avaliacoes`
+A partir da coleção `produtos`, realizamos o `$lookup` com `avaliacoes` para calcular a média de satisfação e o total de reviews por SKU:
+
+```javascript
 db.produtos.aggregate([
+  { $match: { categoria: "Informática", status: "ATIVO" } },
   {
     $lookup: {
       from: "avaliacoes",
-      localField: "_id",
-      foreignField: "produto_id",
-      as: "avaliacoes_recebidas"
+      localField: "sku",
+      foreignField: "sku",
+      as: "reviews"
     }
   },
   {
     $project: {
+      _id: 0,
       sku: 1,
-      nome: 1,
+      titulo: 1,
       preco: 1,
-      total_avaliacoes: { $size: "$avaliacoes_recebidas" },
-      nota_media: {
-        $cond: [
-          { $gt: [{ $size: "$avaliacoes_recebidas" }, 0] },
-          { $round: [{ $avg: "$avaliacoes_recebidas.nota" }, 1] },
-          0.0
-        ]
-      }
+      total_avaliacoes: { $size: "$reviews" },
+      nota_media: { $round: [{ $avg: "$reviews.nota" }, 1] }
     }
   },
-  { $sort: { nota_media: -1 } },
+  { $match: { total_avaliacoes: { $gte: 2 } } },
+  { $sort: { nota_media: -1, total_avaliacoes: -1 } },
   { $limit: 5 }
 ]);
 ```
@@ -210,31 +271,34 @@ db.produtos.aggregate([
 ## Parte 5: Dashboards Multi-Perspectiva (`$facet`), Otimização e Benchmark
 
 ### 5.1 O Estágio `$facet`
-O estágio `$facet` resolve a necessidade de dashboards executivos onde a interface do usuário precisa exibir múltiplos painéis e gráficos simultaneamente (ex.: cartões de KPI, gráfico por método de pagamento e ranking regional). Em vez de disparar 3 ou mais requisições separadas ao banco, o `$facet` processa múltiplos sub-pipelines sobre o mesmo fluxo de entrada em uma única viagem de rede (*Single Round-Trip*).
+O estágio `$facet` resolve a necessidade de dashboards executivos onde a interface do usuário precisa exibir múltiplos painéis e gráficos simultaneamente (ex.: cartões de KPI e ranking de pedidos de maior valor). Em vez de disparar 2 ou mais requisições separadas ao banco, o `$facet` processa múltiplos sub-pipelines sobre o mesmo fluxo de entrada em uma única viagem de rede (*Single Round-Trip*).
 
 ```javascript
 db.pedidos.aggregate([
-  { $match: { status: "entregue" } },
+  { $match: { status: "ENTREGUE" } },
   {
     $facet: {
-      "resumo_kpis": [
+      "kpis_gerais": [
         {
           $group: {
             _id: null,
-            faturamento: { $sum: "$valor_total" },
-            lucro: { $sum: "$lucro_bruto" },
+            faturamento_total: { $sum: "$pagamento.total_pago" },
+            ticket_medio: { $avg: "$pagamento.total_pago" },
             pedidos: { $sum: 1 }
           }
         }
       ],
-      "pagamento": [
+      "maiores_pedidos": [
+        { $sort: { "pagamento.total_pago": -1 } },
+        { $limit: 3 },
         {
-          $group: {
-            _id: "$forma_pagamento",
-            total: { $sum: "$valor_total" }
+          $project: {
+            _id: 0,
+            codigo: 1,
+            cliente_id: 1,
+            total_pago: "$pagamento.total_pago"
           }
-        },
-        { $sort: { total: -1 } }
+        }
       ]
     }
   }
@@ -259,4 +323,4 @@ QueryExceededMemoryLimitNoDiskUseAllowed: Sort exceeded memory limit of 10485760
 ### 5.3 Análise Comparativa do Benchmark
 A execução do script `benchmark_aggregation_opt.py` sobre 10.000 pedidos confirma na prática o impacto da otimização:
 1. **Pipeline Não-Otimizado:** Realiza `$unwind` no início, expandindo o fluxo para mais de 25.000 documentos em memória antes de filtrar, resultando em latência elevada (~140 ms).
-2. **Pipeline Otimizado:** Aplica `$match` precoce na chave indexada `{ status: 1, data_pedido: 1 }`, reduzindo o volume de trabalho inicial para ~7.500 documentos e atingindo tempos de resposta inferiores a 15 ms (*Speedup* $> 9\times$).
+2. **Pipeline Otimizado:** Aplica `$match` precoce na chave indexada `{ status: 1, data_criacao: 1 }`, reduzindo o volume de trabalho inicial para ~7.500 documentos e atingindo tempos de resposta inferiores a 15 ms (*Speedup* $> 9\times$).

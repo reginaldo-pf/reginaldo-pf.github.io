@@ -1,0 +1,147 @@
+[
+  {
+    "_id": {
+      "$oid": "6af30f71f86e1f78f58371a9"
+    },
+    "codigo": "PED-2026-000001",
+    "cliente_id": 2016,
+    "status": "EM_TRANSPORTE",
+    "itens": [
+      {
+        "sku": "SKU-ARM-003310",
+        "preco": 1794.35,
+        "qtd": 4,
+        "status_entrega": "PENDENTE"
+      }
+    ],
+    "pagamento": {
+      "subtotal": 7177.4,
+      "total_pago": 7177.4
+    },
+    "data_criacao": {
+      "$date": "2026-09-27T13:32:29Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6af30f71f86e1f78f58371aa"
+    },
+    "codigo": "PED-2026-000002",
+    "cliente_id": 3470,
+    "status": "PENDENTE",
+    "itens": [
+      {
+        "sku": "SKU-ACE-019196",
+        "preco": 3224.88,
+        "qtd": 3,
+        "status_entrega": "PENDENTE"
+      },
+      {
+        "sku": "SKU-AUD-042472",
+        "preco": 4987.6,
+        "qtd": 1,
+        "status_entrega": "PENDENTE"
+      }
+    ],
+    "pagamento": {
+      "subtotal": 14662.24,
+      "total_pago": 0.0
+    },
+    "data_criacao": {
+      "$date": "2026-09-21T04:30:53Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6af30f71f86e1f78f58371ab"
+    },
+    "codigo": "PED-2026-000003",
+    "cliente_id": 2482,
+    "status": "PENDENTE",
+    "itens": [
+      {
+        "sku": "SKU-ARM-025020",
+        "preco": 3126.06,
+        "qtd": 3,
+        "status_entrega": "PENDENTE"
+      },
+      {
+        "sku": "SKU-MON-044978",
+        "preco": 1920.56,
+        "qtd": 1,
+        "status_entrega": "PENDENTE"
+      },
+      {
+        "sku": "SKU-RED-040453",
+        "preco": 3308.67,
+        "qtd": 2,
+        "status_entrega": "PENDENTE"
+      },
+      {
+        "sku": "SKU-ARM-028987",
+        "preco": 1296.07,
+        "qtd": 1,
+        "status_entrega": "PENDENTE"
+      }
+    ],
+    "pagamento": {
+      "subtotal": 19212.15,
+      "total_pago": 0.0
+    },
+    "data_criacao": {
+      "$date": "2026-09-04T05:06:38Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6af30f71f86e1f78f58371ac"
+    },
+    "codigo": "PED-2026-000004",
+    "cliente_id": 1940,
+    "status": "ENTREGUE",
+    "itens": [
+      {
+        "sku": "SKU-INF-034301",
+        "preco": 4573.87,
+        "qtd": 4,
+        "status_entrega": "PENDENTE"
+      }
+    ],
+    "pagamento": {
+      "subtotal": 18295.48,
+      "total_pago": 17380.71
+    },
+    "data_criacao": {
+      "$date": "2026-10-02T04:01:24Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6af30f71f86e1f78f58371ad"
+    },
+    "codigo": "PED-2026-000005",
+    "cliente_id": 2898,
+    "status": "ENTREGUE",
+    "itens": [
+      {
+        "sku": "SKU-RED-019021",
+        "preco": 420.95,
+        "qtd": 4,
+        "status_entrega": "PENDENTE"
+      },
+      {
+        "sku": "SKU-ACE-036287",
+        "preco": 1254.23,
+        "qtd": 1,
+        "status_entrega": "PENDENTE"
+      }
+    ],
+    "pagamento": {
+      "subtotal": 2938.03,
+      "total_pago": 2938.03
+    },
+    "data_criacao": {
+      "$date": "2026-07-16T11:52:42Z"
+    }
+  }
+]

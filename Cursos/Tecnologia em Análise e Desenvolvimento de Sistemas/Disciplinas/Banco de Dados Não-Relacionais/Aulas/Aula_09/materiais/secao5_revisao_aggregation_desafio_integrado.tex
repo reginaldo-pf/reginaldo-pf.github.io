@@ -23,7 +23,7 @@
       \begin{lstlisting}[language=mongosh]
 // Relatorio de faturamento por categoria
 db.pedidos.aggregate([
-  { $match: { status: "entregue" } },
+  { $match: { status: "ENTREGUE" } },
   { $unwind: "$itens" },
   {
     $group: {

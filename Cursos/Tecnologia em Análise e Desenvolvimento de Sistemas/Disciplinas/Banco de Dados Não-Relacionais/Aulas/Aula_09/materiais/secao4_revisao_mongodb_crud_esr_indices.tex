@@ -77,7 +77,7 @@ db.produtos.updateOne(
       \alert{Ordem Estrita dos Campos no Índice Composto}\par
       \footnotesize
       \begin{enumerate}
-        \item \textbf{E (Equality):} Predicados de igualdade exata (ex.: \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|status: "entregue"|).
+        \item \textbf{E (Equality):} Predicados de igualdade exata (ex.: \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|status: "ENTREGUE"|).
         \item \textbf{S (Sort):} Campos de ordenação (\lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|data_pedido: -1|). Elimina ordenação em RAM (\lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|SORT|).
         \item \textbf{R (Range):} Faixas de valores (\lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$gte|, \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$lt|, \lstinline[language=mongosh, basicstyle=\footnotesize\ttfamily]|$in|).
       \end{enumerate}
@@ -104,7 +104,7 @@ db.pedidos.createIndex({
 
 // 2. Consulta otimizada aproveitando indice
 db.pedidos.find({
-  status: "entregue",
+  status: "ENTREGUE",
   valor_total: { $gte: 300.0 }
 }).sort({ data_pedido: -1 });
       \end{lstlisting}

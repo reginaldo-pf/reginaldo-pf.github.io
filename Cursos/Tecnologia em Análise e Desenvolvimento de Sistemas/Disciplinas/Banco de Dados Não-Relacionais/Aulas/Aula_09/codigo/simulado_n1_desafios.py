@@ -115,14 +115,14 @@ def relatorio_vendas_por_categoria(db) -> list:
     """
     Especificação:
     Construa um pipeline de agregação que:
-    1. Filtre apenas pedidos com status 'entregue' ($match precoce).
+    1. Filtre apenas pedidos com status 'ENTREGUE' ($match precoce).
     2. Desconstrua o array de itens ($unwind).
     3. Agrupe pela categoria do item ($group), calculando faturamento total e peças vendidas.
     4. Ordene pelo maior faturamento descendente ($sort).
     5. Retorne a lista de categorias agregadas.
     """
     pipeline = [
-        {"$match": {"status": "entregue"}},
+        {"$match": {"status": "ENTREGUE"}},
         {"$unwind": "$itens"},
         {
             "$group": {

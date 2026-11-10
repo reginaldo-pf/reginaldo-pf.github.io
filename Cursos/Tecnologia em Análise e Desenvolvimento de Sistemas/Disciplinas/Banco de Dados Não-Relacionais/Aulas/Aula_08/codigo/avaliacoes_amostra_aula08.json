@@ -1,0 +1,87 @@
+[
+  {
+    "_id": {
+      "$oid": "6af30f71f86e1f78f58398b9"
+    },
+    "avaliacao_id": "AVAL-000001",
+    "sku": "SKU-RED-031726",
+    "cliente_id": 1821,
+    "cliente_nome": "Nicolas Alves Silva",
+    "nota": 4,
+    "titulo": "Entrega rápida e bom produto",
+    "comentario": "Ótimo produto, apenas a embalagem poderia vir mais reforçada.",
+    "util_sim": 13,
+    "recomendaria": true,
+    "data_avaliacao": {
+      "$date": "2026-09-23T04:46:11Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6af30f71f86e1f78f58398ba"
+    },
+    "avaliacao_id": "AVAL-000002",
+    "sku": "SKU-MON-012227",
+    "cliente_id": 2638,
+    "cliente_nome": "Felipe Silva Souza",
+    "nota": 5,
+    "titulo": "Excelente produto!",
+    "comentario": "Desempenho incrível, acabamento premium e entrega pontual.",
+    "util_sim": 11,
+    "recomendaria": true,
+    "data_avaliacao": {
+      "$date": "2026-07-28T15:25:29Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6af30f71f86e1f78f58398bb"
+    },
+    "avaliacao_id": "AVAL-000003",
+    "sku": "SKU-INF-028571",
+    "cliente_id": 1821,
+    "cliente_nome": "Nicolas Alves Silva",
+    "nota": 2,
+    "titulo": "Esperava mais",
+    "comentario": "Achei o material frágil demais pelo preço cobrado.",
+    "util_sim": 1,
+    "recomendaria": false,
+    "data_avaliacao": {
+      "$date": "2026-07-19T03:25:33Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6af30f71f86e1f78f58398bc"
+    },
+    "avaliacao_id": "AVAL-000004",
+    "sku": "SKU-GAM-014029",
+    "cliente_id": 2662,
+    "cliente_nome": "Igor Souza Monteiro",
+    "nota": 5,
+    "titulo": "Qualidade impressionante",
+    "comentario": "Excelente compra! Uso diariamente para estudos e trabalho.",
+    "util_sim": 17,
+    "recomendaria": true,
+    "data_avaliacao": {
+      "$date": "2026-10-19T08:05:06Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6af30f71f86e1f78f58398bd"
+    },
+    "avaliacao_id": "AVAL-000005",
+    "sku": "SKU-RED-020637",
+    "cliente_id": 3010,
+    "cliente_nome": "Olivia Monteiro Pereira",
+    "nota": 3,
+    "titulo": "Poderia ser melhor",
+    "comentario": "Produto razoável, construção intermediária mas funciona.",
+    "util_sim": 16,
+    "recomendaria": true,
+    "data_avaliacao": {
+      "$date": "2026-09-28T22:05:55Z"
+    }
+  }
+]
