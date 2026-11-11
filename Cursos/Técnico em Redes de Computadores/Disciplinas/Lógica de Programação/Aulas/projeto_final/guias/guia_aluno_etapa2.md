@@ -12,6 +12,7 @@
 Na **Etapa 1**, criamos o menu interativo e o loop principal do nosso **Sistema de Planejamento Financeiro**. Porém, ao escolher a opção `1`, o sistema apenas exibia uma mensagem dizendo que a funcionalidade estava em construção.
 
 Hoje vamos dar vida à **Opção 1 (Cadastrar Receita)**! Ao final desta aula, seu programa será capaz de:
+
 1. Ler e armazenar a receita mensal do usuário na memória do programa.
 2. Bloquear valores negativos (afinal, não existe salário negativo!).
 3. Proteger o sistema para **não travar com erro vermelho** caso alguém digite letras ou símbolos por engano.
@@ -112,7 +113,8 @@ def obter_numero_positivo(mensagem):
             print("Erro: Digite um número válido (ex: 1500.50).")
 ```
 
-#### 🧠 Entendendo como essa função trabalha:
+#### 🧠 Entendendo como essa função trabalha
+
 * **`try:` (Tente):** O Python tenta converter o texto digitado para número decimal (`float`).
 * **`if valor >= 0: return valor`:** Se deu certo e o número não é negativo, o comando `return` devolve o número imediatamente e encerra a função!
 * **`except ValueError:`:** Se o usuário digitou letras ou símbolos inválidos, em vez de o programa quebrar, ele pula para cá, exibe a mensagem de erro amigável e o `while True` repete a pergunta.
@@ -163,11 +165,11 @@ Aproveite também para atualizar o `print` da **opção `"4"`** para conseguirmo
 
 Execute o seu programa no terminal (`python main.py`) e faça os testes abaixo marcando cada etapa:
 
-- [ ] **Teste 1 (Valor Inicial):** Assim que abrir o programa, escolha a opção `4`. Ele deve mostrar `Receita atual cadastrada: R$ 0.00`.
-- [ ] **Teste 2 (Proteção contra Letras):** Escolha a opção `1` e digite `mil reais` ou `abc`. O programa **não pode fechar com erro**; ele deve exibir `Erro: Digite um número válido (ex: 1500.50).` e pedir o valor novamente.
-- [ ] **Teste 3 (Proteção contra Negativos):** Ainda na opção `1`, digite `-300`. Ele deve exibir `Erro: O valor não pode ser negativo.` e pedir o valor novamente.
-- [ ] **Teste 4 (Cadastro Correto):** Digite `2850.5` e aperte Enter. Ele deve confirmar `Renda prevista atualizada para: R$ 2850.50` e voltar ao menu.
-- [ ] **Teste 5 (Memória Persistente):** No menu principal, escolha a opção `4` novamente. Agora ele deve mostrar `Receita atual cadastrada: R$ 2850.50`!
+* [ ] **Teste 1 (Valor Inicial):** Assim que abrir o programa, escolha a opção `4`. Ele deve mostrar `Receita atual cadastrada: R$ 0.00`.
+* [ ] **Teste 2 (Proteção contra Letras):** Escolha a opção `1` e digite `mil reais` ou `abc`. O programa **não pode fechar com erro**; ele deve exibir `Erro: Digite um número válido (ex: 1500.50).` e pedir o valor novamente.
+* [ ] **Teste 3 (Proteção contra Negativos):** Ainda na opção `1`, digite `-300`. Ele deve exibir `Erro: O valor não pode ser negativo.` e pedir o valor novamente.
+* [ ] **Teste 4 (Cadastro Correto):** Digite `2850.5` e aperte Enter. Ele deve confirmar `Renda prevista atualizada para: R$ 2850.50` e voltar ao menu.
+* [ ] **Teste 5 (Memória Persistente):** No menu principal, escolha a opção `4` novamente. Agora ele deve mostrar `Receita atual cadastrada: R$ 2850.50`!
 
 ---
 
@@ -186,9 +188,13 @@ Execute o seu programa no terminal (`python main.py`) e faça os testes abaixo m
 Terminou todos os testes acima e funcionou perfeitamente? Tente implementar estas melhorias no seu código:
 
 ### 🌟 Desafio 1: Aceitar Vírgula nos Centavos
+
 No Brasil, costumamos digitar `1500,50` com vírgula em vez de ponto (`1500.50`). Mas o `float()` do Python só entende ponto!
+
 * **Missão:** Dentro de `obter_numero_positivo`, use o método `.replace(",", ".")` logo após o `input(mensagem)` para trocar automaticamente qualquer vírgula por ponto antes de converter para `float`!
 
 ### 🌟 Desafio 2: Mostrar a Receita no Cabeçalho do Menu
+
 Que tal exibir o valor da receita atual diretamente no topo do menu principal toda vez que ele aparece na tela?
+
 * **Missão:** Modifique a função `exibir_menu(renda_atual)` para receber a variável `renda_prevista` como parâmetro e mostrar uma linha `[Receita Atual: R$ 0.00]` no cabeçalho do menu!

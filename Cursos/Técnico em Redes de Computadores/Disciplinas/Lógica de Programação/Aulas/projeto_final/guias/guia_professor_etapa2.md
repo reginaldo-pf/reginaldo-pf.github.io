@@ -16,7 +16,8 @@
 > [!IMPORTANT]
 > **Ponto de Partida Real:** Na aula anterior, construímos o esqueleto em [projetinho/main.py](file:///home/reginaldo-fernandes/Aulas/Cursos/Técnico em Redes de Computadores/Disciplinas/Lógica de Programação/Aulas/projeto_final/projetinho/main.py). Hoje vamos transformar a **Opção 1 ("1 - Cadastrar Receita")** de um simples `print` provisório (*stub*) em uma rotina completa, segura e com persistência de estado em memória.
 
-### Objetivos Pedagógicos desta Aula:
+### Objetivos Pedagógicos desta Aula
+
 1. **Gerenciamento de Estado:** Entender por que variáveis que guardam dados do sistema (`renda_prevista`) devem morar **antes** do `while True`.
 2. **Comunicação entre Funções:** Compreender a diferença entre apenas `printar` um valor na tela e **devolver** o valor com `return` para quem chamou.
 3. **Programação Defensiva (`try / except`):** Blindar o software contra erros de digitação (`ValueError`) e regras de negócio inválidas (números negativos).
@@ -38,7 +39,9 @@ def main():
 ```
 
 ### 💡 Dica de Mediação 0.1: O pequeno bug do espaço em branco (`.strip()`)
+
 Antes de iniciar a Etapa 2, faça um teste rápido no código atual da turma:
+
 1. Rode o `main.py` e digite `" 1 "` (com um espaço antes ou depois do número 1).
 2. O programa cairá no `else: Opção inválida!`.
 3. **Pergunte à turma:** *"Eu digitei o número 1! Por que o Python disse que a opção é inválida?"*
@@ -53,6 +56,7 @@ Antes de iniciar a Etapa 2, faça um teste rápido no código atual da turma:
 ## 🧠 Ato 1: Onde Guardar o Dinheiro? (Escopo e Estado na `main`) (15 min)
 
 ### Passo 1.1: Criando a variável de estado
+
 Pergunte aos alunos:
 > *"Quando o usuário escolher a opção 1 e digitar que ganha R$ 2.500,00, precisamos guardar esse número na memória para calcular o Balanço na opção 4. Onde criamos essa variável?"*
 
@@ -69,6 +73,7 @@ def main():
 > [!WARNING]
 > **Armadilha Clássica dos Alunos (O Efeito Amnésia):**
 > Muitos alunos vão declarar `renda_prevista = 0.0` **dentro** do `while True:` (logo abaixo de `exibir_menu()`).
+>
 > * **Como demonstrar:** Explique que tudo dentro do `while True` roda repetidamente a cada volta do menu. Se `renda_prevista = 0.0` estiver lá dentro, toda vez que o menu aparecer na tela, o programa sofre "amnésia" e zera o salário do usuário!
 > * **Analogia de Redes:** É como configurar o IP de um roteador na memória RAM volátil e reiniciar a interface a cada comando sem salvar no estado ativo da sessão.
 
@@ -77,6 +82,7 @@ def main():
 ## 🔌 Ato 2: Chamando a Função e o Conceito de `return` (20 min)
 
 ### Passo 2.1: Substituindo o Stub da Opção 1
+
 Localize o bloco da opção `"1"` na `main()`:
 
 ```python
@@ -85,9 +91,11 @@ Localize o bloco da opção `"1"` na `main()`:
 ```
 
 💬 **O que explicar para a turma:**
+
 * *"Reparem no sinal de igual (`=`). Em programação, o lado direito executa primeiro: o Python pausa a `main()`, viaja até a função `definir_renda()`, coleta o valor que ela devolver e guarda dentro da gaveta `renda_prevista`."*
 
 ### Passo 2.2: Construindo a Primeira Versão de `definir_renda()` (Versão Ingênua)
+
 Suba o cursor acima da `main()` e crie a função:
 
 ```python
@@ -99,7 +107,8 @@ def definir_renda():
     return renda
 ```
 
-### 🔍 Informações Extras sobre Funcionalidades (Para explicar no quadro/projetor):
+### 🔍 Informações Extras sobre Funcionalidades (Para explicar no quadro/projetor)
+
 1. **Por que `float()` e não `int()`?**
    * No mundo financeiro existem centavos (`1500.50`). O `int()` rejeitaria casas decimais ou truncaria valores.
 2. **O que faz a f-string `f"... R$ {renda:.2f}"`?**
@@ -133,6 +142,7 @@ Explique para a turma:
 *"Em vez de colocar uma barragem de proteção só dentro de `definir_renda()`, vamos pensar como engenheiros: na próxima aula teremos que pedir o **Valor da Despesa**, que também não pode ter letras nem ser negativo. Então vamos criar uma função especialista que serve para qualquer número positivo do sistema!"*
 
 ### Passo 4.1: Escrevendo `obter_numero_positivo(mensagem)`
+
 Suba o cursor acima de `definir_renda()` e construa passo a passo:
 
 ```python
@@ -151,7 +161,8 @@ def obter_numero_positivo(mensagem):
             print("Erro: Digite um número válido (ex: 1500.50).")
 ```
 
-### 🧠 Detalhamento Técnico e Dicas para o Professor:
+### 🧠 Detalhamento Técnico e Dicas para o Professor
+
 * **Analogia da Catraca Eletrônica:** O `while True` é uma catraca trancada. O único jeito de passar pela catraca é chegando na linha `return valor`.
 * **Por que não precisamos de `break` depois do `return`?**
   * Muitos alunos perguntam: *"Professor, não tem `break` nesse `while True`, não vai ficar infinito?"*.
@@ -161,6 +172,7 @@ def obter_numero_positivo(mensagem):
   * Se a função `float()` falhar na linha `valor = float(input(mensagem))`, o Python **não executa** o `if valor >= 0` abaixo dele; ele salta imediatamente para o bloco `except ValueError:`, imprime a mensagem amigável e dá uma nova volta no `while True`.
 
 ### Passo 4.2: Conectando a Guardiã dentro de `definir_renda()`
+
 Agora atualize a função `definir_renda()` trocando o `float(input(...))` pela chamada da nossa nova função guardiã:
 
 ```python
@@ -184,6 +196,7 @@ Para provar aos alunos que a variável `renda_prevista` na `main()` realmente gu
 ```
 
 🧪 **Roteiro de Teste Final no Projetor:**
+
 1. Inicie o programa e escolha a opção `4` ➔ Mostra `Receita atual: R$ 0.00`.
 2. Escolha a opção `1`:
    * Digite `abc` ➔ Barra com `Erro: Digite um número válido`.
@@ -198,17 +211,22 @@ Para provar aos alunos que a variável `renda_prevista` na `main()` realmente gu
 Caso a turma avance rápido ou surjam dúvidas/curiosidades durante a aula, você pode apresentar estas melhorias práticas:
 
 ### Extra 1: Aceitar tanto Vírgula quanto Ponto nos Centavos (`.replace(",", ".")`)
+
 * **Contexto:** No Brasil, o teclado numérico usa vírgula (`1500,50`), mas o padrão americano do `float()` exige ponto (`1500.50`). Quando o aluno digita vírgula, o Python lança `ValueError`.
 * **Como implementar em 1 linha:**
+
   ```python
   entrada = input(mensagem).strip().replace(",", ".")
   valor = float(entrada)
   ```
+
 * **Dica Didática:** Mostrar o encadeamento de métodos de string (`.strip().replace(",", ".")`) encanta os alunos porque resolve um incômodo real que eles mesmos sentem ao testar no laboratório!
 
 ### Extra 2: Exibir a Receita Atual no Topo do Menu Dinamicamente
+
 * **Contexto:** E se o próprio menu principal já mostrasse quanto de receita está cadastrado no momento?
 * **Como fazer:** Passar `renda_prevista` como parâmetro para `exibir_menu(renda_prevista)`:
+
   ```python
   def exibir_menu(renda_atual):
       print("\n" + "=" * 40)
@@ -216,9 +234,11 @@ Caso a turma avance rápido ou surjam dúvidas/curiosidades durante a aula, voc�
       print(f"      [Receita Atual: R$ {renda_atual:.2f}]")
       print("=" * 40)
   ```
+
 * **Valor Pedagógico:** Excelente para reforçar passagem de parâmetro para funções caso algum aluno termine o exercício antes dos colegas.
 
 ### Extra 3: Confirmação antes de Sobrescrever uma Receita já Cadastrada
+
 * **Contexto:** Se o usuário já cadastrou `R$ 3000.00` e entra na Opção 1 de novo, podemos avisar qual era o valor anterior antes de alterar.
 * **Como fazer:** Passar `renda_prevista` para `definir_renda(renda_atual)` e exibir `if renda_atual > 0: print(f"Valor atual: R$ {renda_atual:.2f}")`.
 

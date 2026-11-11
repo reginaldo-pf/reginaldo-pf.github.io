@@ -1,4 +1,5 @@
 # Guia Pedagógico: Projeto Final por Fases / Aulas
+
 ## Sistema de Planejamento Financeiro Pessoal com Previsão de Renda e Gastos
 
 * **Instituição:** Instituto Federal de Educação, Ciência e Tecnologia do Ceará (IFCE) – Campus Tauá
@@ -15,7 +16,7 @@ A principal barreira dos estudantes de nível técnico ao desenvolver seu primei
 
 Por essa razão, o projeto foi fatiado em **5 fases incrementais**. Em cada aula os alunos constroem uma fatia funcional do software. Ao soar o sinal de cada encontro, **o código sempre executa sem quebrar**, oferecendo um sentimento palpável de evolução e autoria.
 
-```
+```text
        [Aula 1] Menu & Fluxo Principal (Loop while, if/elif/else, Stubs)
                            │
                            ▼
@@ -50,14 +51,17 @@ Por essa razão, o projeto foi fatiado em **5 fases incrementais**. Em cada aula
 ---
 
 ### 🔹 AULA 1: A Arquitetura do Sistema e o Loop Principal
+
 * **Duração:** 90 minutos
 * **Objetivo Geral:** Construir a espinha dorsal de um software CLI interativo e desmistificar a arquitetura de eventos orientada a menu.
 
-#### 1. Contextualização e Analogia (15 min)
+#### 1. Contextualização e Analogia (Aula 1 - 15 min)
+
 * Mostre a tela de um roteador/switch Cisco quando o técnico acessa via terminal SSH (o menu de opções do terminal).
 * Faça a pergunta disparadora: *"Por que os programas que fizemos até agora encerravam logo após a primeira digitação? Como criar um software que continua vivo até que o usuário decida sair?"*
 
-#### 2. Live Coding Passo a Passo (45 min)
+#### 2. Live Coding Passo a Passo (Aula 1 - 45 min)
+
 1. **Passo 1.1:** Criar a função `exibir_menu()` apenas com prints elegantes formatados com divisores `"=" * 40`.
 2. **Passo 1.2:** Criar a função `main()` contendo um laço `while True`.
 3. **Passo 1.3:** Capturar a opção com `opcao = input("Escolha uma opção: ").strip()`.
@@ -65,33 +69,40 @@ Por essa razão, o projeto foi fatiado em **5 fases incrementais**. Em cada aula
 5. **Passo 1.5:** Criar os *stubs* (placeholders com `print("[EM CONSTRUÇÃO]")`) para que nenhuma opção quebre.
 6. **Passo 1.6:** Implementar a saída segura com `break` na opção `"0"`.
 
-#### 3. Armadilhas Comuns dos Alunos e Mediação do Professor
+#### 3. Armadilhas Comuns e Mediação (Aula 1)
+
 * **Comparação numérica x string:** Alunos costumam fazer `if opcao == 1:` (número inteiro), mas esquecem de converter o `input()` para `int`.
   > *Dica pedagógica:* Recomende comparar como texto (`"1"`, `"2"`), pois evita o erro fatal do Python caso o usuário aperte ENTER sem digitar nada.
 * **Esquecer o `break`:** O menu volta a exibir infinitamente após a opção 0.
 * **Identação do loop:** Código dentro do `while` sem avanço de 4 espaços.
 
-#### 4. Checkpoint do Aluno (Critério de Conclusão da Aula 1)
-O aluno deve rodar o script no terminal e verificar:
-- [x] O menu surge na tela com layout limpo.
-- [x] Ao digitar `9` ou texto inválido, surge aviso de erro e o menu reaparece.
-- [x] Ao escolher `1`, `2`, `3` ou `4`, aparece `[EM CONSTRUÇÃO]` e o menu retorna.
-- [x] Ao digitar `0`, o programa despede-se e fecha suavemente.
+#### 4. Checkpoint do Aluno (Aula 1)
 
-#### 5. Desafio Extra para Alunos Avançados
+O aluno deve rodar o script no terminal e verificar:
+
+* [x] O menu surge na tela com layout limpo.
+* [x] Ao digitar `9` ou texto inválido, surge aviso de erro e o menu reaparece.
+* [x] Ao escolher `1`, `2`, `3` ou `4`, aparece `[EM CONSTRUÇÃO]` e o menu retorna.
+* [x] Ao digitar `0`, o programa despede-se e fecha suavemente.
+
+#### 5. Desafio Extra (Aula 1)
+
 * Customizar o menu incluindo a data atual ou o nome do usuário técnico responsável pelo orçamento.
 
 ---
 
 ### 🔹 AULA 2: Entrada Segura de Dados e Previsão de Renda
+
 * **Duração:** 90 minutos
 * **Objetivo Geral:** Compreender escopo de variáveis, retorno de funções (`return`) e construir barreiras de defesa no software com `try/except`.
 
-#### 1. Contextualização e Analogia (15 min)
+#### 1. Contextualização e Analogia (Aula 2 - 15 min)
+
 * Apresente a analogia da **"Catraca de Acesso"**: ela não permite passar se o bilhete estiver inválido ou vencido; ela repete o pedido até que um bilhete válido seja inserido.
 * Faça a demonstração ao vivo do "Crash": execute um script com `float(input())` e digite `"mil"` ou `"1500,50"`. Mostre o temido `ValueError: could not convert string to float`.
 
-#### 2. Live Coding Passo a Passo (45 min)
+#### 2. Live Coding Passo a Passo (Aula 2 - 45 min)
+
 1. **Passo 2.1:** Construir a função utilitária `obter_numero_positivo(mensagem)`.
 2. **Passo 2.2:** Adicionar o bloco `try:` para a conversão `float(input(mensagem))`.
 3. **Passo 2.3:** Validar regra de negócio financeira: `if valor >= 0: return valor`.
@@ -99,32 +110,39 @@ O aluno deve rodar o script no terminal e verificar:
 5. **Passo 2.5:** Construir a função `definir_renda()` que reaproveita a função de validação e retorna a renda.
 6. **Passo 2.6:** Conectar à `main()`: inicializar `renda_prevista = 0.0` e atribuir `renda_prevista = definir_renda()` na opção `"1"`.
 
-#### 3. Armadilhas Comuns dos Alunos e Mediação do Professor
+#### 3. Armadilhas Comuns e Mediação (Aula 2)
+
 * **Esquecer o `return`:** O aluno faz o cálculo, mas a função retorna `None`. Ao tentar usar o valor na `main()`, a variável perde o dado.
 * **Variável local vs global:** O aluno cria `renda` dentro de `definir_renda()` e tenta acessá-la diretamente na `main()` sem atribuir o retorno (`NameError`).
   > *Dica pedagógica:* Desenhe na lousa a metáfora da "Caixa Preta": o que entra são os parâmetros (inputs), o que sai é a esteira do `return`.
 
-#### 4. Checkpoint do Aluno (Critério de Conclusão da Aula 2)
-O aluno deve testar o programa contra erros deliberados:
-- [x] Tentar digitar `"abc"`, `"quinhentos"`, `"@#"`. O sistema não deve travar com rastreamento vermelho de erro.
-- [x] Tentar digitar `"-500"`. O sistema deve informar que valores negativos não são aceitos.
-- [x] Digitar `"3500.50"`. O sistema confirma com `R$ 3500.50` e volta ao menu principal.
+#### 4. Checkpoint do Aluno (Aula 2)
 
-#### 5. Desafio Extra para Alunos Avançados
+O aluno deve testar o programa contra erros deliberados:
+
+* [x] Tentar digitar `"abc"`, `"quinhentos"`, `"@#"`. O sistema não deve travar com rastreamento vermelho de erro.
+* [x] Tentar digitar `"-500"`. O sistema deve informar que valores negativos não são aceitos.
+* [x] Digitar `"3500.50"`. O sistema confirma com `R$ 3500.50` e volta ao menu principal.
+
+#### 5. Desafio Extra (Aula 2)
+
 * Tratar a digitação de vírgula no lugar de ponto (ex: `input().replace(",", ".")`) antes da conversão para `float`.
 
 ---
 
 ### 🔹 AULA 3: Modelando Dados Compostos – Cadastro de Despesas (`list` + `dict`)
+
 * **Duração:** 90 minutos
 * **Objetivo Geral:** Aprender a estruturar registros complexos do mundo real usando dicionários (`dict`) e agregá-los dinamicamente em listas (`list`).
 
-#### 1. Contextualização e Analogia (15 min)
+#### 1. Contextualização e Analogia (Aula 3 - 15 min)
+
 * Faça um paralelo com Redes de Computadores:
   * Em uma **Tabela de Roteamento** ou **Tabela ARP**, cada linha é um registro com vários campos: IP, Máscara, Gateway, Métrica.
   * Em Python, **cada linha é um Dicionário** e a **tabela completa é uma Lista**.
 
-#### 2. Live Coding Passo a Passo (45 min)
+#### 2. Live Coding Passo a Passo (Aula 3 - 45 min)
+
 1. **Passo 3.1:** Na `main()`, instanciar a lista vazia: `despesas = []`.
 2. **Passo 3.2:** Criar a função `adicionar_despesa(despesas)`.
 3. **Passo 3.3:** Validar que o campo descrição não fique vazio: `while not descricao:`.
@@ -133,97 +151,113 @@ O aluno deve testar o programa contra erros deliberados:
 6. **Passo 3.6:** Empacotar tudo no dicionário `item = {"descricao": ..., "valor": ..., "categoria": ...}`.
 7. **Passo 3.7:** Inserir na coleção com `despesas.append(item)`.
 
-#### 3. Armadilhas Comuns dos Alunos e Mediação do Professor
+#### 3. Armadilhas Comuns e Mediação (Aula 3)
+
 * **Chaves de dicionário com nomes inconsistentes:** Usar `"Descricao"` (maiúsculo) em um lugar e `"descricao"` (minúsculo) em outro (`KeyError`).
 * **Substituição em vez de anexação:** Esquecer o `.append()` e fazer `despesas = item`, transformando a lista em um único dicionário.
 * **Mutabilidade:** Compreender por que a lista `despesas` passada como parâmetro para a função é alterada diretamente sem precisar de `return`.
 
-#### 4. Checkpoint do Aluno (Critério de Conclusão da Aula 3)
-- [x] O usuário entra na opção `"2"`, preenche descrição, valor e escolhe categoria.
-- [x] Se deixar a descrição em branco ou com apenas espaços, o sistema cobra novamente.
-- [x] Se digitar categoria inválida (ex: `4`), o sistema repete a pergunta de categoria.
-- [x] O sistema emite mensagem de sucesso informando a quantidade atual de despesas cadastradas.
+#### 4. Checkpoint do Aluno (Aula 3)
 
-#### 5. Desafio Extra para Alunos Avançados
+* [x] O usuário entra na opção `"2"`, preenche descrição, valor e escolhe categoria.
+* [x] Se deixar a descrição em branco ou com apenas espaços, o sistema cobra novamente.
+* [x] Se digitar categoria inválida (ex: `4`), o sistema repete a pergunta de categoria.
+* [x] O sistema emite mensagem de sucesso informando a quantidade atual de despesas cadastradas.
+
+#### 5. Desafio Extra (Aula 3)
+
 * Permitir cancelar o cadastro da despesa caso o usuário digite `"cancelar"` no campo de descrição.
 
 ---
 
 ### 🔹 AULA 4: Visualização e Iteração – Listagem Formatada em Tabela
+
 * **Duração:** 90 minutos
 * **Objetivo Geral:** Dominar a iteração sobre coleções compostas (`for .. in`), o uso de `enumerate()` e a formatação profissional de relatórios no console.
 
-#### 1. Contextualização e Analogia (15 min)
+#### 1. Contextualização e Analogia (Aula 4 - 15 min)
+
 * Mostre a saída de comandos de rede no terminal Linux/Windows: `ipconfig`, `netstat`, `arp -a`.
 * Destaque: todas as ferramentas profissionais exibem informações em **colunas perfeitamente alinhadas**, o que facilita a leitura rápida humana.
 
-#### 2. Live Coding Passo a Passo (45 min)
+#### 2. Live Coding Passo a Passo (Aula 4 - 45 min)
+
 1. **Passo 4.1:** Criar a função `listar_despesas(despesas)`.
 2. **Passo 4.2:** Inserir a cláusula de guarda: `if not despesas:` para avisar que a lista está vazia e sair com `return`.
 3. **Passo 4.3:** Construir o cabeçalho alinhado com f-string:
+
    ```python
    print(f"{'#':<4} {'Descrição':<25} {'Categoria':<15} {'Valor (R$)'}")
    print("-" * 55)
    ```
+
 4. **Passo 4.4:** Percorrer a lista com `enumerate(despesas, start=1)`.
 5. **Passo 4.5:** Formatar cada linha da tabela puxando as chaves do dicionário `item`:
-   - `indice:<4` (alinhado à esquerda em 4 espaços)
-   - `item['descricao']:<25` (alinhado à esquerda em 25 caracteres)
-   - `item['categoria']:<15` (alinhado à esquerda em 15 caracteres)
-   - `item['valor']:>8.2f` (alinhado à direita com 2 casas decimais)
+   * `indice:<4` (alinhado à esquerda em 4 espaços)
+   * `item['descricao']:<25` (alinhado à esquerda em 25 caracteres)
+   * `item['categoria']:<15` (alinhado à esquerda em 15 caracteres)
+   * `item['valor']:>8.2f` (alinhado à direita com 2 casas decimais)
 6. **Passo 4.6:** Ligar a opção `"3"` na `main()`.
 
-#### 3. Armadilhas Comuns dos Alunos e Mediação do Professor
+#### 3. Armadilhas Comuns e Mediação (Aula 4)
+
 * **Confusão de tipos no laço:** Tentar usar `for i in range(len(despesas))` e depois fazer `despesas[i]['valor']` de forma confusa.
   > *Dica pedagógica:* Apresente o `enumerate(colecao, start=1)` como a forma mais elegante e "pythônica" de obter índice e elemento simultaneamente.
 * **Tabela desalinhada:** Esquecer os modificadores `<` e `>` ou colocar nomes de despesas maiores que 25 caracteres (explique o truncamento se necessário).
 
-#### 4. Checkpoint do Aluno (Critério de Conclusão da Aula 4)
-- [x] Ao escolher a opção `"3"` antes de cadastrar despesas, aparece mensagem clara: *"Nenhuma despesa cadastrada até o momento."*
-- [x] Cadastrar 3 despesas com descrições de tamanhos variados (ex: "Pão", "Aluguel do Apartamento", "Internet").
-- [x] Ao listar, todos os valores em R$ aparecem alinhados pela vírgula/ponto e as categorias alinhadas em sua coluna.
+#### 4. Checkpoint do Aluno (Aula 4)
 
-#### 5. Desafio Extra para Alunos Avançados
+* [x] Ao escolher a opção `"3"` antes de cadastrar despesas, aparece mensagem clara: *"Nenhuma despesa cadastrada até o momento."*
+* [x] Cadastrar 3 despesas com descrições de tamanhos variados (ex: "Pão", "Aluguel do Apartamento", "Internet").
+* [x] Ao listar, todos os valores em R$ aparecem alinhados pela vírgula/ponto e as categorias alinhadas em sua coluna.
+
+#### 5. Desafio Extra (Aula 4)
+
 * Truncar descrições muito longas (acima de 22 caracteres) adicionando reticências `"..."` para manter a tabela sempre esteticamente perfeita.
 
 ---
 
 ### 🔹 AULA 5: Inteligência de Negócio e Relatório Analítico (Regra 50-30-20)
+
 * **Duração:** 90 minutos
 * **Objetivo Geral:** Sintetizar lógica de programação e tomada de decisão: variáveis acumuladoras, regras de negócio financeiras, diagnósticos automatizados e finalização do projeto.
 
-#### 1. Contextualização e Regra de Negócio (15 min)
+#### 1. Contextualização e Regra de Negócio (Aula 5 - 15 min)
+
 * **Apresentação da Regra 50-30-20 (Educação Financeira):**
   * **50% Essenciais:** Gastos vitais para sobreviver (moradia, comida, saúde, contas básicas).
   * **30% Estilo de Vida:** O que torna a vida agradável (hobbies, lazer, passeios, streaming).
   * **20% Reserva Financeira / Metas:** Poupança para emergências e investimentos para o futuro.
 * Explique: o papel do programador é transformar essa regra teórica em um **diagnóstico automatizado** para o usuário final!
 
-#### 2. Live Coding Passo a Passo (45 min)
+#### 2. Live Coding Passo a Passo (Aula 5 - 45 min)
+
 1. **Passo 5.1:** Criar a função `exibir_relatorio(renda_prevista, despesas)`.
 2. **Passo 5.2:** Criar os acumuladores: `total_essencial = 0.0`, `total_estilo_vida = 0.0`, `total_reserva = 0.0`.
 3. **Passo 5.3:** Iterar com `for item in despesas:` somando conforme `item["categoria"]`.
 4. **Passo 5.4:** Calcular o total geral e o saldo: `saldo_restante = renda_prevista - total_gasto`.
 5. **Passo 5.5:** Implementar as condicionais de situação:
-   - Se saldo < 0: `ALERTA: Orçamento deficitário!`
-   - Se saldo == 0: `Atenção: Saldo zerado.`
-   - Se saldo > 0: `Situação: Orçamento com superávit.`
+   * Se saldo < 0: `ALERTA: Orçamento deficitário!`
+   * Se saldo == 0: `Atenção: Saldo zerado.`
+   * Se saldo > 0: `Situação: Orçamento com superávit.`
 6. **Passo 5.6:** Cálculo percentual (com verificação `if renda_prevista > 0:` para **evitar divisão por zero**).
 7. **Passo 5.7:** Exibição do comparativo das porcentagens reais contra as metas recomendadas.
 8. **Passo 5.8:** Fechar a estrutura do programa com o padrão `if __name__ == "__main__": main()`.
 
-#### 3. Armadilhas Comuns dos Alunos e Mediação do Professor
+#### 3. Armadilhas Comuns e Mediação (Aula 5)
+
 * **Divisão por Zero (`ZeroDivisionError`):** Se o usuário não definiu a renda (renda = 0) e tentar gerar o relatório, o cálculo `(total / renda) * 100` quebra o programa.
   > *Dica pedagógica:* Destaque a importância da verificação defensiva `if renda_prevista > 0:`.
 * **Escopo das variáveis acumuladoras:** Inicializar os totais dentro do loop `for` (o que resetaria a soma a cada item) em vez de fora dele.
 
-#### 4. Checkpoint do Aluno (Critério de Conclusão da Aula 5)
-- [x] O sistema executa de ponta a ponta sem qualquer erro.
-- [x] Ao definir renda de R$ 3.000,00 e lançar despesas nas 3 categorias, o relatório exibe com precisão:
-  - Renda prevista
-  - Total gasto
-  - Saldo restante com alerta de situação
-  - Porcentagens calculadas e comparadas com a meta 50-30-20.
+#### 4. Checkpoint do Aluno (Aula 5)
+
+* [x] O sistema executa de ponta a ponta sem qualquer erro.
+* [x] Ao definir renda de R$ 3.000,00 e lançar despesas nas 3 categorias, o relatório exibe com precisão:
+  * Renda prevista
+  * Total gasto
+  * Saldo restante com alerta de situação
+  * Porcentagens calculadas e comparadas com a meta 50-30-20.
 
 ---
 
@@ -245,10 +279,10 @@ Utilize esta rubrica para avaliar a evolução dos estudantes ao longo das fases
 Para alunos que desejam ir além ou para um projeto integrador interdisciplinar com a área de Redes/Sistemas:
 
 1. **Filtro de Despesas por Categoria (Opção 5 no Menu):**
-   - Permitir que o usuário digite a categoria desejada e liste apenas as despesas daquele grupo com seu subtotal.
+   * Permitir que o usuário digite a categoria desejada e liste apenas as despesas daquele grupo com seu subtotal.
 2. **Exclusão de Despesa por ID:**
-   - Permitir remover uma despesa pelo número da linha exibido na listagem com `despesas.pop(indice - 1)`.
+   * Permitir remover uma despesa pelo número da linha exibido na listagem com `despesas.pop(indice - 1)`.
 3. **Limpeza Automática de Tela:**
-   - Adicionar uma função `limpar_tela()` utilizando `os.system('cls' if os.name == 'nt' else 'clear')` para deixar a interface estilo terminal limpo a cada navegação.
+   * Adicionar uma função `limpar_tela()` utilizando `os.system('cls' if os.name == 'nt' else 'clear')` para deixar a interface estilo terminal limpo a cada navegação.
 4. **Persistência em Arquivo CSV (Exportação):**
-   - Criar uma função para salvar a lista de despesas em um arquivo `despesas.csv` utilizando apenas funções nativas do Python (`open()`, `.write()`, `.close()`).
+   * Criar uma função para salvar a lista de despesas em um arquivo `despesas.csv` utilizando apenas funções nativas do Python (`open()`, `.write()`, `.close()`).

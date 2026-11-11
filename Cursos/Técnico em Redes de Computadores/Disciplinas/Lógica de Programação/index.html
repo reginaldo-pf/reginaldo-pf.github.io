@@ -4,7 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lógica de Programação | Técnico em Redes de Computadores | Prof. Reginaldo Fernandes</title>
+  <title>Lógica de Programação | Técnico em Redes de Computadores | IFCE Campus Tauá</title>
+  
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -23,36 +25,60 @@
       }
     }
   </script>
+  
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <!-- Marked.js para renderizar Markdown dinamicamente -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <!-- Prism.js para realce de sintaxe Python -->
+  
+  <!-- Prism.js para realce de sintaxe Python & Bash -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
   <style>
     body { font-family: 'Inter', sans-serif; }
     code, pre { font-family: 'JetBrains Mono', monospace !important; }
-    .markdown-body h1 { font-size: 1.65rem; font-weight: 800; margin-bottom: 0.75rem; margin-top: 1rem; }
-    .markdown-body h2 { font-size: 1.3rem; font-weight: 700; margin-top: 1.75rem; margin-bottom: 0.75rem; padding-bottom: 0.4rem; border-bottom: 1px solid rgba(148, 163, 184, 0.25); }
-    .markdown-body h3 { font-size: 1.1rem; font-weight: 700; margin-top: 1.25rem; margin-bottom: 0.5rem; }
+    
+    pre[class*="language-"] {
+      margin: 0;
+      border-radius: 0.75rem;
+      background: #0f172a !important;
+      font-size: 0.825rem;
+      padding: 1.15rem;
+    }
+    
+    .markdown-body h1 { font-size: 1.65rem; font-weight: 800; margin-bottom: 0.75rem; margin-top: 1rem; color: #0f172a; }
+    .dark .markdown-body h1 { color: #f8fafc; }
+    
+    .markdown-body h2 { font-size: 1.35rem; font-weight: 700; margin-top: 2rem; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(148, 163, 184, 0.25); color: #0f172a; }
+    .dark .markdown-body h2 { color: #f8fafc; }
+    
+    .markdown-body h3 { font-size: 1.15rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.5rem; color: #047857; }
+    .dark .markdown-body h3 { color: #34d399; }
+    
+    .markdown-body h4 { font-size: 1rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.35rem; }
     .markdown-body p { margin-bottom: 0.85rem; line-height: 1.65; }
     .markdown-body ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
     .markdown-body ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1rem; }
     .markdown-body li { margin-bottom: 0.35rem; }
-    .markdown-body pre { border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.25rem; overflow-x: auto; }
-    .markdown-body blockquote { border-left: 4px solid #059669; padding: 0.75rem 1rem; background: rgba(5, 150, 105, 0.08); border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 1rem; }
-    .markdown-body table { width: 100%; border-collapse: collapse; margin-bottom: 1.25rem; font-size: 0.875rem; }
-    .markdown-body th, .markdown-body td { border: 1px solid rgba(148, 163, 184, 0.3); padding: 0.6rem 0.85rem; text-align: left; }
-    .markdown-body th { background: rgba(148, 163, 184, 0.12); font-weight: 600; }
-    .markdown-body hr { margin: 1.75rem 0; border-color: rgba(148, 163, 184, 0.25); }
+    
+    .markdown-body table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: 0.875rem; border-radius: 0.5rem; overflow: hidden; }
+    .markdown-body th, .markdown-body td { border: 1px solid rgba(148, 163, 184, 0.3); padding: 0.65rem 0.85rem; text-align: left; }
+    .markdown-body th { background: rgba(148, 163, 184, 0.15); font-weight: 600; }
+    .markdown-body hr { margin: 2rem 0; border-color: rgba(148, 163, 184, 0.25); }
+    
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.05); }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.4); border-radius: 3px; }
   </style>
+  
   <script>
-    if (localStorage.theme === 'dark') {
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
@@ -62,16 +88,21 @@
 
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
 
-  <!-- Navbar -->
-  <header class="border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur sticky top-0 z-50">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+  <!-- ========================================== -->
+  <!-- NAVBAR SUPERIOR                            -->
+  <!-- ========================================== -->
+  <header class="border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur sticky top-0 z-50 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <a href="../../../../index.html" class="flex items-center space-x-2 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium text-sm transition-colors">
-          <i class="fa-solid fa-arrow-left"></i>
+        <a href="../../../../index.html" class="flex items-center space-x-2 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium text-sm transition-colors group">
+          <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
           <span>Voltar ao Portal Geral</span>
         </a>
       </div>
-      <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-3">
+        <span class="hidden md:inline-flex px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+          IFCE Campus Tauá
+        </span>
         <button id="themeToggle" class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Alternar tema">
           <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
         </button>
@@ -79,8 +110,10 @@
     </div>
   </header>
 
-  <!-- Conteúdo Principal -->
-  <main class="flex-grow max-w-5xl mx-auto px-4 sm:px-6 py-8 w-full">
+  <!-- ========================================== -->
+  <!-- CONTEÚDO PRINCIPAL                         -->
+  <!-- ========================================== -->
+  <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 py-8 w-full">
 
     <!-- Breadcrumb -->
     <nav class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-6 flex items-center space-x-2 flex-wrap">
@@ -95,95 +128,188 @@
     <div class="bg-gradient-to-r from-emerald-800 to-teal-900 rounded-2xl p-6 sm:p-8 text-white shadow-lg mb-8 relative overflow-hidden">
       <div class="relative z-10">
         <div class="flex flex-wrap items-center gap-2 mb-3">
-          <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-500/30 text-amber-200 border border-amber-400/30">Técnico em Redes de Computadores</span>
-          <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-white/20 text-white">Projeto Final em Python</span>
+          <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-500/30 text-amber-200 border border-amber-400/30">
+            Técnico em Redes de Computadores
+          </span>
+          <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-white/20 text-white">
+            Projeto Final em Python
+          </span>
+          <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-400/20 text-emerald-200">
+            100% Offline • Sem Dependência de Servidor
+          </span>
         </div>
         <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight mb-2">Lógica de Programação</h1>
-        <p class="text-emerald-100 text-sm sm:text-base max-w-3xl">
-          Guias práticos passo a passo para o desenvolvimento do Sistema de Planejamento Financeiro Pessoal.
+        <p class="text-emerald-100 text-sm sm:text-base max-w-3xl leading-relaxed">
+          Guias práticos passo a passo para os estudantes desenvolverem o <strong>Sistema de Planejamento Financeiro Pessoal</strong>. Aprenda desde a arquitetura no terminal (CLI) até a interface gráfica desktop moderna com CustomTkinter e persistência permanente em JSON.
         </p>
-        <p class="text-xs text-emerald-200 mt-2">
-          <strong>Docente:</strong> Prof. Reginaldo Pereira Fernandes • IFCE Campus Tauá
-        </p>
+        <div class="mt-4 pt-3 border-t border-emerald-700/50 flex flex-wrap items-center gap-4 text-xs text-emerald-200">
+          <span><i class="fa-solid fa-graduation-cap mr-1.5"></i>IFCE Campus Tauá</span>
+          <span><i class="fa-solid fa-code mr-1.5"></i>Linguagem: Python 3</span>
+          <span><i class="fa-solid fa-book-open-reader mr-1.5"></i>Área Exclusiva de Roteiros do Aluno</span>
+        </div>
       </div>
-      <div class="absolute -right-8 -bottom-8 opacity-10 text-white text-9xl">
+      <div class="absolute -right-8 -bottom-8 opacity-10 text-white text-9xl pointer-events-none">
         <i class="fa-brands fa-python"></i>
       </div>
     </div>
 
-    <!-- Lista de Guias para os Alunos -->
-    <section class="mb-8">
-      <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center space-x-2">
-        <i class="fa-solid fa-book-open-reader text-emerald-600 dark:text-emerald-400"></i>
-        <span>Guias Práticos do Aluno (Passo a Passo)</span>
-      </h2>
+    <!-- ========================================== -->
+    <!-- VISÃO GERAL DAS ETAPAS DO ALUNO            -->
+    <!-- ========================================== -->
+    <section class="mb-10">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+        <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+          <i class="fa-solid fa-book-open-reader text-emerald-600 dark:text-emerald-400"></i>
+          <span>Roteiros Práticos do Aluno (Passo a Passo)</span>
+        </h2>
+        <span class="text-xs text-slate-500 dark:text-slate-400">
+          Clique em <strong>"Ler Guia na Tela"</strong> para abrir o roteiro completo abaixo
+        </span>
+      </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- Grid de Cartões das 5 Etapas do Aluno -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
 
-        <!-- Guia 1: Etapa 2 Terminal -->
-        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
+        <!-- Card 1: Etapa 1 CLI -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between hover:border-emerald-500 transition-all">
           <div>
-            <span class="inline-block px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 mb-2">
-              Parte 1 • Modo Terminal (CLI)
-            </span>
+            <div class="flex items-center justify-between mb-2">
+              <span class="px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                Fase 1 • Modo Terminal
+              </span>
+              <span class="text-xs text-slate-400 font-mono">Aula 1</span>
+            </div>
+            <h3 class="font-bold text-base text-slate-900 dark:text-white">
+              Etapa 1: Menu e Controle de Fluxo
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+              Ponto de entrada <code>if __name__ == '__main__'</code>, laço <code>while True</code>, saída suave com <code>break</code>, limpeza com <code>.strip()</code> e <em>stubs</em>.
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between gap-2">
+            <button onclick="selecionarGuia('guia-etapa1', true)" class="flex-1 inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors shadow-sm">
+              <i class="fa-solid fa-eye mr-1.5"></i> Ler Guia na Tela
+            </button>
+            <a href="Aulas/projeto_final/etapas/etapa1_menu_e_fluxo.py" download class="p-2 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors" title="Baixar script Python (.py)">
+              <i class="fa-brands fa-python text-amber-500"></i>
+            </a>
+            <a href="Aulas/projeto_final/guias/guia_aluno_etapa1.md" download class="p-2 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors" title="Baixar roteiro Markdown (.md)">
+              <i class="fa-solid fa-download"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 2: Etapa 2 CLI -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between hover:border-emerald-500 transition-all">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                Fase 2 • Modo Terminal
+              </span>
+              <span class="text-xs text-slate-400 font-mono">Aula 2</span>
+            </div>
             <h3 class="font-bold text-base text-slate-900 dark:text-white">
               Etapa 2: Entrada Segura e Previsão de Renda
             </h3>
             <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-              Validação de dados com <code>try/except</code>, retorno de funções (<code>return</code>) e armazenamento da receita prevista no menu.
+              Persistência na memória, barreiras defensivas com <code>try/except ValueError</code>, função guardiã positiva e retorno de valores com <code>return</code>.
             </p>
           </div>
           <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between gap-2">
-            <button onclick="carregarGuia('Aulas/projeto_final/guias/guia_aluno_etapa2.md', 'Etapa 2: Entrada Segura e Previsão de Renda')" class="flex-1 inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors">
+            <button onclick="selecionarGuia('guia-etapa2', true)" class="flex-1 inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors shadow-sm">
               <i class="fa-solid fa-eye mr-1.5"></i> Ler Guia na Tela
             </button>
-            <a href="Aulas/projeto_final/guias/guia_aluno_etapa2.md" download class="px-3 py-2 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors" title="Baixar arquivo Markdown">
+            <a href="Aulas/projeto_final/etapas/etapa2_validacao_e_renda.py" download class="p-2 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors" title="Baixar script Python (.py)">
+              <i class="fa-brands fa-python text-amber-500"></i>
+            </a>
+            <a href="Aulas/projeto_final/guias/guia_aluno_etapa2.md" download class="p-2 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors" title="Baixar roteiro Markdown (.md)">
               <i class="fa-solid fa-download"></i>
             </a>
           </div>
         </div>
 
-        <!-- Guia 2: Dashboard CustomTkinter (Menu e Receita) -->
-        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
+        <!-- Card 3: Etapas 3 a 5 CLI -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between hover:border-emerald-500 transition-all">
           <div>
-            <span class="inline-block px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-blue-100 dark:bg-blue-950/70 text-blue-800 dark:text-blue-300 mb-2">
-              Parte 2 • Interface Gráfica (GUI)
-            </span>
+            <div class="flex items-center justify-between mb-2">
+              <span class="px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300">
+                Fases 3 a 5 • CLI Completo
+              </span>
+              <span class="text-xs text-slate-400 font-mono">Aulas 3-5</span>
+            </div>
+            <h3 class="font-bold text-base text-slate-900 dark:text-white">
+              Etapas 3 a 5: Despesas, Tabela e Regra 50-30-20
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+              Dicionários (<code>dict</code>), listas (<code>list</code>), visualização com <code>enumerate()</code>, colunas alinhadas, acumuladores e diagnóstico 50-30-20.
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between gap-2">
+            <button onclick="selecionarGuia('guia-etapa35', true)" class="flex-1 inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors shadow-sm">
+              <i class="fa-solid fa-eye mr-1.5"></i> Ler Guia na Tela
+            </button>
+            <a href="Aulas/projeto_final/etapas/etapa5_projeto_completo.py" download class="p-2 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors" title="Baixar script Python (.py)">
+              <i class="fa-brands fa-python text-amber-500"></i>
+            </a>
+            <a href="Aulas/projeto_final/guias/guia_aluno_etapas3_4_5_cli.md" download class="p-2 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors" title="Baixar roteiro Markdown (.md)">
+              <i class="fa-solid fa-download"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 4: Dashboard GUI (Parte 1) -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between hover:border-blue-500 transition-all">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-blue-100 dark:bg-blue-950/70 text-blue-800 dark:text-blue-300">
+                Interface Gráfica • Parte 1
+              </span>
+              <span class="text-xs text-blue-500 font-mono font-semibold">CustomTkinter</span>
+            </div>
             <h3 class="font-bold text-base text-slate-900 dark:text-white">
               Criando o Dashboard com CustomTkinter
             </h3>
             <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-              Construção passo a passo da janela maximizada em 2 colunas (Menu Lateral + Painel de Resumo de Receita) e janela de entrada <code>CTkInputDialog</code>.
+              Janela maximizada responsiva, divisão rígida em 2 colunas com <code>pack_propagate(False)</code>, card de resumo e janela de entrada <code>CTkInputDialog</code>.
             </p>
           </div>
           <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between gap-2">
-            <button onclick="carregarGuia('Aulas/projeto_final/guias/guia_aluno_gui_customtkinter.md', 'Criando o Dashboard com CustomTkinter')" class="flex-1 inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors">
+            <button onclick="selecionarGuia('guia-gui1', true)" class="flex-1 inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-sm">
               <i class="fa-solid fa-eye mr-1.5"></i> Ler Guia na Tela
             </button>
-            <a href="Aulas/projeto_final/guias/guia_aluno_gui_customtkinter.md" download class="px-3 py-2 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors" title="Baixar arquivo Markdown">
+            <a href="Aulas/projeto_final/etapas/etapa2_gui_customtkinter.py" download class="p-2 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors" title="Baixar script Python (.py)">
+              <i class="fa-brands fa-python text-amber-500"></i>
+            </a>
+            <a href="Aulas/projeto_final/guias/guia_aluno_gui_customtkinter.md" download class="p-2 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors" title="Baixar roteiro Markdown (.md)">
               <i class="fa-solid fa-download"></i>
             </a>
           </div>
         </div>
 
-        <!-- Guia 3: Etapa 3 GUI (Despesas + JSON) -->
-        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
+        <!-- Card 5: Etapa 3 GUI (Parte 2) -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between hover:border-teal-500 transition-all">
           <div>
-            <span class="inline-block px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 mb-2">
-              Parte 3 • Despesas & Persistência
-            </span>
+            <div class="flex items-center justify-between mb-2">
+              <span class="px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-teal-100 dark:bg-teal-950/70 text-teal-800 dark:text-teal-300">
+                Interface Gráfica • Parte 2
+              </span>
+              <span class="text-xs text-teal-500 font-mono font-semibold">Persistência JSON</span>
+            </div>
             <h3 class="font-bold text-base text-slate-900 dark:text-white">
-              Etapa 3 (GUI): Cadastro de Despesas e JSON
+              Despesas Roláveis e Salvamento em JSON
             </h3>
             <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-              Lista rolável (<code>CTkScrollableFrame</code>), formulário pop-up (<code>CTkToplevel</code>), listas de dicionários e salvamento automático em arquivo <code>.json</code>.
+              Área com barra de rolagem (<code>CTkScrollableFrame</code>), subjanela pop-up de formulário (<code>CTkToplevel</code>) e salvamento automático em arquivo <code>.json</code>.
             </p>
           </div>
           <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between gap-2">
-            <button onclick="carregarGuia('Aulas/projeto_final/guias/guia_aluno_etapa3_gui.md', 'Etapa 3 (GUI): Cadastro de Despesas e JSON')" class="flex-1 inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors">
+            <button onclick="selecionarGuia('guia-gui2', true)" class="flex-1 inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-semibold bg-teal-600 hover:bg-teal-700 text-white transition-colors shadow-sm">
               <i class="fa-solid fa-eye mr-1.5"></i> Ler Guia na Tela
             </button>
-            <a href="Aulas/projeto_final/guias/guia_aluno_etapa3_gui.md" download class="px-3 py-2 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors" title="Baixar arquivo Markdown">
+            <a href="Aulas/projeto_final/etapas/etapa3_gui_customtkinter.py" download class="p-2 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors" title="Baixar script Python (.py)">
+              <i class="fa-brands fa-python text-amber-500"></i>
+            </a>
+            <a href="Aulas/projeto_final/guias/guia_aluno_etapa3_gui.md" download class="p-2 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors" title="Baixar roteiro Markdown (.md)">
               <i class="fa-solid fa-download"></i>
             </a>
           </div>
@@ -192,83 +318,1859 @@
       </div>
     </section>
 
-    <!-- Visualizador Integrado do Guia Selecionado -->
-    <section id="leitor-container" class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm overflow-hidden">
-      <div class="bg-slate-100 dark:bg-slate-800/90 px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
-        <div class="flex items-center space-x-2">
-          <i class="fa-solid fa-file-lines text-emerald-600 dark:text-emerald-400"></i>
-          <span id="leitor-titulo" class="font-bold text-sm sm:text-base">Selecione um guia acima para visualizar</span>
+    <!-- ========================================== -->
+    <!-- LEITOR INTEGRADO DE GUIAS (DO ALUNO)       -->
+    <!-- ========================================== -->
+    <section id="leitor-container" class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-md overflow-hidden">
+      
+      <!-- Cabeçalho do Leitor com Abas Rápidas -->
+      <div class="bg-slate-100/90 dark:bg-slate-850 p-4 sm:p-5 border-b border-slate-200 dark:border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shadow">
+            <i class="fa-solid fa-book-open"></i>
+          </div>
+          <div>
+            <h3 id="leitor-titulo" class="font-bold text-base sm:text-lg text-slate-900 dark:text-white leading-tight">
+              Roteiro Prático do Aluno
+            </h3>
+            <p id="leitor-subtitulo" class="text-xs text-slate-500 dark:text-slate-400">
+              Selecione uma etapa para visualizar o passo a passo completo
+            </p>
+          </div>
+        </div>
+
+        <!-- Abas de Navegação Direta entre os 5 Guias do Aluno -->
+        <div class="flex items-center space-x-1.5 overflow-x-auto pb-1 sm:pb-0 custom-scrollbar text-xs font-medium">
+          <button onclick="selecionarGuia('guia-etapa1', false)" id="tab-guia-etapa1" class="tab-btn px-3 py-1.5 rounded-lg whitespace-nowrap transition-all font-semibold flex items-center gap-1.5 bg-emerald-600 text-white shadow-sm">
+            <i class="fa-solid fa-terminal"></i>
+            <span>1. Menu CLI</span>
+          </button>
+          <button onclick="selecionarGuia('guia-etapa2', false)" id="tab-guia-etapa2" class="tab-btn px-3 py-1.5 rounded-lg whitespace-nowrap transition-all font-semibold flex items-center gap-1.5 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600">
+            <i class="fa-solid fa-shield-halved text-emerald-500"></i>
+            <span>2. Entrada Segura</span>
+          </button>
+          <button onclick="selecionarGuia('guia-etapa35', false)" id="tab-guia-etapa35" class="tab-btn px-3 py-1.5 rounded-lg whitespace-nowrap transition-all font-semibold flex items-center gap-1.5 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600">
+            <i class="fa-solid fa-chart-pie text-emerald-500"></i>
+            <span>3-5. 50-30-20</span>
+          </button>
+          <button onclick="selecionarGuia('guia-gui1', false)" id="tab-guia-gui1" class="tab-btn px-3 py-1.5 rounded-lg whitespace-nowrap transition-all font-semibold flex items-center gap-1.5 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600">
+            <i class="fa-solid fa-window-maximize text-blue-500"></i>
+            <span>GUI: Dashboard</span>
+          </button>
+          <button onclick="selecionarGuia('guia-gui2', false)" id="tab-guia-gui2" class="tab-btn px-3 py-1.5 rounded-lg whitespace-nowrap transition-all font-semibold flex items-center gap-1.5 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600">
+            <i class="fa-solid fa-database text-teal-500"></i>
+            <span>GUI: JSON</span>
+          </button>
         </div>
       </div>
-      <div id="leitor-conteudo" class="p-6 sm:p-8 markdown-body text-sm text-slate-700 dark:text-slate-200">
-        <p class="text-slate-400 text-center py-8">Clique em <strong>"Ler Guia na Tela"</strong> em um dos cartões acima para abrir o passo a passo completo aqui.</p>
+
+      <!-- Área de Conteúdo dos Guias Embutidos -->
+      <div class="p-6 sm:p-8 markdown-body text-slate-700 dark:text-slate-200">
+        
+        <!-- Conteúdo Guia 1: Etapa 1 CLI (Aluno) -->
+        <article id="guia-etapa1" class="guia-painel block">
+          <h1>Roteiro Prático do Aluno – Etapa 1: Menu Interativo e Controle de Fluxo</h1>
+<ul>
+<li><strong>Curso:</strong> Técnico em Redes de Computadores – IFCE Campus Tauá</li>
+<li><strong>Disciplina:</strong> Lógica de Programação com Python</li>
+<li><strong>Professor:</strong> Reginaldo Fernandes</li>
+<li><strong>Arquivo de Trabalho:</strong> <code>projetinho/main.py</code> (ou <code>etapas/etapa1_menu_e_fluxo.py</code>)</li>
+</ul>
+<hr />
+<h2>🎯 O que vamos construir hoje?</h2>
+<p>Hoje daremos o pontapé inicial no desenvolvimento do nosso <strong>Sistema de Planejamento Financeiro Pessoal</strong>!</p>
+<p>Nesta primeira etapa, vamos construir a espinha dorsal de um software em modo texto (terminal):</p>
+<ol>
+<li><strong>Estrutura Profissional:</strong> Organizar o código em funções modulares usando o ponto de entrada seguro <code>if __name__ == "__main__":</code>.</li>
+<li><strong>Ciclo de Vida Contínuo:</strong> Manter o programa vivo e aguardando comandos do usuário através do laço <code>while True</code>.</li>
+<li><strong>Menu Interativo:</strong> Exibir uma moldura visual limpa e reagir a cada opção digitada pelo teclado.</li>
+<li><strong>Encerramento Suave:</strong> Garantir que o sistema só feche quando o usuário solicitar explicitamente (opção <code>0 - Sair</code>).</li>
+<li><strong>Tolerância a Falhas:</strong> Avisar educadamente quando o usuário teclar uma opção inválida, sem fechar nem travar o programa.</li>
+</ol>
+<hr />
+<h2>🛠️ Passo a Passo de Construção</h2>
+<h3>Passo 1: O Ponto de Partida e a Função <code>main()</code></h3>
+<p>Abra o seu editor (VS Code) com um arquivo novo ou abra o seu arquivo <code>main.py</code>.</p>
+<p>Vamos começar ensinando ao Python onde o programa deve iniciar. Digite no seu arquivo:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">def main():
+    &quot;&quot;&quot;Função principal: controla o ciclo de vida da aplicação.&quot;&quot;&quot;
+    print(&quot;Sistema iniciado com sucesso!&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<div class="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-blue-900 dark:text-blue-200 p-4 rounded-r-xl my-4 text-xs sm:text-sm leading-relaxed shadow-sm">
+  <div class="font-bold flex items-center gap-2 mb-2">
+    <i class="fa-solid fa-info-circle text-blue-500"></i>
+    <span>Observação</span>
+  </div>
+  <p><strong>Por que usar <code>if __name__ == "__main__":</code>?</strong></p>
+<p>O Python cria automaticamente variáveis internas chamadas de <em>dunder</em> (com dois sublinhados). Quando você executa o arquivo diretamente no terminal, o interpretador atribui o texto <code>'__main__'</code> à variável <code>__name__</code>. Esse padrão garante que o script só execute a função <code>main()</code> quando você o rodar diretamente, evitando execuções acidentais caso ele seja importado por outro módulo no futuro.</p>
+</div>
+<hr />
+<h3>Passo 2: Mantendo o Software Vivo (<code>while True</code>)</h3>
+<p>Se você rodar o script agora (<code>python main.py</code>), ele exibe a mensagem e <strong>encerra imediatamente</strong>. Um sistema interativo precisa continuar rodando até que o usuário decida sair!</p>
+<p>Atualize a sua função <code>main()</code> adicionando o laço de repetição:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">def main():
+    &quot;&quot;&quot;Função principal: controla o ciclo de vida da aplicação.&quot;&quot;&quot;
+    print(&quot;Bem-vindo ao Sistema de Planejamento Financeiro!&quot;)
+
+    while True:
+        pass  # comando temporário para não quebrar a sintaxe enquanto preparamos a tela
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<div class="border-l-4 border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 p-4 rounded-r-xl my-4 text-xs sm:text-sm leading-relaxed shadow-sm">
+  <div class="font-bold flex items-center gap-2 mb-2">
+    <i class="fa-solid fa-lightbulb text-emerald-500"></i>
+    <span>Dica Prática</span>
+  </div>
+  <p><strong>O que é o <code>pass</code>?</strong></p>
+<p>Em Python, blocos de código (como <code>while</code>, <code>if</code> ou <code>def</code>) não podem ficar vazios. O comando <code>pass</code> é apenas uma instrução nula que serve de "marcador de posição" temporário.</p>
+</div>
+<hr />
+<h3>Passo 3: Criando a Função Especialista do Menu (<code>exibir_menu</code>)</h3>
+<p>Para não poluir a função <code>main()</code> com vários comandos de impressão, vamos separar a responsabilidade visual em uma função exclusiva.</p>
+<p>Acima da função <code>main()</code>, adicione a função <code>exibir_menu()</code>:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">def exibir_menu():
+    &quot;&quot;&quot;Exibe o menu textual com as opções disponíveis do sistema.&quot;&quot;&quot;
+    print(&quot;\n&quot; + &quot;=&quot; * 40)
+    print(&quot;      PLANEJAMENTO FINANCEIRO&quot;)
+    print(&quot;=&quot; * 40)
+    print(&quot;0 - Sair&quot;)
+    print(&quot;=&quot; * 40)
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<div class="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-blue-900 dark:text-blue-200 p-4 rounded-r-xl my-4 text-xs sm:text-sm leading-relaxed shadow-sm">
+  <div class="font-bold flex items-center gap-2 mb-2">
+    <i class="fa-solid fa-info-circle text-blue-500"></i>
+    <span>Observação</span>
+  </div>
+  <p><strong>Dica de Formatação:</strong></p>
+<p>A expressão <code>"=" * 40</code> multiplica o caractere por 40, desenhando uma linha divisória perfeita no console sem precisarmos digitar 40 sinais de igual manualmente. O <code>\n</code> pula uma linha no início para afastar o menu do comando anterior.</p>
+</div>
+<hr />
+<h3>Passo 4: Conectando o Menu e a Opção de Saída Segura</h3>
+<p>Agora voltamos para a função <code>main()</code> para chamar o menu, ler a escolha do usuário e implementar a alavanca de parada (<code>break</code>):</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">def main():
+    &quot;&quot;&quot;Função principal: controla o ciclo de vida da aplicação.&quot;&quot;&quot;
+    print(&quot;Bem-vindo ao Sistema de Planejamento Financeiro!&quot;)
+
+    while True:
+        exibir_menu()
+        opcao = input(&quot;Escolha uma opção: &quot;).strip()
+
+        if opcao == &quot;0&quot;:
+            print(&quot;\nEncerrando o programa. Até a próxima aula!&quot;)
+            break
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<div class="border-l-4 border-red-500 bg-red-50 dark:bg-red-950/40 text-red-900 dark:text-red-200 p-4 rounded-r-xl my-4 text-xs sm:text-sm leading-relaxed shadow-sm">
+  <div class="font-bold flex items-center gap-2 mb-2">
+    <i class="fa-solid fa-circle-exclamation text-red-500"></i>
+    <span>Importante</span>
+  </div>
+  <p><strong>O poder do <code>.strip()</code>:</strong></p>
+<p>A função <code>.strip()</code> corta espaços em branco acidentais antes e depois do texto digitado. Se você teclar <code>" 0 "</code> com espaço antes ou depois, o Python limpa para <code>"0"</code>, evitando que a opção seja rejeitada injustamente.</p>
+<p>O comando <code>break</code> interrompe imediatamente o laço <code>while True</code> e finaliza a execução.</p>
+</div>
+<hr />
+<h3>Passo 5: Protegendo Contra Opções Inválidas (<code>else</code>)</h3>
+<p>E se o usuário teclar <code>9</code>, <code>teste</code> ou apertar Enter vazio? O sistema deve alertar educadamente em vez de ficar mudo.</p>
+<p>Adicione o desvio <code>else:</code> logo após o <code>if opcao == "0":</code>:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">        if opcao == &quot;0&quot;:
+            print(&quot;\nEncerrando o programa. Até a próxima aula!&quot;)
+            break
+        else:
+            print(&quot;\nOpção inválida! Digite um número de 0 a 4.&quot;)
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<hr />
+<h3>Passo 6: Expandindo o Menu com Stubs (Desenvolvimento Incremental)</h3>
+<p>Agora que o esqueleto do programa está protegido, vamos adicionar as opções de negócio do nosso sistema.</p>
+<h4>6.1 Atualizar o Menu</h4>
+<p>No topo do arquivo, atualize a função <code>exibir_menu()</code>:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">def exibir_menu():
+    &quot;&quot;&quot;Exibe o menu textual com as opções disponíveis do sistema.&quot;&quot;&quot;
+    print(&quot;\n&quot; + &quot;=&quot; * 40)
+    print(&quot;      PLANEJAMENTO FINANCEIRO&quot;)
+    print(&quot;=&quot; * 40)
+    print(&quot;1 - Definir Previsão de Renda&quot;)
+    print(&quot;2 - Adicionar Despesa&quot;)
+    print(&quot;3 - Listar Todas as Despesas&quot;)
+    print(&quot;4 - Exibir Balanço e Relatório 50-30-20&quot;)
+    print(&quot;0 - Sair&quot;)
+    print(&quot;=&quot; * 40)
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<h4>6.2 Espelhar as Opções na <code>main()</code></h4>
+<p>Na função <code>main()</code>, espelhe cada opção usando ramos <code>elif</code> com mensagens de reserva (<em>stubs</em>):</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">def main():
+    &quot;&quot;&quot;Função principal: controla o ciclo de vida da aplicação.&quot;&quot;&quot;
+    print(&quot;Bem-vindo ao Sistema de Planejamento Financeiro!&quot;)
+
+    while True:
+        exibir_menu()
+        opcao = input(&quot;Escolha uma opção: &quot;).strip()
+
+        if opcao == &quot;1&quot;:
+            print(&quot;\n[EM CONSTRUÇÃO] Funcionalidade de Definir Renda.&quot;)
+        elif opcao == &quot;2&quot;:
+            print(&quot;\n[EM CONSTRUÇÃO] Funcionalidade de Adicionar Despesa.&quot;)
+        elif opcao == &quot;3&quot;:
+            print(&quot;\n[EM CONSTRUÇÃO] Funcionalidade de Listar Despesas.&quot;)
+        elif opcao == &quot;4&quot;:
+            print(&quot;\n[EM CONSTRUÇÃO] Funcionalidade de Relatório e Balanço.&quot;)
+        elif opcao == &quot;0&quot;:
+            print(&quot;\nEncerrando o programa. Até a próxima aula!&quot;)
+            break
+        else:
+            print(&quot;\nOpção inválida! Digite um número de 0 a 4.&quot;)
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<hr />
+<h2>🧪 Hora de Testar! (Checklist de Validação)</h2>
+<p>Execute o seu script no terminal (<code>python main.py</code>) e teste os comportamentos abaixo:</p>
+<ul>
+<li class="flex items-start gap-2 my-1.5"><i class="fa-regular fa-square text-slate-400 mt-1 flex-shrink-0"></i><span><strong>Teste 1 (Layout do Menu):</strong> O cabeçalho com linhas divisórias aparece limpo na tela.</span></li>
+<li class="flex items-start gap-2 my-1.5"><i class="fa-regular fa-square text-slate-400 mt-1 flex-shrink-0"></i><span><strong>Teste 2 (Tratamento de Entradas Inválidas):</strong> Digite <code>8</code>, tecle Enter vazio ou digite <code>abc</code>. O programa deve exibir <code>Opção inválida! Digite um número de 0 a 4.</code> e reapresentar o menu.</span></li>
+<li class="flex items-start gap-2 my-1.5"><i class="fa-regular fa-square text-slate-400 mt-1 flex-shrink-0"></i><span><strong>Teste 3 (Stubs das Opções 1 a 4):</strong> Ao escolher <code>1</code>, <code>2</code>, <code>3</code> ou <code>4</code>, o sistema confirma que a funcionalidade está em construção e não fecha.</span></li>
+<li class="flex items-start gap-2 my-1.5"><i class="fa-regular fa-square text-slate-400 mt-1 flex-shrink-0"></i><span><strong>Teste 4 (Encerramento Suave):</strong> Ao digitar <code>0</code>, o sistema despede-se e fecha limpo, retornando o controle ao terminal.</span></li>
+</ul>
+<hr />
+<h2>🆘 Problemas Comuns (Deu erro? Confira aqui!)</h2>
+<ol>
+<li><strong>O menu fica se repetindo infinitamente na tela sem esperar eu digitar:</strong></li>
+<li>Verifique se você não esqueceu a linha <code>opcao = input(...)</code> dentro do bloco <code>while True:</code>.</li>
+<li><strong>O programa fecha logo após a primeira opção que eu escolho:</strong></li>
+<li>Verifique se você não deixou um comando <code>break</code> solto dentro do <code>while</code> fora da opção <code>0</code>.</li>
+<li><strong>Digitei 0 mas o programa não encerra:</strong></li>
+<li>Certifique-se de que a comparação é com texto entre aspas (<code>if opcao == "0":</code>) e que dentro do bloco há o comando <code>break</code>.</li>
+</ol>
+<hr />
+<h2>🏁 Código Consolidado da Etapa 1</h2>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">&quot;&quot;&quot;
+Projeto Final: Planejamento Financeiro
+Etapa 1: Estrutura do Programa, Loop Principal e Menu de Opções
+&quot;&quot;&quot;
+
+def exibir_menu():
+    &quot;&quot;&quot;Exibe o menu textual com as opções disponíveis do sistema.&quot;&quot;&quot;
+    print(&quot;\n&quot; + &quot;=&quot; * 40)
+    print(&quot;      PLANEJAMENTO FINANCEIRO&quot;)
+    print(&quot;=&quot; * 40)
+    print(&quot;1 - Definir Previsão de Renda&quot;)
+    print(&quot;2 - Adicionar Despesa&quot;)
+    print(&quot;3 - Listar Todas as Despesas&quot;)
+    print(&quot;4 - Exibir Balanço e Relatório 50-30-20&quot;)
+    print(&quot;0 - Sair&quot;)
+    print(&quot;=&quot; * 40)
+
+
+def main():
+    &quot;&quot;&quot;Função principal: controla o ciclo de vida da aplicação.&quot;&quot;&quot;
+    print(&quot;Bem-vindo ao Sistema de Planejamento Financeiro!&quot;)
+
+    while True:
+        exibir_menu()
+        opcao = input(&quot;Escolha uma opção: &quot;).strip()
+
+        if opcao == &quot;1&quot;:
+            print(&quot;\n[EM CONSTRUÇÃO] Funcionalidade de Definir Renda.&quot;)
+        elif opcao == &quot;2&quot;:
+            print(&quot;\n[EM CONSTRUÇÃO] Funcionalidade de Adicionar Despesa.&quot;)
+        elif opcao == &quot;3&quot;:
+            print(&quot;\n[EM CONSTRUÇÃO] Funcionalidade de Listar Despesas.&quot;)
+        elif opcao == &quot;4&quot;:
+            print(&quot;\n[EM CONSTRUÇÃO] Funcionalidade de Relatório e Balanço.&quot;)
+        elif opcao == &quot;0&quot;:
+            print(&quot;\nEncerrando o programa. Até a próxima aula!&quot;)
+            break
+        else:
+            print(&quot;\nOpção inválida! Digite um número de 0 a 4.&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<hr />
+<h2>🚀 Desafios Extras (Para quem terminar antes!)</h2>
+<ul>
+<li><strong>Desafio 1 (Personalização):</strong> Solicite o nome do usuário antes do <code>while True</code> e exiba uma saudação personalizada acima do menu: <code>print(f"Olá, {nome}! Bem-vindo ao seu Planejador Financeiro.")</code>.</li>
+<li><strong>Desafio 2 (Opção Limpar Tela):</strong> Descubra como usar o comando <code>os.system("clear")</code> (Linux) ou <code>os.system("cls")</code> (Windows) para limpar a tela do terminal a cada nova exibição do menu!</li>
+</ul>
+        </article>
+
+        <!-- Conteúdo Guia 2: Etapa 2 CLI (Aluno) -->
+        <article id="guia-etapa2" class="guia-painel hidden">
+          <h1>Roteiro Prático do Aluno – Etapa 2: Entrada Segura e Previsão de Renda</h1>
+<ul>
+<li><strong>Curso:</strong> Técnico em Redes de Computadores – IFCE Campus Tauá</li>
+<li><strong>Disciplina:</strong> Lógica de Programação com Python</li>
+<li><strong>Professor:</strong> Reginaldo Fernandes</li>
+<li><strong>Arquivo de Trabalho:</strong> <code>projetinho/main.py</code></li>
+</ul>
+<hr />
+<h2>🎯 O que vamos construir hoje?</h2>
+<p>Na <strong>Etapa 1</strong>, criamos o menu interativo e o loop principal do nosso <strong>Sistema de Planejamento Financeiro</strong>. Porém, ao escolher a opção <code>1</code>, o sistema apenas exibia uma mensagem dizendo que a funcionalidade estava em construção.</p>
+<p>Hoje vamos dar vida à <strong>Opção 1 (Cadastrar Receita)</strong>! Ao final desta aula, seu programa será capaz de:</p>
+<ol>
+<li>Ler e armazenar a receita mensal do usuário na memória do programa.</li>
+<li>Bloquear valores negativos (afinal, não existe salário negativo!).</li>
+<li>Proteger o sistema para <strong>não travar com erro vermelho</strong> caso alguém digite letras ou símbolos por engano.</li>
+</ol>
+<hr />
+<h2>🔍 Antes de Começar: Revise seu Código da Etapa 1</h2>
+<p>Abra o seu arquivo <code>main.py</code>. Ele deve estar parecido com este:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">def exibir_menu():
+    &quot;&quot;&quot;Exibe o menu principal do sistema.&quot;&quot;&quot;
+    print(&quot;\n&quot; + &quot;=&quot; * 40)
+    print(&quot;        Planejamento Financeiro&quot;)
+    print(&quot;=&quot; * 40)
+    print(&quot;1 - Cadastrar Receita&quot;)
+    print(&quot;2 - Adicionar Despesa&quot;)
+    print(&quot;3 - Listar todas as despesas&quot;)
+    print(&quot;4 - Exibir Balanço 50-30-20&quot;)
+    print(&quot;0 - Sair&quot;)
+    print(&quot;=&quot; * 40)
+
+
+def main():
+    print(&quot;Sistema iniciado com sucesso.&quot;)
+
+    while True:
+        exibir_menu()
+        opcao = input(&quot;Escolha uma opção: &quot;).strip()
+        if opcao == &quot;4&quot;:
+            print(&quot;\n Funcionalidade de Exibir Balanço 50-30-20&quot;)
+        elif opcao == &quot;3&quot;:
+            print(&quot;\n Funcionalidade de Listar Despesas&quot;)
+        elif opcao == &quot;2&quot;:
+            print(&quot;\n Funcionalidade de Adicionar Despesa&quot;)
+        elif opcao == &quot;1&quot;:
+            print(&quot;\n Funcionalidade de Definir receita&quot;)
+        elif opcao == &quot;0&quot;:
+            print(&quot;\nSaindo do sistema...&quot;)
+            break
+        else:
+            print(&quot;\nOpção inválida! Digite um número de 0 a 4.&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<div class="border-l-4 border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 p-4 rounded-r-xl my-4 text-xs sm:text-sm leading-relaxed shadow-sm">
+  <div class="font-bold flex items-center gap-2 mb-2">
+    <i class="fa-solid fa-lightbulb text-emerald-500"></i>
+    <span>Dica Prática</span>
+  </div>
+  <p><strong>Dica Importante:</strong> Veja se a linha do <code>input</code> possui o <code>.strip()</code> no final: <code>opcao = input("Escolha uma opção: ").strip()</code>. Ele remove espaços vazios acidentais caso o usuário digite <code>" 1 "</code> com espaço!</p>
+</div>
+<hr />
+<h2>🛠️ Passo a Passo de Construção</h2>
+<h3>Passo 1: Criar a variável para guardar a Receita na <code>main()</code></h3>
+<p>Precisamos de uma variável para guardar o valor da receita durante toda a execução do programa.</p>
+<ol>
+<li>Localize a função <code>def main():</code>.</li>
+<li><strong>Antes</strong> do <code>while True:</code>, crie a variável <code>renda_prevista = 0.0</code>:</li>
+</ol>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">def main():
+    print(&quot;Sistema iniciado com sucesso.&quot;)
+    renda_prevista = 0.0
+
+    while True:
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<div class="border-l-4 border-amber-500 bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 p-4 rounded-r-xl my-4 text-xs sm:text-sm leading-relaxed shadow-sm">
+  <div class="font-bold flex items-center gap-2 mb-2">
+    <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
+    <span>Atenção / Cuidado</span>
+  </div>
+  <p><strong>Cuidado com a armadilha!</strong> A linha <code>renda_prevista = 0.0</code> <strong>DEVE</strong> ficar fora (acima) do <code>while True:</code>. Se você colocá-la dentro do <code>while</code>, o seu programa vai zerar a receita toda vez que o menu aparecer na tela!</p>
+</div>
+<hr />
+<h3>Passo 2: Criar a Função Guardiã (<code>obter_numero_positivo</code>)</h3>
+<p>Se usarmos apenas <code>float(input())</code> e o usuário digitar uma letra (como <code>"abc"</code>), o Python fecha o programa com um erro chamado <code>ValueError</code>. Além disso, o usuário poderia digitar um número negativo como <code>-500</code>.</p>
+<p>Vamos criar uma função especialista que funciona como uma <strong>catraca de segurança</strong>: ela só deixa passar números válidos e positivos!</p>
+<p>Acima da função <code>main()</code>, adicione a função abaixo:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">def obter_numero_positivo(mensagem):
+    &quot;&quot;&quot;
+    Solicita um número ao usuário e garante que seja
+    um valor numérico válido (float) e não negativo.
+    &quot;&quot;&quot;
+    while True:
+        try:
+            valor = float(input(mensagem))
+            if valor &gt;= 0:
+                return valor
+            print(&quot;Erro: O valor não pode ser negativo.&quot;)
+        except ValueError:
+            print(&quot;Erro: Digite um número válido (ex: 1500.50).&quot;)
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<h4>🧠 Entendendo como essa função trabalha</h4>
+<ul>
+<li><strong><code>try:</code> (Tente):</strong> O Python tenta converter o texto digitado para número decimal (<code>float</code>).</li>
+<li><strong><code>if valor &gt;= 0: return valor</code>:</strong> Se deu certo e o número não é negativo, o comando <code>return</code> devolve o número imediatamente e encerra a função!</li>
+<li><strong><code>except ValueError:</code>:</strong> Se o usuário digitou letras ou símbolos inválidos, em vez de o programa quebrar, ele pula para cá, exibe a mensagem de erro amigável e o <code>while True</code> repete a pergunta.</li>
+</ul>
+<hr />
+<h3>Passo 3: Criar a Função <code>definir_renda()</code></h3>
+<p>Agora vamos criar a função responsável pela <strong>Opção 1</strong> do nosso menu. Ela vai usar a nossa função guardiã do Passo 2!</p>
+<p>Logo abaixo de <code>obter_numero_positivo</code>, digite:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">def definir_renda():
+    &quot;&quot;&quot;Solicita e confirma a previsão de renda mensal.&quot;&quot;&quot;
+    print(&quot;\n--- Previsão de Renda Mensal ---&quot;)
+    renda = obter_numero_positivo(&quot;Informe a receita líquida esperada (R$): &quot;)
+    print(f&quot;Renda prevista atualizada para: R$ {renda:.2f}&quot;)
+    return renda
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<div class="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-blue-900 dark:text-blue-200 p-4 rounded-r-xl my-4 text-xs sm:text-sm leading-relaxed shadow-sm">
+  <div class="font-bold flex items-center gap-2 mb-2">
+    <i class="fa-solid fa-info-circle text-blue-500"></i>
+    <span>Observação</span>
+  </div>
+  <p><strong>O que significa <code>:.2f</code>?</strong>
+Dentro de uma <em>f-string</em> (<code>f"..."</code>), colocar <code>{renda:.2f}</code> formata o número sempre com <strong>2 casas decimais</strong> (centavos). Exemplo: se você digitar <code>2000</code>, ele mostrará <code>R$ 2000.00</code>.</p>
+</div>
+<hr />
+<h3>Passo 4: Conectar a Função na <code>main()</code></h3>
+<p>Agora precisamos ligar os fios! Na função <code>main()</code>, localize o <code>elif opcao == "1":</code> e substitua o <code>print</code> antigo pela chamada da nossa nova função.</p>
+<p>Aproveite também para atualizar o <code>print</code> da <strong>opção <code>"4"</code></strong> para conseguirmos ver se a receita ficou realmente salva na memória:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">        if opcao == &quot;4&quot;:
+            print(f&quot;\n[EM CONSTRUÇÃO] Receita atual cadastrada: R$ {renda_prevista:.2f}&quot;)
+        elif opcao == &quot;3&quot;:
+            print(&quot;\n Funcionalidade de Listar Despesas&quot;)
+        elif opcao == &quot;2&quot;:
+            print(&quot;\n Funcionalidade de Adicionar Despesa&quot;)
+        elif opcao == &quot;1&quot;:
+            renda_prevista = definir_renda()
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<hr />
+<h2>🧪 Hora de Testar! (Checklist de Validação)</h2>
+<p>Execute o seu programa no terminal (<code>python main.py</code>) e faça os testes abaixo marcando cada etapa:</p>
+<ul>
+<li class="flex items-start gap-2 my-1.5"><i class="fa-regular fa-square text-slate-400 mt-1 flex-shrink-0"></i><span><strong>Teste 1 (Valor Inicial):</strong> Assim que abrir o programa, escolha a opção <code>4</code>. Ele deve mostrar <code>Receita atual cadastrada: R$ 0.00</code>.</span></li>
+<li class="flex items-start gap-2 my-1.5"><i class="fa-regular fa-square text-slate-400 mt-1 flex-shrink-0"></i><span><strong>Teste 2 (Proteção contra Letras):</strong> Escolha a opção <code>1</code> e digite <code>mil reais</code> ou <code>abc</code>. O programa <strong>não pode fechar com erro</strong>; ele deve exibir <code>Erro: Digite um número válido (ex: 1500.50).</code> e pedir o valor novamente.</span></li>
+<li class="flex items-start gap-2 my-1.5"><i class="fa-regular fa-square text-slate-400 mt-1 flex-shrink-0"></i><span><strong>Teste 3 (Proteção contra Negativos):</strong> Ainda na opção <code>1</code>, digite <code>-300</code>. Ele deve exibir <code>Erro: O valor não pode ser negativo.</code> e pedir o valor novamente.</span></li>
+<li class="flex items-start gap-2 my-1.5"><i class="fa-regular fa-square text-slate-400 mt-1 flex-shrink-0"></i><span><strong>Teste 4 (Cadastro Correto):</strong> Digite <code>2850.5</code> e aperte Enter. Ele deve confirmar <code>Renda prevista atualizada para: R$ 2850.50</code> e voltar ao menu.</span></li>
+<li class="flex items-start gap-2 my-1.5"><i class="fa-regular fa-square text-slate-400 mt-1 flex-shrink-0"></i><span><strong>Teste 5 (Memória Persistente):</strong> No menu principal, escolha a opção <code>4</code> novamente. Agora ele deve mostrar <code>Receita atual cadastrada: R$ 2850.50</code>!</span></li>
+</ul>
+<hr />
+<h2>🆘 Problemas Comuns (Deu erro? Confira aqui!)</h2>
+<ol>
+<li><strong>Apareceu <code>R$ None</code> ou erro ao escolher a opção 4:</strong></li>
+<li>Verifique se você não esqueceu de escrever <code>return renda</code> na última linha de <code>definir_renda()</code> ou <code>return valor</code> dentro de <code>obter_numero_positivo()</code>.</li>
+<li><strong>Cadastrei a renda na opção 1, mas na opção 4 continua mostrando <code>R$ 0.00</code>:</strong></li>
+<li>Verifique se na opção <code>"1"</code> da <code>main()</code> você escreveu <code>renda_prevista = definir_renda()</code> (com o sinal de <code>=</code>).</li>
+<li>Verifique se <code>renda_prevista = 0.0</code> está realmente <strong>acima</strong> do <code>while True:</code>.</li>
+</ol>
+<hr />
+<h2>🚀 Desafios Extras (Para quem terminar antes!)</h2>
+<p>Terminou todos os testes acima e funcionou perfeitamente? Tente implementar estas melhorias no seu código:</p>
+<h3>🌟 Desafio 1: Aceitar Vírgula nos Centavos</h3>
+<p>No Brasil, costumamos digitar <code>1500,50</code> com vírgula em vez de ponto (<code>1500.50</code>). Mas o <code>float()</code> do Python só entende ponto!</p>
+<ul>
+<li><strong>Missão:</strong> Dentro de <code>obter_numero_positivo</code>, use o método <code>.replace(",", ".")</code> logo após o <code>input(mensagem)</code> para trocar automaticamente qualquer vírgula por ponto antes de converter para <code>float</code>!</li>
+</ul>
+<h3>🌟 Desafio 2: Mostrar a Receita no Cabeçalho do Menu</h3>
+<p>Que tal exibir o valor da receita atual diretamente no topo do menu principal toda vez que ele aparece na tela?</p>
+<ul>
+<li><strong>Missão:</strong> Modifique a função <code>exibir_menu(renda_atual)</code> para receber a variável <code>renda_prevista</code> como parâmetro e mostrar uma linha <code>[Receita Atual: R$ 0.00]</code> no cabeçalho do menu!</li>
+</ul>
+        </article>
+
+        <!-- Conteúdo Guia 3: Etapas 3 a 5 CLI (Aluno) -->
+        <article id="guia-etapa35" class="guia-painel hidden">
+          <h1>Roteiro Prático do Aluno – Etapas 3, 4 e 5: Despesas, Tabela e Relatório 50-30-20</h1>
+<ul>
+<li><strong>Curso:</strong> Técnico em Redes de Computadores – IFCE Campus Tauá</li>
+<li><strong>Disciplina:</strong> Lógica de Programação com Python</li>
+<li><strong>Professor:</strong> Reginaldo Fernandes</li>
+<li><strong>Arquivo de Trabalho:</strong> <code>etapas/etapa5_projeto_completo.py</code> (ou <code>projetinho/main.py</code>)</li>
+</ul>
+<hr />
+<h2>🎯 O que vamos construir nestas etapas?</h2>
+<p>Nas etapas anteriores, criamos o menu interativo e a funcionalidade de cadastrar a <strong>Receita Prevista</strong> com validação de dados.</p>
+<p>Agora, vamos implementar o restante do sistema em modo terminal:</p>
+<ol>
+<li><strong>Etapa 3 (Aula 3):</strong> Modelar cada despesa como um <strong>Dicionário (<code>dict</code>)</strong> e adicioná-la a uma <strong>Lista Dinâmica (<code>list</code>)</strong> com <code>.append()</code>.</li>
+<li><strong>Etapa 4 (Aula 4):</strong> Exibir todas as despesas em formato de <strong>Tabela Perfeitamente Alinhada</strong> no console usando o laço <code>for</code>, <code>enumerate()</code> e <em>f-strings</em> formatadas.</li>
+<li><strong>Etapa 5 (Aula 5):</strong> Construir a inteligência financeira do software: somar os gastos por categoria com <strong>variáveis acumuladoras</strong>, calcular o saldo restante e emitir um <strong>diagnóstico de conformidade com a Regra 50-30-20</strong>.</li>
+</ol>
+<hr />
+<h2>🧱 ETAPA 3: Cadastro de Despesas (Dicionários e Listas)</h2>
+<h3>Passo 3.1: Criar a Lista na <code>main()</code></h3>
+<p>Na função <code>main()</code>, logo abaixo de <code>renda_prevista = 0.0</code> (antes do <code>while True:</code>), crie a lista vazia:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">def main():
+    renda_prevista = 0.0
+    despesas = []  # Lista que guardará os dicionários de cada gasto
+
+    while True:
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<hr />
+<h3>Passo 3.2: Criar a Função <code>adicionar_despesa(despesas)</code></h3>
+<p>Acima da <code>main()</code>, implemente a função que coleta e valida a descrição, o valor e a categoria do gasto:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">def adicionar_despesa(despesas):
+    &quot;&quot;&quot;
+    Cadastra uma despesa na forma de dicionário e adiciona à lista despesas.
+    &quot;&quot;&quot;
+    print(&quot;\n--- Nova Despesa ---&quot;)
+
+    # 1. Validação da descrição
+    descricao = input(&quot;Descrição da despesa: &quot;).strip()
+    while not descricao:
+        print(&quot;Erro: A descrição não pode ficar vazia.&quot;)
+        descricao = input(&quot;Descrição da despesa: &quot;).strip()
+
+    # 2. Reutilização da função de validação de valor
+    valor = obter_numero_positivo(&quot;Valor da despesa (R$): &quot;)
+
+    # 3. Submenu de seleção da categoria
+    print(&quot;\nSelecione a Categoria:&quot;)
+    print(&quot;1 - Essencial (Moradia, Contas, Alimentação, Saúde)&quot;)
+    print(&quot;2 - Estilo de Vida (Lazer, Restaurantes, Assinaturas)&quot;)
+    print(&quot;3 - Reserva / Metas (Poupança, Quitação de Dívidas)&quot;)
+
+    categoria_nome = &quot;&quot;
+    while True:
+        opcao = input(&quot;Opção (1-3): &quot;).strip()
+        if opcao == &quot;1&quot;:
+            categoria_nome = &quot;Essencial&quot;
+            break
+        elif opcao == &quot;2&quot;:
+            categoria_nome = &quot;Estilo de Vida&quot;
+            break
+        elif opcao == &quot;3&quot;:
+            categoria_nome = &quot;Reserva&quot;
+            break
+        else:
+            print(&quot;Opção inválida! Escolha 1, 2 ou 3.&quot;)
+
+    # 4. Criação do registro estruturado (Dicionário)
+    item = {
+        &quot;descricao&quot;: descricao,
+        &quot;valor&quot;: valor,
+        &quot;categoria&quot;: categoria_nome
+    }
+
+    # 5. Armazenamento na lista principal
+    despesas.append(item)
+    print(f&quot;Despesa '{descricao}' registrada com sucesso! (Total cadastradas: {len(despesas)})&quot;)
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<hr />
+<h3>Passo 3.3: Ligar a Opção 2 na <code>main()</code></h3>
+<p>Na <code>main()</code>, substitua o print provisório pela chamada da função:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">        elif opcao == &quot;2&quot;:
+            adicionar_despesa(despesas)
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<hr />
+<h2>📋 ETAPA 4: Listagem Formatada em Tabela</h2>
+<h3>Passo 4.1: Criar a Função <code>listar_despesas(despesas)</code></h3>
+<p>Acima da <code>main()</code>, implemente a função de exibição tabular com cláusula de guarda e alinhamento de colunas:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">def listar_despesas(despesas):
+    &quot;&quot;&quot;
+    Exibe todas as despesas cadastradas em uma tabela organizada no console.
+    &quot;&quot;&quot;
+    print(&quot;\n--- Lista de Despesas Registradas ---&quot;)
+
+    # 1. Cláusula de guarda: verifica se a lista está vazia
+    if not despesas:
+        print(&quot;Nenhuma despesa cadastrada até o momento.&quot;)
+        return
+
+    # 2. Cabeçalho com larguras fixas
+    print(f&quot;{'#':&lt;4} {'Descrição':&lt;25} {'Categoria':&lt;15} {'Valor (R$)'}&quot;)
+    print(&quot;-&quot; * 55)
+
+    # 3. Iteração com enumerate para exibir índice e dados
+    for indice, item in enumerate(despesas, start=1):
+        print(f&quot;{indice:&lt;4} {item['descricao']:&lt;25} {item['categoria']:&lt;15} R$ {item['valor']:&gt;8.2f}&quot;)
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<div class="border-l-4 border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 p-4 rounded-r-xl my-4 text-xs sm:text-sm leading-relaxed shadow-sm">
+  <div class="font-bold flex items-center gap-2 mb-2">
+    <i class="fa-solid fa-lightbulb text-emerald-500"></i>
+    <span>Dica Prática</span>
+  </div>
+  <p><strong>Entendendo as f-strings alinhadas:</strong></p>
+<ul>
+<li><code>indice:&lt;4</code>: Alinha o número à esquerda em 4 caracteres.</li>
+<li><code>item['descricao']:&lt;25</code>: Alinha o texto à esquerda reservando 25 espaços.</li>
+<li><code>item['categoria']:&lt;15</code>: Alinha a categoria em 15 espaços.</li>
+<li><code>item['valor']:&gt;8.2f</code>: Alinha o número à direita com 2 casas decimais.</li>
+</ul>
+</div>
+<hr />
+<h3>Passo 4.2: Ligar a Opção 3 na <code>main()</code></h3>
+<p>Na <code>main()</code>, conecte a opção <code>"3"</code>:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">        elif opcao == &quot;3&quot;:
+            listar_despesas(despesas)
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<hr />
+<h2>🧠 ETAPA 5: Relatório Analítico e Regra 50-30-20</h2>
+<h3>Passo 5.1: Criar a Função <code>exibir_relatorio(renda_prevista, despesas)</code></h3>
+<p>Acima da <code>main()</code>, construa a lógica de agregação por categoria e o diagnóstico:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">def exibir_relatorio(renda_prevista, despesas):
+    &quot;&quot;&quot;
+    Calcula os totais por categoria, o saldo líquido e a conformidade com a regra 50-30-20.
+    &quot;&quot;&quot;
+    print(&quot;\n--- Balanço e Análise Orçamentária ---&quot;)
+    if renda_prevista == 0:
+        print(&quot;Aviso: Defina a previsão de renda na opção 1 para um diagnóstico completo.&quot;)
+
+    # 1. Acumuladores condicionais por categoria
+    total_essencial = 0.0
+    total_estilo_vida = 0.0
+    total_reserva = 0.0
+
+    for item in despesas:
+        if item[&quot;categoria&quot;] == &quot;Essencial&quot;:
+            total_essencial += item[&quot;valor&quot;]
+        elif item[&quot;categoria&quot;] == &quot;Estilo de Vida&quot;:
+            total_estilo_vida += item[&quot;valor&quot;]
+        elif item[&quot;categoria&quot;] == &quot;Reserva&quot;:
+            total_reserva += item[&quot;valor&quot;]
+
+    # 2. Cálculos gerais
+    total_gasto = total_essencial + total_estilo_vida + total_reserva
+    saldo_restante = renda_prevista - total_gasto
+
+    # 3. Resumo financeiro formatado
+    print(f&quot;Renda Prevista : R$ {renda_prevista:&gt;10.2f}&quot;)
+    print(f&quot;Total Despesas : R$ {total_gasto:&gt;10.2f}&quot;)
+    print(f&quot;Saldo Restante : R$ {saldo_restante:&gt;10.2f}&quot;)
+
+    # 4. Diagnóstico de saúde financeira
+    if saldo_restante &lt; 0:
+        print(&quot;ALERTA: O orçamento está deficitário! Os gastos superam as entradas.&quot;)
+    elif saldo_restante == 0:
+        print(&quot;Atenção: Saldo zerado. Não sobrou margem de segurança.&quot;)
+    else:
+        print(&quot;Situação: Orçamento com superávit.&quot;)
+
+    # 5. Avaliação percentual da regra 50-30-20 (com defesa contra divisão por zero)
+    if renda_prevista &gt; 0:
+        pct_essencial = (total_essencial / renda_prevista) * 100
+        pct_estilo = (total_estilo_vida / renda_prevista) * 100
+        pct_reserva = (total_reserva / renda_prevista) * 100
+
+        print(&quot;\nDiagnóstico de Aderência (Regra 50-30-20):&quot;)
+        print(f&quot;- Essenciais    : {pct_essencial:5.1f}% (Meta recomendada: até 50%)&quot;)
+        print(f&quot;- Estilo de Vida: {pct_estilo:5.1f}% (Meta recomendada: até 30%)&quot;)
+        print(f&quot;- Reserva       : {pct_reserva:5.1f}% (Meta recomendada: no mínimo 20%)&quot;)
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<hr />
+<h3>Passo 5.2: Ligar a Opção 4 na <code>main()</code></h3>
+<p>Na <code>main()</code>, conecte a opção <code>"4"</code>:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">        elif opcao == &quot;4&quot;:
+            exibir_relatorio(renda_prevista, despesas)
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<hr />
+<h2>🏁 Código Completo Consolidado (Versão Final da Etapa 5)</h2>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">&quot;&quot;&quot;
+Projeto Final: Planejamento Financeiro
+Etapa 5: Inteligência de Negócio e Relatório Analítico (Regra 50-30-20)
+&quot;&quot;&quot;
+
+def exibir_menu():
+    &quot;&quot;&quot;Exibe o menu principal de opções para o usuário.&quot;&quot;&quot;
+    print(&quot;\n&quot; + &quot;=&quot; * 40)
+    print(&quot;      PLANEJAMENTO FINANCEIRO&quot;)
+    print(&quot;=&quot; * 40)
+    print(&quot;1 - Definir Previsão de Renda&quot;)
+    print(&quot;2 - Adicionar Despesa&quot;)
+    print(&quot;3 - Listar Todas as Despesas&quot;)
+    print(&quot;4 - Exibir Balanço e Relatório 50-30-20&quot;)
+    print(&quot;0 - Sair&quot;)
+    print(&quot;=&quot; * 40)
+
+
+def obter_numero_positivo(mensagem):
+    &quot;&quot;&quot;Garante que o valor inserido seja um float válido e positivo.&quot;&quot;&quot;
+    while True:
+        try:
+            valor = float(input(mensagem))
+            if valor &gt;= 0:
+                return valor
+            print(&quot;Erro: O valor não pode ser negativo.&quot;)
+        except ValueError:
+            print(&quot;Erro: Digite um número válido (ex: 1500.50).&quot;)
+
+
+def definir_renda():
+    &quot;&quot;&quot;Solicita e confirma a previsão de renda mensal.&quot;&quot;&quot;
+    print(&quot;\n--- Previsão de Renda Mensal ---&quot;)
+    renda = obter_numero_positivo(&quot;Informe a receita líquida esperada (R$): &quot;)
+    print(f&quot;Renda prevista atualizada para: R$ {renda:.2f}&quot;)
+    return renda
+
+
+def adicionar_despesa(despesas):
+    &quot;&quot;&quot;Cadastra uma despesa na lista.&quot;&quot;&quot;
+    print(&quot;\n--- Nova Despesa ---&quot;)
+    descricao = input(&quot;Descrição da despesa: &quot;).strip()
+    while not descricao:
+        print(&quot;Erro: A descrição não pode ficar vazia.&quot;)
+        descricao = input(&quot;Descrição da despesa: &quot;).strip()
+
+    valor = obter_numero_positivo(&quot;Valor da despesa (R$): &quot;)
+
+    print(&quot;\nSelecione a Categoria:&quot;)
+    print(&quot;1 - Essencial (Moradia, Contas, Alimentação, Saúde)&quot;)
+    print(&quot;2 - Estilo de Vida (Lazer, Restaurantes, Assinaturas)&quot;)
+    print(&quot;3 - Reserva / Metas (Poupança, Quitação de Dívidas)&quot;)
+
+    categoria_nome = &quot;&quot;
+    while True:
+        opcao = input(&quot;Opção (1-3): &quot;).strip()
+        if opcao == &quot;1&quot;:
+            categoria_nome = &quot;Essencial&quot;
+            break
+        elif opcao == &quot;2&quot;:
+            categoria_nome = &quot;Estilo de Vida&quot;
+            break
+        elif opcao == &quot;3&quot;:
+            categoria_nome = &quot;Reserva&quot;
+            break
+        else:
+            print(&quot;Opção inválida! Escolha 1, 2 ou 3.&quot;)
+
+    item = {
+        &quot;descricao&quot;: descricao,
+        &quot;valor&quot;: valor,
+        &quot;categoria&quot;: categoria_nome
+    }
+    despesas.append(item)
+    print(f&quot;Despesa '{descricao}' registrada com sucesso!&quot;)
+
+
+def listar_despesas(despesas):
+    &quot;&quot;&quot;Exibe todas as despesas cadastradas em uma tabela organizada.&quot;&quot;&quot;
+    print(&quot;\n--- Lista de Despesas Registradas ---&quot;)
+    if not despesas:
+        print(&quot;Nenhuma despesa cadastrada até o momento.&quot;)
+        return
+
+    print(f&quot;{'#':&lt;4} {'Descrição':&lt;25} {'Categoria':&lt;15} {'Valor (R$)'}&quot;)
+    print(&quot;-&quot; * 55)
+    for indice, item in enumerate(despesas, start=1):
+        print(f&quot;{indice:&lt;4} {item['descricao']:&lt;25} {item['categoria']:&lt;15} R$ {item['valor']:&gt;8.2f}&quot;)
+
+
+def exibir_relatorio(renda_prevista, despesas):
+    &quot;&quot;&quot;Calcula os totais e exibe o relatório 50-30-20.&quot;&quot;&quot;
+    print(&quot;\n--- Balanço e Análise Orçamentária ---&quot;)
+    if renda_prevista == 0:
+        print(&quot;Aviso: Defina a previsão de renda na opção 1 para um diagnóstico completo.&quot;)
+
+    total_essencial = 0.0
+    total_estilo_vida = 0.0
+    total_reserva = 0.0
+
+    for item in despesas:
+        if item[&quot;categoria&quot;] == &quot;Essencial&quot;:
+            total_essencial += item[&quot;valor&quot;]
+        elif item[&quot;categoria&quot;] == &quot;Estilo de Vida&quot;:
+            total_estilo_vida += item[&quot;valor&quot;]
+        elif item[&quot;categoria&quot;] == &quot;Reserva&quot;:
+            total_reserva += item[&quot;valor&quot;]
+
+    total_gasto = total_essencial + total_estilo_vida + total_reserva
+    saldo_restante = renda_prevista - total_gasto
+
+    print(f&quot;Renda Prevista : R$ {renda_prevista:&gt;10.2f}&quot;)
+    print(f&quot;Total Despesas : R$ {total_gasto:&gt;10.2f}&quot;)
+    print(f&quot;Saldo Restante : R$ {saldo_restante:&gt;10.2f}&quot;)
+
+    if saldo_restante &lt; 0:
+        print(&quot;ALERTA: O orçamento está deficitário! Os gastos superam as entradas.&quot;)
+    elif saldo_restante == 0:
+        print(&quot;Atenção: Saldo zerado. Não sobrou margem de segurança.&quot;)
+    else:
+        print(&quot;Situação: Orçamento com superávit.&quot;)
+
+    if renda_prevista &gt; 0:
+        pct_essencial = (total_essencial / renda_prevista) * 100
+        pct_estilo = (total_estilo_vida / renda_prevista) * 100
+        pct_reserva = (total_reserva / renda_prevista) * 100
+
+        print(&quot;\nDiagnóstico de Aderência (Regra 50-30-20):&quot;)
+        print(f&quot;- Essenciais    : {pct_essencial:5.1f}% (Meta recomendada: até 50%)&quot;)
+        print(f&quot;- Estilo de Vida: {pct_estilo:5.1f}% (Meta recomendada: até 30%)&quot;)
+        print(f&quot;- Reserva       : {pct_reserva:5.1f}% (Meta recomendada: no mínimo 20%)&quot;)
+
+
+def main():
+    renda_prevista = 0.0
+    despesas = []
+
+    while True:
+        exibir_menu()
+        opcao = input(&quot;Escolha uma opção: &quot;).strip()
+
+        if opcao == &quot;1&quot;:
+            renda_prevista = definir_renda()
+        elif opcao == &quot;2&quot;:
+            adicionar_despesa(despesas)
+        elif opcao == &quot;3&quot;:
+            listar_despesas(despesas)
+        elif opcao == &quot;4&quot;:
+            exibir_relatorio(renda_prevista, despesas)
+        elif opcao == &quot;0&quot;:
+            print(&quot;\nEncerrando o programa. Parabéns pela conclusão do projeto!&quot;)
+            break
+        else:
+            print(&quot;Opção inválida! Digite um número de 0 a 4.&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+        </article>
+
+        <!-- Conteúdo Guia 4: Dashboard CustomTkinter (Aluno) -->
+        <article id="guia-gui1" class="guia-painel hidden">
+          <h1>Roteiro Prático do Aluno – Construindo nosso Dashboard Passo a Passo (CustomTkinter)</h1>
+<ul>
+<li><strong>Curso:</strong> Técnico em Redes de Computadores – IFCE Campus Tauá</li>
+<li><strong>Disciplina:</strong> Lógica de Programação com Python</li>
+<li><strong>Professor:</strong> Reginaldo Fernandes</li>
+<li><strong>Arquivo de Trabalho:</strong> <code>projetinho/gui_main.py</code></li>
+</ul>
+<hr />
+<h2>🎯 Como vamos construir nossa aplicação hoje?</h2>
+<p>Em vez de apenas copiar e colar um código gigante de uma só vez, vamos construir o nosso <strong>Dashboard de Planejamento Financeiro</strong> como programadores profissionais fazem: <strong>em pequenas etapas interativas (Criar Visual ➔ Testar ➔ Criar Função ➔ Testar)</strong>!</p>
+<ol>
+<li><strong>Primeiro (Passos 1 a 4):</strong> Vamos levantar a janela, dividir as duas colunas, colocar os botões no menu lateral e montar os painéis da direita. A cada passo, vamos <strong>executar o programa</strong> para ver a tela ganhando forma!</li>
+<li><strong>Depois (Passos 5 e 6):</strong> Com a janela pronta, vamos programar as funções dos botões e a <strong>janela de entrada de dados (<code>CTkInputDialog</code>)</strong> que atualiza o valor da receita ao vivo na tela!</li>
+</ol>
+<div class="relative group my-4">
+  <pre class="language-text"><code class="language-text">+-------------------------------------------------------------------------------+
+|  Sistema de Planejamento Financeiro - IFCE                         [_][□][X]  |
++----------------------+--------------------------------------------------------+
+|  💰 Finanças IFCE    |  +--------------------------------------------------+  |
+|     Menu Principal   |  | 📌 RESUMO DE RECEITAS (PREVISÃO MENSAL)          |  |
+|                      |  | R$ 0.00                                          |  |
+| [1 - Cadastrar Rec.] |  +--------------------------------------------------+  |
+| [2 - Adic. Despesa ] |  +--------------------------------------------------+  |
+| [3 - Listar Desp.  ] |  | 📋 LISTA DE DESPESAS REGISTRADAS                 |  |
+| [4 - Balanço 50... ] |  | #     Descrição          Categoria        Valor  |  |
+|                      |  |       🚧 Nenhuma despesa exibida.                |  |
+|                      |  |       (Será continuado nas próx. aulas)          |  |
+| [0 - Sair          ] |  +--------------------------------------------------+  |
+|                      |  [ Status: Escolha uma opção no menu lateral.       ]  |
++----------------------+--------------------------------------------------------+
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<hr />
+<h2>⚙️ Passo 0: Preparação do Ambiente</h2>
+<p>No terminal do VS Code, dentro da pasta <code>projetinho</code>, ative seu ambiente virtual (se já tiver criado) e garanta que o <code>customtkinter</code> está instalado:</p>
+<div class="relative group my-4">
+  <pre class="language-bash"><code class="language-bash">python3 -m venv .venv
+source .venv/bin/activate
+pip install customtkinter
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<p>Abra o arquivo <code>gui_main.py</code> em branco para começarmos!</p>
+<hr />
+<h2>🧱 FASE 1: Construindo e Testando o Visual da Janela</h2>
+<h3>Passo 1: Criar a Janela Principal e Abrir em Tela Cheia</h3>
+<p>Vamos começar criando apenas a janela principal e o comando <code>janela.mainloop()</code> (que mantém a janela aberta na tela).</p>
+<p>Digite no seu <code>gui_main.py</code>:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">import customtkinter as ctk
+
+# ==============================================================================
+# 1. CONFIGURAÇÃO VISUAL GLOBAL
+# ==============================================================================
+ctk.set_appearance_mode(&quot;dark&quot;)
+ctk.set_default_color_theme(&quot;blue&quot;)
+
+# ==============================================================================
+# 2. JANELA PRINCIPAL E CONTROLE DE TELA
+# ==============================================================================
+janela = ctk.CTk()
+janela.title(&quot;Sistema de Planejamento Financeiro - IFCE&quot;)
+janela.geometry(&quot;850x520&quot;)
+janela.minsize(750, 480)
+
+# Abertura Maximizada Compatível (Linux / Windows)
+try:
+    janela.state(&quot;zoomed&quot;)
+except Exception:
+    janela.attributes(&quot;-zoomed&quot;, True)
+
+# Atualiza os cálculos de geometria da tela
+janela.update_idletasks()
+
+
+if __name__ == &quot;__main__&quot;:
+    janela.mainloop()
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<p>🧪 <strong>Hora de Testar (Teste 1):</strong>
+Execute no terminal: <code>python gui_main.py</code>.</p>
+<ul>
+<li>Veja que sua janela já abre maximizada em modo escuro! Feche a janela no <code>X</code> para continuar.</li>
+</ul>
+<hr />
+<h3>Passo 2: Dividir a Janela em 2 Colunas (Esquerda e Direita)</h3>
+<p>Para que o nosso layout nunca quebre quando a janela estiver maximizada, vamos criar dois quadros organizadores (<code>CTkFrame</code>):</p>
+<ul>
+<li><strong><code>frame_menu</code> (na esquerda):</strong> Largura fixa de <code>260</code> pixels. Usamos <code>pack_propagate(False)</code> para travar essa largura e impedir que os botões deformem!</li>
+<li><strong><code>frame_conteudo</code> (na direita):</strong> Usa <code>expand=True</code> para ocupar todo o espaço restante do monitor.</li>
+</ul>
+<p>Adicione <strong>acima</strong> do <code>if __name__ == "__main__":</code>:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python"># ==============================================================================
+# 3. CONTAINERS PRINCIPAIS (DIVISÃO EM COLUNAS)
+# ==============================================================================
+
+# Coluna da Esquerda: Menu Lateral (Largura rígida de 260px)
+frame_menu = ctk.CTkFrame(janela, width=260, corner_radius=0)
+frame_menu.pack(side=&quot;left&quot;, fill=&quot;y&quot;)
+frame_menu.pack_propagate(False)  # Impede que elementos filhos alterem os 260px
+
+# Coluna da Direita: Área de Conteúdo / Dados (Absorve todo o restante da tela)
+frame_conteudo = ctk.CTkFrame(janela, fg_color=&quot;transparent&quot;)
+frame_conteudo.pack(side=&quot;right&quot;, fill=&quot;both&quot;, expand=True, padx=20, pady=20)
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<p>🧪 <strong>Hora de Testar (Teste 2):</strong>
+Execute <code>python gui_main.py</code>.</p>
+<ul>
+<li>Observe que agora existe uma coluna lateral destacada na esquerda e uma área ampla na direita! Feche a janela para ir ao Passo 3.</li>
+</ul>
+<hr />
+<h3>Passo 3: Adicionar os Botões no Menu Lateral (Apenas Visual)</h3>
+<p>Agora vamos colocar o título e os 5 botões dentro da coluna esquerda (<code>frame_menu</code>).</p>
+<blockquote>
+<p>💡 <strong>Por que ainda não colocamos <code>command=</code> nos botões?</strong> Porque primeiro queremos ver e testar os botões na tela! No Passo 5 vamos criar as funções e conectá-las aos botões.</p>
+</blockquote>
+<p>Adicione logo abaixo do código do Passo 2 (ainda <strong>antes</strong> do <code>if __name__ == "__main__":</code>):</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python"># ==============================================================================
+# 4. COMPONENTES DO MENU LATERAL (frame_menu)
+# ==============================================================================
+
+lbl_logo = ctk.CTkLabel(
+    frame_menu,
+    text=&quot;💰 Finanças IFCE&quot;,
+    font=ctk.CTkFont(size=20, weight=&quot;bold&quot;)
+)
+lbl_logo.pack(pady=(30, 5), padx=20)
+
+lbl_subtitulo = ctk.CTkLabel(
+    frame_menu,
+    text=&quot;Menu Principal&quot;,
+    font=ctk.CTkFont(size=13),
+    text_color=&quot;gray70&quot;
+)
+lbl_subtitulo.pack(pady=(0, 25), padx=20)
+
+# Botões de Operação
+btn_receita = ctk.CTkButton(
+    frame_menu,
+    text=&quot;1 - Cadastrar Receita&quot;,
+    height=40,
+    anchor=&quot;w&quot;
+)
+btn_receita.pack(pady=6, padx=20, fill=&quot;x&quot;)
+
+btn_adicionar = ctk.CTkButton(
+    frame_menu,
+    text=&quot;2 - Adicionar Despesa&quot;,
+    height=40,
+    anchor=&quot;w&quot;
+)
+btn_adicionar.pack(pady=6, padx=20, fill=&quot;x&quot;)
+
+btn_listar = ctk.CTkButton(
+    frame_menu,
+    text=&quot;3 - Listar Despesas&quot;,
+    height=40,
+    anchor=&quot;w&quot;
+)
+btn_listar.pack(pady=6, padx=20, fill=&quot;x&quot;)
+
+btn_balanco = ctk.CTkButton(
+    frame_menu,
+    text=&quot;4 - Balanço 50-30-20&quot;,
+    height=40,
+    anchor=&quot;w&quot;
+)
+btn_balanco.pack(pady=6, padx=20, fill=&quot;x&quot;)
+
+# Botão de Encerramento (Fixado na base da barra lateral com side=&quot;bottom&quot;)
+btn_sair = ctk.CTkButton(
+    frame_menu,
+    text=&quot;0 - Sair do Sistema&quot;,
+    height=40,
+    fg_color=&quot;#c0392b&quot;,
+    hover_color=&quot;#922b21&quot;
+)
+btn_sair.pack(side=&quot;bottom&quot;, pady=25, padx=20, fill=&quot;x&quot;)
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<p>🧪 <strong>Hora de Testar (Teste 3):</strong>
+Execute <code>python gui_main.py</code>.</p>
+<ul>
+<li>Veja todos os 5 botões alinhados na esquerda e o botão vermelho <strong>0 - Sair do Sistema</strong> posicionado lá embaixo! Se você clicar neles agora, ainda não acontece nada. Feche no <code>X</code> para construirmos o lado direito!</li>
+</ul>
+<hr />
+<h3>Passo 4: Construir a Área da Direita (Resumo de Receita + Lista de Despesas)</h3>
+<p>No espaço da direita (<code>frame_conteudo</code>), vamos colocar:</p>
+<ol>
+<li><strong>No Topo (<code>frame_resumo</code>):</strong> Um card compacto para exibir o <strong>Resumo de Receitas</strong> (<code>R$ 0.00</code>).</li>
+<li><strong>No Centro (<code>frame_despesas</code>):</strong> Um painel grande para a <strong>Lista de Despesas</strong> (indicando que o cadastro de despesas e o salvamento em arquivo serão feitos nas próximas aulas).</li>
+<li><strong>No Rodapé (<code>lbl_status</code>):</strong> Uma barra de texto para exibir avisos e confirmações.</li>
+</ol>
+<p>Adicione logo abaixo do código do Passo 3 (antes do <code>if __name__ == "__main__":</code>):</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python"># ==============================================================================
+# 5. COMPONENTES DO PAINEL DIREITO (frame_conteudo)
+# ==============================================================================
+
+# 5.1 - Card Superior: Resumo de Receitas
+frame_resumo = ctk.CTkFrame(frame_conteudo, corner_radius=10)
+frame_resumo.pack(fill=&quot;x&quot;, pady=(0, 15))
+
+lbl_titulo_resumo = ctk.CTkLabel(
+    frame_resumo,
+    text=&quot;📌 RESUMO DE RECEITAS (PREVISÃO MENSAL)&quot;,
+    font=ctk.CTkFont(size=13, weight=&quot;bold&quot;),
+    text_color=&quot;gray75&quot;
+)
+lbl_titulo_resumo.pack(anchor=&quot;w&quot;, padx=20, pady=(15, 2))
+
+lbl_valor_receita = ctk.CTkLabel(
+    frame_resumo,
+    text=&quot;R$ 0.00&quot;,
+    font=ctk.CTkFont(size=28, weight=&quot;bold&quot;),
+    text_color=&quot;#2ecc71&quot;
+)
+lbl_valor_receita.pack(anchor=&quot;w&quot;, padx=20, pady=(0, 15))
+
+# 5.2 - Painel Central: Lista de Despesas
+frame_despesas = ctk.CTkFrame(frame_conteudo, corner_radius=10)
+frame_despesas.pack(fill=&quot;both&quot;, expand=True)
+
+lbl_titulo_despesas = ctk.CTkLabel(
+    frame_despesas,
+    text=&quot;📋 LISTA DE DESPESAS REGISTRADAS&quot;,
+    font=ctk.CTkFont(size=13, weight=&quot;bold&quot;),
+    text_color=&quot;gray75&quot;
+)
+lbl_titulo_despesas.pack(anchor=&quot;w&quot;, padx=20, pady=(15, 10))
+
+# Cabeçalho da tabela com fonte monoespaçada
+frame_cabecalho_lista = ctk.CTkFrame(frame_despesas, height=32, corner_radius=6, fg_color=&quot;gray20&quot;)
+frame_cabecalho_lista.pack(fill=&quot;x&quot;, padx=20, pady=(0, 10))
+
+lbl_colunas = ctk.CTkLabel(
+    frame_cabecalho_lista,
+    text=&quot;#     Descrição da Despesa                        Categoria               Valor (R$)&quot;,
+    font=ctk.CTkFont(family=&quot;monospace&quot;, size=12, weight=&quot;bold&quot;)
+)
+lbl_colunas.pack(anchor=&quot;w&quot;, padx=15, pady=5)
+
+# Mensagem central explicando a continuidade nas próximas etapas
+lbl_placeholder_lista = ctk.CTkLabel(
+    frame_despesas,
+    text=(
+        &quot;🚧 Nenhuma despesa exibida.\n\n&quot;
+        &quot;O cadastro de despesas e a persistência dos dados (salvar em arquivo)\n&quot;
+        &quot;serão implementados nas próximas etapas do projeto!&quot;
+    ),
+    font=ctk.CTkFont(size=14),
+    text_color=&quot;gray60&quot;,
+    justify=&quot;center&quot;
+)
+lbl_placeholder_lista.pack(expand=True, pady=20)
+
+# 5.3 - Rodapé de Status
+lbl_status = ctk.CTkLabel(
+    frame_conteudo,
+    text=&quot;Sistema iniciado com sucesso. Escolha uma opção no menu lateral.&quot;,
+    font=ctk.CTkFont(size=13),
+    anchor=&quot;w&quot;
+)
+lbl_status.pack(fill=&quot;x&quot;, pady=(12, 0))
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<p>🧪 <strong>Hora de Testar (Teste 4):</strong>
+Execute <code>python gui_main.py</code>.</p>
+<ul>
+<li>Parabéns! Todo o layout visual da nossa aplicação já está completo na tela! Agora vamos programar as funções dos botões.</li>
+</ul>
+<hr />
+<h2>⚡ FASE 2: Incrementando as Funcionalidades e Testando os Cliques</h2>
+<h3>Passo 5: Ativar o Botão "0 - Sair" e os Avisos dos Botões 2, 3 e 4</h3>
+<p>Para que um botão execute uma ação ao ser clicado, fazemos duas coisas:</p>
+<ol>
+<li>Criamos a função no topo do arquivo (antes da criação da janela).</li>
+<li>Adicionamos <code>command=nome_da_funcao</code> dentro do botão correspondente.</li>
+</ol>
+<h4>5.1 Crie as funções no topo do arquivo</h4>
+<p>Suba até o início do arquivo, logo abaixo de <code>ctk.set_default_color_theme("blue")</code>, e adicione:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python"># ==============================================================================
+# DADOS EM MEMÓRIA E FUNÇÕES DOS BOTÕES (CALLBACKS)
+# ==============================================================================
+renda_prevista = 0.0
+
+
+def sair_sistema():
+    &quot;&quot;&quot;Encerra a janela principal com segurança.&quot;&quot;&quot;
+    janela.destroy()
+
+
+def adicionar_despesa():
+    lbl_status.configure(
+        text=&quot;🚧 [EM CONSTRUÇÃO] O cadastro e armazenamento de despesas serão feitos na Etapa 3.&quot;,
+        text_color=&quot;#f39c12&quot;
+    )
+
+
+def listar_despesas():
+    lbl_status.configure(
+        text=&quot;🚧 [EM CONSTRUÇÃO] A listagem dinâmica será implementada nas próximas aulas.&quot;,
+        text_color=&quot;#f39c12&quot;
+    )
+
+
+def exibir_balanco():
+    lbl_status.configure(
+        text=f&quot;📊 [EM CONSTRUÇÃO] Balanço 50-30-20 | Receita atual na memória: R$ {renda_prevista:.2f}&quot;,
+        text_color=&quot;#3498db&quot;
+    )
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<h4>5.2 Conecte o <code>command=</code> nos botões <code>btn_adicionar</code>, <code>btn_listar</code>, <code>btn_balanco</code> e <code>btn_sair</code></h4>
+<p>Desça até onde você criou esses 4 botões (no Passo 3) e adicione a linha <code>command=...</code> em cada um deles:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">btn_adicionar = ctk.CTkButton(
+    frame_menu,
+    text=&quot;2 - Adicionar Despesa&quot;,
+    height=40,
+    anchor=&quot;w&quot;,
+    command=adicionar_despesa
+)
+btn_adicionar.pack(pady=6, padx=20, fill=&quot;x&quot;)
+
+btn_listar = ctk.CTkButton(
+    frame_menu,
+    text=&quot;3 - Listar Despesas&quot;,
+    height=40,
+    anchor=&quot;w&quot;,
+    command=listar_despesas
+)
+btn_listar.pack(pady=6, padx=20, fill=&quot;x&quot;)
+
+btn_balanco = ctk.CTkButton(
+    frame_menu,
+    text=&quot;4 - Balanço 50-30-20&quot;,
+    height=40,
+    anchor=&quot;w&quot;,
+    command=exibir_balanco
+)
+btn_balanco.pack(pady=6, padx=20, fill=&quot;x&quot;)
+
+btn_sair = ctk.CTkButton(
+    frame_menu,
+    text=&quot;0 - Sair do Sistema&quot;,
+    height=40,
+    fg_color=&quot;#c0392b&quot;,
+    hover_color=&quot;#922b21&quot;,
+    command=sair_sistema
+)
+btn_sair.pack(side=&quot;bottom&quot;, pady=25, padx=20, fill=&quot;x&quot;)
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<div class="border-l-4 border-amber-500 bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 p-4 rounded-r-xl my-4 text-xs sm:text-sm leading-relaxed shadow-sm">
+  <div class="font-bold flex items-center gap-2 mb-2">
+    <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
+    <span>Atenção / Cuidado</span>
+  </div>
+  <p><strong>Cuidado:</strong> Nunca coloque parênteses <code>()</code> depois do nome da função no <code>command=</code>! Escreva <code>command=sair_sistema</code> e não <code>command=sair_sistema()</code>.</p>
+</div>
+<p>🧪 <strong>Hora de Testar (Teste 5):</strong>
+Execute <code>python gui_main.py</code>.</p>
+<ul>
+<li>Clique nos botões <code>2</code>, <code>3</code> e <code>4</code> e veja o texto no rodapé mudar de cor e mensagem!</li>
+<li>Clique em <code>0 - Sair do Sistema</code> e veja a janela fechar!</li>
+</ul>
+<hr />
+<h3>Passo 6: Criar a Janela de Entrada de Receita (<code>CTkInputDialog</code>) e Atualizar o Resumo</h3>
+<p>Agora vamos programar o botão <strong>1 - Cadastrar Receita</strong>!</p>
+<h4>🧠 Como funciona a entrada de dados na Interface Gráfica?</h4>
+<ol>
+<li><strong>A Subjanela de Digitação (<code>CTkInputDialog</code>):</strong> Em vez de usar o <code>input()</code> no terminal, o comando <code>ctk.CTkInputDialog(...)</code> abre uma janelinha pop-up no meio da tela para o usuário digitar o valor.</li>
+<li><strong>Capturando o Texto (<code>dialogo.get_input()</code>):</strong> Espera o usuário clicar em <em>Ok</em> e guarda o que foi digitado na variável <code>entrada</code>. Se o usuário clicar em <em>Cancel</em>, ela devolve <code>None</code> e a função encerra sem erro.</li>
+<li><strong>Atualizando o Valor na Tela (<code>lbl_valor_receita.configure(...)</code>):</strong> Depois de validar com <code>try/except</code> se o número é válido e positivo, guardamos na variável <code>renda_prevista</code> e usamos <code>.configure(text=...)</code> para trocar imediatamente o texto <code>R$ 0.00</code> lá no <strong>Card de Resumo de Receitas</strong> pelo novo valor!</li>
+<li><strong>Sobre o Armazenamento Futuro (Persistência):</strong> Nesta etapa, o valor de <code>renda_prevista</code> fica guardado na memória RAM enquanto o programa estiver aberto. Nas próximas etapas do projeto, vamos implementar a <strong>persistência em arquivo</strong> para salvar permanentemente todas as entradas (receitas) e saídas (despesas) no computador!</li>
+</ol>
+<h4>6.1 Adicione a função <code>cadastrar_receita()</code> no bloco de funções (acima de <code>def sair_sistema():</code>)</h4>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">def cadastrar_receita():
+    &quot;&quot;&quot;Abre caixa de diálogo para pedir a receita, valida e atualiza o Resumo.&quot;&quot;&quot;
+    global renda_prevista
+
+    dialogo = ctk.CTkInputDialog(
+        text=&quot;Informe a receita líquida esperada (R$):&quot;,
+        title=&quot;1 - Cadastrar Receita&quot;
+    )
+    entrada = dialogo.get_input()
+
+    # Se o usuário clicou em Cancelar ou fechou a janelinha
+    if entrada is None:
+        return
+
+    # Aceita vírgula ou ponto nos centavos e limpa espaços extras
+    entrada = entrada.strip().replace(&quot;,&quot;, &quot;.&quot;)
+
+    try:
+        valor = float(entrada)
+        if valor &gt;= 0:
+            renda_prevista = valor
+            # Atualiza o número grande verde no Card de Resumo!
+            lbl_valor_receita.configure(text=f&quot;R$ {renda_prevista:.2f}&quot;)
+            # Mostra confirmação na barra de status!
+            lbl_status.configure(
+                text=f&quot;✅ Receita atualizada com sucesso para R$ {renda_prevista:.2f}!&quot;,
+                text_color=&quot;#2ecc71&quot;
+            )
+        else:
+            lbl_status.configure(
+                text=&quot;❌ Erro: O valor da receita não pode ser negativo!&quot;,
+                text_color=&quot;#e74c3c&quot;
+            )
+    except ValueError:
+        lbl_status.configure(
+            text=&quot;❌ Erro: Digite um número válido (ex: 2500.50)!&quot;,
+            text_color=&quot;#e74c3c&quot;
+        )
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<h4>6.2 Conecte o <code>command=cadastrar_receita</code> no botão <code>btn_receita</code></h4>
+<p>Localize o <code>btn_receita</code> (que você criou no Passo 3) e adicione o <code>command=cadastrar_receita</code>:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">btn_receita = ctk.CTkButton(
+    frame_menu,
+    text=&quot;1 - Cadastrar Receita&quot;,
+    height=40,
+    anchor=&quot;w&quot;,
+    command=cadastrar_receita
+)
+btn_receita.pack(pady=6, padx=20, fill=&quot;x&quot;)
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<hr />
+<h2>🧪 Teste Final Completo (Checklist de Validação)</h2>
+<p>Execute o seu programa (<code>python gui_main.py</code>) e faça a bateria final de testes:</p>
+<ul>
+<li class="flex items-start gap-2 my-1.5"><i class="fa-regular fa-square text-slate-400 mt-1 flex-shrink-0"></i><span><strong>Teste 1 (Botão Cancelar):</strong> Clique em <code>1 - Cadastrar Receita</code> e clique em <em>Cancel</em>. O programa deve continuar funcionando normalmente sem erro.</span></li>
+<li class="flex items-start gap-2 my-1.5"><i class="fa-regular fa-square text-slate-400 mt-1 flex-shrink-0"></i><span><strong>Teste 2 (Proteção contra Letras):</strong> Clique em <code>1 - Cadastrar Receita</code>, digite <code>abc</code> e clique em <em>Ok</em>. O rodapé deve ficar vermelho avisando <code>❌ Erro: Digite um número válido!</code>.</span></li>
+<li class="flex items-start gap-2 my-1.5"><i class="fa-regular fa-square text-slate-400 mt-1 flex-shrink-0"></i><span><strong>Teste 3 (Proteção contra Negativos):</strong> Clique em <code>1 - Cadastrar Receita</code>, digite <code>-300</code> e clique em <em>Ok</em>. O rodapé deve avisar que a receita não pode ser negativa.</span></li>
+<li class="flex items-start gap-2 my-1.5"><i class="fa-regular fa-square text-slate-400 mt-1 flex-shrink-0"></i><span><strong>Teste 4 (Atualização do Resumo de Receita):</strong> Clique em <code>1 - Cadastrar Receita</code> e digite <code>3500,50</code>. Veja o número gigante verde no card <strong>Resumo de Receitas</strong> mudar imediatamente para <strong><code>R$ 3500.50</code></strong>!</span></li>
+<li class="flex items-start gap-2 my-1.5"><i class="fa-regular fa-square text-slate-400 mt-1 flex-shrink-0"></i><span><strong>Teste 5 (Memória em Funcionamento):</strong> Clique no botão <code>4 - Balanço 50-30-20</code> e veja no rodapé que o sistema lembra do valor <code>R$ 3500.50</code> armazenado na memória!</span></li>
+</ul>
+        </article>
+
+        <!-- Conteúdo Guia 5: Despesas & JSON GUI (Aluno) -->
+        <article id="guia-gui2" class="guia-painel hidden">
+          <h1>Roteiro Prático do Aluno – Etapa 3 (GUI): Cadastro de Despesas e Salvamento Automático (JSON)</h1>
+<ul>
+<li><strong>Curso:</strong> Técnico em Redes de Computadores – IFCE Campus Tauá</li>
+<li><strong>Disciplina:</strong> Lógica de Programação com Python</li>
+<li><strong>Professor:</strong> Reginaldo Fernandes</li>
+<li><strong>Arquivo de Trabalho:</strong> <code>projetinho/gui_main.py</code></li>
+</ul>
+<hr />
+<h2>🎯 O que vamos construir hoje?</h2>
+<p>Na etapa anterior, deixamos o nosso <strong>Dashboard de Planejamento Financeiro</strong> funcionando com o menu lateral e o cadastro da <strong>Receita Prevista</strong>. Porém:</p>
+<ol>
+<li>O botão <strong><code>2 - Adicionar Despesa</code></strong> ainda estava em construção.</li>
+<li>Quando fechávamos a janela do programa, o valor da receita sumia porque estava apenas na <strong>memória RAM</strong>.</li>
+</ol>
+<p>Hoje vamos continuar o nosso <code>gui_main.py</code> no mesmo formato interativo (<strong>Criar Visual ➔ Testar ➔ Criar Função ➔ Testar</strong>) para:</p>
+<ul>
+<li>Transformar o painel direito em uma <strong>Tabela Rolável (<code>CTkScrollableFrame</code>)</strong> para listar dezenas de despesas.</li>
+<li>Criar uma <strong>Subjanela de Formulário (<code>CTkToplevel</code>)</strong> para cadastrar cada despesa (Descrição, Valor e Categoria) usando <strong>Dicionários (<code>dict</code>)</strong> e <strong>Listas (<code>list</code>)</strong>.</li>
+<li>Implementar o <strong>Armazenamento em Arquivo (<code>JSON</code>)</strong> para que suas receitas e despesas fiquem salvas permanentemente no computador!</li>
+</ul>
+<hr />
+<h2>🧱 CENA 1: Transformando o Painel de Despesas em uma Área Rolável</h2>
+<p>Se cadastrarmos 20 despesas no mês, elas precisam de uma <strong>barra de rolagem</strong> para caberem dentro do painel direito.</p>
+<ol>
+<li>Abra o seu arquivo <code>gui_main.py</code>.</li>
+<li>Vá até o final do arquivo, na seção <strong><code>5.2 - Painel Central: Lista de Despesas</code></strong>.</li>
+<li>Apague o antigo <code>lbl_placeholder_lista</code> (e o <code>lbl_placeholder_lista.pack(...)</code>) e coloque no lugar dele o componente rolável <code>CTkScrollableFrame</code>:</li>
+</ol>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python"># Substitua o antigo lbl_placeholder_lista por esta área rolável:
+frame_lista_scroll = ctk.CTkScrollableFrame(frame_despesas, fg_color=&quot;transparent&quot;)
+frame_lista_scroll.pack(fill=&quot;both&quot;, expand=True, padx=15, pady=(0, 15))
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<p>🧪 <strong>Teste 1:</strong> Execute <code>python gui_main.py</code> e veja que agora o painel de despesas possui uma barra de rolagem na lateral direita! Feche a janela para ir à Cena 2.</p>
+<hr />
+<h2>🎨 CENA 2: Criando a Função que Desenha a Lista na Tela</h2>
+<p>Agora vamos criar a lista <code>despesas = []</code> e uma função chamada <code>atualizar_lista_visual()</code>, que percorre todos os dicionários de despesas cadastrados e cria uma linha visual para cada um dentro do <code>frame_lista_scroll</code>.</p>
+<h3>2.1 Adicione a lista e a função no topo do arquivo</h3>
+<p>Suba até logo abaixo de <code>renda_prevista = 0.0</code> e adicione:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">despesas = []  # Lista que guardará os dicionários de cada despesa
+
+
+def atualizar_lista_visual():
+    &quot;&quot;&quot;Limpa o painel de listagem e redesenha todas as despesas da lista.&quot;&quot;&quot;
+    # 1. Remove os itens visuais antigos antes de redesenhar
+    for widget in frame_lista_scroll.winfo_children():
+        widget.destroy()
+
+    # 2. Se a lista estiver vazia, mostra o aviso amigável
+    if not despesas:
+        lbl_vazio = ctk.CTkLabel(
+            frame_lista_scroll,
+            text=&quot;🚧 Nenhuma despesa cadastrada até o momento.\nClique em '2 - Adicionar Despesa' no menu lateral.&quot;,
+            font=ctk.CTkFont(size=14),
+            text_color=&quot;gray60&quot;,
+            justify=&quot;center&quot;
+        )
+        lbl_vazio.pack(pady=40)
+        return
+
+    # 3. Percorre a lista de dicionários e cria uma linha para cada gasto
+    for indice, item in enumerate(despesas, start=1):
+        linha = ctk.CTkFrame(frame_lista_scroll, corner_radius=6, fg_color=&quot;gray17&quot;)
+        linha.pack(fill=&quot;x&quot;, pady=3, padx=5)
+
+        texto_linha = (
+            f&quot;{indice:&lt;5} &quot;
+            f&quot;{item['descricao'][:35]:&lt;38} &quot;
+            f&quot;{item['categoria']:&lt;22} &quot;
+            f&quot;R$ {item['valor']:&gt;9.2f}&quot;
+        )
+
+        lbl_item = ctk.CTkLabel(
+            linha,
+            text=texto_linha,
+            font=ctk.CTkFont(family=&quot;monospace&quot;, size=12),
+            anchor=&quot;w&quot;
+        )
+        lbl_item.pack(fill=&quot;x&quot;, padx=10, pady=6)
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<h3>2.2 Chame a função no final do arquivo</h3>
+<p>Lá nas últimas linhas do seu <code>gui_main.py</code>, logo <strong>antes</strong> de <code>if __name__ == "__main__":</code>, adicione:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">atualizar_lista_visual()
+
+if __name__ == &quot;__main__&quot;:
+    janela.mainloop()
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<p>🧪 <strong>Teste 2:</strong> Execute <code>python gui_main.py</code>. Como a lista <code>despesas</code> está vazia, você verá o aviso <code>"🚧 Nenhuma despesa cadastrada até o momento..."</code> dentro da área rolável!</p>
+<hr />
+<h2>🪟 CENA 3: Criando a Subjanela de Formulário de Despesas (Visual)</h2>
+<p>Quando clicarmos em <strong><code>2 - Adicionar Despesa</code></strong>, precisamos pedir <strong>3 dados</strong>: Descrição, Valor e Categoria. Para isso, vamos abrir uma subjanela de formulário usando <code>ctk.CTkToplevel(janela)</code>.</p>
+<p>Localize a função <code>def adicionar_despesa():</code> no topo do seu arquivo e substitua o conteúdo dela pelo código abaixo (inicialmente apenas o visual da janelinha):</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">def adicionar_despesa():
+    &quot;&quot;&quot;Abre uma subjanela de formulário (CTkToplevel) para cadastrar uma nova despesa.&quot;&quot;&quot;
+    popup = ctk.CTkToplevel(janela)
+    popup.title(&quot;2 - Nova Despesa&quot;)
+    popup.geometry(&quot;400x380&quot;)
+    popup.resizable(False, False)
+    popup.transient(janela)  # Mantém o pop-up na frente da janela principal
+    popup.grab_set()         # Foca os cliques apenas no pop-up até fechar
+
+    # Campo 1: Descrição
+    ctk.CTkLabel(popup, text=&quot;Descrição da Despesa:&quot;, font=ctk.CTkFont(weight=&quot;bold&quot;)).pack(
+        anchor=&quot;w&quot;, padx=25, pady=(20, 5)
+    )
+    entry_descricao = ctk.CTkEntry(popup, placeholder_text=&quot;Ex: Conta de Internet, Aluguel...&quot;)
+    entry_descricao.pack(fill=&quot;x&quot;, padx=25)
+
+    # Campo 2: Valor (R$)
+    ctk.CTkLabel(popup, text=&quot;Valor da Despesa (R$):&quot;, font=ctk.CTkFont(weight=&quot;bold&quot;)).pack(
+        anchor=&quot;w&quot;, padx=25, pady=(15, 5)
+    )
+    entry_valor = ctk.CTkEntry(popup, placeholder_text=&quot;Ex: 120.50&quot;)
+    entry_valor.pack(fill=&quot;x&quot;, padx=25)
+
+    # Campo 3: Categoria (Menu de Seleção)
+    ctk.CTkLabel(popup, text=&quot;Categoria (Regra 50-30-20):&quot;, font=ctk.CTkFont(weight=&quot;bold&quot;)).pack(
+        anchor=&quot;w&quot;, padx=25, pady=(15, 5)
+    )
+    combo_categoria = ctk.CTkOptionMenu(
+        popup,
+        values=[&quot;Essencial&quot;, &quot;Estilo de Vida&quot;, &quot;Reserva&quot;]
+    )
+    combo_categoria.pack(fill=&quot;x&quot;, padx=25)
+
+    # Rótulo para exibir mensagens de erro dentro do pop-up
+    lbl_erro_popup = ctk.CTkLabel(popup, text=&quot;&quot;, text_color=&quot;#e74c3c&quot;, font=ctk.CTkFont(size=12))
+    lbl_erro_popup.pack(pady=(10, 0))
+
+    # Botão Salvar
+    btn_salvar = ctk.CTkButton(
+        popup,
+        text=&quot;💾 Salvar Despesa&quot;,
+        height=38,
+        fg_color=&quot;#27ae60&quot;,
+        hover_color=&quot;#1e8449&quot;
+    )
+    btn_salvar.pack(fill=&quot;x&quot;, padx=25, pady=(15, 20))
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<p>🧪 <strong>Teste 3:</strong> Execute <code>python gui_main.py</code> e clique no botão <strong><code>2 - Adicionar Despesa</code></strong>. Veja a subjanela abrir com as caixas de texto e o menu de seleção de categorias! Feche para programarmos o botão Salvar.</p>
+<hr />
+<h2>⚡ CENA 4: Programando o Botão "Salvar Despesa" (Dicionário + Lista)</h2>
+<p>Agora vamos criar a função <code>confirmar_cadastro()</code> dentro de <code>adicionar_despesa()</code> para validar o que o usuário digitou, guardar em um <strong>Dicionário (<code>dict</code>)</strong>, adicionar na <strong>Lista (<code>despesas.append</code>)</strong> e atualizar a tabela!</p>
+<h3>4.1 Adicione <code>confirmar_cadastro()</code> dentro de <code>adicionar_despesa()</code> (logo acima do <code>btn_salvar</code>)</h3>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">    def confirmar_cadastro():
+        descricao = entry_descricao.get().strip()
+        valor_texto = entry_valor.get().strip().replace(&quot;,&quot;, &quot;.&quot;)
+        categoria = combo_categoria.get()
+
+        if not descricao:
+            lbl_erro_popup.configure(text=&quot;❌ A descrição não pode ficar vazia!&quot;)
+            return
+
+        try:
+            valor = float(valor_texto)
+            if valor &lt; 0:
+                lbl_erro_popup.configure(text=&quot;❌ O valor não pode ser negativo!&quot;)
+                return
+        except ValueError:
+            lbl_erro_popup.configure(text=&quot;❌ Digite um valor numérico válido!&quot;)
+            return
+
+        # Cria o Dicionário da despesa e adiciona na Lista!
+        nova_despesa = {
+            &quot;descricao&quot;: descricao,
+            &quot;valor&quot;: valor,
+            &quot;categoria&quot;: categoria
+        }
+        despesas.append(nova_despesa)
+
+        # Atualiza a tabela na tela e fecha o pop-up!
+        atualizar_lista_visual()
+        lbl_status.configure(
+            text=f&quot;✅ Despesa '{descricao}' (R$ {valor:.2f}) adicionada! Total: {len(despesas)}&quot;,
+            text_color=&quot;#2ecc71&quot;
+        )
+        popup.destroy()
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<h3>4.2 Conecte o <code>command=confirmar_cadastro</code> no <code>btn_salvar</code></h3>
+<p>Logo abaixo, no <code>btn_salvar</code>, adicione <code>command=confirmar_cadastro</code>:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">    btn_salvar = ctk.CTkButton(
+        popup,
+        text=&quot;💾 Salvar Despesa&quot;,
+        height=38,
+        fg_color=&quot;#27ae60&quot;,
+        hover_color=&quot;#1e8449&quot;,
+        command=confirmar_cadastro
+    )
+    btn_salvar.pack(fill=&quot;x&quot;, padx=25, pady=(15, 20))
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<p>Aproveite também para atualizar a função <code>listar_despesas()</code> (do botão 3) para atualizar a lista quando clicada:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">def listar_despesas():
+    atualizar_lista_visual()
+    lbl_status.configure(
+        text=f&quot;📋 Lista atualizada! Exibindo {len(despesas)} despesa(s) registrada(s).&quot;,
+        text_color=&quot;#3498db&quot;
+    )
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<p>🧪 <strong>Teste 4:</strong> Execute <code>python gui_main.py</code>, clique em <code>2 - Adicionar Despesa</code> e cadastre 2 gastos (ex: <code>Aluguel - 1200</code> e <code>Internet - 110</code>). Veja como eles aparecem alinhados na tabela!</p>
+<ul>
+<li><strong>Porém, faça um teste:</strong> Feche o programa e abra de novo. Os dados sumiram! Vamos resolver isso agora no último passo!</li>
+</ul>
+<hr />
+<h2>💾 CENA 5: Armazenamento Permanente em Arquivo (<code>JSON</code>)</h2>
+<blockquote>
+<p>🧠 <strong>Como funciona o Armazenamento (Persistência)?</strong>
+Variáveis como <code>renda_prevista</code> e <code>despesas</code> ficam na <strong>memória RAM</strong>, que é apagada assim que o programa fecha. Para que os dados fiquem salvos permanentemente no computador, usamos a biblioteca nativa <strong><code>json</code></strong> do Python, que grava nosso dicionário de receita e lista de despesas dentro de um arquivo chamado <code>dados_financeiros.json</code>!</p>
+</blockquote>
+<h3>5.1 Importe <code>json</code> e <code>os</code> nas primeiras linhas do arquivo</h3>
+<p>No topo do <code>gui_main.py</code>, adicione:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">import json
+import os
+import customtkinter as ctk
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<h3>5.2 Crie as funções <code>salvar_dados()</code> e <code>carregar_dados()</code></h3>
+<p>Logo abaixo de <code>despesas = []</code>, adicione:</p>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">ARQUIVO_DADOS = &quot;dados_financeiros.json&quot;
+
+
+def salvar_dados():
+    &quot;&quot;&quot;Salva a receita e a lista de despesas em um arquivo JSON.&quot;&quot;&quot;
+    pacote = {
+        &quot;renda_prevista&quot;: renda_prevista,
+        &quot;despesas&quot;: despesas
+    }
+    with open(ARQUIVO_DADOS, &quot;w&quot;, encoding=&quot;utf-8&quot;) as arquivo:
+        json.dump(pacote, arquivo, indent=4, ensure_ascii=False)
+
+
+def carregar_dados():
+    &quot;&quot;&quot;Carrega os dados do arquivo JSON se ele já existir no computador.&quot;&quot;&quot;
+    global renda_prevista, despesas
+
+    if os.path.exists(ARQUIVO_DADOS):
+        try:
+            with open(ARQUIVO_DADOS, &quot;r&quot;, encoding=&quot;utf-8&quot;) as arquivo:
+                pacote = json.load(arquivo)
+                renda_prevista = pacote.get(&quot;renda_prevista&quot;, 0.0)
+                despesas = pacote.get(&quot;despesas&quot;, [])
+        except Exception:
+            pass
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<h3>5.3 Ative o salvamento e o carregamento automático (3 linhas!)</h3>
+<ol>
+<li><strong>Na função <code>cadastrar_receita()</code>:</strong> Logo abaixo de <code>renda_prevista = valor</code>, chame <code>salvar_dados()</code>.</li>
+<li><strong>Na função <code>confirmar_cadastro()</code> (dentro de <code>adicionar_despesa</code>):</strong> Logo abaixo de <code>despesas.append(nova_despesa)</code>, chame <code>salvar_dados()</code>.</li>
+<li><strong>No final do arquivo (antes do <code>if __name__ == "__main__":</code>):</strong> Chame <code>carregar_dados()</code> e atualize o texto da receita:</li>
+</ol>
+<div class="relative group my-4">
+  <pre class="language-python"><code class="language-python">carregar_dados()
+lbl_valor_receita.configure(text=f&quot;R$ {renda_prevista:.2f}&quot;)
+atualizar_lista_visual()
+
+if __name__ == &quot;__main__&quot;:
+    janela.mainloop()
+</code></pre>
+  <button onclick="copySnippet(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 text-xs rounded-md bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5 transition-colors shadow">
+    <i class="fa-regular fa-copy"></i> Copiar
+  </button>
+</div>
+<hr />
+<h2>🧪 Checklist Final de Validação</h2>
+<p>Execute <code>python gui_main.py</code> e confira:</p>
+<ul>
+<li class="flex items-start gap-2 my-1.5"><i class="fa-regular fa-square text-slate-400 mt-1 flex-shrink-0"></i><span><strong>Teste 1 (Cadastro de Despesas):</strong> Clique em <code>2 - Adicionar Despesa</code>, tente salvar vazio (veja a validação bloquear) e depois cadastre 3 despesas nas diferentes categorias (<code>Essencial</code>, <code>Estilo de Vida</code> e <code>Reserva</code>).</span></li>
+<li class="flex items-start gap-2 my-1.5"><i class="fa-regular fa-square text-slate-400 mt-1 flex-shrink-0"></i><span><strong>Teste 2 (Arquivo JSON Criado):</strong> Olhe na barra de arquivos do VS Code e abra o arquivo <code>dados_financeiros.json</code> que foi criado automaticamente com os seus dados!</span></li>
+<li class="flex items-start gap-2 my-1.5"><i class="fa-regular fa-square text-slate-400 mt-1 flex-shrink-0"></i><span><strong>Teste 3 (Persistência Funcionando!):</strong> Feche a janela completamente no botão <code>0 - Sair do Sistema</code> e execute <code>python gui_main.py</code> novamente. Verifique se sua <strong>Receita Prevista</strong> e todas as suas <strong>Despesas</strong> continuam lá na tela!</span></li>
+</ul>
+        </article>
+
       </div>
     </section>
 
   </main>
 
-  <!-- Footer -->
+  <!-- ========================================== -->
+  <!-- FOOTER                                     -->
+  <!-- ========================================== -->
   <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-6 text-center text-xs text-slate-500 dark:text-slate-400 mt-12">
-    <div class="max-w-5xl mx-auto px-4">
-      <p>© 2026 Instituto Federal do Ceará -- Campus Tauá.</p>
-      <p class="mt-1">Prof. Reginaldo Pereira Fernandes | Curso Técnico em Redes de Computadores</p>
+    <div class="max-w-6xl mx-auto px-4">
+      <p>© 2026 Instituto Federal de Educação, Ciência e Tecnologia do Ceará (IFCE) – Campus Tauá.</p>
+      <p class="mt-1">Curso Técnico em Redes de Computadores • Lógica de Programação com Python</p>
     </div>
   </footer>
 
+  <!-- ========================================== -->
+  <!-- SCRIPTS DE INTERATIVIDADE E NAVEGAÇÃO     -->
+  <!-- ========================================== -->
   <script>
-    // Função para carregar e renderizar o guia Markdown na página
-    async function carregarGuia(caminho, titulo) {
-      const tituloEl = document.getElementById('leitor-titulo');
-      const conteudoEl = document.getElementById('leitor-conteudo');
-      tituloEl.textContent = titulo;
-      conteudoEl.innerHTML = '<p class="text-center py-8 text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Carregando guia...</p>';
+    // Dicionário de títulos para as abas
+    const titulosGuias = {
+      'guia-etapa1': {
+        titulo: 'Etapa 1: Menu e Controle de Fluxo (Roteiro do Aluno)',
+        subtitulo: 'Ponto de entrada, while True, break, .strip() e stubs incrementais'
+      },
+      'guia-etapa2': {
+        titulo: 'Etapa 2: Entrada Segura e Previsão de Renda (Roteiro do Aluno)',
+        subtitulo: 'Armazenamento na memória, try/except ValueError, return e validação'
+      },
+      'guia-etapa35': {
+        titulo: 'Etapas 3 a 5: Despesas, Tabela e Regra 50-30-20 (Roteiro do Aluno)',
+        subtitulo: 'Dicionários, listas, enumerate, acumuladores e diagnóstico 50-30-20'
+      },
+      'guia-gui1': {
+        titulo: 'Dashboard CustomTkinter (Roteiro do Aluno • Interface Gráfica)',
+        subtitulo: 'Janela maximizada responsiva, colunas fixas e CTkInputDialog'
+      },
+      'guia-gui2': {
+        titulo: 'Etapa 3 (GUI): Despesas Roláveis e Salvamento em JSON (Roteiro do Aluno)',
+        subtitulo: 'CTkScrollableFrame, formulário pop-up CTkToplevel e persistência permanente'
+      }
+    };
 
-      try {
-        const resp = await fetch(caminho);
-        if (!resp.ok) throw new Error('Arquivo não encontrado');
-        let md = await resp.text();
-        // Remove tags de alerta do GitHub ([!TIP], [!WARNING], etc.) para ficar limpo no navegador
-        md = md.replace(/\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/g, '<strong>$1:</strong> ');
-        conteudoEl.innerHTML = marked.parse(md);
-        Prism.highlightAllUnder(conteudoEl);
-      } catch (e) {
-        conteudoEl.innerHTML = '<p class="text-red-500">Não foi possível carregar o guia automaticamente. <a href="' + caminho + '" class="underline font-semibold" target="_blank">Clique aqui para abrir o arquivo diretamente</a>.</p>';
+    // Alternador de guias sem fetch() (100% offline!)
+    function selecionarGuia(idGuia, rolarAteLeitor = false) {
+      const paineis = document.querySelectorAll('.guia-painel');
+      paineis.forEach(p => p.classList.add('hidden'));
+
+      const painelAtivo = document.getElementById(idGuia);
+      if (painelAtivo) {
+        painelAtivo.classList.remove('hidden');
+      }
+
+      // Atualiza botões das abas
+      const tabs = document.querySelectorAll('.tab-btn');
+      tabs.forEach(t => {
+        t.className = 'tab-btn px-3 py-1.5 rounded-lg whitespace-nowrap transition-all font-semibold flex items-center gap-1.5 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600';
+      });
+
+      const tabAtiva = document.getElementById('tab-' + idGuia);
+      if (tabAtiva) {
+        tabAtiva.className = 'tab-btn px-3 py-1.5 rounded-lg whitespace-nowrap transition-all font-semibold flex items-center gap-1.5 bg-emerald-600 text-white shadow-sm';
+      }
+
+      // Atualiza textos do cabeçalho
+      const info = titulosGuias[idGuia];
+      if (info) {
+        document.getElementById('leitor-titulo').textContent = info.titulo;
+        document.getElementById('leitor-subtitulo').textContent = info.subtitulo;
+      }
+
+      // Atualiza a URL sem recarregar a página
+      const url = new URL(window.location);
+      url.searchParams.set('guia', idGuia);
+      window.history.replaceState({}, '', url);
+
+      // Re-executa realce de sintaxe Prism caso necessário
+      if (window.Prism && painelAtivo) {
+        Prism.highlightAllUnder(painelAtivo);
+      }
+
+      // Rola suavemente até o leitor quando solicitado
+      if (rolarAteLeitor) {
+        document.getElementById('leitor-container').scrollIntoView({ behavior: 'smooth' });
       }
     }
 
-    // Se a URL tiver ?arquivo=nome.md, permite abrir qualquer guia diretamente (inclusive os do professor!)
-    const params = new URLSearchParams(window.location.search);
-    const arqParam = params.get('guia');
-    if (arqParam) {
-      carregarGuia('Aulas/projeto_final/guias/' + arqParam, arqParam);
-    } else {
-      // Carrega por padrão o guia do Dashboard CustomTkinter
-      carregarGuia('Aulas/projeto_final/guias/guia_aluno_gui_customtkinter.md', 'Criando o Dashboard com CustomTkinter');
+    // Copiador de código com feedback visual
+    function copySnippet(button) {
+      const container = button.closest('.relative');
+      const code = container.querySelector('code');
+      if (!code) return;
+      const text = code.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const originalHTML = button.innerHTML;
+        button.innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> Copiado!';
+        button.classList.add('bg-emerald-800', 'text-white');
+        setTimeout(() => {
+          button.innerHTML = originalHTML;
+          button.classList.remove('bg-emerald-800', 'text-white');
+        }, 2000);
+      }).catch(() => {
+        const range = document.createRange();
+        range.selectNodeContents(code);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      });
     }
 
-    // Modo Escuro / Claro
+    // Inicialização da página
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const guiaParam = params.get('guia');
+      if (guiaParam && document.getElementById(guiaParam)) {
+        selecionarGuia(guiaParam, false);
+      } else {
+        // Por padrão, seleciona a Etapa 1
+        selecionarGuia('guia-etapa1', false);
+      }
+
+      // Realça todos os blocos Prism na carga inicial
+      if (window.Prism) {
+        Prism.highlightAll();
+      }
+    });
+
+    // Alternador de Modo Escuro / Claro
     const themeToggle = document.getElementById('themeToggle');
     const themeIcon = document.getElementById('themeIcon');
     const html = document.documentElement;
 
-    if (localStorage.theme === 'dark') {
-      html.classList.add('dark');
-      themeIcon.className = 'fa-solid fa-sun text-lg text-amber-400';
-    } else {
-      html.classList.remove('dark');
-      themeIcon.className = 'fa-solid fa-moon text-lg';
+    function atualizarIconeTema() {
+      if (html.classList.contains('dark')) {
+        themeIcon.className = 'fa-solid fa-sun text-lg text-amber-400';
+      } else {
+        themeIcon.className = 'fa-solid fa-moon text-lg';
+      }
     }
+
+    atualizarIconeTema();
 
     themeToggle.addEventListener('click', () => {
       if (html.classList.contains('dark')) {
         html.classList.remove('dark');
         localStorage.theme = 'light';
-        themeIcon.className = 'fa-solid fa-moon text-lg';
       } else {
         html.classList.add('dark');
         localStorage.theme = 'dark';
-        themeIcon.className = 'fa-solid fa-sun text-lg text-amber-400';
       }
+      atualizarIconeTema();
     });
   </script>
 </body>

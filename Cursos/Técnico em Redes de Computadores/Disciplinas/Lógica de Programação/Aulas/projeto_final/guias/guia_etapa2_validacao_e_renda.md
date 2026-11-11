@@ -34,6 +34,7 @@ def main():
 ```
 
 ### Passo 0.1: Onde Guardar a Renda Mensal?
+
 Faça a seguinte pergunta para a turma:
 > *"Quando o usuário digitar a renda dele (ex: R$ 3.000,00), onde esse número precisa ficar armazenado para que possamos usá-lo mais tarde no relatório final?"*
 
@@ -49,6 +50,7 @@ def main():
 ```
 
 💬 **O que explicar para a turma (Conceito Crítico de Escopo e Laço):**
+
 * *"Se colocássemos `renda_prevista = 0.0` dentro do `while True:`, a cada vez que o menu reaparecesse na tela, a variável seria resetada para zero e esqueceria o que o usuário cadastrou!"*
 * *"Variáveis declaradas **antes** do laço continuam existindo e mantêm seus valores durante todas as voltas do menu."*
 
@@ -57,6 +59,7 @@ def main():
 ## 🔌 Ato 1: Conectando a Chamada na `main()` (Top-Down Design)
 
 ### Passo 1.1: Substituir o Print de Construção
+
 Na `main()`, dentro do `if opcao == "1":`, remova o print provisório e digite:
 
 ```python
@@ -65,14 +68,18 @@ Na `main()`, dentro do `if opcao == "1":`, remova o print provisório e digite:
 ```
 
 💬 **O que explicar para a turma:**
+
 * *"Estamos dizendo para o Python: 'Quando o usuário escolher 1, execute a função `definir_renda()`. Quando ela terminar de trabalhar, ela nos entregará um valor que será guardado na nossa variável `renda_prevista`'."*
 
 🧪 **Teste com a Turma (Executar agora de propósito):**
 Rode o script no terminal e escolha a opção `1`.
+
 * O terminal exibirá um erro vermelho:
+
   ```text
   NameError: name 'definir_renda' is not defined
   ```
+
 * Comente com os alunos: *"Perfeito! O Python nos avisou: 'Você mandou executar `definir_renda()`, mas essa função ainda não existe!'. É exatamente isso que nos guia para o próximo passo."*
 
 ---
@@ -91,21 +98,26 @@ def definir_renda():
 ```
 
 💬 **O que explicar linha a linha:**
+
 1. `print("\n--- Previsão de Renda Mensal ---")`: Cabeçalho que dá contexto ao usuário.
 2. `renda = float(input(...))`: Lê o texto digitado e tenta converter para número de ponto flutuante (`float`).
 3. `f"Renda prevista atualizada para: R$ {renda:.2f}"`: O modificador `:.2f` formata o número com 2 casas decimais. Se o usuário digitar `2000`, a tela mostrará `2000.00`.
 4. `return renda`: **A esteira de entrega.** Devolve o valor calculado para a linha `renda_prevista = definir_renda()` na `main()`.
 
 🧪 **Teste 1 com a Turma (Cenário Feliz):**
+
 * Execute o programa. Escolha `1`. Digite `2500.50`.
 * A tela confirma: `Renda prevista atualizada para: R$ 2500.50` e volta ao menu. Funcionou!
 
 🧪 **Teste 2 com a Turma (O Crash):**
+
 * Peça para um aluno testar digitando: `dois mil` ou teclar apenas `ENTER`.
 * O programa trava completamente:
+
   ```text
   ValueError: could not convert string to float: 'dois mil'
   ```
+
 * Teste também digitando: `-500`.
 * O programa aceita um salário negativo de -R$ 500,00!
 
@@ -128,11 +140,13 @@ def obter_numero_positivo(mensagem):
 ```
 
 💬 **O que explicar sobre a linha `while True:`:**
+
 * *"O laço infinito aqui significa: 'Enquanto o usuário não me der um número aceitável, eu não saio daqui e não deixo o sistema prosseguir'."*
 
 ---
 
 ### Passo 3.1: O Bloco Monitorado (`try`)
+
 Dentro do `while True:` de `obter_numero_positivo`, digite:
 
 ```python
@@ -142,12 +156,14 @@ Dentro do `while True:` de `obter_numero_positivo`, digite:
 ```
 
 💬 **O que explicar para a turma:**
+
 * *"O bloco `try:` diz ao Python: 'Tente executar o que está aqui dentro. Se ocorrer algum problema de conversão, não quebre o programa; deixe que eu mesmo assumo o controle!'."*
 * *"O parâmetro `mensagem` permite que a função receba qualquer texto como pergunta, tornando-a 100% reutilizável."*
 
 ---
 
 ### Passo 3.2: A Validação da Regra de Negócio (`if valor >= 0`)
+
 Abaixo da leitura do float, ainda dentro do `try`:
 
 ```python
@@ -159,6 +175,7 @@ Abaixo da leitura do float, ainda dentro do `try`:
 ```
 
 💬 **O que explicar para a turma (Superpoder do `return`):**
+
 * *"Se o valor for zero ou positivo, executamos `return valor`."*
 * *"Atenção para este detalhe fundamental: **o `return` encerra a função e quebra o `while True` imediatamente!** Não precisamos nem escrever `break`. Ele pega o dado válido e devolve para quem chamou."*
 * *"Se o valor for negativo (ex: `-100`), a condição falha, ele cai no `print` avisando que não pode ser negativo, e o `while` repete a pergunta!"*
@@ -166,6 +183,7 @@ Abaixo da leitura do float, ainda dentro do `try`:
 ---
 
 ### Passo 3.3: A Rede de Proteção (`except ValueError`)
+
 Agora feche o bloco com a captura da exceção:
 
 ```python
@@ -174,6 +192,7 @@ Agora feche o bloco com a captura da exceção:
 ```
 
 💬 **O que explicar para a turma:**
+
 * *"Se o usuário digitar `'abc'` ou apertar ENTER vazio, a linha `float()` falha. O Python pula instantaneamente para dentro do `except ValueError:`."*
 * *"Em vez de fechar o programa em tela vermelha, ele exibe um aviso educado ao usuário e o `while` recomeça!"*
 
@@ -184,12 +203,14 @@ Agora feche o bloco com a captura da exceção:
 Agora vamos colher os frutos do nosso trabalho.
 Desça o cursor para a função `definir_renda()` e altere a linha do input bruto:
 
-### Antes:
+### Antes
+
 ```python
 renda = float(input("Informe a receita líquida esperada (R$): "))
 ```
 
-### Agora (Refatorado):
+### Agora (Refatorado)
+
 ```python
 def definir_renda():
     """Solicita e confirma a previsão de renda mensal."""
@@ -200,6 +221,7 @@ def definir_renda():
 ```
 
 💬 **O que explicar para a turma:**
+
 * *"Vejam como a função `definir_renda()` ficou limpa e elegante! Ela delegou o trabalho duro de validação para a função `obter_numero_positivo()`. Isso se chama separação de responsabilidades."*
 
 ---
@@ -215,12 +237,13 @@ Na opção `"4"`, nós tínhamos um stub genérico. Vamos ajustá-lo para que o 
 ```
 
 🧪 **Bateria Final de Testes com a Turma:**
+
 1. Rode o programa.
 2. Digite `4` ➔ Exibe `R$ 0.00` (valor inicial).
 3. Digite `1` (Definir Renda).
-   - Digite `dez reais` ➔ O sistema avisa: *"Digite um número válido"*.
-   - Digite `-800` ➔ O sistema avisa: *"O valor não pode ser negativo"*.
-   - Digite `3250.75` ➔ O sistema aceita e confirma!
+   * Digite `dez reais` ➔ O sistema avisa: *"Digite um número válido"*.
+   * Digite `-800` ➔ O sistema avisa: *"O valor não pode ser negativo"*.
+   * Digite `3250.75` ➔ O sistema aceita e confirma!
 4. Voltou ao menu principal.
 5. Digite `4` novamente ➔ Exibe: `Renda atual cadastrada: R$ 3250.75`!
 6. Digite `0` ➔ Programa encerra suavemente.

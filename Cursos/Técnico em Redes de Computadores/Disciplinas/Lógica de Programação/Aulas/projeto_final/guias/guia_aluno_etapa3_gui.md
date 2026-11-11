@@ -10,10 +10,12 @@
 ## 🎯 O que vamos construir hoje?
 
 Na etapa anterior, deixamos o nosso **Dashboard de Planejamento Financeiro** funcionando com o menu lateral e o cadastro da **Receita Prevista**. Porém:
+
 1. O botão **`2 - Adicionar Despesa`** ainda estava em construção.
 2. Quando fechávamos a janela do programa, o valor da receita sumia porque estava apenas na **memória RAM**.
 
 Hoje vamos continuar o nosso `gui_main.py` no mesmo formato interativo (**Criar Visual ➔ Testar ➔ Criar Função ➔ Testar**) para:
+
 * Transformar o painel direito em uma **Tabela Rolável (`CTkScrollableFrame`)** para listar dezenas de despesas.
 * Criar uma **Subjanela de Formulário (`CTkToplevel`)** para cadastrar cada despesa (Descrição, Valor e Categoria) usando **Dicionários (`dict`)** e **Listas (`list`)**.
 * Implementar o **Armazenamento em Arquivo (`JSON`)** para que suas receitas e despesas fiquem salvas permanentemente no computador!
@@ -42,7 +44,8 @@ frame_lista_scroll.pack(fill="both", expand=True, padx=15, pady=(0, 15))
 
 Agora vamos criar a lista `despesas = []` e uma função chamada `atualizar_lista_visual()`, que percorre todos os dicionários de despesas cadastrados e cria uma linha visual para cada um dentro do `frame_lista_scroll`.
 
-### 2.1 Adicione a lista e a função no topo do arquivo:
+### 2.1 Adicione a lista e a função no topo do arquivo
+
 Suba até logo abaixo de `renda_prevista = 0.0` e adicione:
 
 ```python
@@ -88,7 +91,8 @@ def atualizar_lista_visual():
         lbl_item.pack(fill="x", padx=10, pady=6)
 ```
 
-### 2.2 Chame a função no final do arquivo:
+### 2.2 Chame a função no final do arquivo
+
 Lá nas últimas linhas do seu `gui_main.py`, logo **antes** de `if __name__ == "__main__":`, adicione:
 
 ```python
@@ -165,7 +169,7 @@ def adicionar_despesa():
 
 Agora vamos criar a função `confirmar_cadastro()` dentro de `adicionar_despesa()` para validar o que o usuário digitou, guardar em um **Dicionário (`dict`)**, adicionar na **Lista (`despesas.append`)** e atualizar a tabela!
 
-### 4.1 Adicione `confirmar_cadastro()` dentro de `adicionar_despesa()` (logo acima do `btn_salvar`):
+### 4.1 Adicione `confirmar_cadastro()` dentro de `adicionar_despesa()` (logo acima do `btn_salvar`)
 
 ```python
     def confirmar_cadastro():
@@ -203,7 +207,8 @@ Agora vamos criar a função `confirmar_cadastro()` dentro de `adicionar_despesa
         popup.destroy()
 ```
 
-### 4.2 Conecte o `command=confirmar_cadastro` no `btn_salvar`:
+### 4.2 Conecte o `command=confirmar_cadastro` no `btn_salvar`
+
 Logo abaixo, no `btn_salvar`, adicione `command=confirmar_cadastro`:
 
 ```python
@@ -230,6 +235,7 @@ def listar_despesas():
 ```
 
 🧪 **Teste 4:** Execute `python gui_main.py`, clique em `2 - Adicionar Despesa` e cadastre 2 gastos (ex: `Aluguel - 1200` e `Internet - 110`). Veja como eles aparecem alinhados na tabela!
+
 * **Porém, faça um teste:** Feche o programa e abra de novo. Os dados sumiram! Vamos resolver isso agora no último passo!
 
 ---
@@ -239,7 +245,8 @@ def listar_despesas():
 > 🧠 **Como funciona o Armazenamento (Persistência)?**
 > Variáveis como `renda_prevista` e `despesas` ficam na **memória RAM**, que é apagada assim que o programa fecha. Para que os dados fiquem salvos permanentemente no computador, usamos a biblioteca nativa **`json`** do Python, que grava nosso dicionário de receita e lista de despesas dentro de um arquivo chamado `dados_financeiros.json`!
 
-### 5.1 Importe `json` e `os` nas primeiras linhas do arquivo:
+### 5.1 Importe `json` e `os` nas primeiras linhas do arquivo
+
 No topo do `gui_main.py`, adicione:
 
 ```python
@@ -248,7 +255,8 @@ import os
 import customtkinter as ctk
 ```
 
-### 5.2 Crie as funções `salvar_dados()` e `carregar_dados()`:
+### 5.2 Crie as funções `salvar_dados()` e `carregar_dados()`
+
 Logo abaixo de `despesas = []`, adicione:
 
 ```python
@@ -279,7 +287,8 @@ def carregar_dados():
             pass
 ```
 
-### 5.3 Ative o salvamento e o carregamento automático (3 linhas!):
+### 5.3 Ative o salvamento e o carregamento automático (3 linhas!)
+
 1. **Na função `cadastrar_receita()`:** Logo abaixo de `renda_prevista = valor`, chame `salvar_dados()`.
 2. **Na função `confirmar_cadastro()` (dentro de `adicionar_despesa`):** Logo abaixo de `despesas.append(nova_despesa)`, chame `salvar_dados()`.
 3. **No final do arquivo (antes do `if __name__ == "__main__":`):** Chame `carregar_dados()` e atualize o texto da receita:
@@ -299,6 +308,6 @@ if __name__ == "__main__":
 
 Execute `python gui_main.py` e confira:
 
-- [ ] **Teste 1 (Cadastro de Despesas):** Clique em `2 - Adicionar Despesa`, tente salvar vazio (veja a validação bloquear) e depois cadastre 3 despesas nas diferentes categorias (`Essencial`, `Estilo de Vida` e `Reserva`).
-- [ ] **Teste 2 (Arquivo JSON Criado):** Olhe na barra de arquivos do VS Code e abra o arquivo `dados_financeiros.json` que foi criado automaticamente com os seus dados!
-- [ ] **Teste 3 (Persistência Funcionando!):** Feche a janela completamente no botão `0 - Sair do Sistema` e execute `python gui_main.py` novamente. Verifique se sua **Receita Prevista** e todas as suas **Despesas** continuam lá na tela!
+* [ ] **Teste 1 (Cadastro de Despesas):** Clique em `2 - Adicionar Despesa`, tente salvar vazio (veja a validação bloquear) e depois cadastre 3 despesas nas diferentes categorias (`Essencial`, `Estilo de Vida` e `Reserva`).
+* [ ] **Teste 2 (Arquivo JSON Criado):** Olhe na barra de arquivos do VS Code e abra o arquivo `dados_financeiros.json` que foi criado automaticamente com os seus dados!
+* [ ] **Teste 3 (Persistência Funcionando!):** Feche a janela completamente no botão `0 - Sair do Sistema` e execute `python gui_main.py` novamente. Verifique se sua **Receita Prevista** e todas as suas **Despesas** continuam lá na tela!
